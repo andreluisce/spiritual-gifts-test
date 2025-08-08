@@ -14,110 +14,217 @@ export type Database = {
   }
   public: {
     Tables: {
+      answers: {
+        Row: {
+          created_at: string
+          question_id: number
+          score: number
+          session_id: string
+        }
+        Insert: {
+          created_at?: string
+          question_id: number
+          score: number
+          session_id: string
+        }
+        Update: {
+          created_at?: string
+          question_id?: number
+          score?: number
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "answers_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "answers_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       gifts: {
         Row: {
-          description: string
-          key: string
+          description: string | null
+          key: Database["public"]["Enums"]["gift_key"]
           name: string
         }
         Insert: {
-          description: string
-          key: string
+          description?: string | null
+          key: Database["public"]["Enums"]["gift_key"]
           name: string
         }
         Update: {
-          description?: string
-          key?: string
+          description?: string | null
+          key?: Database["public"]["Enums"]["gift_key"]
           name?: string
         }
         Relationships: []
       }
-      quiz_answers: {
+      profiles: {
         Row: {
-          created_at: string | null
-          gift_key: string
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
           id: string
-          question_id: number
-          score: number
-          user_id: string
+          updated_at: string
         }
         Insert: {
-          created_at?: string | null
-          gift_key: string
-          id?: string
-          question_id: number
-          score: number
-          user_id: string
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          updated_at?: string
         }
         Update: {
-          created_at?: string | null
-          gift_key?: string
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
           id?: string
-          question_id?: number
-          score?: number
-          user_id?: string
+          updated_at?: string
         }
         Relationships: []
       }
-      quiz_questions: {
+      question_gift_map: {
         Row: {
-          gift_key: string
-          id: number
-          question: string
+          gift: Database["public"]["Enums"]["gift_key"]
+          question_id: number
         }
         Insert: {
-          gift_key: string
-          id?: number
-          question: string
+          gift: Database["public"]["Enums"]["gift_key"]
+          question_id: number
         }
         Update: {
-          gift_key?: string
-          id?: number
-          question?: string
+          gift?: Database["public"]["Enums"]["gift_key"]
+          question_id?: number
         }
         Relationships: [
           {
-            foreignKeyName: "quiz_questions_gift_key_fkey"
-            columns: ["gift_key"]
-            isOneToOne: false
-            referencedRelation: "gifts"
-            referencedColumns: ["key"]
+            foreignKeyName: "question_gift_map_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: true
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
           },
         ]
       }
-      quiz_results: {
+      questions: {
         Row: {
-          created_at: string | null
+          id: number
+          text: string
+        }
+        Insert: {
+          id: number
+          text: string
+        }
+        Update: {
+          id?: number
+          text?: string
+        }
+        Relationships: []
+      }
+      quiz_sessions: {
+        Row: {
+          completed_at: string | null
+          created_at: string
           id: string
-          top_gifts: Json
-          total_score: Json
           user_id: string
         }
         Insert: {
-          created_at?: string | null
+          completed_at?: string | null
+          created_at?: string
           id?: string
-          top_gifts: Json
-          total_score: Json
           user_id: string
         }
         Update: {
-          created_at?: string | null
+          completed_at?: string | null
+          created_at?: string
           id?: string
-          top_gifts?: Json
-          total_score?: Json
           user_id?: string
         }
         Relationships: []
       }
     }
     Views: {
-      [_ in never]: never
+      quiz_results: {
+        Row: {
+          gift: Database["public"]["Enums"]["gift_key"] | null
+          session_id: string | null
+          total: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "answers_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
-      [_ in never]: never
+      algorithm_sign: {
+        Args: { signables: string; secret: string; algorithm: string }
+        Returns: string
+      }
+      best_gifts: {
+        Args: { p_session_id: string; p_limit?: number }
+        Returns: {
+          gift: Database["public"]["Enums"]["gift_key"]
+          total: number
+        }[]
+      }
+      calculate_quiz_result: {
+        Args: { p_session_id: string }
+        Returns: {
+          gift: Database["public"]["Enums"]["gift_key"]
+          total: number
+        }[]
+      }
+      sign: {
+        Args: { payload: Json; secret: string; algorithm?: string }
+        Returns: string
+      }
+      try_cast_double: {
+        Args: { inp: string }
+        Returns: number
+      }
+      url_decode: {
+        Args: { data: string }
+        Returns: string
+      }
+      url_encode: {
+        Args: { data: string }
+        Returns: string
+      }
+      verify: {
+        Args: { token: string; secret: string; algorithm?: string }
+        Returns: {
+          header: Json
+          payload: Json
+          valid: boolean
+        }[]
+      }
     }
     Enums: {
-      [_ in never]: never
+      gift_key:
+        | "A_PROPHECY"
+        | "B_SERVICE"
+        | "C_TEACHING"
+        | "D_EXHORTATION"
+        | "E_GIVING"
+        | "F_LEADERSHIP"
+        | "G_MERCY"
+        | "H_EVANGELISM"
+        | "I_PASTOR"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -244,6 +351,18 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      gift_key: [
+        "A_PROPHECY",
+        "B_SERVICE",
+        "C_TEACHING",
+        "D_EXHORTATION",
+        "E_GIVING",
+        "F_LEADERSHIP",
+        "G_MERCY",
+        "H_EVANGELISM",
+        "I_PASTOR",
+      ],
+    },
   },
 } as const
