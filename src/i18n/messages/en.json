@@ -1,0 +1,69 @@
+{
+  "common": {
+    "continue": "Continue",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "finish": "Finish",
+    "loading": "Loading...",
+    "error": "Error",
+    "tryAgain": "Try Again",
+    "reload": "Reload",
+    "processing": "Processing...",
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "getStarted": "Get Started"
+  },
+  "nav": {
+    "home": "Home",
+    "quiz": "Quiz",
+    "dashboard": "Dashboard",
+    "gifts": "Gifts"
+  },
+  "home": {
+    "title": "Spiritual Gifts Test",
+    "subtitle": "Discover your spiritual gifts and calling",
+    "heroTitle": "Discover Your Spiritual Gifts",
+    "heroSubtitle": "Uncover how God has uniquely designed you to serve His kingdom. Take our comprehensive spiritual gifts assessment and find your calling.",
+    "startAssessment": "Start Your Assessment",
+    "continueWithGoogle": "Continue with Google",
+    "signInToStart": "Sign In to Start",
+    "beginAssessment": "Begin Assessment Now",
+    "whyTakeAssessment": "Why Take This Assessment?",
+    "assessmentDescription": "Join thousands who have found clarity in their calling. Your spiritual gifts assessment is just one click away."
+  },
+  "quiz": {
+    "title": "Spiritual Gifts Test",
+    "questionOf": "Question {current} of {total}",
+    "answeredOf": "{answered} of {total} answered",
+    "viewAllQuestions": "View all questions",
+    "noQuestionsFound": "No questions found",
+    "errorCurrentQuestion": "Error: Current question not found",
+    "errorInvalidIndex": "Error: Invalid question index",
+    "restartQuiz": "Restart Quiz",
+    "labels": {
+      "1": "Never",
+      "2": "Rarely",
+      "3": "Sometimes",
+      "4": "Frequently",
+      "5": "Always"
+    }
+  },
+  "welcome": {
+    "greeting": "Welcome",
+    "hello": "Hello, {name}!"
+  },
+  "login": {
+    "title": "Spiritual Gifts Test",
+    "subtitle": "Ready to discover your spiritual gifts? Let's get started!",
+    "createAccount": "Create your account",
+    "continueWithEmail": "Continue with Email",
+    "continueWithGoogle": "Continue with Google",
+    "signingIn": "Signing in...",
+    "orContinueWith": "Or continue with",
+    "agreement": "By signing in, you agree to take the spiritual gifts assessment and receive personalized results based on your responses."
+  },
+  "Index": {
+    "title": "Spiritual Gifts Test"
+  }
+}

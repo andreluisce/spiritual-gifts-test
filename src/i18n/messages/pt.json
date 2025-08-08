@@ -1,0 +1,69 @@
+{
+  "common": {
+    "continue": "Continuar",
+    "back": "Voltar",
+    "next": "Próxima",
+    "previous": "Anterior",
+    "finish": "Finalizar",
+    "loading": "Carregando...",
+    "error": "Erro",
+    "tryAgain": "Tentar Novamente",
+    "reload": "Recarregar",
+    "processing": "Processando...",
+    "signIn": "Entrar",
+    "signOut": "Sair",
+    "getStarted": "Começar"
+  },
+  "nav": {
+    "home": "Início",
+    "quiz": "Quiz",
+    "dashboard": "Painel",
+    "gifts": "Dons"
+  },
+  "home": {
+    "title": "Teste de Dons Espirituais",
+    "subtitle": "Descubra seus dons espirituais e chamado",
+    "heroTitle": "Descubra Seus Dons Espirituais",
+    "heroSubtitle": "Descubra como Deus o projetou exclusivamente para servir ao Seu reino. Faça nossa avaliação abrangente de dons espirituais e encontre seu chamado.",
+    "startAssessment": "Iniciar Sua Avaliação",
+    "continueWithGoogle": "Continuar com Google",
+    "signInToStart": "Entre para Começar",
+    "beginAssessment": "Começar Avaliação Agora",
+    "whyTakeAssessment": "Por que Fazer Esta Avaliação?",
+    "assessmentDescription": "Junte-se a milhares que encontraram clareza em seu chamado. Sua avaliação de dons espirituais está a apenas um clique de distância."
+  },
+  "quiz": {
+    "title": "Teste de Dons Espirituais",
+    "questionOf": "Pergunta {current} de {total}",
+    "answeredOf": "{answered} de {total} respondidas",
+    "viewAllQuestions": "Visualizar todas as perguntas",
+    "noQuestionsFound": "Nenhuma pergunta encontrada",
+    "errorCurrentQuestion": "Erro: Pergunta atual não encontrada",
+    "errorInvalidIndex": "Erro: Índice da pergunta inválido",
+    "restartQuiz": "Reiniciar Quiz",
+    "labels": {
+      "1": "Nunca",
+      "2": "Raramente",
+      "3": "Às vezes",
+      "4": "Frequentemente",
+      "5": "Sempre"
+    }
+  },
+  "welcome": {
+    "greeting": "Bem-vindo",
+    "hello": "Olá, {name}!"
+  },
+  "login": {
+    "title": "Teste de Dons Espirituais",
+    "subtitle": "Pronto para descobrir seus dons espirituais? Vamos começar!",
+    "createAccount": "Crie sua conta",
+    "continueWithEmail": "Continuar com Email",
+    "continueWithGoogle": "Continuar com Google",
+    "signingIn": "Entrando...",
+    "orContinueWith": "Ou continue com",
+    "agreement": "Ao entrar, você concorda em fazer a avaliação de dons espirituais e receber resultados personalizados baseados em suas respostas."
+  },
+  "Index": {
+    "title": "Teste de Dons Espirituais"
+  }
+}

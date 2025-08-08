@@ -1,0 +1,69 @@
+{
+  "common": {
+    "continue": "Continuar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "finish": "Finalizar",
+    "loading": "Cargando...",
+    "error": "Error",
+    "tryAgain": "Intentar Nuevamente",
+    "reload": "Recargar",
+    "processing": "Procesando...",
+    "signIn": "Iniciar Sesión",
+    "signOut": "Cerrar Sesión",
+    "getStarted": "Comenzar"
+  },
+  "nav": {
+    "home": "Inicio",
+    "quiz": "Prueba",
+    "dashboard": "Panel",
+    "gifts": "Dones"
+  },
+  "home": {
+    "title": "Prueba de Dones Espirituales",
+    "subtitle": "Descubre tus dones espirituales y llamado",
+    "heroTitle": "Descubre Tus Dones Espirituales",
+    "heroSubtitle": "Descubre cómo Dios te ha diseñado únicamente para servir a Su reino. Realiza nuestra evaluación integral de dones espirituales y encuentra tu llamado.",
+    "startAssessment": "Comenzar Tu Evaluación",
+    "continueWithGoogle": "Continuar con Google",
+    "signInToStart": "Inicia Sesión para Comenzar",
+    "beginAssessment": "Comenzar Evaluación Ahora",
+    "whyTakeAssessment": "¿Por qué Hacer Esta Evaluación?",
+    "assessmentDescription": "Únete a miles que han encontrado claridad en su llamado. Tu evaluación de dones espirituales está a solo un clic de distancia."
+  },
+  "quiz": {
+    "title": "Prueba de Dones Espirituales",
+    "questionOf": "Pregunta {current} de {total}",
+    "answeredOf": "{answered} de {total} respondidas",
+    "viewAllQuestions": "Ver todas las preguntas",
+    "noQuestionsFound": "No se encontraron preguntas",
+    "errorCurrentQuestion": "Error: Pregunta actual no encontrada",
+    "errorInvalidIndex": "Error: Índice de pregunta inválido",
+    "restartQuiz": "Reiniciar Prueba",
+    "labels": {
+      "1": "Nunca",
+      "2": "Raramente",
+      "3": "A veces",
+      "4": "Frecuentemente",
+      "5": "Siempre"
+    }
+  },
+  "welcome": {
+    "greeting": "Bienvenido",
+    "hello": "¡Hola, {name}!"
+  },
+  "login": {
+    "title": "Prueba de Dones Espirituales",
+    "subtitle": "¿Listo para descubrir tus dones espirituales? ¡Empecemos!",
+    "createAccount": "Crea tu cuenta",
+    "continueWithEmail": "Continuar con Email",
+    "continueWithGoogle": "Continuar con Google",
+    "signingIn": "Iniciando sesión...",
+    "orContinueWith": "O continúa con",
+    "agreement": "Al iniciar sesión, aceptas realizar la evaluación de dones espirituales y recibir resultados personalizados basados en tus respuestas."
+  },
+  "Index": {
+    "title": "Prueba de Dones Espirituales"
+  }
+}
