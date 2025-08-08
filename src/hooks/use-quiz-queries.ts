@@ -27,12 +27,7 @@ const fallbackQuestions: QuizQuestion[] = [
   { id: 2, question: "Sinto-me chamado(a) para plantar novas igrejas ou ministérios.", gift_key: "apostleship" },
   { id: 3, question: "Consigo identificar facilmente quando algo não está certo espiritualmente.", gift_key: "discernment" },
   { id: 4, question: "Gosto de ensinar e explicar as Escrituras para outros.", gift_key: "teaching" },
-  { id: 5, question: "Tenho facilidade para liderar grupos e tomar decisões.", gift_key: "leadership" },
-  { id: 6, question: "Sinto compaixão genuína pelos necessitados e busco ajudá-los.", gift_key: "mercy" },
-  { id: 7, question: "Prefiro trabalhar nos bastidores apoiando o ministério dos outros.", gift_key: "service" },
-  { id: 8, question: "Deus me usa para orar por cura e ver resultados sobrenaturais.", gift_key: "healing" },
-  { id: 9, question: "Tenho facilidade para compartilhar o evangelho com não crentes.", gift_key: "evangelism" },
-  { id: 10, question: "Sinto-me motivado(a) a dar generosamente para a obra de Deus.", gift_key: "giving" }
+  { id: 5, question: "Tenho facilidade para liderar grupos e tomar decisões.", gift_key: "leadership" }
 ]
 
 export function useQuizQuestions() {
@@ -44,6 +39,7 @@ export function useQuizQuestions() {
           .from('quiz_questions')
           .select('*')
           .order('id')
+          .limit(5)
 
         if (error) throw error
 
@@ -80,7 +76,7 @@ export function useGifts() {
 
       // For now, merge with static data to get additional info like biblical references
       const { spiritualGifts } = await import('@/data/quiz-data')
-      
+
       return data.map(dbGift => {
         const staticGift = spiritualGifts.find(g => g.key === dbGift.key)
         return {
@@ -159,11 +155,11 @@ export function useSubmitQuiz() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async ({ 
-      userId, 
-      answers, 
-      gifts 
-    }: { 
+    mutationFn: async ({
+      userId,
+      answers,
+      gifts
+    }: {
       userId: string
       answers: Record<number, number>
       gifts: SpiritualGift[]
@@ -253,19 +249,19 @@ export function useDeleteResult() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async ({ 
-      resultId, 
-      userId 
-    }: { 
+    mutationFn: async ({
+      resultId,
+      userId
+    }: {
       resultId: string
-      userId: string 
+      userId: string
     }) => {
       // Delete related answers first
       const { error: answersError } = await supabase
         .from('quiz_answers')
         .delete()
         .eq('user_id', userId)
-        // Note: We would need quiz_result_id in the answers table to properly filter
+      // Note: We would need quiz_result_id in the answers table to properly filter
 
       // Delete the result
       const { error } = await supabase
@@ -293,7 +289,7 @@ export function useSeedGiftsData() {
   return useMutation({
     mutationFn: async () => {
       const { spiritualGifts } = await import('@/data/quiz-data')
-      
+
       const dbGifts: Database['public']['Tables']['gifts']['Insert'][] = spiritualGifts.map(gift => ({
         key: gift.key,
         name: gift.name,
