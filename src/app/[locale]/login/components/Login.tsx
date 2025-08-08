@@ -17,9 +17,9 @@ export function LoginForm() {
     async function handleGoogleLogin() {
         setLoading(true)
         setError(null)
-        
+
         const { error } = await signInWithGoogle()
-        
+
         setLoading(false)
         if (error) {
             setError(error.message)
@@ -32,7 +32,7 @@ export function LoginForm() {
             <div className="absolute top-20 left-20 w-32 h-32 bg-purple-100 rounded-full opacity-60 blur-xl"></div>
             <div className="absolute bottom-20 right-20 w-40 h-40 bg-blue-100 rounded-full opacity-40 blur-xl"></div>
             <div className="absolute top-1/2 left-10 w-24 h-24 bg-green-100 rounded-full opacity-50 blur-xl"></div>
-            
+
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -56,7 +56,7 @@ export function LoginForm() {
                             </p>
                         </motion.div>
                     </div>
-                    
+
                     {/* Content */}
                     <div className="px-6 pb-8 space-y-6">
                         {error && (
@@ -69,37 +69,6 @@ export function LoginForm() {
                             </motion.div>
                         )}
 
-                        {/* Email button (primary) */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3, duration: 0.6 }}
-                        >
-                            <Button
-                                type="button"
-                                className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
-                                onClick={handleGoogleLogin}
-                                disabled={loading}
-                            >
-                                {loading ? t('signingIn') : t('continueWithEmail')}
-                            </Button>
-                        </motion.div>
-                        
-                        {/* Divider */}
-                        <motion.div 
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.4, duration: 0.6 }}
-                            className="relative flex items-center justify-center"
-                        >
-                            <div className="absolute inset-0 flex items-center">
-                                <div className="w-full border-t border-gray-200"></div>
-                            </div>
-                            <div className="relative bg-white px-4 text-sm text-gray-500">
-                                {t('orContinueWith')}
-                            </div>
-                        </motion.div>
-                        
                         {/* Google button (secondary) */}
                         <motion.div
                             initial={{ opacity: 0, y: 10 }}
@@ -117,8 +86,8 @@ export function LoginForm() {
                                 {loading ? t('signingIn') : t('continueWithGoogle')}
                             </Button>
                         </motion.div>
-                        
-                        <motion.p 
+
+                        <motion.p
                             className="text-gray-500 text-xs text-center leading-relaxed"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
@@ -127,7 +96,7 @@ export function LoginForm() {
                             {t('agreement')}
                         </motion.p>
                     </div>
-                    
+
                     {/* Plant Mascot */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}

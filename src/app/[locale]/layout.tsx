@@ -1,18 +1,32 @@
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages, setRequestLocale } from 'next-intl/server';
+import { AuthProvider } from '@/context/AuthContext';
+import { QueryProvider } from '@/providers/QueryProvider';
+import '../globals.css';
 
-import {setRequestLocale} from 'next-intl/server';
-
-export default function LocaleLayout({
+export default async function LocaleLayout({
   children,
-  params: {locale}
+  params
 }: {
   children: React.ReactNode;
-  params: {locale: string};
+  params: Promise<{ locale: string }>;
 }) {
-    setRequestLocale(locale);
+  const { locale } = await params;   // ✅ await it
+  setRequestLocale(locale);
+
+  const messages = await getMessages();
 
   return (
     <html lang={locale}>
-      <body>{children}</body>
+      <body>
+        <NextIntlClientProvider messages={messages}>
+          <AuthProvider>
+            <QueryProvider>
+              {children}
+            </QueryProvider>
+          </AuthProvider>
+        </NextIntlClientProvider>
+      </body>
     </html>
   );
 }
