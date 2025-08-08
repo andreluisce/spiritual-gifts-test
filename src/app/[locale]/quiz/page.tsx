@@ -10,6 +10,7 @@ import { ArrowLeft, ArrowRight, AlertCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useQuiz } from '@/hooks/use-quiz'
 import { useTranslations, useLocale } from 'next-intl'
+import { useAuth } from '@/context/AuthContext'
 
 export default function QuizPage() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
@@ -17,6 +18,7 @@ export default function QuizPage() {
   const t = useTranslations('quiz')
   const tCommon = useTranslations('common')
   const locale = useLocale()
+  const { user } = useAuth()
   
   const {
     questions,
@@ -57,8 +59,14 @@ export default function QuizPage() {
 
   const goToNext = async () => {
     if (isLastQuestion) {
+      if (!user || !user.id) {
+        console.error("User not logged in or user ID not available.");
+        // Optionally, redirect to login or show an error message
+        router.push(`/${locale}/login`);
+        return;
+      }
       // Submit quiz and navigate to results
-      const result = await submitQuiz('mock-user-id') // TODO: Get actual user ID
+      const result = await submitQuiz(user.id)
       if (result) {
         // Store result in localStorage temporarily for the results page
         localStorage.setItem('quizResult', JSON.stringify(result))
