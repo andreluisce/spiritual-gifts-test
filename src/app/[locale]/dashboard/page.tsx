@@ -317,11 +317,13 @@ export default function DashboardPage() {
                           </div>
                         </div>
                         <div className="flex gap-2">
-                          <Button variant="outline" size="sm" className="flex items-center gap-2">
-                            <Eye className="h-4 w-4" />
-                            Ver
-                          </Button>
-                          <Button variant="outline" size="sm" className="flex items-center gap-2">
+                          <Link href={`/quiz/results/${result.sessionId}`}>
+                            <Button variant="outline" size="sm" className="flex items-center gap-2">
+                              <Eye className="h-4 w-4" />
+                              Ver
+                            </Button>
+                          </Link>
+                          <Button variant="outline" size="sm" className="flex items-center gap-2" disabled>
                             <Download className="h-4 w-4" />
                             PDF
                           </Button>

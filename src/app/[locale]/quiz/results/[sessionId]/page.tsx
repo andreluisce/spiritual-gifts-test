@@ -14,24 +14,24 @@ import {
   Target, Lightbulb,
   Award, Users, Church
 } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import {
-  useLatestResult,
+  useResultBySessionId,
   useGifts,
   useSpiritualGifts,
   useCategories,
   type ExtendedSpiritualGift
 } from '@/hooks/use-quiz-queries'
 import type { SpiritualGift } from '@/data/quiz-data'
-import { useAuth } from '@/context/AuthContext'
 
 export default function ResultsPage() {
   const router = useRouter()
-  const { user } = useAuth()
+  const params = useParams()
+  const sessionId = params.sessionId as string
   const [activeTab, setActiveTab] = useState('overview')
 
-  const { data: latestResult, isLoading: loadingResults, error: resultsError } = useLatestResult(user?.id || null)
+  const { data: result, isLoading: loadingResults, error: resultsError } = useResultBySessionId(sessionId)
   const { data: gifts, isLoading: loadingGifts } = useGifts()
   const { data: spiritualGiftsData, isLoading: loadingSpiritualGifts } = useSpiritualGifts()
   const { data: categories, isLoading: loadingCategories } = useCategories()
@@ -59,9 +59,9 @@ export default function ResultsPage() {
 
   // Get the top gift with extended data
   const getTopGiftWithData = () => {
-    if (!latestResult || !spiritualGiftsData || latestResult.topGifts.length === 0) return null
+    if (!result || !spiritualGiftsData || result.topGifts.length === 0) return null
 
-    const topGiftName = latestResult.topGifts[0]
+    const topGiftName = result.topGifts[0]
     return getExtendedGiftData(topGiftName)
   }
 
@@ -86,7 +86,7 @@ export default function ResultsPage() {
     )
   }
 
-  if (!latestResult) {
+  if (!result) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -102,7 +102,7 @@ export default function ResultsPage() {
   const allScores = gifts
     ? gifts.map(gift => ({
         giftKey: gift.key,
-        score: latestResult.totalScore[gift.key] || 0,
+        score: result.totalScore[gift.key] || 0,
       }))
     : [];
 
@@ -122,7 +122,7 @@ export default function ResultsPage() {
             Seus Dons Espirituais
           </h1>
           <p className="text-gray-600">
-            Resultado do teste realizado em {new Date(latestResult.createdAt).toLocaleDateString('pt-BR')}
+            Resultado do teste realizado em {new Date(result.createdAt).toLocaleDateString('pt-BR')}
           </p>
         </div>
 
@@ -136,7 +136,7 @@ export default function ResultsPage() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-              {latestResult.topGifts.map((giftName, index) => (
+              {result.topGifts.map((giftName, index) => (
                 <div key={index} className="text-center">
                   <Badge
                     variant={index === 0 ? "default" : "secondary"}

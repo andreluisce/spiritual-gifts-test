@@ -18,13 +18,53 @@ const QUERY_KEYS = {
 
 // Hooks for fetching data
 
-// Fallback questions for when Supabase is not available
+// Fallback questions for when Supabase is not available - complete 45 questions
 const fallbackQuestions: QuizQuestion[] = [
-  { id: 1, question: "Eu tenho facilidade para organizar eventos e atividades na igreja.", gift_key: "A_PROPHECY" },
-  { id: 2, question: "Sinto-me chamado(a) para plantar novas igrejas ou ministérios.", gift_key: "B_SERVICE" },
-  { id: 3, question: "Consigo identificar facilmente quando algo não está certo espiritualmente.", gift_key: "C_TEACHING" },
-  { id: 4, question: "Gosto de ensinar e explicar as Escrituras para outros.", gift_key: "D_EXHORTATION" },
-  { id: 5, question: "Tenho facilidade para liderar grupos e tomar decisões.", gift_key: "F_LEADERSHIP" }
+  { id: 1, question: 'Gosto de apresentar a verdade de Deus numa forma interessante e entusiasta.', gift_key: 'A_PROPHECY' },
+  { id: 2, question: 'Estou sempre pronto para colocar em posição secundária meu conforto pessoal a fim de que as necessidades alheias sejam satisfeitas.', gift_key: 'B_SERVICE' },
+  { id: 3, question: 'Tenho facilidade para explorar a verdade de um texto dentro do seu contexto.', gift_key: 'C_TEACHING' },
+  { id: 4, question: 'Procuro incentivar individualmente os que vacilam e tem problemas espirituais.', gift_key: 'D_EXHORTATION' },
+  { id: 5, question: 'Administro meu dinheiro, mesmo quando pouco, de modo a separar uma quantia generosa para o trabalho de Deus.', gift_key: 'E_GIVING' },
+  { id: 6, question: 'Acho fácil delegar responsabilidades e preparar outras pessoas para realizações no campo espiritual.', gift_key: 'F_LEADERSHIP' },
+  { id: 7, question: 'Sou muito sensível às necessidades dos outros.', gift_key: 'G_MERCY' },
+  { id: 8, question: 'Acho fácil falar de Jesus para não crentes.', gift_key: 'A_PROPHECY' },
+  { id: 9, question: 'Gosto de acompanhar cristãos para ajudá-los no seu crescimento espiritual.', gift_key: 'B_SERVICE' },
+  { id: 10, question: 'Quando tento persuadir pessoas a respeito de suas reais motivações, faço-o de modo muito convincente.', gift_key: 'A_PROPHECY' },
+  { id: 11, question: 'Consigo levar pessoas a se sentirem à vontade na minha presença.', gift_key: 'B_SERVICE' },
+  { id: 12, question: 'Sinto grande impulso para descobrir conceitos bíblicos e repassá-los a outros.', gift_key: 'C_TEACHING' },
+  { id: 13, question: 'Sempre estou interessado e procuro ajudar o crescimento espiritual das pessoas e levá-las a serem ativas na obra de Deus.', gift_key: 'D_EXHORTATION' },
+  { id: 14, question: 'Alegro-me em dar recursos materiais, de sorte que a obra do Senhor possa ser promovida.', gift_key: 'E_GIVING' },
+  { id: 15, question: 'Sou eficiente em supervisionar as atividades dos outros.', gift_key: 'F_LEADERSHIP' },
+  { id: 16, question: 'Gosto de visitar pessoas hospitalizadas ou que não podem sair de casa.', gift_key: 'G_MERCY' },
+  { id: 17, question: 'Já tive experiências de levar outros à fé em Jesus.', gift_key: 'A_PROPHECY' },
+  { id: 18, question: 'Tenho experiência de levar cristãos a permanecerem firmes na fé devido ao meu acompanhamento.', gift_key: 'B_SERVICE' },
+  { id: 19, question: 'Posso apresentar a Palavra de Deus a uma congregação de pessoas com clareza a ponto de serem trazidas à luz verdades escondidas.', gift_key: 'A_PROPHECY' },
+  { id: 20, question: 'Sinto-me feliz quando solicitado a dar assistência a outros na obra do Senhor sem necessariamente ser indicado para um posto de liderança.', gift_key: 'B_SERVICE' },
+  { id: 21, question: 'Sou muito interessado em apresentar conceitos bíblicos de modo bem claro, dando especial atenção a definição de palavras importantes no texto.', gift_key: 'C_TEACHING' },
+  { id: 22, question: 'Sinto-me feliz por poder tratar as pessoas feridas espiritualmente.', gift_key: 'D_EXHORTATION' },
+  { id: 23, question: 'Não tenho nenhum problema em confiar os meus recursos a outros para a obra do ministério.', gift_key: 'E_GIVING' },
+  { id: 24, question: 'Posso planejar as ações de outras pessoas, com calma, e dar-lhes os detalhes que as capacitem a trabalhar com eficiência.', gift_key: 'F_LEADERSHIP' },
+  { id: 25, question: 'Tenho grande interesse pelos que se acham envolvidos em dificuldades.', gift_key: 'G_MERCY' },
+  { id: 26, question: 'Considero um grande problema o fato de muitos cristãos não falarem aos outros da sua fé em Jesus.', gift_key: 'A_PROPHECY' },
+  { id: 27, question: 'Preocupo-me com o fato de que muitos cristãos não receberem um acompanhamento na sua vida pessoal e espiritual.', gift_key: 'B_SERVICE' },
+  { id: 28, question: 'Esforço-me grandemente para obter resultados, sempre que apresento as verdades da Palavra de Deus.', gift_key: 'A_PROPHECY' },
+  { id: 29, question: 'Sinto-me bem quando proporciono um agradável acolhimento aos hóspedes.', gift_key: 'B_SERVICE' },
+  { id: 30, question: 'Sou diligente em meu estudo da Bíblia e dispenso cuidadosa atenção à necessária pesquisa, não apenas para mostrar sabedoria, mas porque eu gosto.', gift_key: 'C_TEACHING' },
+  { id: 31, question: 'Julgo poder ajudar os que têm necessidades de aconselhamento sobre problemas pessoais.', gift_key: 'D_EXHORTATION' },
+  { id: 32, question: 'Preocupo-me em saber que o trabalho de assistência social está sendo suprido de recursos.', gift_key: 'E_GIVING' },
+  { id: 33, question: 'Procuro estar ciente dos recursos disponíveis para a execução das tarefas que tenho que realizar.', gift_key: 'F_LEADERSHIP' },
+  { id: 34, question: 'Sinto-me feliz quando consigo atingir pessoas geralmente esquecidas pelos outros.', gift_key: 'G_MERCY' },
+  { id: 35, question: 'Para mim é fácil perceber quando uma pessoa está aberta a aceitar o evangelho.', gift_key: 'A_PROPHECY' },
+  { id: 36, question: 'É fácil, para mim, acompanhar pessoalmente um grupo de cristãos e me empenhar pela sua unidade.', gift_key: 'B_SERVICE' },
+  { id: 37, question: 'Verifico que minha pregação leve pessoas a um ponto de decisão definido.', gift_key: 'A_PROPHECY' },
+  { id: 38, question: 'Gosto de aliviar a carga das pessoas que ocupam uma posição-chave, de sorte que possam esforçar-se mais em tarefas a elas concernentes.', gift_key: 'B_SERVICE' },
+  { id: 39, question: 'Posso explicar bem como a Bíblia mantém sua unidade.', gift_key: 'C_TEACHING' },
+  { id: 40, question: 'Sou agudamente consciente das coisas que impedem as pessoas em seu desenvolvimento espiritual e anseio por ajudá-las a vencer seus problemas.', gift_key: 'D_EXHORTATION' },
+  { id: 41, question: 'Sou cuidadoso com a questão de dinheiro e oro continuamente acerca de sua distribuição adequada na obra do Senhor.', gift_key: 'E_GIVING' },
+  { id: 42, question: 'Tenho objetivos bem definidos e consigo levar outros a assumirem meus objetivos.', gift_key: 'F_LEADERSHIP' },
+  { id: 43, question: 'Posso relacionar-me com outras pessoas emocionalmente e me disponho a ajudá-las quando for necessário.', gift_key: 'G_MERCY' },
+  { id: 44, question: 'Estou disposto a freqüentar um curso preparatório para o evangelismo.', gift_key: 'A_PROPHECY' },
+  { id: 45, question: 'Estou disposto a assumir a responsabilidade por um grupo de irmãos.', gift_key: 'F_LEADERSHIP' }
 ]
 
 export function useQuizQuestions() {
@@ -41,12 +81,12 @@ export function useQuizQuestions() {
             question_gift_map ( gift )
             `
           )
-          .order('id')
-          .limit(5)
+          .order('id').limit(5)
 
         if (error) {
           console.error("Supabase fetch error:", error);
-          throw error;
+          console.warn('Database tables may not exist. Using fallback questions.');
+          return fallbackQuestions;
         }
 
         if (data && data.length > 0) {
@@ -71,7 +111,7 @@ export function useQuizQuestions() {
 
 // Extended type for complete gift information from database
 export type ExtendedSpiritualGift = {
-  key: QuizQuestion['gift_key']
+  key: string // Will map to gift_key enum
   name: string
   description: string
   biblicalReferences: string[]
@@ -136,61 +176,68 @@ export function useSpiritualGifts() {
   return useQuery({
     queryKey: ['spiritual_gifts', 'complete'],
     queryFn: async (): Promise<ExtendedSpiritualGift[]> => {
-      const { data, error } = await supabase
-        .from('spiritual_gifts')
-        .select(`
-          id,
-          name,
-          definition,
-          biblical_references,
-          categories (
+      try {
+        const { data, error } = await supabase
+          .from('spiritual_gifts')
+          .select(`
             id,
             name,
-            greek_term,
-            description,
-            purpose
-          ),
-          qualities (
-            id,
-            quality_name,
-            description,
-            order_sequence
-          ),
-          characteristics (
-            id,
-            characteristic,
-            order_sequence
-          ),
-          dangers (
-            id,
-            danger,
-            order_sequence
-          ),
-          misunderstandings (
-            id,
-            misunderstanding,
-            order_sequence
-          )
-        `)
-        .eq('categories.name', 'MOTIVAÇÕES') // Focus on motivation gifts for quiz
-        .order('id')
+            definition,
+            biblical_references,
+            category:category_id(
+              id,
+              name,
+              greek_term,
+              description,
+              purpose
+            ),
+            qualities (
+              id,
+              quality_name,
+              description,
+              order_sequence
+            ),
+            characteristics (
+              id,
+              characteristic,
+              order_sequence
+            ),
+            dangers (
+              id,
+              danger,
+              order_sequence
+            ),
+            misunderstandings (
+              id,
+              misunderstanding,
+              order_sequence
+            )
+          `)
+          .order('id')
 
-      if (error) throw error
+        if (error) {
+          console.warn('Spiritual gifts table not found:', error);
+          return [];
+        }
 
-      return data.map(gift => ({
-        key: `GIFT_${gift.id}` as QuizQuestion['gift_key'], // Map to existing enum or create new mapping
-        name: gift.name,
-        description: gift.definition || '',
-        biblicalReferences: gift.biblical_references ? [gift.biblical_references] : [],
-        characteristics: gift.characteristics
-          ?.sort((a, b) => (a.order_sequence || 0) - (b.order_sequence || 0))
-          .map(c => c.characteristic) || [],
-        id: gift.id,
-        category: gift.categories,
-        qualities: gift.qualities?.sort((a, b) => (a.order_sequence || 0) - (b.order_sequence || 0)) || [],
-        dangers: gift.dangers?.sort((a, b) => (a.order_sequence || 0) - (b.order_sequence || 0)) || [],
-        misunderstandings: gift.misunderstandings?.sort((a, b) => (a.order_sequence || 0) - (b.order_sequence || 0)) || []
-      }))
+        return data.map(gift => ({
+          key: gift.name.toUpperCase(), // Use gift name as key
+          name: gift.name,
+          description: gift.definition || '',
+          biblicalReferences: gift.biblical_references ? [gift.biblical_references] : [],
+          characteristics: gift.characteristics
+            ?.sort((a, b) => (a.order_sequence || 0) - (b.order_sequence || 0))
+            .map(c => c.characteristic) || [],
+          id: gift.id,
+          category: gift.category,
+          qualities: gift.qualities?.sort((a, b) => (a.order_sequence || 0) - (b.order_sequence || 0)) || [],
+          dangers: gift.dangers?.sort((a, b) => (a.order_sequence || 0) - (b.order_sequence || 0)) || [],
+          misunderstandings: gift.misunderstandings?.sort((a, b) => (a.order_sequence || 0) - (b.order_sequence || 0)) || []
+        }))
+      } catch (error) {
+        console.warn('Failed to fetch spiritual gifts:', error);
+        return [];
+      }
     },
     staleTime: 30 * 60 * 1000, // 30 minutes
   })
@@ -201,63 +248,69 @@ export function useSpiritualGift(giftId: number) {
   return useQuery({
     queryKey: ['spiritual_gift', giftId],
     queryFn: async (): Promise<ExtendedSpiritualGift | null> => {
-      const { data, error } = await supabase
-        .from('spiritual_gifts')
-        .select(`
-          id,
-          name,
-          definition,
-          biblical_references,
-          categories (
+      try {
+        const { data, error } = await supabase
+          .from('spiritual_gifts')
+          .select(`
             id,
             name,
-            greek_term,
-            description,
-            purpose
-          ),
-          qualities (
-            id,
-            quality_name,
-            description,
-            order_sequence
-          ),
-          characteristics (
-            id,
-            characteristic,
-            order_sequence
-          ),
-          dangers (
-            id,
-            danger,
-            order_sequence
-          ),
-          misunderstandings (
-            id,
-            misunderstanding,
-            order_sequence
-          )
-        `)
-        .eq('id', giftId)
-        .single()
+            definition,
+            biblical_references,
+            category:category_id(
+              id,
+              name,
+              greek_term,
+              description,
+              purpose
+            ),
+            qualities (
+              id,
+              quality_name,
+              description,
+              order_sequence
+            ),
+            characteristics (
+              id,
+              characteristic,
+              order_sequence
+            ),
+            dangers (
+              id,
+              danger,
+              order_sequence
+            ),
+            misunderstandings (
+              id,
+              misunderstanding,
+              order_sequence
+            )
+          `)
+          .eq('id', giftId)
+          .single()
 
-      if (error) {
-        if (error.code === 'PGRST116') return null // No rows found
-        throw error
-      }
+        if (error) {
+          if (error.code === 'PGRST116') return null // No rows found
+          console.warn('Failed to fetch spiritual gift:', error);
+          return null;
+        }
 
-      return {
-        key: `GIFT_${data.id}` as QuizQuestion['gift_key'],
-        name: data.name,
-        description: data.definition || '',
-        biblicalReferences: data.biblical_references ? [data.biblical_references] : [],
-        characteristics: data.characteristics
-          ?.sort((a, b) => (a.order_sequence || 0) - (b.order_sequence || 0))
-          .map(c => c.characteristic) || [],
-        id: data.id,
-        category: data.categories,
-        qualities: data.qualities?.sort((a, b) => (a.order_sequence || 0) - (b.order_sequence || 0)) || [],
-        dangers: data.dangers?.sort((a, b) => (a.order_sequence || 0) - (b.order_sequence || 0)) || [],
-        misunderstandings: data.misunderstandings?.sort((a, b) => (a.order_sequence || 0) - (b.order_sequence || 0)) || []
+        return {
+          key: data.name.toUpperCase(),
+          name: data.name,
+          description: data.definition || '',
+          biblicalReferences: data.biblical_references ? [data.biblical_references] : [],
+          characteristics: data.characteristics
+            ?.sort((a, b) => (a.order_sequence || 0) - (b.order_sequence || 0))
+            .map(c => c.characteristic) || [],
+          id: data.id,
+          category: data.category,
+          qualities: data.qualities?.sort((a, b) => (a.order_sequence || 0) - (b.order_sequence || 0)) || [],
+          dangers: data.dangers?.sort((a, b) => (a.order_sequence || 0) - (b.order_sequence || 0)) || [],
+          misunderstandings: data.misunderstandings?.sort((a, b) => (a.order_sequence || 0) - (b.order_sequence || 0)) || []
+        }
+      } catch (error) {
+        console.warn('Failed to fetch spiritual gift:', error);
+        return null;
       }
     },
     enabled: !!giftId,
@@ -270,13 +323,29 @@ export function useCategories() {
   return useQuery({
     queryKey: ['categories'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('categories')
-        .select('*')
-        .order('id')
+      try {
+        const { data, error } = await supabase
+          .from('categories')
+          .select('*')
+          .order('id')
 
-      if (error) throw error
-      return data
+        if (error) {
+          console.warn('Categories table not found, returning fallback data');
+          return [
+            { id: 1, name: 'MOTIVAÇÕES', greek_term: 'Karismation', description: 'Impulso básico implantado no interior de cada cristão para que Deus expresse Seu amor', purpose: 'Para cada indivíduo ter e segurar' },
+            { id: 2, name: 'MINISTÉRIOS', greek_term: 'Diakonion', description: 'Serviço cristão que Deus determina para cada um', purpose: 'Para a Igreja' },
+            { id: 3, name: 'MANIFESTAÇÕES', greek_term: 'Energias planerosis', description: 'Manifestações do Espírito para capacitar no ministério', purpose: 'Para indivíduos momentaneamente' }
+          ];
+        }
+        return data
+      } catch (err) {
+        console.warn('Failed to fetch categories, using fallback:', err);
+        return [
+          { id: 1, name: 'MOTIVAÇÕES', greek_term: 'Karismation', description: 'Impulso básico implantado no interior de cada cristão para que Deus expresse Seu amor', purpose: 'Para cada indivíduo ter e segurar' },
+          { id: 2, name: 'MINISTÉRIOS', greek_term: 'Diakonion', description: 'Serviço cristão que Deus determina para cada um', purpose: 'Para a Igreja' },
+          { id: 3, name: 'MANIFESTAÇÕES', greek_term: 'Energias planerosis', description: 'Manifestações do Espírito para capacitar no ministério', purpose: 'Para indivíduos momentaneamente' }
+        ];
+      }
     },
     staleTime: 60 * 60 * 1000, // 1 hour
   })
@@ -287,13 +356,21 @@ export function useMinistries() {
   return useQuery({
     queryKey: ['ministries'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('ministries')
-        .select('*')
-        .order('name')
+      try {
+        const { data, error } = await supabase
+          .from('ministries')
+          .select('*')
+          .order('name')
 
-      if (error) throw error
-      return data
+        if (error) {
+          console.warn('Ministries table not found:', error);
+          return [];
+        }
+        return data
+      } catch (error) {
+        console.warn('Failed to fetch ministries:', error);
+        return [];
+      }
     },
     staleTime: 60 * 60 * 1000, // 1 hour
   })
@@ -304,14 +381,22 @@ export function useManifestations() {
   return useQuery({
     queryKey: ['manifestations'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('manifestations')
-        .select('*')
-        .order('classification', { ascending: true })
-        .order('name')
+      try {
+        const { data, error } = await supabase
+          .from('manifestations')
+          .select('*')
+          .order('classification', { ascending: true })
+          .order('name')
 
-      if (error) throw error
-      return data
+        if (error) {
+          console.warn('Manifestations table not found:', error);
+          return [];
+        }
+        return data
+      } catch (error) {
+        console.warn('Failed to fetch manifestations:', error);
+        return [];
+      }
     },
     staleTime: 60 * 60 * 1000, // 1 hour
   })
@@ -322,13 +407,53 @@ export function useBiblicalActivities() {
   return useQuery({
     queryKey: ['biblical_activities'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('biblical_activities')
-        .select('*')
-        .order('id')
+      try {
+        const { data, error } = await supabase
+          .from('biblical_activities')
+          .select('*')
+          .order('id')
 
-      if (error) throw error
-      return data
+        if (error) {
+          console.warn('Biblical activities table not found:', error);
+          return [];
+        }
+        return data
+      } catch (error) {
+        console.warn('Failed to fetch biblical activities:', error);
+        return [];
+      }
+    },
+    staleTime: 60 * 60 * 1000, // 1 hour
+  })
+}
+
+// Hook to get gift bridge mapping (maps gift_key enum to spiritual_gifts)
+export function useGiftBridge() {
+  return useQuery({
+    queryKey: ['gift_bridge'],
+    queryFn: async () => {
+      try {
+        const { data, error } = await supabase
+          .from('gift_bridge')
+          .select(`
+            gift,
+            spiritual_gift_id,
+            spiritual_gifts(
+              id,
+              name,
+              definition
+            )
+          `)
+
+        if (error) {
+          console.warn('Gift bridge table not found:', error);
+          return [];
+        }
+        return data
+      } catch (error) {
+        console.warn('Failed to fetch gift bridge:', error);
+        return [];
+      }
     },
     staleTime: 60 * 60 * 1000, // 1 hour
   })
@@ -345,40 +470,56 @@ export function useUserResults(userId: string | null) {
     }[]> => {
       if (!userId) throw new Error('User ID is required')
 
-      const { data: sessions, error: sessionsError } = await supabase
-        .from('quiz_sessions')
-        .select('id, created_at')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
+      try {
+        const { data: sessions, error: sessionsError } = await supabase
+          .from('quiz_sessions')
+          .select('id, created_at')
+          .eq('user_id', userId)
+          .order('created_at', { ascending: false })
 
-      if (sessionsError) throw sessionsError
-
-      const results = await Promise.all(sessions.map(async (session) => {
-        const { data: rpcResult, error: rpcError } = await supabase.rpc('calculate_quiz_result', {
-          p_session_id: session.id,
-        })
-
-        if (rpcError) throw rpcError
-
-        const totalScore: Record<string, number> = {};
-        rpcResult.forEach(item => {
-          if (item.gift) {
-            totalScore[item.gift] = item.total || 0;
-          }
-        });
-
-        const { spiritualGifts } = await import('@/data/quiz-data')
-        const topGifts = getTopGifts(totalScore, spiritualGifts, 5);
-
-        return {
-          sessionId: session.id,
-          totalScore,
-          topGifts,
-          createdAt: session.created_at,
+        if (sessionsError) {
+          console.warn('No quiz sessions found for user:', sessionsError);
+          return [];
         }
-      }))
 
-      return results
+        const results = await Promise.all(sessions.map(async (session) => {
+          try {
+            const { data: rpcResult, error: rpcError } = await supabase.rpc('calculate_quiz_result', {
+              p_session_id: session.id,
+            })
+
+            if (rpcError) {
+              console.warn('Error calculating quiz result:', rpcError);
+              return null;
+            }
+
+            const totalScore: Record<string, number> = {};
+            rpcResult.forEach(item => {
+              if (item.gift) {
+                totalScore[item.gift] = item.total || 0;
+              }
+            });
+
+            const { spiritualGifts } = await import('@/data/quiz-data')
+            const topGifts = getTopGifts(totalScore, spiritualGifts);
+
+            return {
+              sessionId: session.id,
+              totalScore,
+              topGifts,
+              createdAt: session.created_at,
+            }
+          } catch (error) {
+            console.warn('Error processing session result:', error);
+            return null;
+          }
+        }))
+
+        return results.filter((result): result is NonNullable<typeof result> => result !== null);
+      } catch (error) {
+        console.warn('Failed to fetch user results:', error);
+        return [];
+      }
     },
     enabled: !!userId,
     staleTime: 2 * 60 * 1000, // 2 minutes
@@ -396,41 +537,111 @@ export function useLatestResult(userId: string | null) {
     } | null> => {
       if (!userId) return null
 
-      const { data: session, error: sessionError } = await supabase
-        .from('quiz_sessions')
-        .select('id, created_at')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle()
+      try {
+        const { data: session, error: sessionError } = await supabase
+          .from('quiz_sessions')
+          .select('id, created_at')
+          .eq('user_id', userId)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle()
 
-      if (sessionError) throw sessionError
-      if (!session) return null
-
-      const { data: rpcResult, error: rpcError } = await supabase.rpc('calculate_quiz_result', {
-        p_session_id: session.id,
-      })
-
-      if (rpcError) throw rpcError
-
-      const totalScore: Record<string, number> = {};
-      rpcResult.forEach(item => {
-        if (item.gift) {
-          totalScore[item.gift] = item.total || 0;
+        if (sessionError) {
+          console.warn('No latest result found:', sessionError);
+          return null;
         }
-      });
+        if (!session) return null
 
-      const { spiritualGifts } = await import('@/data/quiz-data')
-      const topGifts = getTopGifts(totalScore, spiritualGifts, 5);
+        const { data: rpcResult, error: rpcError } = await supabase.rpc('calculate_quiz_result', {
+          p_session_id: session.id,
+        })
 
-      return {
-        sessionId: session.id,
-        totalScore,
-        topGifts,
-        createdAt: session.created_at,
+        if (rpcError) {
+          console.warn('Error calculating latest result:', rpcError);
+          return null;
+        }
+
+        const totalScore: Record<string, number> = {};
+        rpcResult.forEach(item => {
+          if (item.gift) {
+            totalScore[item.gift] = item.total || 0;
+          }
+        });
+
+        const { spiritualGifts } = await import('@/data/quiz-data')
+        const topGifts = getTopGifts(totalScore, spiritualGifts);
+
+        return {
+          sessionId: session.id,
+          totalScore,
+          topGifts,
+          createdAt: session.created_at,
+        }
+      } catch (error) {
+        console.warn('Failed to fetch latest result:', error);
+        return null;
       }
     },
     enabled: !!userId,
+    staleTime: 1 * 60 * 1000, // 1 minute
+  })
+}
+
+export function useResultBySessionId(sessionId: string | null) {
+  return useQuery({
+    queryKey: ['quiz', 'results', sessionId],
+    queryFn: async (): Promise<{
+      sessionId: string;
+      totalScore: Record<string, number>;
+      topGifts: string[];
+      createdAt: string;
+    } | null> => {
+      if (!sessionId) return null
+
+      try {
+        const { data: session, error: sessionError } = await supabase
+          .from('quiz_sessions')
+          .select('id, created_at')
+          .eq('id', sessionId)
+          .single()
+
+        if (sessionError) {
+          console.warn('No result found for this session:', sessionError);
+          return null;
+        }
+        if (!session) return null
+
+        const { data: rpcResult, error: rpcError } = await supabase.rpc('calculate_quiz_result', {
+          p_session_id: session.id,
+        })
+
+        if (rpcError) {
+          console.warn('Error calculating result:', rpcError);
+          return null;
+        }
+
+        const totalScore: Record<string, number> = {};
+        rpcResult.forEach(item => {
+          if (item.gift) {
+            totalScore[item.gift] = item.total || 0;
+          }
+        });
+
+        const { spiritualGifts } = await import('@/data/quiz-data')
+        const topGifts = getTopGifts(totalScore, spiritualGifts);
+
+        return {
+          sessionId: session.id,
+          totalScore,
+          topGifts,
+          createdAt: session.created_at,
+        }
+      } catch (error) {
+        console.warn('Failed to fetch result:', error);
+        return null;
+      }
+    },
+    enabled: !!sessionId,
     staleTime: 1 * 60 * 1000, // 1 minute
   })
 }
@@ -499,7 +710,7 @@ export function useSubmitQuiz() {
         }
       });
 
-      const topGifts = getTopGifts(totalScore, gifts, 5);
+      const topGifts = getTopGifts(totalScore, gifts);
 
       return {
         sessionId,
@@ -507,7 +718,7 @@ export function useSubmitQuiz() {
         totalScore,
       }
     },
-    onSuccess: (data, variables) => {
+    onSuccess: (_, variables) => {
       // Invalidate and refetch related queries
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.userResults(variables.userId)

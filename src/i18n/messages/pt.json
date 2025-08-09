@@ -54,8 +54,8 @@
   },
   "login": {
     "title": "Teste de Dons Espirituais",
-    "subtitle": "Pronto para descobrir seus dons espirituais? Vamos começar!",
-    "createAccount": "Crie sua conta",
+    "subtitle": "",
+    "createAccount": "Faça seu login",
     "continueWithEmail": "Continuar com Email",
     "continueWithGoogle": "Continuar com Google",
     "signingIn": "Entrando...",

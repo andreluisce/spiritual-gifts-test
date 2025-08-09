@@ -4,11 +4,11 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { 
-  BookOpen, 
-  Heart, 
-  Users, 
-  Crown, 
+import {
+  BookOpen,
+  Heart,
+  Users,
+  Crown,
   ArrowRight,
   CheckCircle2,
   Star,
@@ -37,7 +37,7 @@ export default function HomePage() {
     },
     {
       icon: Users,
-      title: "Crescimento na Comunidade", 
+      title: "Crescimento na Comunidade",
       description: "Entenda seu papel no Corpo de Cristo e na Igreja"
     },
     {
@@ -58,17 +58,17 @@ export default function HomePage() {
       description: "7 dons fundamentais que são a base da personalidade cristã"
     },
     {
-      name: "Ministérios", 
+      name: "Ministérios",
       greek: "Diakonion",
       icon: Users,
       color: "text-green-500",
       bgColor: "bg-green-50",
-      borderColor: "border-green-200", 
+      borderColor: "border-green-200",
       description: "12 ministérios para servir ao Corpo de Cristo"
     },
     {
       name: "Manifestações",
-      greek: "Energias Planerosis", 
+      greek: "Energias Planerosis",
       icon: Crown,
       color: "text-purple-500",
       bgColor: "bg-purple-50",
@@ -84,7 +84,7 @@ export default function HomePage() {
         {/* Decorative elements */}
         <div className="absolute top-20 left-10 w-24 h-24 bg-slate-200 rounded-full opacity-40 blur-xl"></div>
         <div className="absolute bottom-20 right-20 w-32 h-32 bg-stone-200 rounded-full opacity-30 blur-xl"></div>
-        
+
         <div className="max-w-6xl mx-auto text-center relative z-10">
           <motion.div
             initial={{ y: -30, opacity: 0 }}
@@ -113,7 +113,7 @@ export default function HomePage() {
             transition={{ delay: 0.4, duration: 0.8 }}
             className="text-xl text-slate-600 mb-8 max-w-3xl mx-auto leading-relaxed"
           >
-            Um teste abrangente baseado nas três categorias bíblicas de dons espirituais. 
+            Um teste abrangente baseado nas três categorias bíblicas de dons espirituais.
             Compreenda como Deus trabalha através de você e encontre seu lugar no Corpo de Cristo.
           </motion.p>
 
@@ -126,10 +126,10 @@ export default function HomePage() {
             <Link href="/quiz">
               <Button size="lg" className="px-8 py-4 text-lg bg-slate-700 hover:bg-slate-800">
                 <Sparkles className="mr-2 h-5 w-5" />
-                Começar Preview Gratuito
+                Começar
               </Button>
             </Link>
-            
+
             {user ? (
               <Link href="/dashboard">
                 <Button variant="outline" size="lg" className="px-8 py-4 text-lg border-slate-300">
@@ -161,10 +161,6 @@ export default function HomePage() {
               <CheckCircle2 className="h-4 w-4" />
               <span>Biblicamente fundamentado</span>
             </div>
-            <div className="flex items-center gap-2">
-              <Heart className="h-4 w-4" />
-              <span>Gratuito</span>
-            </div>
           </motion.div>
         </div>
       </section>
@@ -183,39 +179,40 @@ export default function HomePage() {
               As Três Categorias de Dons
             </h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              Baseado na classificação bíblica dos dons espirituais, nosso teste avalia todas as dimensões 
+              Baseado na classificação bíblica dos dons espirituais, nosso teste avalia todas as dimensões
               de como Deus trabalha através de cada pessoa.
             </p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8">
             {categories.map((category, index) => (
-              <motion.div
-                key={category.name}
-                initial={{ y: 50, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                transition={{ delay: index * 0.2, duration: 0.8 }}
-                viewport={{ once: true }}
-              >
-                <Card className={`h-full border-2 ${category.borderColor} ${category.bgColor} hover:shadow-lg transition-all duration-300`}>
-                  <CardHeader className="text-center">
-                    <div className="flex justify-center mb-4">
-                      <div className={`p-4 rounded-full ${category.bgColor}`}>
-                        <category.icon className={`h-8 w-8 ${category.color}`} />
+              <Link href="/gifts" key={category.name}>
+                <motion.div
+                  initial={{ y: 50, opacity: 0 }}
+                  whileInView={{ y: 0, opacity: 1 }}
+                  transition={{ delay: index * 0.2, duration: 0.8 }}
+                  viewport={{ once: true }}
+                >
+                  <Card className={`h-full border-2 ${category.borderColor} ${category.bgColor} hover:shadow-lg transition-all duration-300`}>
+                    <CardHeader className="text-center">
+                      <div className="flex justify-center mb-4">
+                        <div className={`p-4 rounded-full ${category.bgColor}`}>
+                          <category.icon className={`h-8 w-8 ${category.color}`} />
+                        </div>
                       </div>
-                    </div>
-                    <CardTitle className="text-2xl text-slate-800">
-                      {category.name}
-                    </CardTitle>
-                    <Badge variant="outline" className="w-fit mx-auto text-slate-600">
-                      {category.greek}
-                    </Badge>
-                  </CardHeader>
-                  <CardContent className="text-center">
-                    <p className="text-slate-700">{category.description}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
+                      <CardTitle className="text-2xl text-slate-800">
+                        {category.name}
+                      </CardTitle>
+                      <Badge variant="outline" className="w-fit mx-auto text-slate-600">
+                        {category.greek}
+                      </Badge>
+                    </CardHeader>
+                    <CardContent className="text-center">
+                      <p className="text-slate-700">{category.description}</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </Link>
             ))}
           </div>
         </div>
@@ -232,35 +229,35 @@ export default function HomePage() {
             className="text-center mb-12"
           >
             <h2 className="text-3xl font-bold text-slate-800 mb-4">
-              Por Que Escolher Nosso Teste?
+              Por Que Fazer Este Teste?
             </h2>
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ y: 50, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                viewport={{ once: true }}
-                onMouseEnter={() => setSelectedFeature(index)}
-                className="cursor-pointer"
-              >
-                <Card className={`h-full transition-all duration-300 hover:shadow-lg ${
-                  selectedFeature === index ? 'ring-2 ring-slate-300 shadow-lg' : ''
-                }`}>
-                  <CardHeader className="text-center">
-                    <div className="flex justify-center mb-4">
-                      <feature.icon className="h-12 w-12 text-slate-600" />
-                    </div>
-                    <CardTitle className="text-lg">{feature.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="text-center">
-                    <p className="text-slate-600 text-sm">{feature.description}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
+              <Link href={feature.title === 'Histórico Personalizado' ? '/dashboard' : '/gifts'} key={index}>
+                <motion.div
+                  initial={{ y: 50, opacity: 0 }}
+                  whileInView={{ y: 0, opacity: 1 }}
+                  transition={{ delay: index * 0.1, duration: 0.6 }}
+                  viewport={{ once: true }}
+                  onMouseEnter={() => setSelectedFeature(index)}
+                  className="cursor-pointer h-full"
+                >
+                  <Card className={`h-full transition-all duration-300 hover:shadow-lg ${selectedFeature === index ? 'ring-2 ring-slate-300 shadow-lg' : ''
+                    }`}>
+                    <CardHeader className="text-center">
+                      <div className="flex justify-center mb-4">
+                        <feature.icon className="h-12 w-12 text-slate-600" />
+                      </div>
+                      <CardTitle className="text-lg">{feature.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="text-center">
+                      <p className="text-slate-600 text-sm">{feature.description}</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </Link>
             ))}
           </div>
         </div>
@@ -279,12 +276,12 @@ export default function HomePage() {
               Pronto Para Descobrir Seus Dons?
             </h2>
             <p className="text-xl text-slate-300 mb-8 max-w-2xl mx-auto">
-              {user 
+              {user
                 ? "Continue sua jornada de autoconhecimento espiritual com nosso teste completo."
                 : "Comece com nosso preview gratuito e descubra uma amostra do que Deus colocou em você."
               }
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link href="/quiz">
                 <Button size="lg" className="px-8 py-4 text-lg bg-white text-slate-800 hover:bg-slate-100">
@@ -292,7 +289,7 @@ export default function HomePage() {
                   {user ? "Fazer Teste Completo" : "Começar Preview"}
                 </Button>
               </Link>
-              
+
               {!user && (
                 <p className="text-slate-400 text-sm">
                   • Preview de 3 perguntas • Sem cadastro necessário

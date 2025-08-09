@@ -98,55 +98,32 @@ export const spiritualGifts: SpiritualGift[] = [
       'Capacidade de confortar e consolar',
       'Coração quebrantado pela injustiça'
     ]
-  },
-  {
-    key: 'H_EVANGELISM',
-    name: 'Evangelismo',
-    description: 'A capacidade de comunicar o evangelho de forma clara e persuasiva para os não-crentes.',
-    biblicalReferences: ['Efésios 4:11', 'Atos 8:26-40'],
-    characteristics: [
-      'Paixão por alcançar os perdidos',
-      'Habilidade natural para compartilhar a fé',
-      'Facilidade em se conectar com não-crentes',
-      'Coragem para abordar temas espirituais'
-    ]
-  },
-  {
-    key: 'I_PASTOR',
-    name: 'Pastor',
-    description: 'A capacidade de assumir responsabilidade pessoal de longo prazo pelo bem-estar espiritual de um grupo de crentes.',
-    biblicalReferences: ['Efésios 4:11', '1 Pedro 5:1-4'],
-    characteristics: [
-      'Coração de pastor e cuidado',
-      'Capacidade de nutrir espiritualmente',
-      'Responsabilidade pelos outros',
-      'Habilidade de guiar e proteger'
-    ]
   }
 ];
 
 export const calculateScores = (answers: { gift_key: Database['public']['Enums']['gift_key']; score: number }[], gifts: SpiritualGift[]): Record<string, number> => {
   const scores: Record<string, number> = {};
-  
+
   // Initialize all gift keys with 0
   gifts.forEach(gift => {
     scores[gift.key] = 0;
   });
-  
+
   // Calculate scores for each gift
   answers.forEach(answer => {
     scores[answer.gift_key] = (scores[answer.gift_key] || 0) + answer.score;
   });
-  
+
   return scores;
 };
 
-export const getTopGifts = (scores: Record<string, number>, gifts: SpiritualGift[], topCount: number = 5): string[] => {
-  return Object.entries(scores)
-    .sort(([,a], [,b]) => b - a)
-    .slice(0, topCount)
-    .map(([giftKey]) => {
-      const gift = gifts.find(g => g.key === giftKey);
-      return gift?.name || giftKey;
-    });
+export const getTopGifts = (scores: Record<string, number>, gifts: SpiritualGift[]): string[] => {
+  const allScores = gifts.map(gift => ({
+    name: gift.name,
+    score: scores[gift.key] || 0,
+  }));
+
+  return allScores
+    .sort((a, b) => b.score - a.score)
+    .map(item => item.name);
 };
