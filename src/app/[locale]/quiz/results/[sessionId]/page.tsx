@@ -12,7 +12,7 @@ import {
   Gift, RotateCcw,
   BookOpen, AlertTriangle, Heart,
   Target, Lightbulb,
-  Award, Users, Church
+  Award, Users, Church, ArrowLeft
 } from 'lucide-react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
@@ -114,7 +114,17 @@ export default function ResultsPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <div className="max-w-6xl mx-auto py-8">
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 relative">
+          {/* Back button */}
+          <div className="absolute left-0 top-0">
+            <Link href="/dashboard">
+              <Button variant="outline" size="sm" className="flex items-center gap-2">
+                <ArrowLeft size={16} />
+                <span className="hidden sm:inline">Dashboard</span>
+              </Button>
+            </Link>
+          </div>
+          
           <div className="flex justify-center mb-4">
             <Gift className="h-16 w-16 text-blue-600" />
           </div>
@@ -406,7 +416,12 @@ export default function ResultsPage() {
 
         {/* Actions */}
         <div className="flex flex-wrap gap-4 justify-center mt-8">
-
+          <Link href="/dashboard">
+            <Button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700">
+              <ArrowLeft size={16} />
+              Voltar ao Dashboard
+            </Button>
+          </Link>
 
           <Button variant="outline" onClick={retakeQuiz} className="flex items-center gap-2">
             <RotateCcw size={16} />
@@ -416,12 +431,6 @@ export default function ResultsPage() {
           <Link href="/gifts">
             <Button variant="outline">
               Ver Todos os Dons
-            </Button>
-          </Link>
-
-          <Link href="/dashboard">
-            <Button variant="outline">
-              Meu Histórico
             </Button>
           </Link>
         </div>

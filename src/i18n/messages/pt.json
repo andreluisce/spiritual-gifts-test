@@ -21,8 +21,7 @@
     "progress": "Progresso",
     "downloadPdf": "Baixar PDF",
     "noQuestions": "Nenhuma pergunta encontrada",
-    "errorLoading": "Erro ao carregar",
-    "signOut": "Sair"
+    "errorLoading": "Erro ao carregar"
   },
   "nav": {
     "home": "Início",

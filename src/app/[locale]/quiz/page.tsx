@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -16,10 +16,11 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 
 export default function QuizPage() {
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [progressValue, setProgressValue] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [isTransitioning, setIsTransitioning] = useState(false)
+  const [showContinuePrompt, setShowContinuePrompt] = useState(false)
+  const promptShownRef = useRef(false)
 
   const router = useRouter()
   const t = useTranslations('quiz')
@@ -41,7 +42,11 @@ export default function QuizPage() {
     isSubmitting,
     updateAnswer,
     submitQuiz,
-    refetch
+    refetch,
+    currentQuestionIndex,
+    setCurrentQuestionIndex,
+    hasPersistedState,
+    clearAnswers
   } = useQuiz()
 
   // Preview mode: only 3 questions for non-logged users
@@ -69,6 +74,14 @@ export default function QuizPage() {
       setSelectedAnswer(currentAnswers[currentQuestion.id] ?? null)
     }
   }, [currentQuestion, currentAnswers])
+
+  // Show continue prompt only once when there's persisted state
+  useEffect(() => {
+    if (hasPersistedState && Object.keys(currentAnswers).length > 0 && !promptShownRef.current) {
+      setShowContinuePrompt(true)
+      promptShownRef.current = true
+    }
+  }, [hasPersistedState, currentAnswers])
 
   const handleAnswer = (score: number) => {
     if (currentQuestion && !isTransitioning) {
@@ -103,19 +116,33 @@ export default function QuizPage() {
       const result = await submitQuiz(user.id)
       if (result) {
         localStorage.setItem('quizResult', JSON.stringify(result))
+        // Clear persisted state after successful submission
+        clearAnswers()
         router.push(`/${locale}/quiz/results`)
       }
     } else {
-      setCurrentQuestionIndex(prev => prev + 1)
+      setCurrentQuestionIndex(currentQuestionIndex + 1)
       setSelectedAnswer(null)
     }
   }
 
   const goToPrevious = () => {
     if (currentQuestionIndex > 0 && !isTransitioning) {
-      setCurrentQuestionIndex(prev => prev - 1)
+      setCurrentQuestionIndex(currentQuestionIndex - 1)
       setSelectedAnswer(null)
     }
+  }
+
+  const handleStartNew = () => {
+    clearAnswers()
+    setCurrentQuestionIndex(0)
+    setShowContinuePrompt(false)
+    promptShownRef.current = false
+    setSelectedAnswer(null)
+  }
+
+  const handleContinue = () => {
+    setShowContinuePrompt(false)
   }
 
   const getScoreLabel = (score: number) => {
@@ -187,6 +214,45 @@ export default function QuizPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-stone-100 p-4">
+      {/* Continue Quiz Modal */}
+      {showContinuePrompt && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white rounded-lg shadow-xl max-w-md w-full p-6"
+          >
+            <div className="text-center">
+              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <BookOpen className="h-6 w-6 text-blue-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                Continuar teste?
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Encontramos um teste em progresso. Você tem {Object.keys(currentAnswers).length} resposta(s) salva(s). 
+                Deseja continuar de onde parou ou começar um novo teste?
+              </p>
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={handleStartNew}
+                  className="flex-1"
+                >
+                  Novo Teste
+                </Button>
+                <Button
+                  onClick={handleContinue}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700"
+                >
+                  Continuar
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
       <div className="max-w-4xl mx-auto py-4 md:py-8">
 
         {/* User Header — visível apenas em md+ */}
@@ -285,7 +351,14 @@ export default function QuizPage() {
           className="mb-4 md:mb-8"
         >
           <div className="flex justify-between items-center mb-2 md:mb-3">
-            <span className="text-xs md:text-sm font-medium text-slate-600">{tCommon('progress')}</span>
+            <span className="text-xs md:text-sm font-medium text-slate-600 flex items-center gap-2">
+              {tCommon('progress')}
+              {hasPersistedState && (
+                <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                  Salvo
+                </span>
+              )}
+            </span>
             <span className="text-xs md:text-sm font-semibold text-slate-700">
               {Math.round(progressValue)}%
             </span>

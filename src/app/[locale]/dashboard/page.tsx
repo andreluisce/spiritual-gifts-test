@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -13,20 +14,57 @@ import {
   Eye,
   Download,
   RefreshCw,
-  Plus
+  Plus,
+  AlertCircle,
+  Play
 } from 'lucide-react'
 import Link from 'next/link'
 import type { SpiritualGift } from '@/data/quiz-data'
 import { useUserResults, useLatestResult, useGifts } from '@/hooks/use-quiz-queries'
 import { useAuth } from '@/context/AuthContext'
 
+const QUIZ_STATE_KEY = 'quiz_in_progress'
+
+interface QuizState {
+  answers: Record<number, number>
+  currentQuestionIndex: number
+  startedAt: number
+}
+
 export default function DashboardPage() {
   const { user } = useAuth()
   const { data: results, isLoading: loadingResults, refetch: refetchResults } = useUserResults(user?.id || null)
   const { data: latestResult, isLoading: loadingLatestResult } = useLatestResult(user?.id || null)
   const { data: gifts, isLoading: loadingGifts } = useGifts()
+  const [quizInProgress, setQuizInProgress] = useState<QuizState | null>(null)
 
   const loading = loadingResults || loadingLatestResult || loadingGifts
+
+  // Check for quiz in progress
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    try {
+      const persistedState = localStorage.getItem(QUIZ_STATE_KEY)
+      if (persistedState) {
+        const state: QuizState = JSON.parse(persistedState)
+        
+        // Check if the state is not too old (e.g., 24 hours)
+        const MAX_AGE = 24 * 60 * 60 * 1000 // 24 hours in ms
+        const isStateValid = Date.now() - state.startedAt < MAX_AGE
+        
+        if (isStateValid && Object.keys(state.answers).length > 0) {
+          setQuizInProgress(state)
+        } else {
+          // Clear old/invalid state
+          localStorage.removeItem(QUIZ_STATE_KEY)
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to load persisted quiz state:', error)
+      localStorage.removeItem(QUIZ_STATE_KEY)
+    }
+  }, [])
 
   const getGiftByKey = (key: string): SpiritualGift | undefined => {
     return gifts?.find(gift => gift.key === key)
@@ -88,8 +126,17 @@ export default function DashboardPage() {
           <div className="flex gap-2 mt-4 md:mt-0">
             <Link href="/quiz">
               <Button className="flex items-center gap-2">
-                <Plus className="h-4 w-4" />
-                Novo Teste
+                {quizInProgress ? (
+                  <>
+                    <Play className="h-4 w-4" />
+                    Continuar Teste
+                  </>
+                ) : (
+                  <>
+                    <Plus className="h-4 w-4" />
+                    Novo Teste
+                  </>
+                )}
               </Button>
             </Link>
             <Button variant="outline" className="flex items-center gap-2" onClick={() => refetchResults()}>
@@ -99,6 +146,46 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        {/* Quiz in Progress Alert */}
+        {quizInProgress && (
+          <Card className="mb-6 border-amber-200 bg-amber-50">
+            <CardContent className="p-6">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  <AlertCircle className="h-6 w-6 text-amber-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-amber-800 mb-2">
+                    Teste em Progresso
+                  </h3>
+                  <p className="text-amber-700 mb-4">
+                    Você tem um teste em andamento com {Object.keys(quizInProgress.answers).length} resposta(s) salva(s). 
+                    Continue de onde parou para não perder seu progresso.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Link href="/quiz">
+                      <Button className="flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white">
+                        <Play className="h-4 w-4" />
+                        Continuar Teste
+                      </Button>
+                    </Link>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => {
+                        localStorage.removeItem(QUIZ_STATE_KEY)
+                        setQuizInProgress(null)
+                      }}
+                      className="border-amber-300 text-amber-700 hover:bg-amber-100"
+                    >
+                      Descartar Teste
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {!results || results.length === 0 ? (
           // Empty State
           <div className="text-center py-16">
@@ -107,12 +194,24 @@ export default function DashboardPage() {
               Bem-vindo à sua jornada espiritual!
             </h2>
             <p className="text-gray-600 mb-8 max-w-md mx-auto">
-              Você ainda não fez nenhum teste. Que tal descobrir seus dons espirituais agora?
+              {quizInProgress 
+                ? "Você tem um teste em progresso. Continue de onde parou ou comece um novo teste."
+                : "Você ainda não fez nenhum teste. Que tal descobrir seus dons espirituais agora?"
+              }
             </p>
             <Link href="/quiz">
               <Button size="lg" className="flex items-center gap-2 mx-auto">
-                <Award className="h-5 w-5" />
-                Fazer Meu Primeiro Teste
+                {quizInProgress ? (
+                  <>
+                    <Play className="h-5 w-5" />
+                    Continuar Teste
+                  </>
+                ) : (
+                  <>
+                    <Award className="h-5 w-5" />
+                    Fazer Meu Primeiro Teste
+                  </>
+                )}
               </Button>
             </Link>
           </div>
