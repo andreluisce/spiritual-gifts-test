@@ -42,11 +42,10 @@
     "errorInvalidIndex": "Erro: Índice da pergunta inválido",
     "restartQuiz": "Reiniciar Quiz",
     "labels": {
-      "1": "Nunca",
-      "2": "Raramente",
-      "3": "Às vezes",
-      "4": "Frequentemente",
-      "5": "Sempre"
+      "0": "Nunca",
+      "1": "Raramente",
+      "2": "Às vezes",
+      "3": "Sempre"
     }
   },
   "welcome": {

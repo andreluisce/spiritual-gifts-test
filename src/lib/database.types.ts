@@ -50,6 +50,132 @@ export type Database = {
           },
         ]
       }
+      biblical_activities: {
+        Row: {
+          activity_name: string
+          biblical_reference: string | null
+          biblical_text: string | null
+          id: number
+        }
+        Insert: {
+          activity_name: string
+          biblical_reference?: string | null
+          biblical_text?: string | null
+          id?: number
+        }
+        Update: {
+          activity_name?: string
+          biblical_reference?: string | null
+          biblical_text?: string | null
+          id?: number
+        }
+        Relationships: []
+      }
+      categories: {
+        Row: {
+          description: string | null
+          greek_term: string | null
+          id: number
+          name: string
+          purpose: string | null
+        }
+        Insert: {
+          description?: string | null
+          greek_term?: string | null
+          id?: number
+          name: string
+          purpose?: string | null
+        }
+        Update: {
+          description?: string | null
+          greek_term?: string | null
+          id?: number
+          name?: string
+          purpose?: string | null
+        }
+        Relationships: []
+      }
+      characteristics: {
+        Row: {
+          characteristic: string
+          gift_id: number | null
+          id: number
+          order_sequence: number | null
+        }
+        Insert: {
+          characteristic: string
+          gift_id?: number | null
+          id?: number
+          order_sequence?: number | null
+        }
+        Update: {
+          characteristic?: string
+          gift_id?: number | null
+          id?: number
+          order_sequence?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "characteristics_gift_id_fkey"
+            columns: ["gift_id"]
+            isOneToOne: false
+            referencedRelation: "spiritual_gifts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dangers: {
+        Row: {
+          danger: string
+          gift_id: number | null
+          id: number
+          order_sequence: number | null
+        }
+        Insert: {
+          danger: string
+          gift_id?: number | null
+          id?: number
+          order_sequence?: number | null
+        }
+        Update: {
+          danger?: string
+          gift_id?: number | null
+          id?: number
+          order_sequence?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dangers_gift_id_fkey"
+            columns: ["gift_id"]
+            isOneToOne: false
+            referencedRelation: "spiritual_gifts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gift_bridge: {
+        Row: {
+          gift: Database["public"]["Enums"]["gift_key"]
+          spiritual_gift_id: number
+        }
+        Insert: {
+          gift: Database["public"]["Enums"]["gift_key"]
+          spiritual_gift_id: number
+        }
+        Update: {
+          gift?: Database["public"]["Enums"]["gift_key"]
+          spiritual_gift_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gift_bridge_spiritual_gift_id_fkey"
+            columns: ["spiritual_gift_id"]
+            isOneToOne: false
+            referencedRelation: "spiritual_gifts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       gifts: {
         Row: {
           description: string | null
@@ -67,6 +193,101 @@ export type Database = {
           name?: string
         }
         Relationships: []
+      }
+      manifestation_principles: {
+        Row: {
+          id: number
+          order_sequence: number | null
+          principle: string
+        }
+        Insert: {
+          id?: number
+          order_sequence?: number | null
+          principle: string
+        }
+        Update: {
+          id?: number
+          order_sequence?: number | null
+          principle?: string
+        }
+        Relationships: []
+      }
+      manifestations: {
+        Row: {
+          biblical_references: string | null
+          classification: string | null
+          definition: string | null
+          id: number
+          name: string
+        }
+        Insert: {
+          biblical_references?: string | null
+          classification?: string | null
+          definition?: string | null
+          id?: number
+          name: string
+        }
+        Update: {
+          biblical_references?: string | null
+          classification?: string | null
+          definition?: string | null
+          id?: number
+          name?: string
+        }
+        Relationships: []
+      }
+      ministries: {
+        Row: {
+          biblical_references: string | null
+          definition: string | null
+          id: number
+          name: string
+          type: string | null
+        }
+        Insert: {
+          biblical_references?: string | null
+          definition?: string | null
+          id?: number
+          name: string
+          type?: string | null
+        }
+        Update: {
+          biblical_references?: string | null
+          definition?: string | null
+          id?: number
+          name?: string
+          type?: string | null
+        }
+        Relationships: []
+      }
+      misunderstandings: {
+        Row: {
+          gift_id: number | null
+          id: number
+          misunderstanding: string
+          order_sequence: number | null
+        }
+        Insert: {
+          gift_id?: number | null
+          id?: number
+          misunderstanding: string
+          order_sequence?: number | null
+        }
+        Update: {
+          gift_id?: number | null
+          id?: number
+          misunderstanding?: string
+          order_sequence?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "misunderstandings_gift_id_fkey"
+            columns: ["gift_id"]
+            isOneToOne: false
+            referencedRelation: "spiritual_gifts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -92,6 +313,38 @@ export type Database = {
         }
         Relationships: []
       }
+      qualities: {
+        Row: {
+          description: string | null
+          gift_id: number | null
+          id: number
+          order_sequence: number | null
+          quality_name: string
+        }
+        Insert: {
+          description?: string | null
+          gift_id?: number | null
+          id?: number
+          order_sequence?: number | null
+          quality_name: string
+        }
+        Update: {
+          description?: string | null
+          gift_id?: number | null
+          id?: number
+          order_sequence?: number | null
+          quality_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qualities_gift_id_fkey"
+            columns: ["gift_id"]
+            isOneToOne: false
+            referencedRelation: "spiritual_gifts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       question_gift_map: {
         Row: {
           gift: Database["public"]["Enums"]["gift_key"]
@@ -108,6 +361,29 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "question_gift_map_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: true
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      question_trait_map: {
+        Row: {
+          question_id: number
+          trait: Database["public"]["Enums"]["quiz_trait"]
+        }
+        Insert: {
+          question_id: number
+          trait: Database["public"]["Enums"]["quiz_trait"]
+        }
+        Update: {
+          question_id?: number
+          trait?: Database["public"]["Enums"]["quiz_trait"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_trait_map_question_id_fkey"
             columns: ["question_id"]
             isOneToOne: true
             referencedRelation: "questions"
@@ -151,6 +427,38 @@ export type Database = {
         }
         Relationships: []
       }
+      spiritual_gifts: {
+        Row: {
+          biblical_references: string | null
+          category_id: number | null
+          definition: string | null
+          id: number
+          name: string
+        }
+        Insert: {
+          biblical_references?: string | null
+          category_id?: number | null
+          definition?: string | null
+          id?: number
+          name: string
+        }
+        Update: {
+          biblical_references?: string | null
+          category_id?: number | null
+          definition?: string | null
+          id?: number
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spiritual_gifts_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       quiz_results: {
@@ -165,6 +473,32 @@ export type Database = {
             columns: ["session_id"]
             isOneToOne: false
             referencedRelation: "quiz_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quiz_results_motivations_details: {
+        Row: {
+          gift: Database["public"]["Enums"]["gift_key"] | null
+          gift_definition: string | null
+          gift_name: string | null
+          session_id: string | null
+          spiritual_gift_id: number | null
+          total: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "answers_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gift_bridge_spiritual_gift_id_fkey"
+            columns: ["spiritual_gift_id"]
+            isOneToOne: false
+            referencedRelation: "spiritual_gifts"
             referencedColumns: ["id"]
           },
         ]
@@ -223,8 +557,7 @@ export type Database = {
         | "E_GIVING"
         | "F_LEADERSHIP"
         | "G_MERCY"
-        | "H_EVANGELISM"
-        | "I_PASTOR"
+      quiz_trait: "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -360,9 +693,8 @@ export const Constants = {
         "E_GIVING",
         "F_LEADERSHIP",
         "G_MERCY",
-        "H_EVANGELISM",
-        "I_PASTOR",
       ],
+      quiz_trait: ["A", "B", "C", "D", "E", "F", "G", "H", "I"],
     },
   },
 } as const

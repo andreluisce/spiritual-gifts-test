@@ -1,82 +1,35 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Separator } from '@/components/ui/separator'
-import { 
-  BarChart3, 
-  Calendar, 
-  TrendingUp, 
-  Award, 
+import {
+  BarChart3,
+  Calendar,
+  TrendingUp,
+  Award,
   Eye,
   Download,
   RefreshCw,
   Plus
 } from 'lucide-react'
 import Link from 'next/link'
-import type { QuizResult, SpiritualGift } from '@/data/quiz-data'
-import { spiritualGifts } from '@/data/quiz-data'
+import type { SpiritualGift } from '@/data/quiz-data'
+import { useUserResults, useLatestResult, useGifts } from '@/hooks/use-quiz-queries'
+import { useAuth } from '@/context/AuthContext'
 
 export default function DashboardPage() {
-  const [results, setResults] = useState<QuizResult[]>([])
-  const [loading, setLoading] = useState(true)
+  const { user } = useAuth()
+  const { data: results, isLoading: loadingResults, refetch: refetchResults } = useUserResults(user?.id || null)
+  const { data: latestResult, isLoading: loadingLatestResult } = useLatestResult(user?.id || null)
+  const { data: gifts, isLoading: loadingGifts } = useGifts()
 
-  useEffect(() => {
-    // TODO: Fetch user's quiz results from Supabase
-    // For now, simulate some historical data
-    const mockResults: QuizResult[] = [
-      {
-        id: '1',
-        user_id: 'mock-user',
-        total_score: {
-          'teaching': 23,
-          'leadership': 21,
-          'prophecy': 19,
-          'knowledge': 18,
-          'evangelism': 17
-        },
-        top_gifts: ['Ensino', 'Liderança', 'Profecia', 'Conhecimento', 'Evangelismo'],
-        created_at: '2024-01-15T10:30:00Z'
-      },
-      {
-        id: '2',
-        user_id: 'mock-user',
-        total_score: {
-          'teaching': 25,
-          'leadership': 19,
-          'knowledge': 20,
-          'prophecy': 18,
-          'evangelism': 16
-        },
-        top_gifts: ['Ensino', 'Conhecimento', 'Liderança', 'Profecia', 'Evangelismo'],
-        created_at: '2024-02-20T14:45:00Z'
-      }
-    ]
+  const loading = loadingResults || loadingLatestResult || loadingGifts
 
-    // Also add the current session result if it exists
-    try {
-      const currentResult = localStorage.getItem('quizResult')
-      if (currentResult) {
-        const parsed = JSON.parse(currentResult)
-        mockResults.push(parsed)
-      }
-    } catch (error) {
-      console.error('Error loading current result:', error)
-    }
-
-    setResults(mockResults.sort((a, b) => 
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    ))
-    setLoading(false)
-  }, [])
-
-  const latestResult = results[0]
-  
   const getGiftByKey = (key: string): SpiritualGift | undefined => {
-    return spiritualGifts.find(gift => gift.key === key)
+    return gifts?.find(gift => gift.key === key)
   }
 
   const formatDate = (dateString: string) => {
@@ -88,16 +41,16 @@ export default function DashboardPage() {
   }
 
   const getGiftEvolution = () => {
-    if (results.length < 2) return null
-    
+    if (!results || results.length < 2) return null
+
     const latest = results[0]
     const previous = results[1]
-    
-    const evolution = Object.entries(latest.total_score).map(([giftKey, latestScore]) => {
-      const previousScore = previous.total_score[giftKey] || 0
+
+    const evolution = Object.entries(latest.totalScore).map(([giftKey, latestScore]) => {
+      const previousScore = previous.totalScore[giftKey] || 0
       const change = latestScore - previousScore
       const gift = getGiftByKey(giftKey)
-      
+
       return {
         giftKey,
         giftName: gift?.name || giftKey,
@@ -107,7 +60,7 @@ export default function DashboardPage() {
         percentChange: previousScore > 0 ? ((change / previousScore) * 100) : 0
       }
     }).sort((a, b) => Math.abs(b.change) - Math.abs(a.change))
-    
+
     return evolution.slice(0, 5) // Top 5 changes
   }
 
@@ -139,14 +92,14 @@ export default function DashboardPage() {
                 Novo Teste
               </Button>
             </Link>
-            <Button variant="outline" className="flex items-center gap-2">
+            <Button variant="outline" className="flex items-center gap-2" onClick={() => refetchResults()}>
               <RefreshCw className="h-4 w-4" />
               Atualizar
             </Button>
           </div>
         </div>
 
-        {results.length === 0 ? (
+        {!results || results.length === 0 ? (
           // Empty State
           <div className="text-center py-16">
             <Award className="h-24 w-24 text-gray-400 mx-auto mb-6" />
@@ -189,7 +142,7 @@ export default function DashboardPage() {
                     </div>
                     <div>
                       <p className="text-sm text-gray-600">Dom Principal</p>
-                      <p className="text-lg font-bold">{latestResult.top_gifts[0]}</p>
+                      <p className="text-lg font-bold">{latestResult?.topGifts[0] || 'N/A'}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -203,7 +156,7 @@ export default function DashboardPage() {
                     </div>
                     <div>
                       <p className="text-sm text-gray-600">Último Teste</p>
-                      <p className="text-sm font-semibold">{formatDate(latestResult.created_at)}</p>
+                      <p className="text-sm font-semibold">{latestResult ? formatDate(latestResult.createdAt) : 'N/A'}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -218,7 +171,6 @@ export default function DashboardPage() {
                     <div>
                       <p className="text-sm text-gray-600">Evolução</p>
                       <p className="text-lg font-bold">
-                        {results.length > 1 ? '+' : ''}
                         {results.length > 1 ? 'Crescendo' : 'Primeiro'}
                       </p>
                     </div>
@@ -233,7 +185,7 @@ export default function DashboardPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
                     <span>Resultado Mais Recente</span>
-                    <Badge>{formatDate(latestResult.created_at)}</Badge>
+                    <Badge>{latestResult ? formatDate(latestResult.createdAt) : 'N/A'}</Badge>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -241,12 +193,12 @@ export default function DashboardPage() {
                     <div>
                       <h4 className="font-semibold mb-3">Top 5 Dons</h4>
                       <div className="space-y-3">
-                        {latestResult.top_gifts.slice(0, 5).map((giftName, index) => {
-                          const giftKey = Object.entries(latestResult.total_score)
-                            .sort(([,a], [,b]) => b - a)[index][0]
-                          const score = latestResult.total_score[giftKey]
+                        {latestResult?.topGifts.slice(0, 5).map((giftName, index) => {
+                          const giftKey = Object.entries(latestResult.totalScore)
+                            .sort(([, a], [, b]) => b - a)[index][0]
+                          const score = latestResult.totalScore[giftKey]
                           const maxScore = 25 // Assuming 5 questions per gift with max 5 points each
-                          
+
                           return (
                             <div key={index} className="flex items-center justify-between">
                               <div className="flex items-center gap-3 flex-1">
@@ -303,7 +255,7 @@ export default function DashboardPage() {
                                 <span className="text-sm text-gray-500">
                                   {item.previousScore} → {item.latestScore}
                                 </span>
-                                <Badge 
+                                <Badge
                                   variant={item.change > 0 ? "default" : item.change < 0 ? "destructive" : "secondary"}
                                   className="text-xs"
                                 >
@@ -345,7 +297,7 @@ export default function DashboardPage() {
               <CardContent>
                 <div className="space-y-4">
                   {results.map((result, index) => (
-                    <div key={result.id}>
+                    <div key={result.sessionId}>
                       <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50">
                         <div>
                           <div className="flex items-center gap-3">
@@ -353,11 +305,11 @@ export default function DashboardPage() {
                               {index === 0 ? 'Mais Recente' : `#${index + 1}`}
                             </Badge>
                             <span className="font-medium">
-                              {formatDate(result.created_at)}
+                              {formatDate(result.createdAt)}
                             </span>
                           </div>
                           <div className="mt-2 flex flex-wrap gap-2">
-                            {result.top_gifts.slice(0, 3).map((gift, i) => (
+                            {result.topGifts.slice(0, 3).map((gift, i) => (
                               <Badge key={i} variant="outline" className="text-xs">
                                 {gift}
                               </Badge>

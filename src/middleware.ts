@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 const intl = createMiddleware(routing);
 
 // Rotas públicas (sem exigir sessão)
-const PUBLIC_SEGMENTS = new Set(['login', 'signup', 'forgot-password']);
+const PUBLIC_SEGMENTS = new Set(['login', 'signup', 'forgot-password', '', 'quiz', 'gifts']);
 
 export default async function middleware(req: NextRequest) {
   // 1) i18n negotiation (ex.: / → /pt)
@@ -47,10 +47,10 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // 4b) Se logado e estiver em /:locale/login ou na home /:locale => manda pra gifts
-  if (session && (segment === 'login' || segment === '')) {
+  // 4b) Se logado e estiver em /:locale/login => manda pra dashboard
+  if (session && segment === 'login') {
     const url = req.nextUrl.clone();
-    url.pathname = `/${locale}/gifts`;
+    url.pathname = `/${locale}/dashboard`;
     return NextResponse.redirect(url);
   }
 

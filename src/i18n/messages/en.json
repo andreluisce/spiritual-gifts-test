@@ -42,11 +42,10 @@
     "errorInvalidIndex": "Error: Invalid question index",
     "restartQuiz": "Restart Quiz",
     "labels": {
-      "1": "Never",
-      "2": "Rarely",
-      "3": "Sometimes",
-      "4": "Frequently",
-      "5": "Always"
+      "0": "Never",
+      "1": "Rarely",
+      "2": "Sometimes",
+      "3": "Always"
     }
   },
   "welcome": {

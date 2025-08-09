@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import type { QuizResult } from '@/data/quiz-data'
 import { useQuizQuestions, useGifts, useSubmitQuiz } from './use-quiz-queries'
 
 interface UseQuizReturn {
@@ -16,7 +15,7 @@ interface UseQuizReturn {
   
   // Actions
   updateAnswer: (questionId: number, score: number) => void
-  submitQuiz: (userId: string) => Promise<QuizResult | null>
+  submitQuiz: (userId: string) => Promise<{ sessionId: string; topGifts: string[]; totalScore: Record<string, number> } | null>
   clearAnswers: () => void
   refetch: () => void
 }
@@ -41,7 +40,7 @@ export function useQuiz(): UseQuizReturn {
     }))
   }, [])
 
-  const submitQuiz = useCallback(async (userId: string): Promise<QuizResult | null> => {
+  const submitQuiz = useCallback(async (userId: string): Promise<{ sessionId: string; topGifts: string[]; totalScore: Record<string, number> } | null> => {
     try {
       if (!giftsQuery.data) {
         throw new Error('Dados dos dons não carregados')
