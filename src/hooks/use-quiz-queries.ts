@@ -81,7 +81,7 @@ export function useQuizQuestions() {
             question_gift_map ( gift )
             `
           )
-          .order('id').limit(5)
+          .order('id')
 
         if (error) {
           console.error("Supabase fetch error:", error);

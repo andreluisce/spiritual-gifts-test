@@ -5,14 +5,23 @@
     "next": "Next",
     "previous": "Previous",
     "finish": "Finish",
-    "loading": "Loading...",
+    "loading": "Loading",
     "error": "Error",
     "tryAgain": "Try Again",
     "reload": "Reload",
-    "processing": "Processing...",
+    "processing": "Processing",
     "signIn": "Sign In",
     "signOut": "Sign Out",
-    "getStarted": "Get Started"
+    "getStarted": "Get Started",
+    "dashboard": "Dashboard",
+    "points": "points",
+    "questions": "questions",
+    "completed": "Completed",
+    "start": "Start",
+    "progress": "Progress",
+    "downloadPdf": "Download PDF",
+    "noQuestions": "No questions found",
+    "errorLoading": "Error loading"
   },
   "nav": {
     "home": "Home",
@@ -34,18 +43,33 @@
   },
   "quiz": {
     "title": "Spiritual Gifts Test",
+    "previewTitle": "Preview - Spiritual Gifts",
     "questionOf": "Question {current} of {total}",
     "answeredOf": "{answered} of {total} answered",
+    "questionsOfTotal": "{answered} of {total} questions",
     "viewAllQuestions": "View all questions",
     "noQuestionsFound": "No questions found",
     "errorCurrentQuestion": "Error: Current question not found",
     "errorInvalidIndex": "Error: Invalid question index",
     "restartQuiz": "Restart Quiz",
+    "fullTest": "Full Test",
+    "seeFullTest": "See Full Test",
+    "previewNotice": "Preview • Login for full test",
+    "unlockFull": {
+      "title": "Unlock Full Potential",
+      "features": {
+        "fullTest": "• Complete test with all questions",
+        "analysis": "• Detailed analysis of your gifts",
+        "history": "• Results history",
+        "recommendations": "• Personalized recommendations"
+      },
+      "loginButton": "Login and Continue"
+    },
     "labels": {
-      "0": "Never",
-      "1": "Rarely",
-      "2": "Sometimes",
-      "3": "Always"
+      "0": "Don't identify",
+      "1": "Identify a little",
+      "2": "Identify well",
+      "3": "Identify strongly"
     }
   },
   "welcome": {
@@ -58,7 +82,7 @@
     "createAccount": "Create your account",
     "continueWithEmail": "Continue with Email",
     "continueWithGoogle": "Continue with Google",
-    "signingIn": "Signing in...",
+    "signingIn": "Signing in",
     "orContinueWith": "Or continue with",
     "agreement": "By signing in, you agree to take the spiritual gifts assessment and receive personalized results based on your responses."
   },

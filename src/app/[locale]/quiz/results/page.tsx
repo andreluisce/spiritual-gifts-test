@@ -12,10 +12,11 @@ import {
   Gift, RotateCcw,
   BookOpen, AlertTriangle, Heart,
   Target, Lightbulb,
-  Award, Users, Church
+  Award, Users, Church, FileText, Download
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useLocale } from 'next-intl'
 import {
   useLatestResult,
   useGifts,
@@ -28,6 +29,7 @@ import { useAuth } from '@/context/AuthContext'
 
 export default function ResultsPage() {
   const router = useRouter()
+  const locale = useLocale()
   const { user } = useAuth()
   const [activeTab, setActiveTab] = useState('overview')
 
@@ -68,7 +70,7 @@ export default function ResultsPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600" />
       </div>
     )
   }
@@ -101,9 +103,9 @@ export default function ResultsPage() {
 
   const allScores = gifts
     ? gifts.map(gift => ({
-        giftKey: gift.key,
-        score: latestResult.totalScore[gift.key] || 0,
-      }))
+      giftKey: gift.key,
+      score: latestResult.totalScore[gift.key] || 0,
+    }))
     : [];
 
   const sortedScores = allScores.sort((a, b) => b.score - a.score);
@@ -406,7 +408,12 @@ export default function ResultsPage() {
 
         {/* Actions */}
         <div className="flex flex-wrap gap-4 justify-center mt-8">
-
+          <Link href={`/${locale}/quiz/report`}>
+            <Button variant="default" className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700">
+              <FileText size={16} />
+              Relatório Completo (PDF)
+            </Button>
+          </Link>
 
           <Button variant="outline" onClick={retakeQuiz} className="flex items-center gap-2">
             <RotateCcw size={16} />

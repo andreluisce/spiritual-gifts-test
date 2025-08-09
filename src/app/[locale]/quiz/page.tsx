@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -26,6 +26,12 @@ export default function QuizPage() {
   const tCommon = useTranslations('common')
   const locale = useLocale()
   const { user, signOut } = useAuth()
+
+  useEffect(() => {
+    if (!user) {
+      router.replace(`/${locale}/login?from=quiz`)
+    }
+  }, [user, router, locale])
 
   const {
     questions,
@@ -113,7 +119,12 @@ export default function QuizPage() {
   }
 
   const getScoreLabel = (score: number) => {
-    const labels = ['Nunca', 'Raramente', 'Às vezes', 'Sempre']
+    const labels = [
+      t('labels.0'), 
+      t('labels.1'), 
+      t('labels.2'), 
+      t('labels.3')
+    ]
     return labels[score] || ''
   }
 
@@ -206,7 +217,7 @@ export default function QuizPage() {
                     <p className="text-sm font-medium text-slate-800">
                       {user.user_metadata?.full_name || user.email}
                     </p>
-                    <p className="text-xs text-slate-500">Teste Completo</p>
+                    <p className="text-xs text-slate-500">{t('fullTest')}</p>
                   </div>
                 </div>
               </PopoverTrigger>
@@ -219,14 +230,14 @@ export default function QuizPage() {
                     {user.email}
                   </p>
                   <Button variant="ghost" className="w-full justify-start" onClick={signOut}>
-                    Sair
+                    {tCommon('signOut')}
                   </Button>
                 </div>
               </PopoverContent>
             </Popover>
             <Link href="/dashboard">
               <Button variant="outline" size="sm" className="text-slate-600 border-slate-300">
-                Dashboard
+                {tCommon('dashboard')}
               </Button>
             </Link>
           </motion.div>
@@ -250,13 +261,16 @@ export default function QuizPage() {
           </div>
 
           <h1 className="text-xl md:text-3xl font-bold text-slate-800 mb-2 md:mb-3">
-            {isPreviewMode ? "Preview - Dons Espirituais" : "Teste de Dons Espirituais"}
+            {isPreviewMode ? t('previewTitle') : t('title')}
           </h1>
 
           <div className="flex items-center justify-center gap-2 text-slate-600 text-sm md:text-base">
             <div className="w-1.5 h-1.5 rounded-full bg-slate-300 hidden md:block" />
             <span className="font-medium">
-              Pergunta {currentQuestionIndex + 1} de {availableQuestions?.length || 0}
+              {t('questionOf', { 
+                current: currentQuestionIndex + 1, 
+                total: availableQuestions?.length || 0 
+              })}
               {isPreviewMode && <span className="text-amber-600 ml-2">(Preview)</span>}
             </span>
             <div className="w-1.5 h-1.5 rounded-full bg-slate-300 hidden md:block" />
@@ -271,7 +285,7 @@ export default function QuizPage() {
           className="mb-4 md:mb-8"
         >
           <div className="flex justify-between items-center mb-2 md:mb-3">
-            <span className="text-xs md:text-sm font-medium text-slate-600">Progresso</span>
+            <span className="text-xs md:text-sm font-medium text-slate-600">{tCommon('progress')}</span>
             <span className="text-xs md:text-sm font-semibold text-slate-700">
               {Math.round(progressValue)}%
             </span>
@@ -285,9 +299,9 @@ export default function QuizPage() {
             />
           </div>
           <div className="flex justify-between text-[10px] md:text-xs text-slate-500 mt-1 md:mt-2">
-            <span>Início</span>
-            <span>{answeredCount}/{availableQuestions.length} respondidas</span>
-            <span>Concluído</span>
+            <span>{tCommon('start')}</span>
+            <span>{t('answeredOf', { answered: answeredCount, total: availableQuestions.length })}</span>
+            <span>{tCommon('completed')}</span>
           </div>
         </motion.div>
 
@@ -398,7 +412,7 @@ export default function QuizPage() {
                   <BookOpen size={16} className="md:!hidden" />
                   <BookOpen size={18} className="hidden md:block" />
                 </motion.div>
-                Processando...
+                Processando
               </>
             ) : isLastQuestion ? (
               <>

@@ -5,11 +5,11 @@
     "next": "Siguiente",
     "previous": "Anterior",
     "finish": "Finalizar",
-    "loading": "Cargando...",
+    "loading": "Cargando",
     "error": "Error",
     "tryAgain": "Intentar Nuevamente",
     "reload": "Recargar",
-    "processing": "Procesando...",
+    "processing": "Procesando",
     "signIn": "Iniciar Sesión",
     "signOut": "Cerrar Sesión",
     "getStarted": "Comenzar"
@@ -58,7 +58,7 @@
     "createAccount": "Crea tu cuenta",
     "continueWithEmail": "Continuar con Email",
     "continueWithGoogle": "Continuar con Google",
-    "signingIn": "Iniciando sesión...",
+    "signingIn": "Iniciando sesión",
     "orContinueWith": "O continúa con",
     "agreement": "Al iniciar sesión, aceptas realizar la evaluación de dones espirituales y recibir resultados personalizados basados en tus respuestas."
   },

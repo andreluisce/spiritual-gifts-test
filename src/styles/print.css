@@ -1,0 +1,19 @@
+@media print {
+  /* Print specific styles */
+  body {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  /* Page margins */
+  @page {
+    margin: 1cm;
+    size: A4;
+  }
+  
+  /* Ensure proper spacing between sections */
+  .space-y-4 > * + * {
+    margin-top: 1rem !important;
+  }
+}

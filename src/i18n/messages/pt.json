@@ -5,14 +5,24 @@
     "next": "Próxima",
     "previous": "Anterior",
     "finish": "Finalizar",
-    "loading": "Carregando...",
+    "loading": "Carregando",
     "error": "Erro",
     "tryAgain": "Tentar Novamente",
     "reload": "Recarregar",
-    "processing": "Processando...",
+    "processing": "Processando",
     "signIn": "Entrar",
     "signOut": "Sair",
-    "getStarted": "Começar"
+    "getStarted": "Começar",
+    "dashboard": "Dashboard",
+    "points": "pontos",
+    "questions": "questões",
+    "completed": "Concluído",
+    "start": "Início",
+    "progress": "Progresso",
+    "downloadPdf": "Baixar PDF",
+    "noQuestions": "Nenhuma pergunta encontrada",
+    "errorLoading": "Erro ao carregar",
+    "signOut": "Sair"
   },
   "nav": {
     "home": "Início",
@@ -30,22 +40,86 @@
     "signInToStart": "Entre para Começar",
     "beginAssessment": "Começar Avaliação Agora",
     "whyTakeAssessment": "Por que Fazer Esta Avaliação?",
-    "assessmentDescription": "Junte-se a milhares que encontraram clareza em seu chamado. Sua avaliação de dons espirituais está a apenas um clique de distância."
+    "assessmentDescription": "Junte-se a milhares que encontraram clareza em seu chamado. Sua avaliação de dons espirituais está a apenas um clique de distância.",
+    "features": {
+      "scriptural": {
+        "title": "Baseado nas Escrituras",
+        "description": "Fundamentado em textos bíblicos e estudos teológicos sólidos"
+      },
+      "discover": {
+        "title": "Descubra Seus Dons",
+        "description": "Descubra como Deus trabalha através de você de forma única"
+      },
+      "purpose": {
+        "title": "Encontre Seu Propósito",
+        "description": "Entenda seu papel no Corpo de Cristo e na Igreja"
+      },
+      "history": {
+        "title": "Histórico Personalizado",
+        "description": "Acompanhe sua jornada espiritual e crescimento ao longo do tempo"
+      }
+    },
+    "categories": {
+      "title": "As Três Categorias de Dons",
+      "subtitle": "Baseado na classificação bíblica dos dons espirituais, nosso teste avalia todas as dimensões de como Deus trabalha através de cada pessoa.",
+      "motivations": {
+        "title": "Motivações",
+        "count": "7 dons",
+        "description": "7 dons fundamentais que são a base da personalidade cristã"
+      },
+      "ministries": {
+        "title": "Ministérios", 
+        "count": "12 ministérios",
+        "description": "12 ministérios para servir ao Corpo de Cristo"
+      },
+      "manifestations": {
+        "title": "Manifestações",
+        "count": "9 manifestações", 
+        "description": "9 manifestações do poder sobrenatural de Deus"
+      }
+    },
+    "cta": {
+      "title": "Pronto Para Descobrir Seus Dons?",
+      "subtitle": "Continue sua jornada de autoconhecimento espiritual com nosso teste completo.",
+      "description": "Comece com nosso preview gratuito e descubra uma amostra do que Deus colocou em você.",
+      "fullTest": "Fazer Teste Completo",
+      "preview": "Começar Preview",
+      "previewFeatures": "• Preview de 3 perguntas • Sem cadastro necessário"
+    },
+    "stats": {
+      "duration": "3-5 minutos",
+      "foundation": "Biblicamente fundamentado"
+    }
   },
   "quiz": {
     "title": "Teste de Dons Espirituais",
+    "previewTitle": "Preview - Dons Espirituais",
     "questionOf": "Pergunta {current} de {total}",
     "answeredOf": "{answered} de {total} respondidas",
+    "questionsOfTotal": "{answered} de {total} questões",
     "viewAllQuestions": "Visualizar todas as perguntas",
     "noQuestionsFound": "Nenhuma pergunta encontrada",
     "errorCurrentQuestion": "Erro: Pergunta atual não encontrada",
     "errorInvalidIndex": "Erro: Índice da pergunta inválido",
     "restartQuiz": "Reiniciar Quiz",
+    "fullTest": "Teste Completo",
+    "seeFullTest": "Ver Teste Completo",
+    "previewNotice": "Preview • Faça login para o teste completo",
+    "unlockFull": {
+      "title": "Desbloqueie o Potencial Completo",
+      "features": {
+        "fullTest": "• Teste completo com todas as perguntas",
+        "analysis": "• Análise detalhada dos seus dons",
+        "history": "• Histórico de resultados",
+        "recommendations": "• Recomendações personalizadas"
+      },
+      "loginButton": "Fazer Login e Continuar"
+    },
     "labels": {
-      "0": "Nunca",
-      "1": "Raramente",
-      "2": "Às vezes",
-      "3": "Sempre"
+      "0": "Não me identifico",
+      "1": "Identifico-me pouco",
+      "2": "Identifico-me bem",
+      "3": "Identifico-me muito"
     }
   },
   "welcome": {
@@ -58,9 +132,131 @@
     "createAccount": "Faça seu login",
     "continueWithEmail": "Continuar com Email",
     "continueWithGoogle": "Continuar com Google",
-    "signingIn": "Entrando...",
+    "signingIn": "Entrando",
     "orContinueWith": "Ou continue com",
     "agreement": "Ao entrar, você concorda em fazer a avaliação de dons espirituais e receber resultados personalizados baseados em suas respostas."
+  },
+  "gifts": {
+    "title": "Dons Espirituais",
+    "subtitle": "As Três Categorias: Motivações, Ministérios e Manifestações",
+    "discoverMyGifts": "Descobrir Meus Dons",
+    "myHistory": "Meu Histórico",
+    "searchPlaceholder": "Buscar dons, ministérios ou manifestações",
+    "categories": {
+      "motivations": "Motivações",
+      "ministries": "Ministérios", 
+      "manifestations": "Manifestações"
+    },
+    "giftTypes": {
+      "discernment": "DISCERNIMENTO",
+      "power": "PODER",
+      "declaration": "DECLARAÇÃO"
+    },
+    "giftDetails": {
+      "characteristics": "características",
+      "description": "Descrição",
+      "qualitiesToDevelop": "Qualidades a Desenvolver",
+      "additionalCharacteristics": "características adicionais",
+      "precautions": "Cuidados",
+      "additionalPrecautions": "cuidados adicionais",
+      "discoverIfIHave": "Descobrir Se Tenho Este Dom",
+      "selectGift": "Selecione um dom espiritual para ver mais detalhes",
+      "motivationsDescription": "Os dons de motivação são impulsos básicos implantados por Deus",
+      "classification": {
+        "main": "Principal",
+        "others": "Outros"
+      }
+    },
+    "cta": {
+      "title": "Pronto para descobrir seus dons?",
+      "description": "Nosso teste foi desenvolvido com base nas Escrituras e no documento \"Dons Espirituais - As Três Categorias\" para ajudar você a identificar e compreender os dons que Deus lhe concedeu.",
+      "button": "Fazer o Teste Agora"
+    }
+  },
+  "results": {
+    "title": "Seus Dons Espirituais",
+    "resultDate": "Resultado do teste realizado em {date}",
+    "topGifts": "Seus Principais Dons Espirituais",
+    "errorLoading": "Erro ao carregar resultados: {error}",
+    "noResults": "Nenhum resultado encontrado",
+    "takeTest": "Fazer o Teste",
+    "tabs": {
+      "overview": "Visão Geral",
+      "characteristics": "Características",
+      "qualities": "Qualidades",
+      "precautions": "Cuidados",
+      "guidance": "Orientações"
+    },
+    "detailedScores": "Pontuação Detalhada",
+    "affinity": "{percentage}% de afinidade",
+    "characteristicsTitle": "Características do Dom de {giftName}",
+    "qualitiesTitle": "Qualidades a Desenvolver",
+    "qualitiesDescription": "Sete qualidades importantes para desenvolver no dom de {giftName}",
+    "precautionsTitle": "Cuidados e Perigos",
+    "precautionsDescription": "Aspectos importantes a observar para um exercício saudável do dom",
+    "misunderstandingsTitle": "Possíveis Mal-entendidos",
+    "misunderstandingsDescription": "Como seu dom pode ser interpretado pelos outros",
+    "biblicalReferences": "Referências Bíblicas",
+    "biblicalReferencesInDevelopment": "Referências bíblicas específicas em desenvolvimento.",
+    "notAvailable": {
+      "main": "Dados completos do dom principal não disponíveis. Mostrando informações básicas.",
+      "qualities": "Dados de qualidades não disponíveis para análise completa.",
+      "precautions": "Dados de cuidados não disponíveis para análise completa.",
+      "guidance": "Orientações detalhadas não disponíveis para análise completa."
+    },
+    "actions": {
+      "fullReport": "Relatório Completo (PDF)",
+      "retakeTest": "Refazer Teste",
+      "viewAllGifts": "Ver Todos os Dons",
+      "myHistory": "Meu Histórico"
+    }
+  },
+  "report": {
+    "title": "Relatório de Dons Espirituais",
+    "subtitle": "Análise detalhada das {count} perguntas agrupadas por dons espirituais",
+    "resultDate": "Resultado de: {date}",
+    "chartTitle": "Distribuição de Pontuação por Dom Espiritual",
+    "chartTitleEnd": "Gráfico de Distribuição dos Dons",
+    "questions": "Perguntas ({count}):",
+    "stats": {
+      "totalQuestions": "Total de Perguntas:",
+      "totalScore": "Pontuação Total:", 
+      "averagePerQuestion": "Média por Pergunta:",
+      "percentOfTotal": "% do Total:"
+    },
+    "footer": {
+      "title": "Total de Perguntas",
+      "description": "Perguntas organizadas para avaliar os 7 dons espirituais principais"
+    }
+  },
+  "dashboard": {
+    "title": "Meu Dashboard",
+    "subtitle": "Acompanhe sua jornada de descoberta dos dons espirituais",
+    "newTest": "Novo Teste",
+    "refresh": "Atualizar",
+    "welcome": {
+      "title": "Bem-vindo à sua jornada espiritual!",
+      "description": "Você ainda não fez nenhum teste. Que tal descobrir seus dons espirituais agora?",
+      "button": "Fazer Meu Primeiro Teste"
+    },
+    "stats": {
+      "totalTests": "Total de Testes",
+      "mainGift": "Dom Principal", 
+      "lastTest": "Último Teste",
+      "evolution": "Evolução",
+      "growing": "Crescendo",
+      "first": "Primeiro"
+    },
+    "sections": {
+      "recentResult": "Resultado Mais Recente",
+      "top5Gifts": "Top 5 Dons",
+      "viewDetails": "Ver Detalhes",
+      "giftEvolution": "Evolução dos Dons",
+      "testHistory": "Histórico de Testes",
+      "takeAnother": "Fazer Outro Teste",
+      "fullHistory": "Histórico Completo",
+      "view": "Ver"
+    }
   },
   "Index": {
     "title": "Teste de Dons Espirituais"
