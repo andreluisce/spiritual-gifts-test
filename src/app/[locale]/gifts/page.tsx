@@ -1,6 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/context/AuthContext'
+import { useLocale } from 'next-intl'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -25,6 +28,18 @@ import {
 export default function GiftsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedGift, setSelectedGift] = useState<ExtendedSpiritualGift | null>(null)
+
+  const router = useRouter()
+  const { user } = useAuth()
+  const locale = useLocale()
+
+  const handleDiscoverGifts = useCallback(() => {
+    if (!user) {
+      router.push(`/${locale}/login?from=gifts`)
+    } else {
+      router.push(`/${locale}/quiz`)
+    }
+  }, [user, router, locale])
   const [activeSection, setActiveSection] = useState('motivations')
 
   const { data: spiritualGiftsData, isLoading: loadingSpiritualGifts } = useSpiritualGifts()
@@ -74,12 +89,10 @@ export default function GiftsPage() {
           
           {/* Call to Action */}
           <div className="flex flex-wrap gap-4 justify-center">
-            <Link href="/quiz">
-              <Button size="lg" className="flex items-center gap-2">
-                <Star className="h-5 w-5" />
-                Descobrir Meus Dons
-              </Button>
-            </Link>
+            <Button size="lg" className="flex items-center gap-2" onClick={handleDiscoverGifts}>
+            <Star className="h-5 w-5" />
+            Descobrir Meus Dons
+          </Button>
             <Link href="/dashboard">
               <Button variant="outline" size="lg">
                 Meu Histórico
@@ -357,12 +370,10 @@ export default function GiftsPage() {
             Nosso teste foi desenvolvido com base nas Escrituras e no documento &ldquo;Dons Espirituais - As Três Categorias&rdquo; 
             para ajudar você a identificar e compreender os dons que Deus lhe concedeu.
           </p>
-          <Link href="/quiz">
-            <Button size="lg" className="flex items-center gap-2 mx-auto">
-              <Star className="h-5 w-5" />
-              Fazer o Teste Agora
-            </Button>
-          </Link>
+          <Button size="lg" className="flex items-center gap-2 mx-auto" onClick={handleDiscoverGifts}>
+            <Star className="h-5 w-5" />
+            Fazer o Teste Agora
+          </Button>
         </div>
       </div>
     </div>
