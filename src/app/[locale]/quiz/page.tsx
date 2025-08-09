@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
@@ -24,7 +25,7 @@ export default function QuizPage() {
   const t = useTranslations('quiz')
   const tCommon = useTranslations('common')
   const locale = useLocale()
-  const { user } = useAuth()
+  const { user, signOut } = useAuth()
 
   const {
     questions,
@@ -185,27 +186,44 @@ export default function QuizPage() {
             transition={{ duration: 0.5 }}
             className="hidden md:flex items-center justify-between mb-6"
           >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center overflow-hidden">
-                {user.user_metadata?.avatar_url ? (
-                  <Image
-                    src={user.user_metadata.avatar_url}
-                    alt="Avatar"
-                    width={40}
-                    height={40}
-                    className="w-10 h-10 rounded-full"
-                  />
-                ) : (
-                  <User className="h-5 w-5 text-slate-600" />
-                )}
-              </div>
-              <div>
-                <p className="text-sm font-medium text-slate-800">
-                  {user.user_metadata?.full_name || user.email}
-                </p>
-                <p className="text-xs text-slate-500">Teste Completo</p>
-              </div>
-            </div>
+            <Popover>
+              <PopoverTrigger asChild>
+                <div className="flex items-center gap-3 cursor-pointer">
+                  <div className="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center overflow-hidden">
+                    {user.user_metadata?.avatar_url ? (
+                      <Image
+                        src={user.user_metadata.avatar_url}
+                        alt="Avatar"
+                        width={40}
+                        height={40}
+                        className="w-10 h-10 rounded-full"
+                      />
+                    ) : (
+                      <User className="h-5 w-5 text-slate-600" />
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-slate-800">
+                      {user.user_metadata?.full_name || user.email}
+                    </p>
+                    <p className="text-xs text-slate-500">Teste Completo</p>
+                  </div>
+                </div>
+              </PopoverTrigger>
+              <PopoverContent className="w-56 p-2">
+                <div className="flex flex-col space-y-2">
+                  <p className="text-sm font-medium leading-none">
+                    {user.user_metadata?.full_name || user.email}
+                  </p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    {user.email}
+                  </p>
+                  <Button variant="ghost" className="w-full justify-start" onClick={signOut}>
+                    Sair
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
             <Link href="/dashboard">
               <Button variant="outline" size="sm" className="text-slate-600 border-slate-300">
                 Dashboard
