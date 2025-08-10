@@ -146,26 +146,37 @@ export function useGifts() {
   return useQuery({
     queryKey: QUERY_KEYS.gifts,
     queryFn: async (): Promise<SpiritualGift[]> => {
-      const { data, error } = await supabase
-        .from('gifts')
-        .select('*')
-        .order('name')
+      try {
+        const { data, error } = await supabase
+          .from('gifts')
+          .select('*')
+          .order('name')
 
-      if (error) throw error
-
-      // For now, merge with static data to get additional info like biblical references
-      const { spiritualGifts } = await import('@/data/quiz-data')
-
-      return data.map(dbGift => {
-        const staticGift = spiritualGifts.find(g => g.key === dbGift.key)
-        return {
-          key: dbGift.key,
-          name: dbGift.name,
-          description: dbGift.description || '',
-          biblicalReferences: staticGift?.biblicalReferences || [],
-          characteristics: staticGift?.characteristics || []
+        // If there's an error or no data, use fallback static data
+        if (error || !data || data.length === 0) {
+          console.warn('Database not available, using static data:', error?.message)
+          const { spiritualGifts } = await import('@/data/quiz-data')
+          return spiritualGifts
         }
-      })
+
+        // Merge database data with static data
+        const { spiritualGifts } = await import('@/data/quiz-data')
+        return data.map(dbGift => {
+          const staticGift = spiritualGifts.find(g => g.key === dbGift.key)
+          return {
+            key: dbGift.key,
+            name: dbGift.name,
+            description: dbGift.description || staticGift?.description || '',
+            biblicalReferences: staticGift?.biblicalReferences || [],
+            characteristics: staticGift?.characteristics || []
+          }
+        })
+      } catch (error) {
+        // On any error, fallback to static data
+        console.warn('Database connection failed, using static data:', error)
+        const { spiritualGifts } = await import('@/data/quiz-data')
+        return spiritualGifts
+      }
     },
     staleTime: 30 * 60 * 1000, // 30 minutes
   })

@@ -982,7 +982,7 @@ end$$;
 -- GIFTS TABLE (for compatibility)
 insert into public.gifts(key,name,description) values
   ('A_PROPHECY','Profecia','Proclamar a verdade com clareza e convicção'),
-  ('B_SERVICE','Ministério','Apoio prático e auxilio aos outros'),
+  ('B_SERVICE','Ministério (Serviço)','Apoio prático e auxilio aos outros'),
   ('C_TEACHING','Ensino','Explicar a verdade fielmente e com clareza'),
   ('D_EXHORTATION','Exortação','Encorajar e aconselhar rumo à ação'),
   ('E_GIVING','Contribuição','Compartilhar recursos generosamente'),

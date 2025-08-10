@@ -108,9 +108,58 @@ export default function ResultsPage() {
     }))
     : [];
 
-  const sortedScores = allScores.sort((a, b) => b.score - a.score);
+  // Sort scores to match the topGifts ranking from getTopGifts algorithm
+  const sortedScores = allScores.sort((a, b) => {
+    const giftA = getGiftByKey(a.giftKey)
+    const giftB = getGiftByKey(b.giftKey)
+    
+    if (!giftA || !giftB) return 0
+    
+    // Find positions in topGifts array (already calculated with our algorithm)
+    const posA = latestResult.topGifts.findIndex(name => name === giftA.name)
+    const posB = latestResult.topGifts.findIndex(name => name === giftB.name)
+    
+    // Use topGifts order if both found, otherwise fallback to score
+    if (posA !== -1 && posB !== -1) {
+      return posA - posB
+    }
+    
+    return b.score - a.score
+  });
 
   const topGiftWithData = getTopGiftWithData()
+
+  // Calculate rankings considering tied scores
+  const calculateRankings = () => {
+    const rankingsMap = new Map<string, number>()
+    let currentRank = 1
+    let previousScore: number | null = null
+    let sameRankCount = 0
+
+    sortedScores.forEach((scoreData, index) => {
+      const currentScore = scoreData.score
+      
+      if (previousScore !== null && currentScore !== previousScore) {
+        // Score changed, update rank
+        currentRank += sameRankCount
+        sameRankCount = 1
+      } else {
+        // Same score or first item
+        sameRankCount++
+      }
+      
+      const gift = getGiftByKey(scoreData.giftKey)
+      if (gift) {
+        rankingsMap.set(gift.name, currentRank)
+      }
+      
+      previousScore = currentScore
+    })
+    
+    return rankingsMap
+  }
+
+  const rankingsMap = calculateRankings()
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
@@ -138,22 +187,25 @@ export default function ResultsPage() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-              {latestResult.topGifts.map((giftName, index) => (
-                <div key={index} className="text-center">
-                  <Badge
-                    variant={index === 0 ? "default" : "secondary"}
-                    className="text-sm px-3 py-1 mb-2"
-                  >
-                    #{index + 1}
-                  </Badge>
-                  <p className="font-semibold">{giftName}</p>
-                  {index === 0 && topGiftWithData && (
-                    <p className="text-xs text-gray-500 mt-1">
-                      {topGiftWithData.category?.greek_term}
-                    </p>
-                  )}
-                </div>
-              ))}
+              {latestResult.topGifts.map((giftName, index) => {
+                const rank = rankingsMap.get(giftName) || index + 1
+                return (
+                  <div key={index} className="text-center">
+                    <Badge
+                      variant={rank === 1 ? "default" : "secondary"}
+                      className="text-sm px-3 py-1 mb-2"
+                    >
+                      #{rank}
+                    </Badge>
+                    <p className="font-semibold">{giftName}</p>
+                    {rank === 1 && topGiftWithData && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        {topGiftWithData.category?.greek_term}
+                      </p>
+                    )}
+                  </div>
+                )
+              })}
             </div>
           </CardContent>
         </Card>
