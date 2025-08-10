@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react'
 import { useQuizQuestions, useGifts, useSubmitQuiz } from './use-quiz-queries'
+import type { QuizQuestion } from '@/data/quiz-data'
 
 interface UseQuizReturn {
   // Quiz state from React Query
@@ -28,21 +29,73 @@ interface UseQuizReturn {
 const QUIZ_STATE_KEY = 'quiz_in_progress'
 const QUIZ_ANSWERS_KEY = 'quiz_answers'
 const QUIZ_QUESTION_INDEX_KEY = 'quiz_question_index'
+const QUIZ_QUESTION_ORDER_KEY = 'quiz_question_order'
 
 interface QuizState {
   answers: Record<number, number>
   currentQuestionIndex: number
   startedAt: number
+  questionOrder?: number[] // Array of original question IDs in shuffled order
+}
+
+// Fisher-Yates shuffle algorithm for array randomization
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+  }
+  return shuffled
 }
 
 export function useQuiz(): UseQuizReturn {
   const [currentAnswers, setCurrentAnswers] = useState<Record<number, number>>({})
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0)
   const [hasPersistedState, setHasPersistedState] = useState<boolean>(false)
+  const [questionOrder, setQuestionOrder] = useState<number[]>([])
+  const [shuffledQuestions, setShuffledQuestions] = useState<QuizQuestion[]>([])
 
   const questionsQuery = useQuizQuestions()
   const giftsQuery = useGifts()
   const submitQuizMutation = useSubmitQuiz()
+
+  // Shuffle questions when they are first loaded
+  useEffect(() => {
+    if (questionsQuery.data && questionsQuery.data.length > 0 && shuffledQuestions.length === 0) {
+      let newQuestionOrder: number[]
+      let newShuffledQuestions: QuizQuestion[]
+
+      // Try to load existing order from localStorage first
+      const savedOrder = localStorage.getItem(QUIZ_QUESTION_ORDER_KEY)
+      if (savedOrder) {
+        try {
+          const parsedOrder = JSON.parse(savedOrder)
+          if (Array.isArray(parsedOrder) && parsedOrder.length === questionsQuery.data.length) {
+            // Use saved order
+            newQuestionOrder = parsedOrder
+            newShuffledQuestions = newQuestionOrder.map(id => 
+              questionsQuery.data!.find(q => q.id === id)
+            ).filter((q): q is QuizQuestion => q !== undefined)
+          } else {
+            throw new Error('Invalid saved order')
+          }
+        } catch {
+          // If parsing fails, create new shuffle
+          newShuffledQuestions = shuffleArray([...questionsQuery.data])
+          newQuestionOrder = newShuffledQuestions.map(q => q.id)
+          localStorage.setItem(QUIZ_QUESTION_ORDER_KEY, JSON.stringify(newQuestionOrder))
+        }
+      } else {
+        // No saved order, create new shuffle
+        newShuffledQuestions = shuffleArray([...questionsQuery.data])
+        newQuestionOrder = newShuffledQuestions.map(q => q.id)
+        localStorage.setItem(QUIZ_QUESTION_ORDER_KEY, JSON.stringify(newQuestionOrder))
+      }
+
+      setQuestionOrder(newQuestionOrder)
+      setShuffledQuestions(newShuffledQuestions)
+    }
+  }, [questionsQuery.data, shuffledQuestions.length])
 
   // Load persisted state on mount
   useEffect(() => {
@@ -61,9 +114,15 @@ export function useQuiz(): UseQuizReturn {
           setCurrentAnswers(state.answers)
           setCurrentQuestionIndex(state.currentQuestionIndex)
           setHasPersistedState(true)
+          
+          // Load question order if available
+          if (state.questionOrder) {
+            setQuestionOrder(state.questionOrder)
+          }
         } else {
           // Clear old/invalid state
           localStorage.removeItem(QUIZ_STATE_KEY)
+          localStorage.removeItem(QUIZ_QUESTION_ORDER_KEY)
         }
       }
     } catch (error) {
@@ -82,7 +141,8 @@ export function useQuiz(): UseQuizReturn {
       const state: QuizState = {
         answers: currentAnswers,
         currentQuestionIndex,
-        startedAt: Date.now()
+        startedAt: Date.now(),
+        questionOrder: questionOrder.length > 0 ? questionOrder : undefined
       }
       
       try {
@@ -91,7 +151,7 @@ export function useQuiz(): UseQuizReturn {
         console.warn('Failed to save quiz state:', error)
       }
     }
-  }, [currentAnswers, currentQuestionIndex])
+  }, [currentAnswers, currentQuestionIndex, questionOrder])
 
   const loading = questionsQuery.isLoading || giftsQuery.isLoading
   const error = questionsQuery.error?.message || 
@@ -133,10 +193,13 @@ export function useQuiz(): UseQuizReturn {
   const clearAnswers = useCallback(() => {
     setCurrentAnswers({})
     setCurrentQuestionIndex(0)
+    setQuestionOrder([])
+    setShuffledQuestions([])
     
     // Clear persisted state
     if (typeof window !== 'undefined') {
       localStorage.removeItem(QUIZ_STATE_KEY)
+      localStorage.removeItem(QUIZ_QUESTION_ORDER_KEY)
     }
   }, [])
 
@@ -150,7 +213,7 @@ export function useQuiz(): UseQuizReturn {
   }, [questionsQuery, giftsQuery])
 
   return {
-    questions: questionsQuery.data,
+    questions: shuffledQuestions.length > 0 ? shuffledQuestions : questionsQuery.data,
     loading,
     error,
     currentAnswers,

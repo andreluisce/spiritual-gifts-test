@@ -111,15 +111,40 @@ export const calculateScores = (answers: { gift_key: Database['public']['Enums']
     giftCounts[gift.key] = 0;
   });
 
-  // Calculate weighted scores and count questions per gift
+  // Group scores by gift for trimmed mean calculation
+  const giftScores: Record<string, number[]> = {};
+  
+  // Initialize arrays for each gift
+  gifts.forEach(gift => {
+    giftScores[gift.key] = [];
+  });
+
+  // Collect weighted scores for each gift
   answers.forEach((answer, index) => {
     // Use question ID from answers array index + 1, or apply default weight
     const questionId = index + 1;
     const weight = QUESTION_WEIGHTS[questionId] || 1.0;
     const weightedScore = answer.score * weight;
     
-    scores[answer.gift_key] = (scores[answer.gift_key] || 0) + weightedScore;
-    giftCounts[answer.gift_key] = (giftCounts[answer.gift_key] || 0) + 1;
+    giftScores[answer.gift_key].push(weightedScore);
+  });
+
+  // Calculate trimmed mean (exclude highest and lowest score per gift)
+  gifts.forEach(gift => {
+    const giftScoreArray = giftScores[gift.key];
+    
+    if (giftScoreArray.length >= 3) {
+      // Sort scores and remove highest and lowest
+      const sortedScores = [...giftScoreArray].sort((a, b) => a - b);
+      const trimmedScores = sortedScores.slice(1, -1); // Remove first (lowest) and last (highest)
+      
+      scores[gift.key] = trimmedScores.reduce((sum, score) => sum + score, 0);
+      giftCounts[gift.key] = trimmedScores.length;
+    } else {
+      // If less than 3 scores, use all scores (can't trim)
+      scores[gift.key] = giftScoreArray.reduce((sum, score) => sum + score, 0);
+      giftCounts[gift.key] = giftScoreArray.length;
+    }
   });
 
   // Normalize scores to account for different numbers of questions per gift
