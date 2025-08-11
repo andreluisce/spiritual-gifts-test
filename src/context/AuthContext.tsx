@@ -45,13 +45,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .select('id, full_name, avatar_url')
         .eq('id', userId)
         .single()
-      
+
       if (error) throw error
-      
+
       // For now, hardcode admin check based on email
       const user = await supabase.auth.getUser()
       const isAdminEmail = user.data.user?.email === 'andremluisce@gmail.com'
-      
+
       return {
         ...data,
         role: isAdminEmail ? 'admin' as const : 'user' as const
@@ -67,11 +67,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       ; (async () => {
         const { data } = await supabase.auth.getSession()
         if (!mounted.current) return
-        
+
         const session = data.session
         setSession(session ?? null)
         setUser(session?.user ?? null)
-        
+
         if (session?.user?.id) {
           const userProfile = await fetchUserProfile(session.user.id)
           if (mounted.current) {
@@ -80,17 +80,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } else {
           setProfile(null)
         }
-        
+
         setLoading(false)
       })()
 
     const { data: listener } = supabase.auth.onAuthStateChange(
       async (_event: AuthChangeEvent, newSession) => {
         if (!mounted.current) return
-        
+
         setSession(newSession)
         setUser(newSession?.user ?? null)
-        
+
         if (newSession?.user?.id) {
           const userProfile = await fetchUserProfile(newSession.user.id)
           if (mounted.current) {
@@ -99,7 +99,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } else {
           setProfile(null)
         }
-        
+
         setLoading(false)
       }
     )
@@ -108,7 +108,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       mounted.current = false
       listener.subscription.unsubscribe()
     }
-  }, [])
+  }, [fetchUserProfile])
 
   const signInWithGoogle = useCallback(async () => {
     try {

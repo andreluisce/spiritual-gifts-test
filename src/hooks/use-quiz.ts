@@ -9,17 +9,17 @@ interface UseQuizReturn {
   questions: ReturnType<typeof useQuizQuestions>['data']
   loading: boolean
   error: string | null
-  
+
   // Current quiz session
   currentAnswers: Record<number, number>
   isSubmitting: boolean
-  
+
   // Actions
   updateAnswer: (questionId: number, score: number) => void
   submitQuiz: (userId: string) => Promise<{ sessionId: string; topGifts: string[]; totalScore: Record<string, number> } | null>
   clearAnswers: () => void
   refetch: () => void
-  
+
   // Quiz session persistence
   currentQuestionIndex: number
   setCurrentQuestionIndex: (index: number) => void
@@ -27,8 +27,6 @@ interface UseQuizReturn {
 }
 
 const QUIZ_STATE_KEY = 'quiz_in_progress'
-const QUIZ_ANSWERS_KEY = 'quiz_answers'
-const QUIZ_QUESTION_INDEX_KEY = 'quiz_question_index'
 const QUIZ_QUESTION_ORDER_KEY = 'quiz_question_order'
 
 interface QuizState {
@@ -43,7 +41,7 @@ function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array]
   for (let i = shuffled.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
-    ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
   }
   return shuffled
 }
@@ -73,7 +71,7 @@ export function useQuiz(): UseQuizReturn {
           if (Array.isArray(parsedOrder) && parsedOrder.length === questionsQuery.data.length) {
             // Use saved order
             newQuestionOrder = parsedOrder
-            newShuffledQuestions = newQuestionOrder.map(id => 
+            newShuffledQuestions = newQuestionOrder.map(id =>
               questionsQuery.data!.find(q => q.id === id)
             ).filter((q): q is QuizQuestion => q !== undefined)
           } else {
@@ -105,16 +103,16 @@ export function useQuiz(): UseQuizReturn {
       const persistedState = localStorage.getItem(QUIZ_STATE_KEY)
       if (persistedState) {
         const state: QuizState = JSON.parse(persistedState)
-        
+
         // Check if the state is not too old (e.g., 24 hours)
         const MAX_AGE = 24 * 60 * 60 * 1000 // 24 hours in ms
         const isStateValid = Date.now() - state.startedAt < MAX_AGE
-        
+
         if (isStateValid && Object.keys(state.answers).length > 0) {
           setCurrentAnswers(state.answers)
           setCurrentQuestionIndex(state.currentQuestionIndex)
           setHasPersistedState(true)
-          
+
           // Load question order if available
           if (state.questionOrder) {
             setQuestionOrder(state.questionOrder)
@@ -134,9 +132,9 @@ export function useQuiz(): UseQuizReturn {
   // Save state to localStorage whenever answers or currentQuestionIndex change
   useEffect(() => {
     if (typeof window === 'undefined') return
-    
+
     const hasAnswers = Object.keys(currentAnswers).length > 0
-    
+
     if (hasAnswers) {
       const state: QuizState = {
         answers: currentAnswers,
@@ -144,7 +142,7 @@ export function useQuiz(): UseQuizReturn {
         startedAt: Date.now(),
         questionOrder: questionOrder.length > 0 ? questionOrder : undefined
       }
-      
+
       try {
         localStorage.setItem(QUIZ_STATE_KEY, JSON.stringify(state))
       } catch (error) {
@@ -154,10 +152,10 @@ export function useQuiz(): UseQuizReturn {
   }, [currentAnswers, currentQuestionIndex, questionOrder])
 
   const loading = questionsQuery.isLoading || giftsQuery.isLoading
-  const error = questionsQuery.error?.message || 
-               giftsQuery.error?.message || 
-               submitQuizMutation.error?.message || 
-               null
+  const error = questionsQuery.error?.message ||
+    giftsQuery.error?.message ||
+    submitQuizMutation.error?.message ||
+    null
 
   const updateAnswer = useCallback((questionId: number, score: number) => {
     setCurrentAnswers(prev => ({
@@ -195,7 +193,7 @@ export function useQuiz(): UseQuizReturn {
     setCurrentQuestionIndex(0)
     setQuestionOrder([])
     setShuffledQuestions([])
-    
+
     // Clear persisted state
     if (typeof window !== 'undefined') {
       localStorage.removeItem(QUIZ_STATE_KEY)

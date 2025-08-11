@@ -12,7 +12,7 @@ import {
   Gift, RotateCcw,
   BookOpen, AlertTriangle, Heart,
   Target, Lightbulb,
-  Award, Users, Church, FileText, Download
+  Award, Users, Church, FileText
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -112,18 +112,18 @@ export default function ResultsPage() {
   const sortedScores = allScores.sort((a, b) => {
     const giftA = getGiftByKey(a.giftKey)
     const giftB = getGiftByKey(b.giftKey)
-    
+
     if (!giftA || !giftB) return 0
-    
+
     // Find positions in topGifts array (already calculated with our algorithm)
     const posA = latestResult.topGifts.findIndex(name => name === giftA.name)
     const posB = latestResult.topGifts.findIndex(name => name === giftB.name)
-    
+
     // Use topGifts order if both found, otherwise fallback to score
     if (posA !== -1 && posB !== -1) {
       return posA - posB
     }
-    
+
     return b.score - a.score
   });
 
@@ -136,9 +136,9 @@ export default function ResultsPage() {
     let previousScore: number | null = null
     let sameRankCount = 0
 
-    sortedScores.forEach((scoreData, index) => {
+    sortedScores.forEach((scoreData) => {
       const currentScore = scoreData.score
-      
+
       if (previousScore !== null && currentScore !== previousScore) {
         // Score changed, update rank
         currentRank += sameRankCount
@@ -147,15 +147,15 @@ export default function ResultsPage() {
         // Same score or first item
         sameRankCount++
       }
-      
+
       const gift = getGiftByKey(scoreData.giftKey)
       if (gift) {
         rankingsMap.set(gift.name, currentRank)
       }
-      
+
       previousScore = currentScore
     })
-    
+
     return rankingsMap
   }
 
