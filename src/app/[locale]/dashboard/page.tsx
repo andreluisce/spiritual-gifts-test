@@ -12,7 +12,6 @@ import {
   TrendingUp,
   Award,
   Eye,
-  Download,
   RefreshCw,
   Plus,
   AlertCircle,
@@ -324,10 +323,6 @@ export default function DashboardPage() {
                           Ver Detalhes
                         </Button>
                       </Link>
-                      <Button variant="outline" size="sm" className="flex items-center gap-2">
-                        <Download className="h-4 w-4" />
-                        Download
-                      </Button>
                     </div>
                   </div>
                 </CardContent>
@@ -422,10 +417,6 @@ export default function DashboardPage() {
                               Ver
                             </Button>
                           </Link>
-                          <Button variant="outline" size="sm" className="flex items-center gap-2" disabled>
-                            <Download className="h-4 w-4" />
-                            PDF
-                          </Button>
                         </div>
                       </div>
                       {index < results.length - 1 && <Separator className="my-4" />}
