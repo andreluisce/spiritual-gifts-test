@@ -24,7 +24,6 @@ import {
   Award,
   Eye,
   RefreshCw,
-  Plus,
   AlertCircle,
   Play,
   Trash2,
@@ -203,21 +202,14 @@ export default function DashboardPage() {
             </p>
           </div>
           <div className="flex gap-2 mt-4 md:mt-0">
-            <Link href="/quiz">
-              <Button className="flex items-center gap-2">
-                {quizInProgress ? (
-                  <>
-                    <Play className="h-4 w-4" />
-                    Continuar Teste
-                  </>
-                ) : (
-                  <>
-                    <Plus className="h-4 w-4" />
-                    Novo Teste
-                  </>
-                )}
-              </Button>
-            </Link>
+            {quizInProgress && (
+              <Link href="/quiz">
+                <Button className="flex items-center gap-2">
+                  <Play className="h-4 w-4" />
+                  Continuar Teste
+                </Button>
+              </Link>
+            )}
             <Button variant="outline" className="flex items-center gap-2" onClick={() => refetchResults()}>
               <RefreshCw className="h-4 w-4" />
               Atualizar
