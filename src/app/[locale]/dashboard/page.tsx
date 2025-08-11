@@ -27,12 +27,16 @@ import {
   Plus,
   AlertCircle,
   Play,
-  Trash2
+  Trash2,
+  User
 } from 'lucide-react'
 import Link from 'next/link'
 import type { SpiritualGift } from '@/data/quiz-data'
 import { useUserResults, useLatestResult, useGifts, useDeleteResult } from '@/hooks/use-quiz-queries'
 import { useAuth } from '@/context/AuthContext'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { useTranslations } from 'next-intl'
+import Image from 'next/image'
 
 const QUIZ_STATE_KEY = 'quiz_in_progress'
 
@@ -43,12 +47,13 @@ interface QuizState {
 }
 
 export default function DashboardPage() {
-  const { user } = useAuth()
+  const { user, signOut } = useAuth()
   const { data: results, isLoading: loadingResults, refetch: refetchResults } = useUserResults(user?.id || null)
   const { data: latestResult, isLoading: loadingLatestResult } = useLatestResult(user?.id || null)
   const { data: gifts, isLoading: loadingGifts } = useGifts()
   const deleteResultMutation = useDeleteResult()
   const [quizInProgress, setQuizInProgress] = useState<QuizState | null>(null)
+  const tCommon = useTranslations('common')
 
   const loading = loadingResults || loadingLatestResult || loadingGifts
 
@@ -138,7 +143,56 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="max-w-7xl mx-auto p-4 py-8">
-        {/* Header */}
+        {/* User Header */}
+        {user && (
+          <div className="flex items-center justify-between mb-6">
+            <Popover>
+              <PopoverTrigger asChild>
+                <div className="flex items-center gap-3 cursor-pointer">
+                  <div className="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center overflow-hidden">
+                    {user.user_metadata?.avatar_url ? (
+                      <Image
+                        src={user.user_metadata.avatar_url}
+                        alt="Avatar"
+                        width={40}
+                        height={40}
+                        className="w-10 h-10 rounded-full"
+                      />
+                    ) : (
+                      <User className="h-5 w-5 text-slate-600" />
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-slate-800">
+                      {user.user_metadata?.full_name || user.email}
+                    </p>
+                    <p className="text-xs text-slate-500">Dashboard</p>
+                  </div>
+                </div>
+              </PopoverTrigger>
+              <PopoverContent className="w-56 p-2">
+                <div className="flex flex-col space-y-2">
+                  <p className="text-sm font-medium leading-none">
+                    {user.user_metadata?.full_name || user.email}
+                  </p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    {user.email}
+                  </p>
+                  <Button variant="ghost" className="w-full justify-start" onClick={signOut}>
+                    {tCommon('signOut')}
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
+            <Link href="/quiz">
+              <Button variant="outline" size="sm" className="text-slate-600 border-slate-300">
+                Fazer Teste
+              </Button>
+            </Link>
+          </div>
+        )}
+
+        {/* Main Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-800 mb-2">
