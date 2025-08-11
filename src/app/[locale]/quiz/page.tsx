@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
-import { ArrowLeft, ArrowRight, AlertCircle, CheckCircle2, Book, BookOpen, Star, User } from 'lucide-react'
+import { ArrowLeft, AlertCircle, CheckCircle2, Book, BookOpen, Star, User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useQuiz } from '@/hooks/use-quiz'
@@ -95,7 +95,7 @@ export default function QuizPage() {
           goToNext()
         }
         setIsTransitioning(false)
-      }, 800)
+      }, 400)
     }
   }
 
@@ -147,9 +147,9 @@ export default function QuizPage() {
 
   const getScoreLabel = (score: number) => {
     const labels = [
-      t('labels.0'), 
-      t('labels.1'), 
-      t('labels.2'), 
+      t('labels.0'),
+      t('labels.1'),
+      t('labels.2'),
       t('labels.3')
     ]
     return labels[score] || ''
@@ -230,7 +230,7 @@ export default function QuizPage() {
                 Continuar teste?
               </h3>
               <p className="text-gray-600 mb-6">
-                Encontramos um teste em progresso. Você tem {Object.keys(currentAnswers).length} resposta(s) salva(s). 
+                Encontramos um teste em progresso. Você tem {Object.keys(currentAnswers).length} resposta(s) salva(s).
                 Deseja continuar de onde parou ou começar um novo teste?
               </p>
               <div className="flex gap-3">
@@ -333,9 +333,9 @@ export default function QuizPage() {
           <div className="flex items-center justify-center gap-2 text-slate-600 text-sm md:text-base">
             <div className="w-1.5 h-1.5 rounded-full bg-slate-300 hidden md:block" />
             <span className="font-medium">
-              {t('questionOf', { 
-                current: currentQuestionIndex + 1, 
-                total: availableQuestions?.length || 0 
+              {t('questionOf', {
+                current: currentQuestionIndex + 1,
+                total: availableQuestions?.length || 0
               })}
               {isPreviewMode && <span className="text-amber-600 ml-2">(Preview)</span>}
             </span>
@@ -389,7 +389,7 @@ export default function QuizPage() {
           >
             <Card className="mb-6 md:mb-8 shadow-lg border border-slate-200 bg-white">
               <div className="px-4 pt-4 md:px-6 md:pt-6">
-                <h2 className="text-base md:text-xl leading-relaxed text-slate-800 text-center line-clamp-3">
+                <h2 className="text-base md:text-xl leading-relaxed text-slate-800 text-center">
                   {currentQuestion.question}
                 </h2>
               </div>
@@ -471,34 +471,31 @@ export default function QuizPage() {
             </div>
           </div>
 
-          <Button
-            onClick={goToNext}
-            disabled={!canProceed || isSubmitting || isTransitioning}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-800 text-white disabled:opacity-50 text-sm md:text-base"
-          >
-            {isSubmitting ? (
-              <>
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                >
-                  <BookOpen size={16} className="md:!hidden" />
-                  <BookOpen size={18} className="hidden md:block" />
-                </motion.div>
-                Processando
-              </>
-            ) : isLastQuestion ? (
-              <>
-                {isPreviewMode ? "Ver Teste Completo" : "Finalizar"}
-                <CheckCircle2 size={16} className="md:size-[18px]" />
-              </>
-            ) : (
-              <>
-                Próxima
-                <ArrowRight size={16} className="md:size-[18px]" />
-              </>
-            )}
-          </Button>
+          {isLastQuestion && (
+            <Button
+              onClick={goToNext}
+              disabled={!canProceed || isSubmitting || isTransitioning}
+              className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-800 text-white disabled:opacity-50 text-sm md:text-base"
+            >
+              {isSubmitting ? (
+                <>
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  >
+                    <BookOpen size={16} className="md:!hidden" />
+                    <BookOpen size={18} className="hidden md:block" />
+                  </motion.div>
+                  Processando
+                </>
+              ) : (
+                <>
+                  {isPreviewMode ? "Ver Teste Completo" : "Finalizar"}
+                  <CheckCircle2 size={16} className="md:size-[18px]" />
+                </>
+              )}
+            </Button>
+          )}
         </motion.div>
 
 

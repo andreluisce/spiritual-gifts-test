@@ -11,18 +11,18 @@ import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { 
-  Search, BookOpen, Heart, Star, 
+import {
+  Search, BookOpen, Heart, Star,
   AlertTriangle, Target, Lightbulb,
   Users, Crown
 } from 'lucide-react'
 import Link from 'next/link'
-import { 
-  useSpiritualGifts, 
-  useCategories, 
-  useMinistries, 
+import {
+  useSpiritualGifts,
+  useCategories,
+  useMinistries,
   useManifestations,
-  type ExtendedSpiritualGift 
+  type ExtendedSpiritualGift
 } from '@/hooks/use-quiz-queries'
 
 export default function GiftsPage() {
@@ -86,13 +86,13 @@ export default function GiftsPage() {
           <p className="text-xl text-gray-600 mb-6">
             As Três Categorias: Motivações, Ministérios e Manifestações
           </p>
-          
+
           {/* Call to Action */}
           <div className="flex flex-wrap gap-4 justify-center">
             <Button size="lg" className="flex items-center gap-2" onClick={handleDiscoverGifts}>
-            <Star className="h-5 w-5" />
-            Descobrir Meus Dons
-          </Button>
+              <Star className="h-5 w-5" />
+              Descobrir Meus Dons
+            </Button>
             <Link href="/dashboard">
               <Button variant="outline" size="lg">
                 Meu Histórico
@@ -159,11 +159,10 @@ export default function GiftsPage() {
               <div className="lg:col-span-2">
                 <div className="grid md:grid-cols-2 gap-6">
                   {filteredGifts.map((gift) => (
-                    <Card 
+                    <Card
                       key={gift.id}
-                      className={`cursor-pointer transition-all hover:shadow-lg ${
-                        selectedGift?.id === gift.id ? 'ring-2 ring-blue-500' : ''
-                      }`}
+                      className={`cursor-pointer transition-all hover:shadow-lg ${selectedGift?.id === gift.id ? 'ring-2 ring-blue-500' : ''
+                        }`}
                       onClick={() => setSelectedGift(gift)}
                     >
                       <CardHeader>
@@ -173,7 +172,7 @@ export default function GiftsPage() {
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <p className="text-gray-600 text-sm line-clamp-3">
+                        <p className="text-gray-600 text-sm">
                           {gift.description}
                         </p>
                         <div className="mt-4 flex justify-between items-center">
@@ -308,7 +307,7 @@ export default function GiftsPage() {
                       <Users className="h-5 w-5 text-green-500" />
                       {ministry.name}
                     </CardTitle>
-                    <Badge 
+                    <Badge
                       variant={ministry.type === 'PRIMARY' ? 'default' : 'secondary'}
                       className="w-fit"
                     >
@@ -367,7 +366,7 @@ export default function GiftsPage() {
             Pronto para descobrir seus dons?
           </h2>
           <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-            Nosso teste foi desenvolvido com base nas Escrituras e no documento &ldquo;Dons Espirituais - As Três Categorias&rdquo; 
+            Nosso teste foi desenvolvido com base nas Escrituras e no documento &ldquo;Dons Espirituais - As Três Categorias&rdquo;
             para ajudar você a identificar e compreender os dons que Deus lhe concedeu.
           </p>
           <Button size="lg" className="flex items-center gap-2 mx-auto" onClick={handleDiscoverGifts}>
