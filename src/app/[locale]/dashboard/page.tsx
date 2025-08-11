@@ -7,6 +7,17 @@ import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Separator } from '@/components/ui/separator'
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
+import {
   BarChart3,
   Calendar,
   TrendingUp,
@@ -15,11 +26,12 @@ import {
   RefreshCw,
   Plus,
   AlertCircle,
-  Play
+  Play,
+  Trash2
 } from 'lucide-react'
 import Link from 'next/link'
 import type { SpiritualGift } from '@/data/quiz-data'
-import { useUserResults, useLatestResult, useGifts } from '@/hooks/use-quiz-queries'
+import { useUserResults, useLatestResult, useGifts, useDeleteResult } from '@/hooks/use-quiz-queries'
 import { useAuth } from '@/context/AuthContext'
 
 const QUIZ_STATE_KEY = 'quiz_in_progress'
@@ -35,6 +47,7 @@ export default function DashboardPage() {
   const { data: results, isLoading: loadingResults, refetch: refetchResults } = useUserResults(user?.id || null)
   const { data: latestResult, isLoading: loadingLatestResult } = useLatestResult(user?.id || null)
   const { data: gifts, isLoading: loadingGifts } = useGifts()
+  const deleteResultMutation = useDeleteResult()
   const [quizInProgress, setQuizInProgress] = useState<QuizState | null>(null)
 
   const loading = loadingResults || loadingLatestResult || loadingGifts
@@ -75,6 +88,19 @@ export default function DashboardPage() {
       month: 'long',
       day: 'numeric'
     })
+  }
+
+  const handleDeleteResult = async (sessionId: string) => {
+    if (!user?.id) return
+    
+    try {
+      await deleteResultMutation.mutateAsync({
+        sessionId,
+        userId: user.id
+      })
+    } catch (error) {
+      console.error('Error deleting result:', error)
+    }
   }
 
   const getGiftEvolution = () => {
@@ -417,6 +443,38 @@ export default function DashboardPage() {
                               Ver
                             </Button>
                           </Link>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="flex items-center gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                disabled={deleteResultMutation.isPending}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                                Remover
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Confirmar Remoção</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Tem certeza que deseja remover este teste de {formatDate(result.createdAt)}? 
+                                  Esta ação não pode ser desfeita e todos os dados do teste serão perdidos permanentemente.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleDeleteResult(result.sessionId)}
+                                  className="bg-red-600 hover:bg-red-700 text-white"
+                                  disabled={deleteResultMutation.isPending}
+                                >
+                                  {deleteResultMutation.isPending ? 'Removendo...' : 'Remover Teste'}
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         </div>
                       </div>
                       {index < results.length - 1 && <Separator className="my-4" />}
