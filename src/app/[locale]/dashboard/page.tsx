@@ -23,11 +23,12 @@ import {
   TrendingUp,
   Award,
   Eye,
-  RefreshCw,
   AlertCircle,
   Play,
   Trash2,
-  User
+  User,
+  Home,
+  Settings
 } from 'lucide-react'
 import Link from 'next/link'
 import type { SpiritualGift } from '@/data/quiz-data'
@@ -46,8 +47,8 @@ interface QuizState {
 }
 
 export default function DashboardPage() {
-  const { user, signOut } = useAuth()
-  const { data: results, isLoading: loadingResults, refetch: refetchResults } = useUserResults(user?.id || null)
+  const { user, signOut, isAdmin } = useAuth()
+  const { data: results, isLoading: loadingResults } = useUserResults(user?.id || null)
   const { data: latestResult, isLoading: loadingLatestResult } = useLatestResult(user?.id || null)
   const { data: gifts, isLoading: loadingGifts } = useGifts()
   const deleteResultMutation = useDeleteResult()
@@ -183,11 +184,27 @@ export default function DashboardPage() {
                 </div>
               </PopoverContent>
             </Popover>
-            <Link href="/quiz">
-              <Button variant="outline" size="sm" className="text-slate-600 border-slate-300">
-                Fazer Teste
-              </Button>
-            </Link>
+            <div className="flex gap-2">
+              <Link href="/">
+                <Button variant="ghost" size="sm" className="text-slate-600">
+                  <Home className="h-4 w-4 mr-2" />
+                  Home
+                </Button>
+              </Link>
+              {isAdmin && (
+                <Link href="/admin">
+                  <Button variant="ghost" size="sm" className="text-slate-600">
+                    <Settings className="h-4 w-4 mr-2" />
+                    Admin
+                  </Button>
+                </Link>
+              )}
+              <Link href="/quiz">
+                <Button variant="outline" size="sm" className="text-slate-600 border-slate-300">
+                  Fazer Teste
+                </Button>
+              </Link>
+            </div>
           </div>
         )}
 
@@ -201,20 +218,16 @@ export default function DashboardPage() {
               Acompanhe sua jornada de descoberta dos dons espirituais
             </p>
           </div>
-          <div className="flex gap-2 mt-4 md:mt-0">
-            {quizInProgress && (
+          {quizInProgress && (
+            <div className="mt-4 md:mt-0">
               <Link href="/quiz">
                 <Button className="flex items-center gap-2">
                   <Play className="h-4 w-4" />
                   Continuar Teste
                 </Button>
               </Link>
-            )}
-            <Button variant="outline" className="flex items-center gap-2" onClick={() => refetchResults()}>
-              <RefreshCw className="h-4 w-4" />
-              Atualizar
-            </Button>
-          </div>
+            </div>
+          )}
         </div>
 
         {/* Quiz in Progress Alert */}

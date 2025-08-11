@@ -6,13 +6,12 @@ import { NextRequest, NextResponse } from 'next/server';
 const intl = createMiddleware(routing);
 
 // Rotas públicas (sem exigir sessão)
-const PUBLIC_SEGMENTS = new Set(['login', 'signup', 'forgot-password', '', 'quiz', 'gifts']);
+const PUBLIC_SEGMENTS = new Set(['login']);
+
+// Rotas que requerem admin
+const ADMIN_SEGMENTS = new Set(['admin']);
 
 export default async function middleware(req: NextRequest) {
-  // 1) i18n negotiation (ex.: / → /pt)
-  const intlRes = intl(req);
-  if (intlRes) return intlRes;
-
   const res = NextResponse.next();
 
 
@@ -39,9 +38,34 @@ export default async function middleware(req: NextRequest) {
 
   const { data: { session } } = await supabase.auth.getSession();
 
+  console.log(`Middleware: ${pathname} | segment: "${segment}" | session: ${!!session}`);
+
+  // Check if user is admin for admin routes
+  let isAdmin = false;
+  if (session && ADMIN_SEGMENTS.has(segment)) {
+    // For now, hardcode admin check based on email
+    isAdmin = session.user.email === 'andremluisce@gmail.com';
+  }
+
   // 4) Regras
   // 4a) Se não logado e NÃO for página pública => manda pra login
   if (!session && !PUBLIC_SEGMENTS.has(segment)) {
+    console.log(`Redirecting to login: segment "${segment}" not in public segments`);
+    const url = req.nextUrl.clone();
+    url.pathname = `/${locale}/login`;
+    return NextResponse.redirect(url);
+  }
+
+  // 4a1) Se logado mas não é admin e tenta acessar rota admin => manda pra dashboard
+  if (session && ADMIN_SEGMENTS.has(segment) && !isAdmin) {
+    console.log(`Redirecting to dashboard: user is not admin`);
+    const url = req.nextUrl.clone();
+    url.pathname = `/${locale}/dashboard`;
+    return NextResponse.redirect(url);
+  }
+
+  // 4a2) Se não logado e estiver na home => manda pra login
+  if (!session && segment === '') {
     const url = req.nextUrl.clone();
     url.pathname = `/${locale}/login`;
     return NextResponse.redirect(url);
@@ -53,6 +77,10 @@ export default async function middleware(req: NextRequest) {
     url.pathname = `/${locale}/dashboard`;
     return NextResponse.redirect(url);
   }
+
+  // 5) i18n negotiation (ex.: / → /pt) - só depois da auth
+  const intlRes = intl(req);
+  if (intlRes) return intlRes;
 
   return res;
 }

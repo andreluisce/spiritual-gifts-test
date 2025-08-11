@@ -214,7 +214,7 @@ export default function GiftsPage() {
                             <Target className="h-4 w-4" />
                             Qualidades a Desenvolver
                           </h3>
-                          <div className="space-y-2 max-h-40 overflow-y-auto">
+                          <div className="space-y-2 md:max-h-none md:overflow-visible max-h-40 overflow-y-auto">
                             {selectedGift.qualities.map((quality, index) => (
                               <div key={quality.id} className="flex items-start gap-2">
                                 <Badge variant="outline" className="text-xs mt-1">
@@ -233,18 +233,13 @@ export default function GiftsPage() {
                             <Lightbulb className="h-4 w-4" />
                             Características
                           </h3>
-                          <div className="space-y-2 max-h-40 overflow-y-auto">
-                            {selectedGift.characteristics.slice(0, 5).map((char, index) => (
+                          <div className="space-y-2 md:max-h-none md:overflow-visible max-h-40 overflow-y-auto">
+                            {selectedGift.characteristics.map((char, index) => (
                               <div key={index} className="flex items-start gap-2">
                                 <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
                                 <span className="text-gray-700 text-sm">{char}</span>
                               </div>
                             ))}
-                            {selectedGift.characteristics.length > 5 && (
-                              <p className="text-xs text-gray-500 pl-4">
-                                +{selectedGift.characteristics.length - 5} características adicionais
-                              </p>
-                            )}
                           </div>
                         </div>
 
@@ -255,19 +250,14 @@ export default function GiftsPage() {
                             <AlertTriangle className="h-4 w-4 text-amber-500" />
                             Cuidados
                           </h3>
-                          <div className="space-y-2 max-h-32 overflow-y-auto">
-                            {selectedGift.dangers.slice(0, 3).map((danger) => (
+                          <div className="space-y-2 md:max-h-none md:overflow-visible max-h-40 overflow-y-auto">
+                            {selectedGift.dangers.map((danger) => (
                               <Alert key={danger.id} className="py-2">
                                 <AlertDescription className="text-xs">
                                   {danger.danger}
                                 </AlertDescription>
                               </Alert>
                             ))}
-                            {selectedGift.dangers.length > 3 && (
-                              <p className="text-xs text-gray-500">
-                                +{selectedGift.dangers.length - 3} cuidados adicionais
-                              </p>
-                            )}
                           </div>
                         </div>
 

@@ -6,11 +6,20 @@ import { supabase } from '@/lib/supabase'
 
 type AuthError = { name: string; message: string }
 
+type UserProfile = {
+  id: string
+  full_name?: string
+  avatar_url?: string
+  role: 'user' | 'admin'
+}
+
 type AuthContextType = {
   user: User | null
   session: Session | null
+  profile: UserProfile | null
   loading: boolean
   isAuthenticated: boolean
+  isAdmin: boolean
   signInWithGoogle: () => Promise<{ error: AuthError | null }>
   signOut: () => Promise<void>
 }
@@ -25,24 +34,72 @@ const getOrigin = () =>
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
+  const [profile, setProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const mounted = useRef(true)
+
+  const fetchUserProfile = useCallback(async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, full_name, avatar_url')
+        .eq('id', userId)
+        .single()
+      
+      if (error) throw error
+      
+      // For now, hardcode admin check based on email
+      const user = await supabase.auth.getUser()
+      const isAdminEmail = user.data.user?.email === 'andremluisce@gmail.com'
+      
+      return {
+        ...data,
+        role: isAdminEmail ? 'admin' as const : 'user' as const
+      } as UserProfile
+    } catch (error) {
+      console.error('Error fetching user profile:', error)
+      return null
+    }
+  }, [])
 
   useEffect(() => {
     mounted.current = true
       ; (async () => {
         const { data } = await supabase.auth.getSession()
         if (!mounted.current) return
-        setSession(data.session ?? null)
-        setUser(data.session?.user ?? null)
+        
+        const session = data.session
+        setSession(session ?? null)
+        setUser(session?.user ?? null)
+        
+        if (session?.user?.id) {
+          const userProfile = await fetchUserProfile(session.user.id)
+          if (mounted.current) {
+            setProfile(userProfile)
+          }
+        } else {
+          setProfile(null)
+        }
+        
         setLoading(false)
       })()
 
     const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event: AuthChangeEvent, newSession) => {
+      async (_event: AuthChangeEvent, newSession) => {
         if (!mounted.current) return
+        
         setSession(newSession)
         setUser(newSession?.user ?? null)
+        
+        if (newSession?.user?.id) {
+          const userProfile = await fetchUserProfile(newSession.user.id)
+          if (mounted.current) {
+            setProfile(userProfile)
+          }
+        } else {
+          setProfile(null)
+        }
+        
         setLoading(false)
       }
     )
@@ -86,11 +143,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo<AuthContextType>(() => ({
     user,
     session,
+    profile,
     loading,
     isAuthenticated: !!session?.user,
+    isAdmin: profile?.role === 'admin',
     signInWithGoogle,
     signOut,
-  }), [user, session, loading, signInWithGoogle, signOut])
+  }), [user, session, profile, loading, signInWithGoogle, signOut])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
