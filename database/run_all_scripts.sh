@@ -72,6 +72,7 @@ execute_sql "04_CLEAN_english_translations.sql" "STEP 5: Load English translatio
 execute_sql "05_CLEAN_spanish_translations.sql" "STEP 6: Load Spanish translations"
 execute_sql "enhanced_spiritual_gifts_schema.sql" "STEP 7: Load rich multilingual data"
 execute_sql "06_CLEAN_final_verification.sql" "STEP 8: Final verification & testing"
+execute_sql "07_RLS_policies.sql" "STEP 9: Configure Row Level Security policies"
 
 # Success message
 echo -e "${GREEN}"

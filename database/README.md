@@ -21,6 +21,7 @@ psql -d your_database -f 04_CLEAN_english_translations.sql
 psql -d your_database -f 05_CLEAN_spanish_translations.sql
 psql -d your_database -f enhanced_spiritual_gifts_schema.sql
 psql -d your_database -f 06_CLEAN_final_verification.sql
+psql -d your_database -f 07_RLS_policies.sql
 ```
 
 ## 📋 Scripts Individuais (Ordem de Execução)
@@ -69,6 +70,14 @@ psql -d your_database -f 06_CLEAN_final_verification.sql
   - Criação de dados de teste
   - Função de validação completa
   - Estatísticas finais
+
+### 9. `07_RLS_policies.sql`
+- **Propósito**: Configura Row Level Security (RLS) para acesso seguro
+- **Funcionalidades**:
+  - Habilita RLS em todas as tabelas
+  - Permite leitura de dados públicos para usuários autenticados
+  - Restringe acesso a sessões e respostas aos próprios usuários
+  - Configurações especiais para administradores
 
 ## 🧪 Testando o Sistema
 
@@ -132,12 +141,28 @@ database/
 └── README.md                    # Este arquivo
 ```
 
+## 🔐 Segurança e RLS
+
+### Aplicar apenas políticas RLS
+Se você já tem o banco configurado e só precisa aplicar as políticas de segurança:
+
+```bash
+cd database/
+./apply_rls_policies.sh
+```
+
+### Políticas de Acesso
+- **Dados públicos**: Todos os usuários autenticados podem ler categorias, dons, perguntas
+- **Dados privados**: Usuários só acessam suas próprias sessões e respostas
+- **Administradores**: Acesso completo se `is_admin = true` nos metadados do usuário
+
 ## ⚡ Dicas de Uso
 
 1. **Desenvolvimento**: Use `00_MASTER_SETUP.sql` para reset completo
 2. **Produção**: Execute scripts individuais para atualizações incrementais
 3. **Debug**: Use `06_CLEAN_final_verification.sql` para diagnosticar problemas
 4. **Backup**: Sempre faça backup antes de executar `00_FRESH_START`
+5. **Segurança**: Sempre execute `07_RLS_policies.sql` em produção
 
 ## 🌍 Suporte Multilíngue
 
