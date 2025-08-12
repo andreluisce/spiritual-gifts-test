@@ -35,6 +35,7 @@ import { useUserResults, useLatestResult, useSpiritualGifts, useDeleteResult, ty
 import { useAuth } from '@/context/AuthContext'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { useTranslations, useLocale } from 'next-intl'
+import { formatScore, formatPercentage } from '@/data/quiz-data'
 import Image from 'next/image'
 
 const QUIZ_STATE_KEY = 'quiz_in_progress'
@@ -401,7 +402,7 @@ export default function DashboardPage() {
                                 <div className="w-24">
                                   <Progress value={(score / maxScore) * 100} className="h-2" />
                                 </div>
-                                <span className="text-sm font-semibold w-8">{score}</span>
+                                <span className="text-sm font-semibold w-8">{formatScore(score, 0)}</span>
                               </div>
                             </div>
                           )
@@ -439,13 +440,13 @@ export default function DashboardPage() {
                               <span className="font-medium">{item.giftName}</span>
                               <div className="flex items-center gap-2">
                                 <span className="text-sm text-gray-500">
-                                  {item.previousScore} → {item.latestScore}
+                                  {formatScore(item.previousScore, 0)} → {formatScore(item.latestScore, 0)}
                                 </span>
                                 <Badge
                                   variant={item.change > 0 ? "default" : item.change < 0 ? "destructive" : "secondary"}
                                   className="text-xs"
                                 >
-                                  {item.change > 0 ? '+' : ''}{item.change}
+                                  {item.change > 0 ? '+' : ''}{formatScore(item.change, 0)}
                                 </Badge>
                               </div>
                             </div>
