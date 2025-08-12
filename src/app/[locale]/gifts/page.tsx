@@ -10,10 +10,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import {
   Search, BookOpen, Heart, Star,
-  AlertTriangle, Target, Lightbulb,
+  Target, Lightbulb,
   Users, Crown
 } from 'lucide-react'
 import Link from 'next/link'
@@ -160,8 +159,8 @@ export default function GiftsPage() {
                 <div className="grid md:grid-cols-2 gap-6">
                   {filteredGifts.map((gift) => (
                     <Card
-                      key={gift.id}
-                      className={`cursor-pointer transition-all hover:shadow-lg ${selectedGift?.id === gift.id ? 'ring-2 ring-blue-500' : ''
+                      key={gift.key}
+                      className={`cursor-pointer transition-all hover:shadow-lg ${selectedGift?.key === gift.key ? 'ring-2 ring-blue-500' : ''
                         }`}
                       onClick={() => setSelectedGift(gift)}
                     >
@@ -177,7 +176,7 @@ export default function GiftsPage() {
                         </p>
                         <div className="mt-4 flex justify-between items-center">
                           <Badge variant="secondary" className="text-xs">
-                            {gift.category?.greek_term || 'Karismation'}
+                            Dom Espiritual
                           </Badge>
                           <div className="text-xs text-gray-500">
                             {gift.characteristics.length} características
@@ -196,7 +195,7 @@ export default function GiftsPage() {
                     <Card>
                       <CardHeader>
                         <CardTitle className="text-2xl">{selectedGift.name}</CardTitle>
-                        <p className="text-sm text-gray-500">{selectedGift.category?.greek_term}</p>
+                        <p className="text-sm text-gray-500">Dom Espiritual</p>
                       </CardHeader>
                       <CardContent className="space-y-6">
                         <div>
@@ -215,12 +214,12 @@ export default function GiftsPage() {
                             Qualidades a Desenvolver
                           </h3>
                           <div className="space-y-2 md:max-h-none md:overflow-visible max-h-40 overflow-y-auto">
-                            {selectedGift.qualities.map((quality, index) => (
-                              <div key={quality.id} className="flex items-start gap-2">
+                            {selectedGift.characteristics?.map((characteristic, index) => (
+                              <div key={index} className="flex items-start gap-2">
                                 <Badge variant="outline" className="text-xs mt-1">
                                   {index + 1}
                                 </Badge>
-                                <span className="text-gray-700 text-sm">{quality.quality_name}</span>
+                                <span className="text-gray-700 text-sm">{characteristic}</span>
                               </div>
                             ))}
                           </div>
@@ -234,7 +233,7 @@ export default function GiftsPage() {
                             Características
                           </h3>
                           <div className="space-y-2 md:max-h-none md:overflow-visible max-h-40 overflow-y-auto">
-                            {selectedGift.characteristics.map((char, index) => (
+                            {selectedGift.characteristics?.map((char, index) => (
                               <div key={index} className="flex items-start gap-2">
                                 <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
                                 <span className="text-gray-700 text-sm">{char}</span>
@@ -245,21 +244,6 @@ export default function GiftsPage() {
 
                         <Separator />
 
-                        <div>
-                          <h3 className="font-semibold mb-3 flex items-center gap-2">
-                            <AlertTriangle className="h-4 w-4 text-amber-500" />
-                            Cuidados
-                          </h3>
-                          <div className="space-y-2 md:max-h-none md:overflow-visible max-h-40 overflow-y-auto">
-                            {selectedGift.dangers.map((danger) => (
-                              <Alert key={danger.id} className="py-2">
-                                <AlertDescription className="text-xs">
-                                  {danger.danger}
-                                </AlertDescription>
-                              </Alert>
-                            ))}
-                          </div>
-                        </div>
 
                         <div className="pt-4">
                           <Link href="/quiz">

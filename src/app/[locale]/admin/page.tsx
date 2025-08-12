@@ -1,31 +1,20 @@
 'use client'
 
 import { useAuth } from '@/context/AuthContext'
-import { useRouter, Link } from '@/i18n/navigation'
+import { useRouter } from '@/i18n/navigation'
 import { useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { 
-  Users, 
-  BarChart3, 
-  FileText, 
-  Settings,
-  TrendingUp,
-  Database,
-  Activity,
-  PieChart
-} from 'lucide-react'
+
 
 
 export default function AdminPage() {
-  const { isAuthenticated, isAdmin, loading } = useAuth()
+  const { user, isAdmin, loading } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
-    if (!loading && (!isAuthenticated || !isAdmin)) {
+    if (!loading && (!user || !isAdmin)) {
       router.push('/dashboard')
     }
-  }, [isAuthenticated, isAdmin, loading, router])
+  }, [user, isAdmin, loading, router])
 
   if (loading) {
     return (
@@ -35,7 +24,7 @@ export default function AdminPage() {
     )
   }
 
-  if (!isAuthenticated || !isAdmin) {
+  if (!user || !isAdmin) {
     return null
   }
 

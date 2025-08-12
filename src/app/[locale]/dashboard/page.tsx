@@ -31,8 +31,8 @@ import {
   Settings
 } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
-import type { SpiritualGift } from '@/data/quiz-data'
-import { useUserResults, useLatestResult, useGifts, useDeleteResult } from '@/hooks/use-quiz-queries'
+import type { ExtendedSpiritualGift } from '@/hooks/use-quiz-queries'
+import { useUserResults, useLatestResult, useSpiritualGifts, useDeleteResult } from '@/hooks/use-quiz-queries'
 import { useAuth } from '@/context/AuthContext'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { useTranslations } from 'next-intl'
@@ -50,7 +50,7 @@ export default function DashboardPage() {
   const { user, signOut, isAdmin } = useAuth()
   const { data: results, isLoading: loadingResults } = useUserResults(user?.id || null)
   const { data: latestResult, isLoading: loadingLatestResult } = useLatestResult(user?.id || null)
-  const { data: gifts, isLoading: loadingGifts } = useGifts()
+  const { data: gifts, isLoading: loadingGifts } = useSpiritualGifts()
   const deleteResultMutation = useDeleteResult()
   const [quizInProgress, setQuizInProgress] = useState<QuizState | null>(null)
   const tCommon = useTranslations('common')
@@ -83,7 +83,7 @@ export default function DashboardPage() {
     }
   }, [])
 
-  const getGiftByKey = (key: string): SpiritualGift | undefined => {
+  const getGiftByKey = (key: string): ExtendedSpiritualGift | undefined => {
     return gifts?.find(gift => gift.key === key)
   }
 

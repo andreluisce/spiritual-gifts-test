@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
-import { useQuizQuestions, useGifts, useSubmitQuiz } from './use-quiz-queries'
+import { useQuizQuestions, useSpiritualGifts, useSubmitQuiz } from './use-quiz-queries'
 import type { QuizQuestion } from '@/data/quiz-data'
 
 interface UseQuizReturn {
@@ -54,7 +54,7 @@ export function useQuiz(locale: string = 'pt'): UseQuizReturn {
   const [shuffledQuestions, setShuffledQuestions] = useState<QuizQuestion[]>([])
 
   const questionsQuery = useQuizQuestions(locale)
-  const giftsQuery = useGifts()
+  const giftsQuery = useSpiritualGifts()
   const submitQuizMutation = useSubmitQuiz()
 
   // Shuffle questions when they are first loaded

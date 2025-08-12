@@ -89,7 +89,7 @@ export default function HomePage() {
           <motion.div
             initial={{ y: -30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 2 }}
             className="flex justify-center mb-8"
           >
             <div className="bg-white rounded-full p-6 shadow-lg">

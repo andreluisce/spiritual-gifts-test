@@ -9,7 +9,7 @@ import { useLocale } from 'next-intl'
 import { useAuth } from '@/context/AuthContext'
 import { motion } from 'framer-motion'
 import { useQuizQuestions, useLatestResult } from '@/hooks/use-quiz-queries'
-import { createSupabaseBrowserClient } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase-client'
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts'
 import { spiritualGifts } from '@/data/quiz-data'
 
@@ -19,7 +19,7 @@ import '@/styles/print.css'
 export default function QuizReportPage() {
   const router = useRouter()
   const locale = useLocale()
-  const { user } = useAuth()
+  const { user, loading: authLoading } = useAuth()
   const printRef = useRef<HTMLDivElement>(null)
 
   const { data: questions, isLoading, error } = useQuizQuestions()
@@ -32,7 +32,7 @@ export default function QuizReportPage() {
       if (!latestResult?.sessionId || !questions) return
       
       try {
-        const { data, error } = await createSupabaseBrowserClient()
+        const { data, error } = await createClient()
           .from('answers')
           .select('question_id, score')
           .eq('session_id', latestResult.sessionId)
@@ -40,7 +40,9 @@ export default function QuizReportPage() {
         if (!error && data) {
           const answersMap: Record<number, number> = {}
           data.forEach(answer => {
-            answersMap[answer.question_id] = answer.score
+            if (answer.question_id !== null) {
+              answersMap[answer.question_id] = answer.score
+            }
           })
           setUserAnswers(answersMap)
         }
@@ -93,10 +95,11 @@ export default function QuizReportPage() {
   }
 
   useEffect(() => {
-    if (!user) {
+    // Only redirect to login after auth is loaded and there's no user
+    if (!authLoading && !user) {
       router.replace(`/${locale}/login?from=quiz-report`)
     }
-  }, [user, router, locale])
+  }, [user, router, locale, authLoading])
 
   const getScoreLabel = (score: number) => {
     // Opções mais suaves e graduais

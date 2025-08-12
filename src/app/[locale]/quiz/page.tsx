@@ -26,13 +26,14 @@ export default function QuizPage() {
   const t = useTranslations('quiz')
   const tCommon = useTranslations('common')
   const locale = useLocale()
-  const { user, signOut } = useAuth()
+  const { user, signOut, loading: authLoading } = useAuth()
 
   useEffect(() => {
-    if (!user) {
+    // Only redirect to login after auth is loaded and there's no user
+    if (!authLoading && !user) {
       router.replace(`/${locale}/login?from=quiz`)
     }
-  }, [user, router, locale])
+  }, [user, router, locale, authLoading])
 
   const {
     questions,

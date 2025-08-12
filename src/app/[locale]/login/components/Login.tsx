@@ -18,11 +18,11 @@ export function LoginForm() {
         setLoading(true)
         setError(null)
 
-        const { error } = await signInWithGoogle()
-
-        setLoading(false)
-        if (error) {
-            setError(error.message)
+        try {
+            await signInWithGoogle()
+        } catch (error) {
+            setLoading(false)
+            setError(error instanceof Error ? error.message : 'Erro ao fazer login')
         }
     }
 

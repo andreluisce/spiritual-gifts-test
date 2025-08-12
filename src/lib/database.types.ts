@@ -59,6 +59,127 @@ export type Database = {
           },
         ]
       }
+      biblical_activities: {
+        Row: {
+          activity_name: string
+          biblical_reference: string | null
+          biblical_text: string | null
+          id: number
+          key: string
+          locale: string
+        }
+        Insert: {
+          activity_name: string
+          biblical_reference?: string | null
+          biblical_text?: string | null
+          id?: number
+          key: string
+          locale?: string
+        }
+        Update: {
+          activity_name?: string
+          biblical_reference?: string | null
+          biblical_text?: string | null
+          id?: number
+          key?: string
+          locale?: string
+        }
+        Relationships: []
+      }
+      categories: {
+        Row: {
+          description: string | null
+          greek_term: string | null
+          id: number
+          key: string
+          locale: string
+          name: string
+          purpose: string | null
+        }
+        Insert: {
+          description?: string | null
+          greek_term?: string | null
+          id?: number
+          key: string
+          locale?: string
+          name: string
+          purpose?: string | null
+        }
+        Update: {
+          description?: string | null
+          greek_term?: string | null
+          id?: number
+          key?: string
+          locale?: string
+          name?: string
+          purpose?: string | null
+        }
+        Relationships: []
+      }
+      characteristics: {
+        Row: {
+          characteristic: string
+          gift_key: Database["public"]["Enums"]["gift_key"]
+          id: number
+          locale: string
+          order_sequence: number | null
+        }
+        Insert: {
+          characteristic: string
+          gift_key: Database["public"]["Enums"]["gift_key"]
+          id?: number
+          locale?: string
+          order_sequence?: number | null
+        }
+        Update: {
+          characteristic?: string
+          gift_key?: Database["public"]["Enums"]["gift_key"]
+          id?: number
+          locale?: string
+          order_sequence?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_characteristics_gift"
+            columns: ["gift_key", "locale"]
+            isOneToOne: false
+            referencedRelation: "spiritual_gifts"
+            referencedColumns: ["gift_key", "locale"]
+          },
+        ]
+      }
+      dangers: {
+        Row: {
+          danger: string
+          gift_key: Database["public"]["Enums"]["gift_key"]
+          id: number
+          locale: string
+          order_sequence: number | null
+        }
+        Insert: {
+          danger: string
+          gift_key: Database["public"]["Enums"]["gift_key"]
+          id?: number
+          locale?: string
+          order_sequence?: number | null
+        }
+        Update: {
+          danger?: string
+          gift_key?: Database["public"]["Enums"]["gift_key"]
+          id?: number
+          locale?: string
+          order_sequence?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_dangers_gift"
+            columns: ["gift_key", "locale"]
+            isOneToOne: false
+            referencedRelation: "spiritual_gifts"
+            referencedColumns: ["gift_key", "locale"]
+          },
+        ]
+      }
       decision_weights: {
         Row: {
           created_at: string
@@ -92,6 +213,57 @@ export type Database = {
         }
         Relationships: []
       }
+      manifestation_principles: {
+        Row: {
+          id: number
+          locale: string
+          order_sequence: number | null
+          principle: string
+        }
+        Insert: {
+          id?: number
+          locale?: string
+          order_sequence?: number | null
+          principle: string
+        }
+        Update: {
+          id?: number
+          locale?: string
+          order_sequence?: number | null
+          principle?: string
+        }
+        Relationships: []
+      }
+      manifestations: {
+        Row: {
+          biblical_references: string | null
+          classification: string | null
+          definition: string | null
+          id: number
+          key: string
+          locale: string
+          name: string
+        }
+        Insert: {
+          biblical_references?: string | null
+          classification?: string | null
+          definition?: string | null
+          id?: number
+          key: string
+          locale?: string
+          name: string
+        }
+        Update: {
+          biblical_references?: string | null
+          classification?: string | null
+          definition?: string | null
+          id?: number
+          key?: string
+          locale?: string
+          name?: string
+        }
+        Relationships: []
+      }
       migration_log: {
         Row: {
           description: string | null
@@ -112,6 +284,68 @@ export type Database = {
           step?: string
         }
         Relationships: []
+      }
+      ministries: {
+        Row: {
+          biblical_references: string | null
+          definition: string | null
+          id: number
+          key: string
+          locale: string
+          name: string
+          type: string | null
+        }
+        Insert: {
+          biblical_references?: string | null
+          definition?: string | null
+          id?: number
+          key: string
+          locale?: string
+          name: string
+          type?: string | null
+        }
+        Update: {
+          biblical_references?: string | null
+          definition?: string | null
+          id?: number
+          key?: string
+          locale?: string
+          name?: string
+          type?: string | null
+        }
+        Relationships: []
+      }
+      misunderstandings: {
+        Row: {
+          gift_key: Database["public"]["Enums"]["gift_key"]
+          id: number
+          locale: string
+          misunderstanding: string
+          order_sequence: number | null
+        }
+        Insert: {
+          gift_key: Database["public"]["Enums"]["gift_key"]
+          id?: number
+          locale?: string
+          misunderstanding: string
+          order_sequence?: number | null
+        }
+        Update: {
+          gift_key?: Database["public"]["Enums"]["gift_key"]
+          id?: number
+          locale?: string
+          misunderstanding?: string
+          order_sequence?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_misunderstandings_gift"
+            columns: ["gift_key", "locale"]
+            isOneToOne: false
+            referencedRelation: "spiritual_gifts"
+            referencedColumns: ["gift_key", "locale"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -142,6 +376,41 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      qualities: {
+        Row: {
+          description: string | null
+          gift_key: Database["public"]["Enums"]["gift_key"]
+          id: number
+          locale: string
+          order_sequence: number | null
+          quality_name: string
+        }
+        Insert: {
+          description?: string | null
+          gift_key: Database["public"]["Enums"]["gift_key"]
+          id?: number
+          locale?: string
+          order_sequence?: number | null
+          quality_name: string
+        }
+        Update: {
+          description?: string | null
+          gift_key?: Database["public"]["Enums"]["gift_key"]
+          id?: number
+          locale?: string
+          order_sequence?: number | null
+          quality_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_qualities_gift"
+            columns: ["gift_key", "locale"]
+            isOneToOne: false
+            referencedRelation: "spiritual_gifts"
+            referencedColumns: ["gift_key", "locale"]
+          },
+        ]
       }
       question_pool: {
         Row: {
@@ -255,6 +524,44 @@ export type Database = {
           },
         ]
       }
+      spiritual_gifts: {
+        Row: {
+          biblical_references: string | null
+          category_key: string
+          definition: string | null
+          gift_key: Database["public"]["Enums"]["gift_key"]
+          id: number
+          locale: string
+          name: string
+        }
+        Insert: {
+          biblical_references?: string | null
+          category_key: string
+          definition?: string | null
+          gift_key: Database["public"]["Enums"]["gift_key"]
+          id?: number
+          locale?: string
+          name: string
+        }
+        Update: {
+          biblical_references?: string | null
+          category_key?: string
+          definition?: string | null
+          gift_key?: Database["public"]["Enums"]["gift_key"]
+          id?: number
+          locale?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_spiritual_gifts_category"
+            columns: ["category_key", "locale"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["key", "locale"]
+          },
+        ]
+      }
     }
     Views: {
       quiz_results_weighted: {
@@ -320,6 +627,47 @@ export type Database = {
           avg_weighted: number
         }[]
       }
+      get_all_gifts_with_data: {
+        Args: { p_locale?: string }
+        Returns: Json
+      }
+      get_categories_by_locale: {
+        Args: { p_locale?: string }
+        Returns: {
+          key: string
+          name: string
+          greek_term: string
+          description: string
+          purpose: string
+        }[]
+      }
+      get_gift_complete_data: {
+        Args: {
+          p_gift_key: Database["public"]["Enums"]["gift_key"]
+          p_locale?: string
+        }
+        Returns: Json
+      }
+      get_manifestations_by_locale: {
+        Args: { p_locale?: string }
+        Returns: {
+          key: string
+          name: string
+          definition: string
+          classification: string
+          biblical_references: string
+        }[]
+      }
+      get_ministries_by_locale: {
+        Args: { p_locale?: string }
+        Returns: {
+          key: string
+          name: string
+          definition: string
+          biblical_references: string
+          type: string
+        }[]
+      }
       get_questions_by_locale: {
         Args: { target_locale?: string }
         Returns: {
@@ -331,6 +679,19 @@ export type Database = {
           default_weight: number
           text: string
           is_active: boolean
+        }[]
+      }
+      get_top_gift_details: {
+        Args: { p_session_id: string; p_locale?: string }
+        Returns: {
+          gift_key: Database["public"]["Enums"]["gift_key"]
+          gift_name: string
+          definition: string
+          biblical_references: string
+          total_weighted: number
+          question_count: number
+          category_name: string
+          greek_term: string
         }[]
       }
       gtrgm_compress: {

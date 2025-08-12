@@ -18,12 +18,11 @@ import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import {
   useResultBySessionId,
-  useGifts,
   useSpiritualGifts,
   useCategories,
   type ExtendedSpiritualGift
 } from '@/hooks/use-quiz-queries'
-import type { SpiritualGift } from '@/data/quiz-data'
+
 
 export default function ResultsPage() {
   const router = useRouter()
@@ -32,14 +31,13 @@ export default function ResultsPage() {
   const [activeTab, setActiveTab] = useState('overview')
 
   const { data: result, isLoading: loadingResults, error: resultsError } = useResultBySessionId(sessionId)
-  const { data: gifts, isLoading: loadingGifts } = useGifts()
   const { data: spiritualGiftsData, isLoading: loadingSpiritualGifts } = useSpiritualGifts()
   const { data: categories, isLoading: loadingCategories } = useCategories()
 
-  const loading = loadingResults || loadingGifts || loadingSpiritualGifts || loadingCategories
+  const loading = loadingResults || loadingSpiritualGifts || loadingCategories
 
-  const getGiftByKey = (key: string): SpiritualGift | undefined => {
-    return gifts?.find(gift => gift.key === key)
+  const getGiftByKey = (key: string): ExtendedSpiritualGift | undefined => {
+    return spiritualGiftsData?.find(gift => gift.key === key)
   }
 
   // Get extended spiritual gift data based on quiz results
@@ -99,8 +97,8 @@ export default function ResultsPage() {
     )
   }
 
-  const allScores = gifts
-    ? gifts.map(gift => ({
+  const allScores = spiritualGiftsData
+    ? spiritualGiftsData.map(gift => ({
         giftKey: gift.key,
         score: result.totalScore[gift.key] || 0,
       }))
@@ -157,7 +155,7 @@ export default function ResultsPage() {
                   <p className="font-semibold">{giftName}</p>
                   {index === 0 && topGiftWithData && (
                     <p className="text-xs text-gray-500 mt-1">
-                      {topGiftWithData.category?.greek_term}
+Dom Espiritual
                     </p>
                   )}
                 </div>
@@ -171,7 +169,6 @@ export default function ResultsPage() {
             <TabsTrigger value="overview">Visão Geral</TabsTrigger>
             <TabsTrigger value="characteristics">Características</TabsTrigger>
             <TabsTrigger value="qualities">Qualidades</TabsTrigger>
-            <TabsTrigger value="dangers">Cuidados</TabsTrigger>
             <TabsTrigger value="guidance">Orientações</TabsTrigger>
           </TabsList>
 
@@ -250,7 +247,7 @@ export default function ResultsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-3">
-                    {topGiftWithData.characteristics.map((char, index) => (
+                    {topGiftWithData.characteristics?.map((char, index) => (
                       <div key={index} className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
                         <Badge variant="outline" className="mt-1">
                           {index + 1}
@@ -285,18 +282,16 @@ export default function ResultsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="grid md:grid-cols-2 gap-4">
-                    {topGiftWithData.qualities.map((quality, index) => (
-                      <div key={quality.id} className="flex items-start gap-3 p-4 border rounded-lg">
+                    {topGiftWithData.characteristics?.map((characteristic, index) => (
+                      <div key={index} className="flex items-start gap-3 p-4 border rounded-lg">
                         <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">
                           {index + 1}
                         </div>
                         <div>
                           <h4 className="font-semibold text-gray-800 mb-1">
-                            {quality.quality_name}
+                            Característica {index + 1}
                           </h4>
-                          {quality.description && (
-                            <p className="text-sm text-gray-600">{quality.description}</p>
-                          )}
+                          <p className="text-sm text-gray-600">{characteristic}</p>
                         </div>
                       </div>
                     ))}
@@ -313,70 +308,10 @@ export default function ResultsPage() {
             )}
           </TabsContent>
 
-          <TabsContent value="dangers" className="space-y-6 mt-[70px] md:mt-[40px]">
-            {topGiftWithData ? (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <AlertTriangle className="h-5 w-5 text-amber-600" />
-                    Cuidados e Perigos
-                  </CardTitle>
-                  <p className="text-gray-600">
-                    Aspectos importantes a observar para um exercício saudável do dom
-                  </p>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {topGiftWithData.dangers.map((danger, index) => (
-                      <Alert key={danger.id} className="border-amber-200 bg-amber-50">
-                        <AlertTriangle className="h-4 w-4 text-amber-600" />
-                        <AlertDescription>
-                          <span className="font-semibold text-amber-800 mr-2">
-                            {index + 1}.
-                          </span>
-                          <span className="text-amber-700">{danger.danger}</span>
-                        </AlertDescription>
-                      </Alert>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <Alert>
-                <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>
-                  Dados de cuidados não disponíveis para análise completa.
-                </AlertDescription>
-              </Alert>
-            )}
-          </TabsContent>
 
           <TabsContent value="guidance" className="space-y-6 mt-[70px] md:mt-[40px]">
             {topGiftWithData ? (
               <>
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <BookOpen className="h-5 w-5" />
-                      Possíveis Mal-entendidos
-                    </CardTitle>
-                    <p className="text-gray-600">
-                      Como seu dom pode ser interpretado pelos outros
-                    </p>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {topGiftWithData.misunderstandings.map((misunderstanding, index) => (
-                        <div key={misunderstanding.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                          <Badge variant="secondary">
-                            {index + 1}
-                          </Badge>
-                          <p className="text-gray-700 flex-1">{misunderstanding.misunderstanding}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
 
                 {/* Biblical References */}
                 <Card>
@@ -387,9 +322,9 @@ export default function ResultsPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {topGiftWithData.biblicalReferences.length > 0 ? (
+                    {(topGiftWithData.biblicalReferences?.length ?? 0) > 0 ? (
                       <div className="flex flex-wrap gap-2">
-                        {topGiftWithData.biblicalReferences.map((reference, index) => (
+                        {topGiftWithData.biblicalReferences?.map((reference, index) => (
                           <Badge key={index} variant="outline" className="text-blue-600">
                             {reference}
                           </Badge>
