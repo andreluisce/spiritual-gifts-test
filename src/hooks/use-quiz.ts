@@ -57,43 +57,18 @@ export function useQuiz(locale: string = 'pt'): UseQuizReturn {
   const giftsQuery = useSpiritualGifts(locale)
   const submitQuizMutation = useSubmitQuiz()
 
-  // Shuffle questions when they are first loaded
+  // Backend now handles question ordering - but preserve local state for session persistence
   useEffect(() => {
-    if (questionsQuery.data && questionsQuery.data.length > 0 && shuffledQuestions.length === 0) {
-      let newQuestionOrder: number[]
-      let newShuffledQuestions: QuizQuestion[]
-
-      // Try to load existing order from localStorage first
-      const savedOrder = localStorage.getItem(QUIZ_QUESTION_ORDER_KEY)
-      if (savedOrder) {
-        try {
-          const parsedOrder = JSON.parse(savedOrder)
-          if (Array.isArray(parsedOrder) && parsedOrder.length === questionsQuery.data.length) {
-            // Use saved order
-            newQuestionOrder = parsedOrder
-            newShuffledQuestions = newQuestionOrder.map(id =>
-              questionsQuery.data!.find(q => q.id === id)
-            ).filter((q): q is QuizQuestion => q !== undefined)
-          } else {
-            throw new Error('Invalid saved order')
-          }
-        } catch {
-          // If parsing fails, create new shuffle
-          newShuffledQuestions = shuffleArray([...questionsQuery.data])
-          newQuestionOrder = newShuffledQuestions.map(q => q.id)
-          localStorage.setItem(QUIZ_QUESTION_ORDER_KEY, JSON.stringify(newQuestionOrder))
-        }
-      } else {
-        // No saved order, create new shuffle
-        newShuffledQuestions = shuffleArray([...questionsQuery.data])
-        newQuestionOrder = newShuffledQuestions.map(q => q.id)
-        localStorage.setItem(QUIZ_QUESTION_ORDER_KEY, JSON.stringify(newQuestionOrder))
-      }
-
-      setQuestionOrder(newQuestionOrder)
-      setShuffledQuestions(newShuffledQuestions)
+    if (questionsQuery.data && questionsQuery.data.length > 0) {
+      // Backend already provides ordered questions, just use them
+      const orderedQuestions = [...questionsQuery.data].sort((a, b) => 
+        (a.question_order || 0) - (b.question_order || 0)
+      )
+      
+      setQuestionOrder(orderedQuestions.map(q => q.id))
+      setShuffledQuestions(orderedQuestions)
     }
-  }, [questionsQuery.data, shuffledQuestions.length])
+  }, [questionsQuery.data])
 
   // Load persisted state on mount
   useEffect(() => {
@@ -166,25 +141,17 @@ export function useQuiz(locale: string = 'pt'): UseQuizReturn {
 
   const submitQuiz = useCallback(async (userId: string): Promise<{ sessionId: string; topGifts: string[]; totalScore: Record<string, number> } | null> => {
     try {
-      if (!giftsQuery.data) {
-        throw new Error('Dados dos dons não carregados')
-      }
-
+      // Backend now handles all the logic - much simpler!
       const result = await submitQuizMutation.mutateAsync({
         userId,
-        answers: currentAnswers,
-        gifts: giftsQuery.data.map(gift => ({
-          key: gift.gift_key,
-          name: gift.name,
-          description: gift.definition,
-          biblicalReferences: [gift.biblical_references],
-          characteristics: gift.characteristics.map(c => c.characteristic)
-        }))
+        answers: currentAnswers
+        // No need to pass gifts anymore - backend handles everything
       })
 
       // Clear persisted state after successful submission
       if (typeof window !== 'undefined') {
         localStorage.removeItem(QUIZ_STATE_KEY)
+        localStorage.removeItem(QUIZ_QUESTION_ORDER_KEY)
       }
 
       return result
@@ -192,7 +159,7 @@ export function useQuiz(locale: string = 'pt'): UseQuizReturn {
       console.error('Error submitting quiz:', err)
       return null
     }
-  }, [currentAnswers, giftsQuery.data, submitQuizMutation])
+  }, [currentAnswers, submitQuizMutation])
 
   const clearAnswers = useCallback(() => {
     setCurrentAnswers({})

@@ -44,7 +44,10 @@ export default function ResultsPage() {
 
   // Get extended spiritual gift data based on quiz results
   const getExtendedGiftData = (giftName: string): SpiritualGiftData | undefined => {
-    return spiritualGiftsData?.find(gift => gift.name.toLowerCase().includes(giftName.toLowerCase()))
+    if (!giftName || !spiritualGiftsData) return undefined;
+    return spiritualGiftsData?.find(gift => 
+      gift.name?.toLowerCase().includes(giftName.toLowerCase())
+    )
   }
 
   const getScorePercentage = (score: number, maxPossibleScore: number = 25): number => {
@@ -61,8 +64,20 @@ export default function ResultsPage() {
   const getTopGiftWithData = () => {
     if (!latestResult || !spiritualGiftsData || latestResult.topGifts.length === 0) return null
 
-    const topGiftName = latestResult.topGifts[0]
-    return getExtendedGiftData(topGiftName)
+    // Since the new RPC returns gift names in Portuguese, we need to use the gift keys from totalScore
+    // to find the corresponding gift data
+    const scores = Object.entries(latestResult.totalScore)
+    if (scores.length === 0) return null
+
+    // Get the highest scoring gift key
+    const topGiftKey = scores.reduce((a, b) => a[1] > b[1] ? a : b)[0]
+    const topGift = getGiftByKey(topGiftKey)
+    
+    console.log('🔍 DEBUG - Top gift key:', topGiftKey)
+    console.log('🔍 DEBUG - Top gift data:', topGift)
+    console.log('🔍 DEBUG - Top gift characteristics:', topGift?.characteristics)
+    
+    return topGift
   }
 
   if (loading) {
@@ -86,7 +101,12 @@ export default function ResultsPage() {
     )
   }
 
+  console.log('🔍 DEBUG - user:', user);
+  console.log('🔍 DEBUG - latestResult exists:', !!latestResult);
+  console.log('🔍 DEBUG - spiritualGiftsData:', spiritualGiftsData);
+
   if (!latestResult) {
+    console.log('🔍 DEBUG - No latestResult, returning no results page');
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -99,29 +119,28 @@ export default function ResultsPage() {
     )
   }
 
+  // Debug: log the data to understand the issue
+  console.log('🔍 DEBUG - latestResult:', latestResult);
+  console.log('🔍 DEBUG - latestResult.totalScore:', latestResult?.totalScore);
+
   const allScores = spiritualGiftsData
-    ? spiritualGiftsData.map(gift => ({
-      giftKey: gift.gift_key,
-      score: latestResult.totalScore[gift.gift_key] || 0,
-    }))
+    ? spiritualGiftsData.map(gift => {
+        console.log(`🔍 DEBUG - Processing gift:`, gift);
+        const score = latestResult.totalScore[gift.gift_key] || 0;
+        console.log(`🔍 DEBUG - Gift ${gift.gift_key}: score = ${score}`);
+        return {
+          giftKey: gift.gift_key,
+          score: score,
+        };
+      }).filter(scoreData => {
+        const giftFound = getGiftByKey(scoreData.giftKey) !== undefined;
+        console.log(`🔍 DEBUG - Gift ${scoreData.giftKey} found: ${giftFound}`);
+        return giftFound;
+      })
     : [];
 
-  // Sort scores to match the topGifts ranking from getTopGifts algorithm
+  // Sort scores by score value (descending) since we have totalScore directly
   const sortedScores = allScores.sort((a, b) => {
-    const giftA = getGiftByKey(a.giftKey)
-    const giftB = getGiftByKey(b.giftKey)
-
-    if (!giftA || !giftB) return 0
-
-    // Find positions in topGifts array (already calculated with our algorithm)
-    const posA = latestResult.topGifts.findIndex(name => name === giftA.name)
-    const posB = latestResult.topGifts.findIndex(name => name === giftB.name)
-
-    // Use topGifts order if both found, otherwise fallback to score
-    if (posA !== -1 && posB !== -1) {
-      return posA - posB
-    }
-
     return b.score - a.score
   });
 
@@ -228,8 +247,7 @@ Dom Espiritual
               </CardHeader>
               <CardContent className="space-y-6">
                 {sortedScores.map(({ giftKey, score }, index) => {
-                  const gift = getGiftByKey(giftKey)
-                  if (!gift) return null
+                  const gift = getGiftByKey(giftKey)!  // Safe now due to filter above
 
                   const percentage = getScorePercentage(score)
 
@@ -241,7 +259,7 @@ Dom Espiritual
                           <p className="text-sm text-gray-600">{gift.definition}</p>
                         </div>
                         <div className="text-right">
-                          <div className="text-2xl font-bold text-blue-600">{score}</div>
+                          <div className="text-2xl font-bold text-blue-600">{Math.round(score)}</div>
                           <div className="text-sm text-gray-500">pontos</div>
                         </div>
                       </div>
@@ -297,7 +315,7 @@ Dom Espiritual
                         <Badge variant="outline" className="mt-1">
                           {index + 1}
                         </Badge>
-                        <p className="text-gray-700 flex-1">{char}</p>
+                        <p className="text-gray-700 flex-1">{char.characteristic}</p>
                       </div>
                     ))}
                   </div>
@@ -322,21 +340,23 @@ Dom Espiritual
                     Qualidades a Desenvolver
                   </CardTitle>
                   <p className="text-gray-600">
-                    Sete qualidades importantes para desenvolver no dom de {topGiftWithData.name}
+                    Qualidades importantes para desenvolver no dom de {topGiftWithData.name}
                   </p>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    {topGiftWithData.characteristics?.map((characteristic, index) => (
-                      <div key={index} className="flex items-start gap-3 p-4 border rounded-lg">
-                        <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">
+                  <div className="grid gap-3">
+                    {topGiftWithData.qualities?.map((quality, index) => (
+                      <div key={index} className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
+                        <Badge variant="outline" className="mt-1 bg-green-100 text-green-800">
                           {index + 1}
-                        </div>
-                        <div>
+                        </Badge>
+                        <div className="flex-1">
                           <h4 className="font-semibold text-gray-800 mb-1">
-                            Característica {index + 1}
+                            {quality.quality_name}
                           </h4>
-                          <p className="text-sm text-gray-600">{characteristic}</p>
+                          {quality.description && (
+                            <p className="text-sm text-gray-600">{quality.description}</p>
+                          )}
                         </div>
                       </div>
                     ))}

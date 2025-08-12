@@ -46,7 +46,7 @@ interface QuizState {
 }
 
 export default function DashboardPage() {
-  const { user, signOut, isAdmin } = useAuth()
+  const { user, signOut, isAdmin, loading: authLoading } = useAuth()
   const locale = useLocale()
   const { data: results, isLoading: loadingResults } = useUserResults(user?.id || null)
   const { data: latestResult, isLoading: loadingLatestResult } = useLatestResult(user?.id || null)
@@ -55,7 +55,14 @@ export default function DashboardPage() {
   const [quizInProgress, setQuizInProgress] = useState<QuizState | null>(null)
   const tCommon = useTranslations('common')
 
-  const loading = loadingResults || loadingLatestResult || loadingGifts
+  const loading = loadingResults || loadingLatestResult || loadingGifts || authLoading
+
+  // Redirect unauthenticated users
+  useEffect(() => {
+    if (!authLoading && !user) {
+      window.location.href = `/${locale}`
+    }
+  }, [user, authLoading, locale])
 
   // Check for quiz in progress
   useEffect(() => {
@@ -132,7 +139,7 @@ export default function DashboardPage() {
     return evolution.slice(0, 5) // Top 5 changes
   }
 
-  if (loading) {
+  if (loading || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>

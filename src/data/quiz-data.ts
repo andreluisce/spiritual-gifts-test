@@ -4,6 +4,10 @@ export interface QuizQuestion {
   id: number;
   question: string;
   gift_key: Database['public']['Enums']['gift_key'];
+  // Additional metadata from backend
+  weight_class?: string;
+  question_order?: number;
+  quiz_id?: string;
 }
 
 export interface SpiritualGift {

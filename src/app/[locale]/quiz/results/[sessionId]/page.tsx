@@ -196,7 +196,7 @@ export default function ResultsPage() {
                           <p className="text-sm text-gray-600">{definition}</p>
                         </div>
                         <div className="text-right">
-                          <div className="text-2xl font-bold text-blue-600">{score.toFixed(1)}</div>
+                          <div className="text-2xl font-bold text-blue-600">{Math.round(score)}</div>
                           <div className="text-sm text-gray-500">pontos</div>
                         </div>
                       </div>

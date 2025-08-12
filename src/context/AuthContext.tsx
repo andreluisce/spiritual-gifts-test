@@ -39,10 +39,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [supabase])
 
   const signInWithGoogle = async () => {
+    // Get current locale from URL
+    const currentPath = window.location.pathname
+    const locale = currentPath.split('/')[1] || 'pt'
+    
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard`
+        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/${locale}/dashboard`
       }
     })
   }

@@ -109,25 +109,41 @@ export function useQuizQuestions(locale: string = 'pt') {
     queryKey: [...QUERY_KEYS.questions, locale],
     queryFn: async (): Promise<QuizQuestion[]> => {
       try {
-        const { data, error } = await supabase.rpc('get_questions_by_locale', { 
-          target_locale: locale 
+        // Use the new enhanced quiz generation function with configurable questions per gift
+        const { data, error } = await supabase.rpc('generate_balanced_quiz', { 
+          target_locale: locale,
+          questions_per_gift: 1, // Set to 1 for testing, change to 5 for full quiz
+          user_id_param: null // We can pass user ID later if needed for personalization
         })
 
         if (error) {
-          console.warn('Questions RPC function failed, trying fallback:', error.message)
+          console.warn('Balanced quiz generation failed, trying fallback:', error.message)
           throw error
         }
 
         if (!data || data.length === 0) {
-          throw new Error(`No questions found for locale: ${locale}`)
+          throw new Error(`No questions generated for locale: ${locale}`)
         }
 
-        const questions: QuizQuestion[] = data.map((item: { id: number; text: string; gift: string }) => ({
-          id: item.id,
-          question: item.text,
-          gift_key: item.gift as Database['public']['Enums']['gift_key'],
+        // Map the comprehensive response to QuizQuestion format
+        const questions: QuizQuestion[] = data.map((item: { 
+          quiz_id: string;
+          question_id: number; 
+          question_text: string; 
+          gift_key: string;
+          weight_class: string;
+          question_order: number;
+        }) => ({
+          id: item.question_id,
+          question: item.question_text,
+          gift_key: item.gift_key as Database['public']['Enums']['gift_key'],
+          // Additional metadata from backend
+          weight_class: item.weight_class,
+          question_order: item.question_order,
+          quiz_id: item.quiz_id
         }))
         
+        console.log(`Generated balanced quiz with ${questions.length} questions (${questions.length / 9} per gift)`)
         return questions
       } catch (rpcError) {
         console.warn('Questions RPC not available, trying direct table query')
@@ -283,71 +299,78 @@ export function useSpiritualGifts(locale: string = 'pt') {
   return useQuery({
     queryKey: [...QUERY_KEYS.gifts, locale],
     queryFn: async (): Promise<SpiritualGiftData[]> => {
-      // Try the advanced function first
       try {
         const { data, error } = await supabase.rpc('get_all_gifts_with_data', {
           p_locale: locale
         })
 
         if (error) {
-          console.warn('Advanced function failed, trying fallback:', error.message)
+          console.error('Error fetching spiritual gifts from database:', error.message)
           throw error
         }
 
+        if (!data) {
+          console.error('No spiritual gifts data returned from database')
+          throw new Error('No spiritual gifts data available')
+        }
+
         // Parse JSON response from database function
-        interface RawGiftData {
-          gift_key: Database['public']['Enums']['gift_key']
-          gift_name: string
+        interface DatabaseGiftData {
+          key: Database['public']['Enums']['gift_key']
+          name: string
           definition: string
           biblical_references: string
-          category_name: string
-          category_key: string
-          greek_term: string
-          qualities?: Quality[]
-          characteristics?: Characteristic[]
-          dangers?: Danger[]
-          misunderstandings?: Misunderstanding[]
+          category: {
+            key: string
+            name: string
+            greek_term: string
+            description: string
+            purpose: string
+          }
+          characteristics: string[]
+          qualities: {
+            id: number
+            quality_name: string
+            description: string
+          }[]
+          dangers: string[]
+          misunderstandings: string[]
         }
         
-        const gifts = Array.isArray(data) ? data : []
-        return gifts.map((gift: unknown) => {
-          const giftData = gift as RawGiftData
-          return {
-            gift_key: giftData.gift_key,
-            name: giftData.gift_name,
-            definition: giftData.definition,
-            biblical_references: giftData.biblical_references,
-            category_name: giftData.category_name,
-            category_key: giftData.category_key,
-            greek_term: giftData.greek_term,
-            qualities: giftData.qualities || [],
-            characteristics: giftData.characteristics || [],
-            dangers: giftData.dangers || [],
-            misunderstandings: giftData.misunderstandings || []
-          }
-        }) as SpiritualGiftData[]
+        // data is a JSON array
+        const gifts = Array.isArray(data) ? data : (data ? [data] : [])
+        console.log('🔍 DEBUG - Raw spiritual gifts data from database:', gifts)
         
-      } catch (advancedError) {
-        console.warn('Advanced spiritual gifts function not available, using static fallback')
-        
-        // Ultimate fallback: use static data from quiz-data.ts
-        const { spiritualGifts } = await import('@/data/quiz-data')
-        return spiritualGifts.map(gift => ({
-          gift_key: gift.key as Database['public']['Enums']['gift_key'],
+        return gifts.map((gift: DatabaseGiftData) => ({
+          gift_key: gift.key,
           name: gift.name,
-          definition: gift.description,
-          biblical_references: gift.biblicalReferences.join(', '),
-          category_name: 'Motivational Gifts',
-          category_key: 'motivational',
-          greek_term: 'Karismata',
-          qualities: [],
-          characteristics: gift.characteristics.map((char, index) => ({
+          definition: gift.definition,
+          biblical_references: gift.biblical_references,
+          category_name: gift.category?.name || 'Unknown Category',
+          category_key: gift.category?.key || 'unknown',
+          greek_term: gift.category?.greek_term || '',
+          qualities: (gift.qualities || []).map(q => ({
+            quality_name: q.quality_name,
+            description: q.description,
+            order_sequence: q.id
+          })),
+          characteristics: (gift.characteristics || []).map((char, index) => ({
             characteristic: char,
             order_sequence: index + 1
           })),
-          dangers: [],
-          misunderstandings: []
+          dangers: (gift.dangers || []).map((danger, index) => ({
+            danger: danger,
+            order_sequence: index + 1
+          })),
+          misunderstandings: (gift.misunderstandings || []).map((misunderstanding, index) => ({
+            misunderstanding: misunderstanding,
+            order_sequence: index + 1
+          }))
         })) as SpiritualGiftData[]
+        
+      } catch (error) {
+        console.error('Failed to fetch spiritual gifts from database:', error)
+        throw new Error('Unable to load spiritual gifts data from database. Please check your connection.')
       }
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -378,56 +401,32 @@ export function useUserResults(userId: string | null) {
       if (!userId) return [];
 
       try {
-        const { data: sessions, error: sessionsError } = await supabase
-          .from('quiz_sessions')
-          .select('id, created_at')
-          .eq('user_id', userId)
-          .order('created_at', { ascending: false })
+        // Use the new RPC function that respects RLS
+        const { data: results, error } = await supabase.rpc('get_user_results_with_scores', {
+          p_user_id: userId,
+        })
 
-        if (sessionsError) {
-          console.warn('No quiz sessions found for user:', sessionsError);
+        if (error) {
+          console.warn('Error fetching user results:', error);
           return [];
         }
 
-        const results = await Promise.all(sessions.map(async (session) => {
-          try {
-            const { data: rpcResult, error: rpcError } = await supabase.rpc('calculate_quiz_result', {
-              p_session_id: session.id,
-            })
+        if (!results || results.length === 0) {
+          return [];
+        }
 
-            if (rpcError) {
-              console.warn('Error calculating quiz result:', rpcError);
-              return null;
-            }
-
-            const totalScore: Record<string, number> = {};
-            rpcResult.forEach((item: { gift?: string; total_weighted?: number }) => {
-              if (item.gift) {
-                totalScore[item.gift] = item.total_weighted || 0;
-              }
-            });
-
-            const { spiritualGifts } = await import('@/data/quiz-data')
-            const topGifts = getTopGifts(totalScore, spiritualGifts);
-
-            return {
-              sessionId: session.id,
-              totalScore,
-              topGifts,
-              createdAt: session.created_at
-            };
-          } catch (error) {
-            console.error('Error processing session result:', error);
-            return null;
-          }
+        return results.map((result: {
+          session_id: string;
+          created_at: string;
+          total_scores: Record<string, number>;
+          top_gifts_keys: string[];
+          top_gifts_names: string[];
+        }) => ({
+          sessionId: result.session_id,
+          totalScore: result.total_scores,
+          topGifts: result.top_gifts_names,
+          createdAt: result.created_at
         }));
-
-        return results.filter(result => result !== null) as {
-          sessionId: string;
-          totalScore: Record<string, number>;
-          topGifts: string[];
-          createdAt: string;
-        }[];
       } catch (error) {
         console.error('Error fetching user results:', error);
         return [];
@@ -450,42 +449,26 @@ export function useLatestResult(userId: string | null) {
       if (!userId) return null;
 
       try {
-        const { data: session, error: sessionError } = await supabase
-          .from('quiz_sessions')
-          .select('id, created_at')
-          .eq('user_id', userId)
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .single()
-
-        if (sessionError) {
-          console.warn('No latest session found for user:', sessionError);
-          return null;
-        }
-
-        const { data: rpcResult, error: rpcError } = await supabase.rpc('calculate_quiz_result', {
-          p_session_id: session.id,
+        // Use the new RPC function that respects RLS
+        const { data: results, error } = await supabase.rpc('get_latest_user_result', {
+          p_user_id: userId,
         })
 
-        if (rpcError) {
-          console.warn('Error calculating latest result:', rpcError);
+        if (error) {
+          console.warn('Error fetching latest result:', error);
           return null;
         }
 
-        const totalScore: Record<string, number> = {};
-        rpcResult.forEach((item: { gift?: string; total_weighted?: number }) => {
-          if (item.gift) {
-            totalScore[item.gift] = item.total_weighted || 0;
-          }
-        });
+        if (!results || results.length === 0) {
+          return null;
+        }
 
-        const topGifts = getTopGiftsFromScores(totalScore);
-
+        const result = results[0];
         return {
-          sessionId: session.id,
-          totalScore,
-          topGifts,
-          createdAt: session.created_at
+          sessionId: result.session_id,
+          totalScore: result.total_scores,
+          topGifts: result.top_gifts_names,
+          createdAt: result.created_at
         };
       } catch (error) {
         console.error('Error fetching latest result:', error);
@@ -508,55 +491,32 @@ export function useSubmitQuiz() {
     }: {
       userId: string
       answers: Record<number, number>
-      gifts: SpiritualGift[]
+      gifts?: SpiritualGift[] // Made optional since backend handles this now
     }) => {
-      // Create session
-      const sessionId = crypto.randomUUID()
-      
-      const { error: sessionError } = await supabase
-        .from('quiz_sessions')
-        .insert({
-          id: sessionId,
-          user_id: userId,
-          is_completed: true,
-          completed_at: new Date().toISOString()
-        })
-
-      if (sessionError) throw sessionError
-
-      // Submit answers
-      const dbAnswers: DbAnswer[] = Object.entries(answers).map(([questionId, score]) => ({
-        session_id: sessionId,
-        pool_question_id: parseInt(questionId),
-        score
-      }))
-
-      const { error: answersError } = await supabase
-        .from('answers')
-        .insert(dbAnswers)
-
-      if (answersError) throw answersError
-
-      // Calculate result using RPC
-      const { data: rpcResult, error: rpcError } = await supabase.rpc('calculate_quiz_result', {
-        p_session_id: sessionId,
+      // Use the comprehensive backend function
+      const { data, error } = await supabase.rpc('submit_complete_quiz', {
+        p_user_id: userId,
+        p_answers: answers, // Direct JSONB format
+        p_quiz_id: null
       })
 
-      if (rpcError) throw rpcError
+      if (error) {
+        console.error('Quiz submission error:', error)
+        throw error
+      }
 
-      const totalScore: Record<string, number> = {};
-      rpcResult.forEach((item: { gift?: string; total_weighted?: number }) => {
-        if (item.gift) {
-          totalScore[item.gift] = item.total_weighted || 0;
-        }
-      });
+      if (!data || data.length === 0) {
+        throw new Error('No result returned from quiz submission')
+      }
 
-      const topGifts = getTopGifts(totalScore, gifts);
-
+      const result = data[0]
+      
       return {
-        sessionId,
-        topGifts,
-        totalScore
+        sessionId: result.session_id,
+        topGifts: result.top_gifts_names || [],
+        topGiftKeys: result.top_gifts_keys || [],
+        totalScore: result.total_scores || {},
+        completedAt: result.completed_at
       }
     },
     onSuccess: (data) => {
@@ -642,8 +602,16 @@ export function useResultBySessionId(sessionId: string) {
           }
         })
 
-        const { spiritualGifts } = await import('@/data/quiz-data')
-        const topGifts = getTopGifts(totalScore, spiritualGifts)
+        // Get gift names from the database instead of static data
+        const spiritualGiftsData = await supabase.rpc('get_all_gifts_with_data', { p_locale: 'pt' })
+        const gifts = spiritualGiftsData.data || []
+        const topGifts = Object.entries(totalScore)
+          .sort(([, a], [, b]) => b - a)
+          .slice(0, 5)
+          .map(([giftKey]) => {
+            const gift = gifts.find((g: any) => g.key === giftKey)
+            return gift?.name || giftKey
+          })
 
         return {
           sessionId: session.id,
@@ -703,7 +671,7 @@ export function useTopGiftDetails(sessionId: string, locale: string = 'pt') {
   });
 }
 
-// Helper function to get top gifts from total score (without needing gifts array)
+// Helper functions moved to backend - keeping for legacy compatibility only
 function getTopGiftsFromScores(totalScore: Record<string, number>): string[] {
   return Object.entries(totalScore)
     .sort(([, a], [, b]) => b - a)
@@ -711,7 +679,6 @@ function getTopGiftsFromScores(totalScore: Record<string, number>): string[] {
     .map(([giftKey]) => giftKey)
 }
 
-// Helper function for backward compatibility
 export function getTopGifts(totalScore: Record<string, number>, gifts: { key: string; name: string }[]): string[] {
   return Object.entries(totalScore)
     .sort(([, a], [, b]) => b - a)
