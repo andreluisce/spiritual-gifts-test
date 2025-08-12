@@ -532,22 +532,32 @@ export function useDeleteResult() {
 
   return useMutation({
     mutationFn: async ({ sessionId, userId }: { sessionId: string; userId: string }) => {
+      console.log('🗑️ Attempting to delete session:', { sessionId, userId })
+      
       // First, delete all answers for this session
-      const { error: answersError } = await supabase
+      const { error: answersError, count: answersCount } = await supabase
         .from('answers')
         .delete()
         .eq('session_id', sessionId)
 
-      if (answersError) throw answersError
+      if (answersError) {
+        console.error('❌ Error deleting answers:', answersError)
+        throw new Error(`Failed to delete answers: ${answersError.message}`)
+      }
+      console.log('✅ Deleted answers count:', answersCount)
 
       // Then, delete the session
-      const { error: sessionError } = await supabase
+      const { error: sessionError, count: sessionCount } = await supabase
         .from('quiz_sessions')
         .delete()
         .eq('id', sessionId)
         .eq('user_id', userId) // Extra safety check
 
-      if (sessionError) throw sessionError
+      if (sessionError) {
+        console.error('❌ Error deleting session:', sessionError)
+        throw new Error(`Failed to delete session: ${sessionError.message}`)
+      }
+      console.log('✅ Deleted session count:', sessionCount)
 
       return { sessionId, userId }
     },

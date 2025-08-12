@@ -104,15 +104,23 @@ export default function DashboardPage() {
   }
 
   const handleDeleteResult = async (sessionId: string) => {
-    if (!user?.id) return
+    if (!user?.id) {
+      console.error('❌ No user ID available for delete operation')
+      return
+    }
+    
+    console.log('🗑️ Dashboard: Initiating delete for session:', sessionId)
     
     try {
       await deleteResultMutation.mutateAsync({
         sessionId,
         userId: user.id
       })
+      console.log('✅ Successfully deleted result from dashboard')
     } catch (error) {
-      console.error('Error deleting result:', error)
+      console.error('❌ Dashboard error deleting result:', error)
+      // Could add toast notification here
+      alert(`Erro ao deletar resultado: ${error instanceof Error ? error.message : 'Erro desconhecido'}`)
     }
   }
 
