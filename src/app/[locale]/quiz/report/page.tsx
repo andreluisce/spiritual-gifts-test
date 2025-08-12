@@ -11,7 +11,7 @@ import { motion } from 'framer-motion'
 import { useQuizQuestions, useLatestResult } from '@/hooks/use-quiz-queries'
 import { createClient } from '@/lib/supabase-client'
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts'
-import { spiritualGifts } from '@/data/quiz-data'
+import { spiritualGifts, formatScore, formatPercentage } from '@/data/quiz-data'
 
 // Import print styles
 import '@/styles/print.css'
@@ -82,7 +82,7 @@ export default function QuizReportPage() {
     name: group.gift.name,
     value: group.totalScore,
     percentage: giftGroups.reduce((sum, g) => sum + g.totalScore, 0) > 0 
-      ? ((group.totalScore / giftGroups.reduce((sum, g) => sum + g.totalScore, 0)) * 100).toFixed(1)
+      ? formatScore((group.totalScore / giftGroups.reduce((sum, g) => sum + g.totalScore, 0)) * 100, 1)
       : 0
   }))
 
@@ -469,7 +469,7 @@ export default function QuizReportPage() {
                     <div>
                       <span className="font-medium text-slate-600">Média por Pergunta:</span>
                       <span className="ml-2 font-bold">
-                        {(group.totalScore / group.questions.length).toFixed(1)}
+                        {formatScore(group.totalScore / group.questions.length, 1)}
                       </span>
                     </div>
                     <div>

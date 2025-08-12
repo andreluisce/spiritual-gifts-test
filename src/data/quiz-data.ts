@@ -168,13 +168,23 @@ export const calculateScores = (answers: { gift_key: Database['public']['Enums']
       // Add slight randomization to break ties (±2% variation)
       const randomFactor = 0.98 + (Math.random() * 0.04);
       
-      normalizedScores[gift.key] = scaledScore * randomFactor;
+      normalizedScores[gift.key] = Math.round((scaledScore * randomFactor) * 100) / 100;
     } else {
       normalizedScores[gift.key] = 0;
     }
   });
 
   return normalizedScores;
+};
+
+// Utility function to format scores consistently
+export const formatScore = (score: number, decimals: number = 0): string => {
+  return score.toFixed(decimals);
+};
+
+// Utility function to format percentages consistently
+export const formatPercentage = (value: number, decimals: number = 0): string => {
+  return `${value.toFixed(decimals)}%`;
 };
 
 // Question weights based on their position and importance

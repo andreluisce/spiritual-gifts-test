@@ -13,6 +13,7 @@ import { useQuiz } from '@/hooks/use-quiz'
 import { useTranslations, useLocale } from 'next-intl'
 import { useAuth } from '@/context/AuthContext'
 import { motion, AnimatePresence } from 'framer-motion'
+import { formatPercentage } from '@/data/quiz-data'
 import Image from 'next/image'
 
 export default function QuizPage() {
@@ -361,7 +362,7 @@ export default function QuizPage() {
               )}
             </span>
             <span className="text-xs md:text-sm font-semibold text-slate-700">
-              {Math.round(progressValue)}%
+              {formatPercentage(progressValue)}
             </span>
           </div>
           <div className="relative bg-gray-200 rounded-full h-2 md:h-3 overflow-hidden">

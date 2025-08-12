@@ -23,6 +23,7 @@ import {
   type SpiritualGiftData,
 } from '@/hooks/use-quiz-queries'
 import { useLocale } from 'next-intl'
+import { formatScore, formatPercentage } from '@/data/quiz-data'
 
 
 export default function ResultsPage() {
@@ -159,7 +160,7 @@ export default function ResultsPage() {
                   </Badge>
                   <p className="font-semibold">{scoreData.giftName}</p>
                   <p className="text-xs text-gray-500 mt-1">
-                    {scoreData.score.toFixed(1)} pontos
+                    {formatScore(scoreData.score, 1)} pontos
                   </p>
                 </div>
               ))}
@@ -196,13 +197,13 @@ export default function ResultsPage() {
                           <p className="text-sm text-gray-600">{definition}</p>
                         </div>
                         <div className="text-right">
-                          <div className="text-2xl font-bold text-blue-600">{Math.round(score)}</div>
+                          <div className="text-2xl font-bold text-blue-600">{formatScore(score, 0)}</div>
                           <div className="text-sm text-gray-500">pontos</div>
                         </div>
                       </div>
                       <Progress value={percentage} className="h-3 mb-2" />
                       <div className="text-sm text-gray-500 mb-4">
-                        {percentage.toFixed(0)}% de afinidade
+                        {formatPercentage(percentage)} de afinidade
                       </div>
                       {index < sortedScores.length - 1 && <Separator />}
                     </div>

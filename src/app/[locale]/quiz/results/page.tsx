@@ -25,6 +25,7 @@ import {
 } from '@/hooks/use-quiz-queries'
 
 import { useAuth } from '@/context/AuthContext'
+import { formatScore, formatPercentage } from '@/data/quiz-data'
 
 export default function ResultsPage() {
   const router = useRouter()
@@ -259,13 +260,13 @@ Dom Espiritual
                           <p className="text-sm text-gray-600">{gift.definition}</p>
                         </div>
                         <div className="text-right">
-                          <div className="text-2xl font-bold text-blue-600">{Math.round(score)}</div>
+                          <div className="text-2xl font-bold text-blue-600">{formatScore(score, 0)}</div>
                           <div className="text-sm text-gray-500">pontos</div>
                         </div>
                       </div>
                       <Progress value={percentage} className="h-3 mb-2" />
                       <div className="text-sm text-gray-500 mb-4">
-                        {percentage.toFixed(0)}% de afinidade
+                        {formatPercentage(percentage)} de afinidade
                       </div>
                       {index < sortedScores.length - 1 && <Separator />}
                     </div>
