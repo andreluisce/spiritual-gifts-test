@@ -1,7 +1,9 @@
 'use client'
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { supabase } from '@/lib/supabase'
+import { createSupabaseBrowserClient } from '@/lib/supabase'
+
+const supabase = createSupabaseBrowserClient()
 import type { Database } from '@/lib/database.types'
 import type { QuizQuestion, SpiritualGift } from '@/data/quiz-data'
 import { getTopGifts } from '@/data/quiz-data'
@@ -67,36 +69,56 @@ const fallbackQuestions: QuizQuestion[] = [
   { id: 45, question: 'Estou disposto a assumir a responsabilidade por um grupo de irmãos.', gift_key: 'F_LEADERSHIP' }
 ]
 
-export function useQuizQuestions() {
+export function useQuizQuestions(locale: string = 'pt') {
   return useQuery({
-    queryKey: QUERY_KEYS.questions,
+    queryKey: [...QUERY_KEYS.questions, locale],
     queryFn: async (): Promise<QuizQuestion[]> => {
       try {
-        const { data, error } = await supabase
-          .from('questions')
-          .select(
-            `
-            id,
-            text,
-            question_gift_map ( gift )
-            `
-          )
-          .order('id')
+        // First try to use the new multilingual function
+        const { data, error } = await supabase.rpc('get_questions_by_locale', {
+          target_locale: locale
+        })
 
         if (error) {
-          console.error("Supabase fetch error:", error);
-          console.warn('Database tables may not exist. Using fallback questions.');
-          return fallbackQuestions;
+          console.error("Failed to fetch questions by locale:", error);
+          console.warn('Trying fallback query...');
+          
+          // Fallback to old questions table if new function doesn't exist
+          const { data: oldData, error: oldError } = await supabase
+            .from('questions')
+            .select(
+              `
+              id,
+              text,
+              question_gift_map ( gift )
+              `
+            )
+            .order('id')
+
+          if (oldError) {
+            console.warn('Database tables may not exist. Using fallback questions.');
+            return fallbackQuestions;
+          }
+
+          if (oldData && oldData.length > 0) {
+            return oldData.map(q => ({
+              id: q.id,
+              question: q.text,
+              gift_key: (q.question_gift_map?.gift || '') as QuizQuestion['gift_key']
+            }))
+          } else {
+            return fallbackQuestions
+          }
         }
 
         if (data && data.length > 0) {
           return data.map(q => ({
             id: q.id,
             question: q.text,
-            gift_key: (q.question_gift_map?.gift || '') as QuizQuestion['gift_key']
+            gift_key: q.gift as QuizQuestion['gift_key']
           }))
         } else {
-          // If no data from Supabase, use fallback questions
+          // If no data from new function, use fallback questions
           return fallbackQuestions
         }
       } catch (error) {
@@ -479,7 +501,7 @@ export function useUserResults(userId: string | null) {
       topGifts: string[];
       createdAt: string;
     }[]> => {
-      if (!userId) throw new Error('User ID is required')
+      if (!userId) return [];
 
       try {
         const { data: sessions, error: sessionsError } = await supabase
@@ -684,7 +706,7 @@ export function useSubmitQuiz() {
 
       // 2. Fetch questions to get gift_key for each question
       const questions = await queryClient.fetchQuery<QuizQuestion[]>({
-        queryKey: QUERY_KEYS.questions,
+        queryKey: [...QUERY_KEYS.questions, 'pt'], // Default to Portuguese for backwards compatibility
       })
 
       // 3. Prepare answers for batch insert

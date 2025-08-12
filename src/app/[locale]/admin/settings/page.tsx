@@ -1,23 +1,10 @@
 'use client'
 
 import { useAuth } from '@/context/AuthContext'
-import { useRouter, Link } from '@/i18n/navigation'
+import { useRouter } from '@/i18n/navigation'
 import { useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { 
-  Users, 
-  BarChart3, 
-  FileText, 
-  Settings,
-  TrendingUp,
-  Database,
-  Activity,
-  PieChart
-} from 'lucide-react'
 
-
-export default function AdminPage() {
+export default function AdminSettingsPage() {
   const { isAuthenticated, isAdmin, loading } = useAuth()
   const router = useRouter()
 
@@ -40,8 +27,12 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-red-200 flex items-center justify-center">
-      <h1 className="text-5xl font-bold text-red-800">ADMIN PAGE TEST - IF YOU SEE THIS, ROUTING WORKS!</h1>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      <div className="max-w-7xl mx-auto p-4 py-8">
+        <h1 className="text-3xl font-bold text-gray-800 mb-4">Configurações do Sistema</h1>
+        <p className="text-gray-600">Conteúdo para a página de configurações.</p>
+        {/* Add system settings features here */}
+      </div>
     </div>
   )
 }

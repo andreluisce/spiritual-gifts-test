@@ -9,7 +9,7 @@ import { useLocale } from 'next-intl'
 import { useAuth } from '@/context/AuthContext'
 import { motion } from 'framer-motion'
 import { useQuizQuestions, useLatestResult } from '@/hooks/use-quiz-queries'
-import { supabase } from '@/lib/supabase'
+import { createSupabaseBrowserClient } from '@/lib/supabase'
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts'
 import { spiritualGifts } from '@/data/quiz-data'
 
@@ -32,7 +32,7 @@ export default function QuizReportPage() {
       if (!latestResult?.sessionId || !questions) return
       
       try {
-        const { data, error } = await supabase
+        const { data, error } = await createSupabaseBrowserClient()
           .from('answers')
           .select('question_id, score')
           .eq('session_id', latestResult.sessionId)

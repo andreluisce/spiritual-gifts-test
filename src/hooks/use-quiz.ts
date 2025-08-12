@@ -46,14 +46,14 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled
 }
 
-export function useQuiz(): UseQuizReturn {
+export function useQuiz(locale: string = 'pt'): UseQuizReturn {
   const [currentAnswers, setCurrentAnswers] = useState<Record<number, number>>({})
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0)
   const [hasPersistedState, setHasPersistedState] = useState<boolean>(false)
   const [questionOrder, setQuestionOrder] = useState<number[]>([])
   const [shuffledQuestions, setShuffledQuestions] = useState<QuizQuestion[]>([])
 
-  const questionsQuery = useQuizQuestions()
+  const questionsQuery = useQuizQuestions(locale)
   const giftsQuery = useGifts()
   const submitQuizMutation = useSubmitQuiz()
 

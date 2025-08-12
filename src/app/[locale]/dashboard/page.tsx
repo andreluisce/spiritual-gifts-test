@@ -30,7 +30,7 @@ import {
   Home,
   Settings
 } from 'lucide-react'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import type { SpiritualGift } from '@/data/quiz-data'
 import { useUserResults, useLatestResult, useGifts, useDeleteResult } from '@/hooks/use-quiz-queries'
 import { useAuth } from '@/context/AuthContext'

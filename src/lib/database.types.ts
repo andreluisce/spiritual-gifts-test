@@ -17,28 +17,37 @@ export type Database = {
       answers: {
         Row: {
           created_at: string
-          question_id: number
+          id: number
+          pool_question_id: number | null
+          question_id: number | null
+          questionnaire_id: string | null
           score: number
           session_id: string
         }
         Insert: {
           created_at?: string
-          question_id: number
+          id?: number
+          pool_question_id?: number | null
+          question_id?: number | null
+          questionnaire_id?: string | null
           score: number
           session_id: string
         }
         Update: {
           created_at?: string
-          question_id?: number
+          id?: number
+          pool_question_id?: number | null
+          question_id?: number | null
+          questionnaire_id?: string | null
           score?: number
           session_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "answers_question_id_fkey"
-            columns: ["question_id"]
+            foreignKeyName: "answers_pool_question_id_fkey"
+            columns: ["pool_question_id"]
             isOneToOne: false
-            referencedRelation: "questions"
+            referencedRelation: "question_pool"
             referencedColumns: ["id"]
           },
           {
@@ -50,422 +59,212 @@ export type Database = {
           },
         ]
       }
-      biblical_activities: {
+      decision_weights: {
         Row: {
-          activity_name: string
-          biblical_reference: string | null
-          biblical_text: string | null
-          id: number
-        }
-        Insert: {
-          activity_name: string
-          biblical_reference?: string | null
-          biblical_text?: string | null
-          id?: number
-        }
-        Update: {
-          activity_name?: string
-          biblical_reference?: string | null
-          biblical_text?: string | null
-          id?: number
-        }
-        Relationships: []
-      }
-      categories: {
-        Row: {
+          created_at: string
           description: string | null
-          greek_term: string | null
-          id: number
-          name: string
-          purpose: string | null
-        }
-        Insert: {
-          description?: string | null
-          greek_term?: string | null
-          id?: number
-          name: string
-          purpose?: string | null
-        }
-        Update: {
-          description?: string | null
-          greek_term?: string | null
-          id?: number
-          name?: string
-          purpose?: string | null
-        }
-        Relationships: []
-      }
-      characteristics: {
-        Row: {
-          characteristic: string
-          gift_id: number | null
-          id: number
-          order_sequence: number | null
-        }
-        Insert: {
-          characteristic: string
-          gift_id?: number | null
-          id?: number
-          order_sequence?: number | null
-        }
-        Update: {
-          characteristic?: string
-          gift_id?: number | null
-          id?: number
-          order_sequence?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "characteristics_gift_id_fkey"
-            columns: ["gift_id"]
-            isOneToOne: false
-            referencedRelation: "spiritual_gifts"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      dangers: {
-        Row: {
-          danger: string
-          gift_id: number | null
-          id: number
-          order_sequence: number | null
-        }
-        Insert: {
-          danger: string
-          gift_id?: number | null
-          id?: number
-          order_sequence?: number | null
-        }
-        Update: {
-          danger?: string
-          gift_id?: number | null
-          id?: number
-          order_sequence?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "dangers_gift_id_fkey"
-            columns: ["gift_id"]
-            isOneToOne: false
-            referencedRelation: "spiritual_gifts"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      gift_bridge: {
-        Row: {
           gift: Database["public"]["Enums"]["gift_key"]
-          spiritual_gift_id: number
+          id: number
+          is_active: boolean
+          multiplier: number
+          pclass: Database["public"]["Enums"]["weight_class"]
+          source: Database["public"]["Enums"]["source_type"]
         }
         Insert: {
+          created_at?: string
+          description?: string | null
           gift: Database["public"]["Enums"]["gift_key"]
-          spiritual_gift_id: number
+          id?: number
+          is_active?: boolean
+          multiplier?: number
+          pclass: Database["public"]["Enums"]["weight_class"]
+          source: Database["public"]["Enums"]["source_type"]
         }
         Update: {
+          created_at?: string
+          description?: string | null
           gift?: Database["public"]["Enums"]["gift_key"]
-          spiritual_gift_id?: number
+          id?: number
+          is_active?: boolean
+          multiplier?: number
+          pclass?: Database["public"]["Enums"]["weight_class"]
+          source?: Database["public"]["Enums"]["source_type"]
         }
-        Relationships: [
-          {
-            foreignKeyName: "gift_bridge_spiritual_gift_id_fkey"
-            columns: ["spiritual_gift_id"]
-            isOneToOne: false
-            referencedRelation: "spiritual_gifts"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
-      gifts: {
+      migration_log: {
         Row: {
           description: string | null
-          key: Database["public"]["Enums"]["gift_key"]
-          name: string
+          executed_at: string | null
+          id: number
+          step: string
         }
         Insert: {
           description?: string | null
-          key: Database["public"]["Enums"]["gift_key"]
-          name: string
+          executed_at?: string | null
+          id?: number
+          step: string
         }
         Update: {
           description?: string | null
-          key?: Database["public"]["Enums"]["gift_key"]
-          name?: string
+          executed_at?: string | null
+          id?: number
+          step?: string
         }
         Relationships: []
-      }
-      manifestation_principles: {
-        Row: {
-          id: number
-          order_sequence: number | null
-          principle: string
-        }
-        Insert: {
-          id?: number
-          order_sequence?: number | null
-          principle: string
-        }
-        Update: {
-          id?: number
-          order_sequence?: number | null
-          principle?: string
-        }
-        Relationships: []
-      }
-      manifestations: {
-        Row: {
-          biblical_references: string | null
-          classification: string | null
-          definition: string | null
-          id: number
-          name: string
-        }
-        Insert: {
-          biblical_references?: string | null
-          classification?: string | null
-          definition?: string | null
-          id?: number
-          name: string
-        }
-        Update: {
-          biblical_references?: string | null
-          classification?: string | null
-          definition?: string | null
-          id?: number
-          name?: string
-        }
-        Relationships: []
-      }
-      ministries: {
-        Row: {
-          biblical_references: string | null
-          definition: string | null
-          id: number
-          name: string
-          type: string | null
-        }
-        Insert: {
-          biblical_references?: string | null
-          definition?: string | null
-          id?: number
-          name: string
-          type?: string | null
-        }
-        Update: {
-          biblical_references?: string | null
-          definition?: string | null
-          id?: number
-          name?: string
-          type?: string | null
-        }
-        Relationships: []
-      }
-      misunderstandings: {
-        Row: {
-          gift_id: number | null
-          id: number
-          misunderstanding: string
-          order_sequence: number | null
-        }
-        Insert: {
-          gift_id?: number | null
-          id?: number
-          misunderstanding: string
-          order_sequence?: number | null
-        }
-        Update: {
-          gift_id?: number | null
-          id?: number
-          misunderstanding?: string
-          order_sequence?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "misunderstandings_gift_id_fkey"
-            columns: ["gift_id"]
-            isOneToOne: false
-            referencedRelation: "spiritual_gifts"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       profiles: {
         Row: {
           avatar_url: string | null
           created_at: string
+          email: string | null
           full_name: string | null
           id: string
+          role: string | null
           updated_at: string
         }
         Insert: {
           avatar_url?: string | null
           created_at?: string
+          email?: string | null
           full_name?: string | null
           id: string
+          role?: string | null
           updated_at?: string
         }
         Update: {
           avatar_url?: string | null
           created_at?: string
+          email?: string | null
           full_name?: string | null
           id?: string
+          role?: string | null
           updated_at?: string
         }
         Relationships: []
       }
-      qualities: {
+      question_pool: {
         Row: {
-          description: string | null
-          gift_id: number | null
+          created_at: string
+          default_weight: number
+          gift: Database["public"]["Enums"]["gift_key"]
           id: number
-          order_sequence: number | null
-          quality_name: string
+          is_active: boolean
+          pclass: Database["public"]["Enums"]["weight_class"]
+          reverse_scored: boolean
+          source: Database["public"]["Enums"]["source_type"]
+          text: string
+          updated_at: string
         }
         Insert: {
-          description?: string | null
-          gift_id?: number | null
+          created_at?: string
+          default_weight?: number
+          gift: Database["public"]["Enums"]["gift_key"]
           id?: number
-          order_sequence?: number | null
-          quality_name: string
+          is_active?: boolean
+          pclass?: Database["public"]["Enums"]["weight_class"]
+          reverse_scored?: boolean
+          source?: Database["public"]["Enums"]["source_type"]
+          text: string
+          updated_at?: string
         }
         Update: {
-          description?: string | null
-          gift_id?: number | null
-          id?: number
-          order_sequence?: number | null
-          quality_name?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "qualities_gift_id_fkey"
-            columns: ["gift_id"]
-            isOneToOne: false
-            referencedRelation: "spiritual_gifts"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      question_gift_map: {
-        Row: {
-          gift: Database["public"]["Enums"]["gift_key"]
-          question_id: number
-        }
-        Insert: {
-          gift: Database["public"]["Enums"]["gift_key"]
-          question_id: number
-        }
-        Update: {
+          created_at?: string
+          default_weight?: number
           gift?: Database["public"]["Enums"]["gift_key"]
-          question_id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "question_gift_map_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: true
-            referencedRelation: "questions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      question_trait_map: {
-        Row: {
-          question_id: number
-          trait: Database["public"]["Enums"]["quiz_trait"]
-        }
-        Insert: {
-          question_id: number
-          trait: Database["public"]["Enums"]["quiz_trait"]
-        }
-        Update: {
-          question_id?: number
-          trait?: Database["public"]["Enums"]["quiz_trait"]
-        }
-        Relationships: [
-          {
-            foreignKeyName: "question_trait_map_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: true
-            referencedRelation: "questions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      questions: {
-        Row: {
-          id: number
-          text: string
-        }
-        Insert: {
-          id: number
-          text: string
-        }
-        Update: {
           id?: number
+          is_active?: boolean
+          pclass?: Database["public"]["Enums"]["weight_class"]
+          reverse_scored?: boolean
+          source?: Database["public"]["Enums"]["source_type"]
           text?: string
+          updated_at?: string
         }
         Relationships: []
+      }
+      question_translations: {
+        Row: {
+          created_at: string
+          id: number
+          locale: string
+          question_id: number
+          text: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          locale: string
+          question_id: number
+          text: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          locale?: string
+          question_id?: number
+          text?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_translations_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "question_pool"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       quiz_sessions: {
         Row: {
           completed_at: string | null
           created_at: string
           id: string
-          user_id: string
+          is_completed: boolean | null
+          questionnaire_id: string | null
+          updated_at: string
+          user_id: string | null
         }
         Insert: {
           completed_at?: string | null
           created_at?: string
           id?: string
-          user_id: string
+          is_completed?: boolean | null
+          questionnaire_id?: string | null
+          updated_at?: string
+          user_id?: string | null
         }
         Update: {
           completed_at?: string | null
           created_at?: string
           id?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      spiritual_gifts: {
-        Row: {
-          biblical_references: string | null
-          category_id: number | null
-          definition: string | null
-          id: number
-          name: string
-        }
-        Insert: {
-          biblical_references?: string | null
-          category_id?: number | null
-          definition?: string | null
-          id?: number
-          name: string
-        }
-        Update: {
-          biblical_references?: string | null
-          category_id?: number | null
-          definition?: string | null
-          id?: number
-          name?: string
+          is_completed?: boolean | null
+          questionnaire_id?: string | null
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "spiritual_gifts_category_id_fkey"
-            columns: ["category_id"]
+            foreignKeyName: "quiz_sessions_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "categories"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
       }
     }
     Views: {
-      quiz_results: {
+      quiz_results_weighted: {
         Row: {
+          avg_weighted: number | null
           gift: Database["public"]["Enums"]["gift_key"] | null
+          question_count: number | null
           session_id: string | null
-          total: number | null
+          total_raw: number | null
+          total_weighted: number | null
         }
         Relationships: [
           {
@@ -477,74 +276,102 @@ export type Database = {
           },
         ]
       }
-      quiz_results_motivations_details: {
+      v_answer_effective_weights: {
         Row: {
+          answer_id: number | null
           gift: Database["public"]["Enums"]["gift_key"] | null
-          gift_definition: string | null
-          gift_name: string | null
+          matrix_multiplier: number | null
+          normalized_score: number | null
+          pclass: Database["public"]["Enums"]["weight_class"] | null
+          pool_question_id: number | null
+          question_weight: number | null
+          reverse_scored: boolean | null
+          score: number | null
           session_id: string | null
-          spiritual_gift_id: number | null
-          total: number | null
+          source: Database["public"]["Enums"]["source_type"] | null
+          weighted_score: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "answers_pool_question_id_fkey"
+            columns: ["pool_question_id"]
+            isOneToOne: false
+            referencedRelation: "question_pool"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "answers_session_id_fkey"
             columns: ["session_id"]
             isOneToOne: false
             referencedRelation: "quiz_sessions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "gift_bridge_spiritual_gift_id_fkey"
-            columns: ["spiritual_gift_id"]
-            isOneToOne: false
-            referencedRelation: "spiritual_gifts"
             referencedColumns: ["id"]
           },
         ]
       }
     }
     Functions: {
-      algorithm_sign: {
-        Args: { signables: string; secret: string; algorithm: string }
-        Returns: string
-      }
-      best_gifts: {
-        Args: { p_session_id: string; p_limit?: number }
-        Returns: {
-          gift: Database["public"]["Enums"]["gift_key"]
-          total: number
-        }[]
-      }
       calculate_quiz_result: {
         Args: { p_session_id: string }
         Returns: {
           gift: Database["public"]["Enums"]["gift_key"]
-          total: number
+          total_weighted: number
+          total_raw: number
+          question_count: number
+          avg_weighted: number
         }[]
       }
-      sign: {
-        Args: { payload: Json; secret: string; algorithm?: string }
-        Returns: string
+      get_questions_by_locale: {
+        Args: { target_locale?: string }
+        Returns: {
+          id: number
+          gift: Database["public"]["Enums"]["gift_key"]
+          source: Database["public"]["Enums"]["source_type"]
+          pclass: Database["public"]["Enums"]["weight_class"]
+          reverse_scored: boolean
+          default_weight: number
+          text: string
+          is_active: boolean
+        }[]
       }
-      try_cast_double: {
-        Args: { inp: string }
+      gtrgm_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_decompress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_in: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_options: {
+        Args: { "": unknown }
+        Returns: undefined
+      }
+      gtrgm_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      set_limit: {
+        Args: { "": number }
         Returns: number
       }
-      url_decode: {
-        Args: { data: string }
-        Returns: string
+      show_limit: {
+        Args: Record<PropertyKey, never>
+        Returns: number
       }
-      url_encode: {
-        Args: { data: string }
-        Returns: string
+      show_trgm: {
+        Args: { "": string }
+        Returns: string[]
       }
-      verify: {
-        Args: { token: string; secret: string; algorithm?: string }
+      validate_multilingual_system: {
+        Args: Record<PropertyKey, never>
         Returns: {
-          header: Json
-          payload: Json
-          valid: boolean
+          check_name: string
+          status: string
+          details: string
+          is_critical: boolean
         }[]
       }
     }
@@ -557,7 +384,13 @@ export type Database = {
         | "E_GIVING"
         | "F_LEADERSHIP"
         | "G_MERCY"
-      quiz_trait: "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I"
+      source_type:
+        | "QUALITY"
+        | "CHARACTERISTIC"
+        | "DANGER"
+        | "MISUNDERSTANDING"
+        | "OTHER"
+      weight_class: "P1" | "P2" | "P3"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -694,7 +527,14 @@ export const Constants = {
         "F_LEADERSHIP",
         "G_MERCY",
       ],
-      quiz_trait: ["A", "B", "C", "D", "E", "F", "G", "H", "I"],
+      source_type: [
+        "QUALITY",
+        "CHARACTERISTIC",
+        "DANGER",
+        "MISUNDERSTANDING",
+        "OTHER",
+      ],
+      weight_class: ["P1", "P2", "P3"],
     },
   },
 } as const

@@ -47,7 +47,7 @@ export default function QuizPage() {
     setCurrentQuestionIndex,
     hasPersistedState,
     clearAnswers
-  } = useQuiz()
+  } = useQuiz(locale)
 
   // Preview mode: only 3 questions for non-logged users
   const isPreviewMode = !user
