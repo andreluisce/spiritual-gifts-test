@@ -8,28 +8,88 @@ import type { Database } from '@/lib/database.types'
 import type { QuizQuestion, SpiritualGift } from '@/data/quiz-data'
 
 
-export interface Manifestation {
-  id: number;
+// Updated interfaces to match new database structure
+export interface Category {
+  key: string;
+  name: string;
+  greek_term: string;
+  description: string;
+  purpose: string;
+}
+
+export interface SpiritualGiftData {
+  gift_key: Database['public']['Enums']['gift_key'];
   name: string;
   definition: string;
-  classification: 'DISCERNIMENTO' | 'PODER' | 'DECLARACAO';
   biblical_references: string;
+  category_name: string;
+  category_key: string;
+  greek_term: string;
+  qualities: Quality[];
+  characteristics: Characteristic[];
+  dangers: Danger[];
+  misunderstandings: Misunderstanding[];
+}
+
+export interface Quality {
+  quality_name: string;
+  description: string | null;
+  order_sequence: number | null;
+}
+
+export interface Characteristic {
+  characteristic: string;
+  order_sequence: number | null;
+}
+
+export interface Danger {
+  danger: string;
+  order_sequence: number | null;
+}
+
+export interface Misunderstanding {
+  misunderstanding: string;
+  order_sequence: number | null;
 }
 
 export interface Ministry {
-  id: number;
+  key: string;
   name: string;
   definition: string;
-  type: 'PRIMARY' | 'OTHER';
+  type: string;
   biblical_references: string;
 }
 
 export interface Manifestation {
-  id: number;
+  key: string;
   name: string;
   definition: string;
-  classification: 'DISCERNIMENTO' | 'PODER' | 'DECLARACAO';
+  classification: string;
   biblical_references: string;
+}
+
+export interface GiftCompleteData {
+  gift_key: Database['public']['Enums']['gift_key'];
+  gift_name: string;
+  definition: string;
+  biblical_references: string;
+  category_name: string;
+  greek_term: string;
+  qualities: Quality[];
+  characteristics: Characteristic[];
+  dangers: Danger[];
+  misunderstandings: Misunderstanding[];
+}
+
+export interface TopGiftDetail {
+  gift_key: Database['public']['Enums']['gift_key'];
+  gift_name: string;
+  definition: string;
+  biblical_references: string;
+  total_weighted: number;
+  question_count: number;
+  category_name: string;
+  greek_term: string;
 }
 
 type DbAnswer = Database['public']['Tables']['answers']['Insert']
@@ -74,15 +134,53 @@ export function useQuizQuestions(locale: string = 'pt') {
 
 export type ExtendedSpiritualGift = SpiritualGift
 
-// Hook to get spiritual gifts
-export function useSpiritualGifts() {
+// Hook to get spiritual gifts from database with rich data
+export function useSpiritualGifts(locale: string = 'pt') {
   return useQuery({
-    queryKey: QUERY_KEYS.gifts,
-    queryFn: async () => {
-      const { spiritualGifts } = await import('@/data/quiz-data')
-      return spiritualGifts
+    queryKey: [...QUERY_KEYS.gifts, locale],
+    queryFn: async (): Promise<SpiritualGiftData[]> => {
+      const { data, error } = await supabase.rpc('get_all_gifts_with_data', {
+        p_locale: locale
+      })
+
+      if (error) {
+        throw new Error(`Failed to fetch spiritual gifts: ${error.message}`)
+      }
+
+      // Parse JSON response from database function
+      interface RawGiftData {
+        gift_key: Database['public']['Enums']['gift_key']
+        gift_name: string
+        definition: string
+        biblical_references: string
+        category_name: string
+        category_key: string
+        greek_term: string
+        qualities?: Quality[]
+        characteristics?: Characteristic[]
+        dangers?: Danger[]
+        misunderstandings?: Misunderstanding[]
+      }
+      
+      const gifts = Array.isArray(data) ? data : []
+      return gifts.map((gift: unknown) => {
+        const giftData = gift as RawGiftData
+        return {
+          gift_key: giftData.gift_key,
+          name: giftData.gift_name,
+          definition: giftData.definition,
+          biblical_references: giftData.biblical_references,
+          category_name: giftData.category_name,
+          category_key: giftData.category_key,
+          greek_term: giftData.greek_term,
+          qualities: giftData.qualities || [],
+          characteristics: giftData.characteristics || [],
+          dangers: giftData.dangers || [],
+          misunderstandings: giftData.misunderstandings || []
+        }
+      }) as SpiritualGiftData[]
     },
-    staleTime: Infinity, // Static data, never stale
+    staleTime: 5 * 60 * 1000, // 5 minutes
   })
 }
 
@@ -211,8 +309,7 @@ export function useLatestResult(userId: string | null) {
           }
         });
 
-        const { spiritualGifts } = await import('@/data/quiz-data')
-        const topGifts = getTopGifts(totalScore, spiritualGifts);
+        const topGifts = getTopGiftsFromScores(totalScore);
 
         return {
           sessionId: session.id,
@@ -332,61 +429,61 @@ export function useDeleteResult() {
   })
 }
 
-// Hook to get categories (static data)
-export function useCategories() {
+// Hook to get categories by locale
+export function useCategories(locale: string = 'pt') {
   return useQuery({
-    queryKey: ['categories'],
-    queryFn: async () => {
-      return [
-        {
-          id: 'motivations',
-          name: 'MOTIVAÇÕES',
-          greek_term: 'Charisma',
-          description: 'Dons motivacionais que impulsionam o serviço cristão',
-          purpose: 'Capacitam para ação e liderança'
-        },
-        {
-          id: 'ministries',
-          name: 'MINISTÉRIOS',
-          greek_term: 'Diakonia',
-          description: 'Dons de serviço para edificação do corpo de Cristo',
-          purpose: 'Direcionam o chamado específico'
-        },
-        {
-          id: 'manifestations',
-          name: 'MANIFESTAÇÕES',
-          greek_term: 'Phanerosis',
-          description: 'Manifestações sobrenaturais do Espírito Santo',
-          purpose: 'Demonstram o poder divino'
-        }
-      ]
+    queryKey: ['categories', locale],
+    queryFn: async (): Promise<Category[]> => {
+      const { data, error } = await supabase.rpc('get_categories_by_locale', {
+        p_locale: locale
+      });
+
+      if (error) {
+        throw new Error(`Failed to fetch categories: ${error.message}`);
+      }
+
+      return data || [];
     },
-    staleTime: Infinity, // Static data
-  })
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
 }
 
-// Hook to get ministries (returns empty for now)
-export function useMinistries() {
+// Hook to get ministries by locale
+export function useMinistries(locale: string = 'pt') {
   return useQuery({
-    queryKey: ['ministries'],
+    queryKey: ['ministries', locale],
     queryFn: async (): Promise<Ministry[]> => {
-      // Return empty array as ministries table doesn't exist yet
-      return []
+      const { data, error } = await supabase.rpc('get_ministries_by_locale', {
+        p_locale: locale
+      });
+
+      if (error) {
+        throw new Error(`Failed to fetch ministries: ${error.message}`);
+      }
+
+      return data || [];
     },
-    staleTime: Infinity,
-  })
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
 }
 
-// Hook to get manifestations (returns empty for now)
-export function useManifestations() {
+// Hook to get manifestations by locale
+export function useManifestations(locale: string = 'pt') {
   return useQuery({
-    queryKey: ['manifestations'],
+    queryKey: ['manifestations', locale],
     queryFn: async (): Promise<Manifestation[]> => {
-      // Return empty array as manifestations table doesn't exist yet
-      return []
+      const { data, error } = await supabase.rpc('get_manifestations_by_locale', {
+        p_locale: locale
+      });
+
+      if (error) {
+        throw new Error(`Failed to fetch manifestations: ${error.message}`);
+      }
+
+      return data || [];
     },
-    staleTime: Infinity,
-  })
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
 }
 
 // Hook to get specific quiz result by session ID
@@ -450,8 +547,58 @@ export function useResultBySessionId(sessionId: string) {
   })
 }
 
-// Helper function to get top gifts from total score
-function getTopGifts(totalScore: Record<string, number>, gifts: SpiritualGift[]): string[] {
+// Hook to get complete gift data by gift key
+export function useGiftCompleteData(giftKey: Database['public']['Enums']['gift_key'], locale: string = 'pt') {
+  return useQuery({
+    queryKey: ['gift_complete_data', giftKey, locale],
+    queryFn: async (): Promise<GiftCompleteData | null> => {
+      const { data, error } = await supabase.rpc('get_gift_complete_data', {
+        p_gift_key: giftKey,
+        p_locale: locale
+      });
+
+      if (error) {
+        throw new Error(`Failed to fetch gift complete data: ${error.message}`);
+      }
+
+      return data || null;
+    },
+    enabled: !!giftKey,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+}
+
+// Hook to get top gift details for a session
+export function useTopGiftDetails(sessionId: string, locale: string = 'pt') {
+  return useQuery({
+    queryKey: ['top_gift_details', sessionId, locale],
+    queryFn: async (): Promise<TopGiftDetail[]> => {
+      const { data, error } = await supabase.rpc('get_top_gift_details', {
+        p_session_id: sessionId,
+        p_locale: locale
+      });
+
+      if (error) {
+        throw new Error(`Failed to fetch top gift details: ${error.message}`);
+      }
+
+      return data || [];
+    },
+    enabled: !!sessionId,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+}
+
+// Helper function to get top gifts from total score (without needing gifts array)
+function getTopGiftsFromScores(totalScore: Record<string, number>): string[] {
+  return Object.entries(totalScore)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 5)
+    .map(([giftKey]) => giftKey)
+}
+
+// Helper function for backward compatibility
+export function getTopGifts(totalScore: Record<string, number>, gifts: { key: string; name: string }[]): string[] {
   return Object.entries(totalScore)
     .sort(([, a], [, b]) => b - a)
     .slice(0, 5)

@@ -20,30 +20,32 @@ import {
   useResultBySessionId,
   useSpiritualGifts,
   useCategories,
-  type ExtendedSpiritualGift
+  type SpiritualGiftData,
 } from '@/hooks/use-quiz-queries'
+import { useLocale } from 'next-intl'
 
 
 export default function ResultsPage() {
   const router = useRouter()
   const params = useParams()
+  const locale = useLocale()
   const sessionId = params.sessionId as string
   const [activeTab, setActiveTab] = useState('overview')
 
   const { data: result, isLoading: loadingResults, error: resultsError } = useResultBySessionId(sessionId)
-  const { data: spiritualGiftsData, isLoading: loadingSpiritualGifts } = useSpiritualGifts()
-  const { data: categories, isLoading: loadingCategories } = useCategories()
+  const { data: spiritualGiftsData, isLoading: loadingSpiritualGifts } = useSpiritualGifts(locale)
+  const { data: categories, isLoading: loadingCategories } = useCategories(locale)
 
   const loading = loadingResults || loadingSpiritualGifts || loadingCategories
 
-  const getGiftByKey = (key: string): ExtendedSpiritualGift | undefined => {
-    return spiritualGiftsData?.find(gift => gift.key === key)
-  }
+  // const getGiftByKey = (key: string): SpiritualGiftData | undefined => {
+  //   return spiritualGiftsData?.find(gift => gift.gift_key === key)
+  // }
 
-  // Get extended spiritual gift data based on quiz results
-  const getExtendedGiftData = (giftName: string): ExtendedSpiritualGift | undefined => {
-    return spiritualGiftsData?.find(gift => gift.name.toLowerCase().includes(giftName.toLowerCase()))
-  }
+  // Get the top gift data from the database function
+  // const getTopGiftData = (): TopGiftDetail | undefined => {
+  //   return topGiftDetails?.[0] // Return the highest scoring gift
+  // }
 
   const getScorePercentage = (score: number, maxPossibleScore: number = 25): number => {
     return (score / maxPossibleScore) * 100
@@ -55,13 +57,13 @@ export default function ResultsPage() {
     router.push('/quiz')
   }
 
-  // Get the top gift with extended data
-  const getTopGiftWithData = () => {
-    if (!result || !spiritualGiftsData || result.topGifts.length === 0) return null
-
-    const topGiftName = result.topGifts[0]
-    return getExtendedGiftData(topGiftName)
-  }
+  // Get the complete top gift data
+  // const getTopGiftWithCompleteData = (): SpiritualGiftData | null => {
+  //   const topGiftData = getTopGiftData()
+  //   if (!topGiftData || !spiritualGiftsData) return null
+  //   
+  //   return spiritualGiftsData.find(gift => gift.gift_key === topGiftData.gift_key) || null
+  // }
 
   if (loading) {
     return (
@@ -99,14 +101,17 @@ export default function ResultsPage() {
 
   const allScores = spiritualGiftsData
     ? spiritualGiftsData.map(gift => ({
-        giftKey: gift.key,
-        score: result.totalScore[gift.key] || 0,
+        giftKey: gift.gift_key,
+        giftName: gift.name,
+        definition: gift.definition,
+        score: result.totalScore[gift.gift_key] || 0,
       }))
     : [];
 
   const sortedScores = allScores.sort((a, b) => b.score - a.score);
 
-  const topGiftWithData = getTopGiftWithData()
+  // const topGiftWithCompleteData = getTopGiftWithCompleteData()
+  // const topGiftDetail = getTopGiftData()
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
@@ -144,20 +149,18 @@ export default function ResultsPage() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-              {result.topGifts.map((giftName, index) => (
-                <div key={index} className="text-center">
+              {sortedScores.slice(0, 5).map((scoreData, index) => (
+                <div key={scoreData.giftKey} className="text-center">
                   <Badge
                     variant={index === 0 ? "default" : "secondary"}
                     className="text-sm px-3 py-1 mb-2"
                   >
                     #{index + 1}
                   </Badge>
-                  <p className="font-semibold">{giftName}</p>
-                  {index === 0 && topGiftWithData && (
-                    <p className="text-xs text-gray-500 mt-1">
-Dom Espiritual
-                    </p>
-                  )}
+                  <p className="font-semibold">{scoreData.giftName}</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {scoreData.score.toFixed(1)} pontos
+                  </p>
                 </div>
               ))}
             </div>
@@ -182,21 +185,18 @@ Dom Espiritual
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                {sortedScores.map(({ giftKey, score }, index) => {
-                  const gift = getGiftByKey(giftKey)
-                  if (!gift) return null
-
+                {sortedScores.map(({ giftKey, giftName, definition, score }, index) => {
                   const percentage = getScorePercentage(score)
 
                   return (
                     <div key={giftKey}>
                       <div className="flex justify-between items-center mb-2">
                         <div>
-                          <h3 className="font-semibold text-lg">{gift.name}</h3>
-                          <p className="text-sm text-gray-600">{gift.description}</p>
+                          <h3 className="font-semibold text-lg">{giftName}</h3>
+                          <p className="text-sm text-gray-600">{definition}</p>
                         </div>
                         <div className="text-right">
-                          <div className="text-2xl font-bold text-blue-600">{score}</div>
+                          <div className="text-2xl font-bold text-blue-600">{score.toFixed(1)}</div>
                           <div className="text-sm text-gray-500">pontos</div>
                         </div>
                       </div>
@@ -215,7 +215,7 @@ Dom Espiritual
             {categories && (
               <div className="grid md:grid-cols-3 gap-4">
                 {categories.map((category) => (
-                  <Card key={category.id}>
+                  <Card key={category.key}>
                     <CardHeader>
                       <CardTitle className="text-lg flex items-center gap-2">
                         {category.name === 'MOTIVAÇÕES' && <Heart className="h-5 w-5" />}
@@ -236,116 +236,41 @@ Dom Espiritual
           </TabsContent>
 
           <TabsContent value="characteristics" className="space-y-6 mt-[70px] md:mt-[40px]">
-            {topGiftWithData ? (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Lightbulb className="h-5 w-5" />
-                    Características do Dom de {topGiftWithData.name}
-                  </CardTitle>
-                  <p className="text-gray-600">{topGiftWithData.description}</p>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid gap-3">
-                    {topGiftWithData.characteristics?.map((char, index) => (
-                      <div key={index} className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
-                        <Badge variant="outline" className="mt-1">
-                          {index + 1}
-                        </Badge>
-                        <p className="text-gray-700 flex-1">{char}</p>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <Alert>
-                <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>
-                  Dados completos do dom principal não disponíveis. Mostrando informações básicas.
-                </AlertDescription>
-              </Alert>
-            )}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Lightbulb className="h-5 w-5" />
+                  Características Detalhadas
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Alert>
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertDescription>
+                    Dados completos do dom principal não disponíveis. Mostrando informações básicas.
+                  </AlertDescription>
+                </Alert>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="qualities" className="space-y-6 mt-[70px] md:mt-[40px]">
-            {topGiftWithData ? (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Target className="h-5 w-5" />
-                    Qualidades a Desenvolver
-                  </CardTitle>
-                  <p className="text-gray-600">
-                    Sete qualidades importantes para desenvolver no dom de {topGiftWithData.name}
-                  </p>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    {topGiftWithData.characteristics?.map((characteristic, index) => (
-                      <div key={index} className="flex items-start gap-3 p-4 border rounded-lg">
-                        <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">
-                          {index + 1}
-                        </div>
-                        <div>
-                          <h4 className="font-semibold text-gray-800 mb-1">
-                            Característica {index + 1}
-                          </h4>
-                          <p className="text-sm text-gray-600">{characteristic}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <Alert>
-                <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>
-                  Dados de qualidades não disponíveis para análise completa.
-                </AlertDescription>
-              </Alert>
-            )}
+            <Alert>
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>
+                Dados de qualidades não disponíveis para análise completa.
+              </AlertDescription>
+            </Alert>
           </TabsContent>
 
 
           <TabsContent value="guidance" className="space-y-6 mt-[70px] md:mt-[40px]">
-            {topGiftWithData ? (
-              <>
-
-                {/* Biblical References */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <BookOpen className="h-5 w-5" />
-                      Referências Bíblicas
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {(topGiftWithData.biblicalReferences?.length ?? 0) > 0 ? (
-                      <div className="flex flex-wrap gap-2">
-                        {topGiftWithData.biblicalReferences?.map((reference, index) => (
-                          <Badge key={index} variant="outline" className="text-blue-600">
-                            {reference}
-                          </Badge>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-gray-500 italic">
-                        Referências bíblicas específicas em desenvolvimento.
-                      </p>
-                    )}
-                  </CardContent>
-                </Card>
-              </>
-            ) : (
-              <Alert>
-                <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>
-                  Orientações detalhadas não disponíveis para análise completa.
-                </AlertDescription>
-              </Alert>
-            )}
+            <Alert>
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>
+                Orientações detalhadas não disponíveis para análise completa.
+              </AlertDescription>
+            </Alert>
           </TabsContent>
         </Tabs>
 

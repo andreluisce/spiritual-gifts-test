@@ -21,7 +21,7 @@ import {
   useLatestResult,
   useSpiritualGifts,
   useCategories,
-  type ExtendedSpiritualGift
+  type SpiritualGiftData
 } from '@/hooks/use-quiz-queries'
 
 import { useAuth } from '@/context/AuthContext'
@@ -33,17 +33,17 @@ export default function ResultsPage() {
   const [activeTab, setActiveTab] = useState('overview')
 
   const { data: latestResult, isLoading: loadingResults, error: resultsError } = useLatestResult(user?.id || null)
-  const { data: spiritualGiftsData, isLoading: loadingSpiritualGifts } = useSpiritualGifts()
-  const { data: categories, isLoading: loadingCategories } = useCategories()
+  const { data: spiritualGiftsData, isLoading: loadingSpiritualGifts } = useSpiritualGifts(locale)
+  const { data: categories, isLoading: loadingCategories } = useCategories(locale)
 
   const loading = loadingResults || loadingSpiritualGifts || loadingCategories
 
-  const getGiftByKey = (key: string): ExtendedSpiritualGift | undefined => {
-    return spiritualGiftsData?.find(gift => gift.key === key)
+  const getGiftByKey = (key: string): SpiritualGiftData | undefined => {
+    return spiritualGiftsData?.find(gift => gift.gift_key === key)
   }
 
   // Get extended spiritual gift data based on quiz results
-  const getExtendedGiftData = (giftName: string): ExtendedSpiritualGift | undefined => {
+  const getExtendedGiftData = (giftName: string): SpiritualGiftData | undefined => {
     return spiritualGiftsData?.find(gift => gift.name.toLowerCase().includes(giftName.toLowerCase()))
   }
 
@@ -101,8 +101,8 @@ export default function ResultsPage() {
 
   const allScores = spiritualGiftsData
     ? spiritualGiftsData.map(gift => ({
-      giftKey: gift.key,
-      score: latestResult.totalScore[gift.key] || 0,
+      giftKey: gift.gift_key,
+      score: latestResult.totalScore[gift.gift_key] || 0,
     }))
     : [];
 
@@ -238,7 +238,7 @@ Dom Espiritual
                       <div className="flex justify-between items-center mb-2">
                         <div>
                           <h3 className="font-semibold text-lg">{gift.name}</h3>
-                          <p className="text-sm text-gray-600">{gift.description}</p>
+                          <p className="text-sm text-gray-600">{gift.definition}</p>
                         </div>
                         <div className="text-right">
                           <div className="text-2xl font-bold text-blue-600">{score}</div>
@@ -260,7 +260,7 @@ Dom Espiritual
             {categories && (
               <div className="grid md:grid-cols-3 gap-4">
                 {categories.map((category) => (
-                  <Card key={category.id}>
+                  <Card key={category.key}>
                     <CardHeader>
                       <CardTitle className="text-lg flex items-center gap-2">
                         {category.name === 'MOTIVAÇÕES' && <Heart className="h-5 w-5" />}

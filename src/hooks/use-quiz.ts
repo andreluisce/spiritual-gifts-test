@@ -54,7 +54,7 @@ export function useQuiz(locale: string = 'pt'): UseQuizReturn {
   const [shuffledQuestions, setShuffledQuestions] = useState<QuizQuestion[]>([])
 
   const questionsQuery = useQuizQuestions(locale)
-  const giftsQuery = useSpiritualGifts()
+  const giftsQuery = useSpiritualGifts(locale)
   const submitQuizMutation = useSubmitQuiz()
 
   // Shuffle questions when they are first loaded
@@ -173,7 +173,13 @@ export function useQuiz(locale: string = 'pt'): UseQuizReturn {
       const result = await submitQuizMutation.mutateAsync({
         userId,
         answers: currentAnswers,
-        gifts: giftsQuery.data
+        gifts: giftsQuery.data.map(gift => ({
+          key: gift.gift_key,
+          name: gift.name,
+          description: gift.definition,
+          biblicalReferences: [gift.biblical_references],
+          characteristics: gift.characteristics.map(c => c.characteristic)
+        }))
       })
 
       // Clear persisted state after successful submission

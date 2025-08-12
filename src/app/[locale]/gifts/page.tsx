@@ -21,12 +21,12 @@ import {
   useCategories,
   useMinistries,
   useManifestations,
-  type ExtendedSpiritualGift
+  type SpiritualGiftData
 } from '@/hooks/use-quiz-queries'
 
 export default function GiftsPage() {
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedGift, setSelectedGift] = useState<ExtendedSpiritualGift | null>(null)
+  const [selectedGift, setSelectedGift] = useState<SpiritualGiftData | null>(null)
 
   const router = useRouter()
   const { user } = useAuth()
@@ -41,16 +41,16 @@ export default function GiftsPage() {
   }, [user, router, locale])
   const [activeSection, setActiveSection] = useState('motivations')
 
-  const { data: spiritualGiftsData, isLoading: loadingSpiritualGifts } = useSpiritualGifts()
-  const { data: categories, isLoading: loadingCategories } = useCategories()
-  const { data: ministries } = useMinistries()
-  const { data: manifestations } = useManifestations()
+  const { data: spiritualGiftsData, isLoading: loadingSpiritualGifts } = useSpiritualGifts(locale)
+  const { data: categories, isLoading: loadingCategories } = useCategories(locale)
+  const { data: ministries } = useMinistries(locale)
+  const { data: manifestations } = useManifestations(locale)
 
   const loading = loadingSpiritualGifts || loadingCategories
 
   const filteredGifts = spiritualGiftsData?.filter(gift =>
     gift.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    gift.description.toLowerCase().includes(searchTerm.toLowerCase())
+    gift.definition.toLowerCase().includes(searchTerm.toLowerCase())
   ) || []
 
   const filteredMinistries = ministries?.filter(ministry =>
@@ -104,7 +104,7 @@ export default function GiftsPage() {
         {categories && (
           <div className="grid md:grid-cols-3 gap-6 mb-8">
             {categories.map((category) => (
-              <Card key={category.id} className="text-center">
+              <Card key={category.key} className="text-center">
                 <CardHeader>
                   <div className="flex justify-center mb-2">
                     {category.name === 'MOTIVAÇÕES' && <Heart className="h-8 w-8 text-red-500" />}
@@ -159,8 +159,8 @@ export default function GiftsPage() {
                 <div className="grid md:grid-cols-2 gap-6">
                   {filteredGifts.map((gift) => (
                     <Card
-                      key={gift.key}
-                      className={`cursor-pointer transition-all hover:shadow-lg ${selectedGift?.key === gift.key ? 'ring-2 ring-blue-500' : ''
+                      key={gift.gift_key}
+                      className={`cursor-pointer transition-all hover:shadow-lg ${selectedGift?.gift_key === gift.gift_key ? 'ring-2 ring-blue-500' : ''
                         }`}
                       onClick={() => setSelectedGift(gift)}
                     >
@@ -172,14 +172,14 @@ export default function GiftsPage() {
                       </CardHeader>
                       <CardContent>
                         <p className="text-gray-600 text-sm">
-                          {gift.description}
+                          {gift.definition}
                         </p>
                         <div className="mt-4 flex justify-between items-center">
                           <Badge variant="secondary" className="text-xs">
-                            Dom Espiritual
+                            {gift.category_name}
                           </Badge>
                           <div className="text-xs text-gray-500">
-                            {gift.characteristics.length} características
+                            {gift.characteristics?.length || 0} características
                           </div>
                         </div>
                       </CardContent>
@@ -203,7 +203,7 @@ export default function GiftsPage() {
                             <BookOpen className="h-4 w-4" />
                             Descrição
                           </h3>
-                          <p className="text-gray-700">{selectedGift.description}</p>
+                          <p className="text-gray-700">{selectedGift.definition}</p>
                         </div>
 
                         <Separator />
@@ -214,12 +214,17 @@ export default function GiftsPage() {
                             Qualidades a Desenvolver
                           </h3>
                           <div className="space-y-2 md:max-h-none md:overflow-visible max-h-40 overflow-y-auto">
-                            {selectedGift.characteristics?.map((characteristic, index) => (
+                            {selectedGift.qualities?.map((quality, index) => (
                               <div key={index} className="flex items-start gap-2">
                                 <Badge variant="outline" className="text-xs mt-1">
                                   {index + 1}
                                 </Badge>
-                                <span className="text-gray-700 text-sm">{characteristic}</span>
+                                <div className="text-gray-700 text-sm">
+                                  <span className="font-medium">{quality.quality_name}</span>
+                                  {quality.description && (
+                                    <p className="text-xs text-gray-600 mt-1">{quality.description}</p>
+                                  )}
+                                </div>
                               </div>
                             ))}
                           </div>
@@ -236,7 +241,7 @@ export default function GiftsPage() {
                             {selectedGift.characteristics?.map((char, index) => (
                               <div key={index} className="flex items-start gap-2">
                                 <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
-                                <span className="text-gray-700 text-sm">{char}</span>
+                                <span className="text-gray-700 text-sm">{char.characteristic}</span>
                               </div>
                             ))}
                           </div>
@@ -275,7 +280,7 @@ export default function GiftsPage() {
           <TabsContent value="ministries" className="space-y-6">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredMinistries.map((ministry) => (
-                <Card key={ministry.id}>
+                <Card key={ministry.key}>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Users className="h-5 w-5 text-green-500" />
@@ -285,7 +290,7 @@ export default function GiftsPage() {
                       variant={ministry.type === 'PRIMARY' ? 'default' : 'secondary'}
                       className="w-fit"
                     >
-                      {ministry.type === 'PRIMARY' ? 'Principal' : 'Outros'}
+                      {ministry.type}
                     </Badge>
                   </CardHeader>
                   <CardContent>
@@ -313,7 +318,7 @@ export default function GiftsPage() {
                     {filteredManifestations
                       .filter(m => m.classification === classification)
                       .map((manifestation) => (
-                        <Card key={manifestation.id}>
+                        <Card key={manifestation.key}>
                           <CardHeader>
                             <CardTitle className="text-lg">{manifestation.name}</CardTitle>
                           </CardHeader>
