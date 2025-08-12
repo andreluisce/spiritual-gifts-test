@@ -223,3 +223,158 @@ FROM information_schema.tables
 WHERE table_schema = 'public';
 
 -- Sistema multilíngue criado com sucesso
+
+-- 14. FUNÇÕES ADICIONAIS PARA QUIZ BALANCEADO
+-- Last Updated: 2025-08-12 - Moved business logic to backend
+-- Migration Reference: 20250812182225_create_quiz_functions.sql
+
+-- Create comprehensive quiz generation function (Updated: 2025-08-12)
+CREATE OR REPLACE FUNCTION public.generate_balanced_quiz(
+  target_locale text DEFAULT 'pt',
+  questions_per_gift integer DEFAULT 5,
+  user_id_param uuid DEFAULT NULL
+)
+RETURNS TABLE (
+  quiz_id uuid,
+  question_id bigint,
+  question_text text,
+  gift_key public.gift_key,
+  weight_class public.weight_class,
+  question_order integer
+) 
+LANGUAGE plpgsql
+STABLE
+SECURITY DEFINER
+AS $$
+DECLARE
+  quiz_uuid uuid;
+BEGIN
+  quiz_uuid := gen_random_uuid();
+  
+  RETURN QUERY
+  WITH questions_with_translations AS (
+    SELECT 
+      qp.id,
+      qp.gift,
+      qp.pclass,
+      COALESCE(qt_target.text, qt_fallback.text, qp.text) as translated_text
+    FROM public.question_pool qp
+    LEFT JOIN public.question_translations qt_target 
+      ON qp.id = qt_target.question_id AND qt_target.locale = target_locale
+    LEFT JOIN public.question_translations qt_fallback 
+      ON qp.id = qt_fallback.question_id AND qt_fallback.locale = 'pt'
+    WHERE qp.is_active = true
+  ),
+  balanced_per_gift AS (
+    SELECT 
+      qwt.*,
+      ROW_NUMBER() OVER (PARTITION BY qwt.gift ORDER BY 
+        CASE qwt.pclass 
+          WHEN 'P1' THEN 1 
+          WHEN 'P2' THEN 2 
+          WHEN 'P3' THEN 3 
+          ELSE 4 
+        END, RANDOM()) as overall_rank
+    FROM questions_with_translations qwt
+  ),
+  selected_questions AS (
+    SELECT 
+      bpg.*,
+      ROW_NUMBER() OVER (ORDER BY bpg.gift, bpg.overall_rank) as final_order
+    FROM balanced_per_gift bpg
+    WHERE bpg.overall_rank <= questions_per_gift
+  )
+  SELECT 
+    quiz_uuid as quiz_id,
+    sq.id as question_id,
+    sq.translated_text as question_text,
+    sq.gift as gift_key,
+    sq.pclass as weight_class,
+    sq.final_order::integer as question_order
+  FROM selected_questions sq
+  ORDER BY sq.final_order;
+END;
+$$;
+
+-- Create comprehensive quiz submission function (Updated: 2025-08-12)
+CREATE OR REPLACE FUNCTION public.submit_complete_quiz(
+  p_user_id uuid,
+  p_answers jsonb, -- Format: {"question_id": score, ...}
+  p_quiz_id uuid DEFAULT NULL
+)
+RETURNS TABLE (
+  session_id uuid,
+  top_gifts_keys text[],
+  top_gifts_names text[],
+  total_scores jsonb,
+  completed_at timestamptz
+) 
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  new_session_id uuid;
+  answer_record record;
+  completion_time timestamptz;
+BEGIN
+  new_session_id := gen_random_uuid();
+  completion_time := timezone('utc', now());
+  
+  INSERT INTO public.quiz_sessions (
+    id, user_id, is_completed, completed_at, created_at
+  ) VALUES (
+    new_session_id, p_user_id, true, completion_time, completion_time
+  );
+  
+  FOR answer_record IN 
+    SELECT 
+      key::bigint as question_id, 
+      value::integer as score
+    FROM jsonb_each_text(p_answers)
+  LOOP
+    INSERT INTO public.answers (
+      session_id, pool_question_id, score
+    ) VALUES (
+      new_session_id, answer_record.question_id, answer_record.score
+    );
+  END LOOP;
+  
+  RETURN QUERY
+  WITH quiz_results AS (
+    SELECT * FROM public.calculate_quiz_result(new_session_id)
+  ),
+  gift_names AS (
+    SELECT 
+      qr.gift,
+      qr.total_weighted,
+      COALESCE(sg.name, qr.gift::text) as gift_name
+    FROM quiz_results qr
+    LEFT JOIN public.spiritual_gifts sg ON sg.gift_key = qr.gift
+    WHERE sg.locale = 'pt' OR sg.locale IS NULL
+  ),
+  top_5_gifts AS (
+    SELECT 
+      gn.gift,
+      gn.gift_name,
+      gn.total_weighted,
+      ROW_NUMBER() OVER (ORDER BY gn.total_weighted DESC) as rank
+    FROM gift_names gn
+    ORDER BY gn.total_weighted DESC
+    LIMIT 5
+  ),
+  aggregated_results AS (
+    SELECT 
+      array_agg(t5.gift::text ORDER BY t5.rank) as gift_keys,
+      array_agg(t5.gift_name ORDER BY t5.rank) as gift_names,
+      jsonb_object_agg(t5.gift::text, t5.total_weighted) as scores
+    FROM top_5_gifts t5
+  )
+  SELECT 
+    new_session_id,
+    ar.gift_keys,
+    ar.gift_names,
+    ar.scores,
+    completion_time
+  FROM aggregated_results ar;
+END;
+$$;

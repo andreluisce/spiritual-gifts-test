@@ -30,6 +30,15 @@
 -- STEP 8: FINAL VERIFICATION
 -- Execute: 06_CLEAN_final_verification.sql
 
+-- STEP 9: ROW LEVEL SECURITY (RLS) POLICIES  
+-- Execute: 07_RLS_policies.sql
+
+-- STEP 10: ADVANCED QUIZ FUNCTIONS (Updated: 2025-08-12)
+-- Execute: 08_QUIZ_FUNCTIONS.sql
+
+-- STEP 11: COMPREHENSIVE RLS FOR ALL TABLES (Updated: 2025-08-12)
+-- Execute: 09_COMPREHENSIVE_RLS.sql
+
 -- =========================================================
 -- EXECUTION COMMANDS FOR PSQL CLIENT:
 -- =========================================================
@@ -44,6 +53,9 @@ psql -d your_database -c "\i 04_CLEAN_english_translations.sql"
 psql -d your_database -c "\i 05_CLEAN_spanish_translations.sql"
 psql -d your_database -c "\i enhanced_spiritual_gifts_schema.sql"
 psql -d your_database -c "\i 06_CLEAN_final_verification.sql"
+psql -d your_database -c "\i 07_RLS_policies.sql"
+psql -d your_database -c "\i 08_QUIZ_FUNCTIONS.sql"
+psql -d your_database -c "\i 09_COMPREHENSIVE_RLS.sql"
 
 OR execute this entire folder with a bash script (see run_all_scripts.sh)
 */
