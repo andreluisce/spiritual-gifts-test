@@ -393,3 +393,63 @@ export function useSystemStatus() {
 
   return { systemStatus, loading, error }
 }
+
+// Hook for age demographics
+export function useAgeDemographics() {
+  const [demographics, setDemographics] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [supabase] = useState(() => createClient())
+
+  useEffect(() => {
+    const fetchDemographics = async () => {
+      try {
+        setLoading(true)
+        const { data, error } = await supabase
+          .rpc('get_age_demographics')
+
+        if (error) throw error
+        setDemographics(data || [])
+      } catch (err) {
+        console.error('Error fetching age demographics:', err)
+        setError(err instanceof Error ? err.message : 'Unknown error')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchDemographics()
+  }, [supabase])
+
+  return { demographics, loading, error }
+}
+
+// Hook for geographic distribution
+export function useGeographicDistribution() {
+  const [distribution, setDistribution] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [supabase] = useState(() => createClient())
+
+  useEffect(() => {
+    const fetchDistribution = async () => {
+      try {
+        setLoading(true)
+        const { data, error } = await supabase
+          .rpc('get_geographic_distribution')
+
+        if (error) throw error
+        setDistribution(data || [])
+      } catch (err) {
+        console.error('Error fetching geographic distribution:', err)
+        setError(err instanceof Error ? err.message : 'Unknown error')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchDistribution()
+  }, [supabase])
+
+  return { distribution, loading, error }
+}

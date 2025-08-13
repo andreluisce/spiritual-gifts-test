@@ -34,10 +34,19 @@ import {
   Edit3,
   CheckCircle,
   Clock,
-  Activity
+  Activity,
+  Globe,
+  Building
 } from 'lucide-react'
 import Link from 'next/link'
 import { useProfile, useUpdateProfile, useUpdateAvatar, ProfileUpdateData } from '@/hooks/useProfile'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { useUserActivities } from '@/hooks/useUserActivity'
 
 // Validation schema for profile editing
@@ -46,7 +55,11 @@ const profileEditSchema = z.object({
   phone: z.string().optional(),
   bio: z.string().max(500, 'Bio deve ter menos de 500 caracteres').optional(),
   location: z.string().max(100, 'Localização deve ter menos de 100 caracteres').optional(),
-  birth_date: z.string().optional()
+  birth_date: z.string().optional(),
+  age_range: z.string().optional(),
+  country: z.string().optional(),
+  city: z.string().optional(),
+  state_province: z.string().optional()
 })
 
 type ProfileEditForm = z.infer<typeof profileEditSchema>
@@ -78,7 +91,11 @@ export default function ProfilePage() {
       phone: '',
       bio: '',
       location: '',
-      birth_date: ''
+      birth_date: '',
+      age_range: '',
+      country: '',
+      city: '',
+      state_province: ''
     }
   })
 
@@ -95,7 +112,11 @@ export default function ProfilePage() {
         phone: profile.phone || '',
         bio: profile.bio || '',
         location: profile.location || '',
-        birth_date: profile.birth_date || ''
+        birth_date: profile.birth_date || '',
+        age_range: profile.age_range || '',
+        country: profile.country || '',
+        city: profile.city || '',
+        state_province: profile.state_province || ''
       })
     }
   }, [profile, reset])
@@ -340,6 +361,75 @@ export default function ProfilePage() {
                     {...register('birth_date')}
                     type="date"
                     disabled={!isEditing}
+                    className={`${!isEditing ? 'bg-gray-50' : ''}`}
+                  />
+                </div>
+
+                {/* Age Range */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    Faixa Etária
+                  </label>
+                  <Select
+                    value={profile?.age_range || ''}
+                    onValueChange={(value) => {
+                      register('age_range').onChange({ target: { value } })
+                    }}
+                    disabled={!isEditing}
+                  >
+                    <SelectTrigger className={`${!isEditing ? 'bg-gray-50' : ''}`}>
+                      <SelectValue placeholder="Selecione sua faixa etária" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="18-24">18-24 anos</SelectItem>
+                      <SelectItem value="25-34">25-34 anos</SelectItem>
+                      <SelectItem value="35-44">35-44 anos</SelectItem>
+                      <SelectItem value="45-54">45-54 anos</SelectItem>
+                      <SelectItem value="55-64">55-64 anos</SelectItem>
+                      <SelectItem value="65+">65+ anos</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Country */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium flex items-center gap-2">
+                    <Globe className="h-4 w-4" />
+                    País
+                  </label>
+                  <Input
+                    {...register('country')}
+                    disabled={!isEditing}
+                    placeholder="Brasil"
+                    className={`${!isEditing ? 'bg-gray-50' : ''}`}
+                  />
+                </div>
+
+                {/* State/Province */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium flex items-center gap-2">
+                    <Building className="h-4 w-4" />
+                    Estado
+                  </label>
+                  <Input
+                    {...register('state_province')}
+                    disabled={!isEditing}
+                    placeholder="São Paulo"
+                    className={`${!isEditing ? 'bg-gray-50' : ''}`}
+                  />
+                </div>
+
+                {/* City */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium flex items-center gap-2">
+                    <MapPin className="h-4 w-4" />
+                    Cidade
+                  </label>
+                  <Input
+                    {...register('city')}
+                    disabled={!isEditing}
+                    placeholder="São Paulo"
                     className={`${!isEditing ? 'bg-gray-50' : ''}`}
                   />
                 </div>

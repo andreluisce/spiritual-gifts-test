@@ -20,7 +20,13 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { formatScore, formatPercentage } from '@/data/quiz-data'
-import { useAnalyticsData, useGiftDistribution, useAdminStats } from '@/hooks/useAdminData'
+import { 
+  useAnalyticsData, 
+  useGiftDistribution, 
+  useAdminStats,
+  useAgeDemographics,
+  useGeographicDistribution 
+} from '@/hooks/useAdminData'
 
 // All data comes from the database - no mock data
 
@@ -35,6 +41,8 @@ export default function AdminAnalyticsPage() {
   const { analytics: realAnalytics, loading: analyticsLoading } = useAnalyticsData(dateRange)
   const { distribution: realGifts, loading: giftsLoading } = useGiftDistribution()
   const { stats: realStats, loading: statsLoading } = useAdminStats()
+  const { demographics: ageDemographics, loading: ageLoading } = useAgeDemographics()
+  const { distribution: geoDistribution, loading: geoLoading } = useGeographicDistribution()
 
   useEffect(() => {
     if (!loading && (!user || !isAdmin)) {
@@ -300,11 +308,38 @@ export default function AdminAnalyticsPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-8">
-                  <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500">{t('demographics.ageDistribution.description')}</p>
-                  <p className="text-xs text-gray-400 mt-2">{t('demographics.ageDistribution.comingSoon')}</p>
-                </div>
+                {ageLoading ? (
+                  <div className="text-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                  </div>
+                ) : ageDemographics && ageDemographics.length > 0 ? (
+                  <div className="space-y-4">
+                    {ageDemographics.map((group: any, index: number) => (
+                      <div key={index} className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">{group.age_range}</span>
+                          <span className="text-sm text-gray-500">
+                            {group.count} ({formatPercentage(group.percentage)})
+                          </span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div
+                            className="bg-blue-600 h-2 rounded-full"
+                            style={{ width: `${group.percentage}%` }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-500">{t('demographics.ageDistribution.description')}</p>
+                    <p className="text-xs text-gray-400 mt-2">
+                      Nenhum dado demográfico disponível ainda.
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -317,11 +352,46 @@ export default function AdminAnalyticsPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-8">
-                  <Globe className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500">{t('demographics.geographicDistribution.description')}</p>
-                  <p className="text-xs text-gray-400 mt-2">{t('demographics.geographicDistribution.comingSoon')}</p>
-                </div>
+                {geoLoading ? (
+                  <div className="text-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                  </div>
+                ) : geoDistribution && geoDistribution.length > 0 ? (
+                  <div className="space-y-4">
+                    {geoDistribution.map((location: any, index: number) => (
+                      <div key={index} className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">{location.country}</span>
+                          <span className="text-sm text-gray-500">
+                            {location.count} ({formatPercentage(location.percentage)})
+                          </span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div
+                            className="bg-green-600 h-2 rounded-full"
+                            style={{ width: `${location.percentage}%` }}
+                          />
+                        </div>
+                        {location.cities && location.cities.length > 0 && (
+                          <div className="pl-4">
+                            <p className="text-xs text-gray-500">
+                              Cidades: {location.cities.slice(0, 3).join(', ')}
+                              {location.cities.length > 3 && ` +${location.cities.length - 3} mais`}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <Globe className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-500">{t('demographics.geographicDistribution.description')}</p>
+                    <p className="text-xs text-gray-400 mt-2">
+                      Nenhum dado geográfico disponível ainda.
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
