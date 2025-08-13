@@ -119,6 +119,28 @@
       "1": "Identifico-me pouco",
       "2": "Identifico-me bem",
       "3": "Identifico-me muito"
+    },
+    "loginRequired": {
+      "title": "Login Obrigatório",
+      "description": "Para acessar o teste de dons espirituais, você precisa fazer login primeiro. Isso nos permite salvar seu progresso e fornecer resultados personalizados.",
+      "button": "Fazer Login"
+    },
+    "continuePrompt": {
+      "title": "Continuar teste?",
+      "description": "Encontramos um teste em progresso. Você tem {count} resposta(s) salva(s). Deseja continuar de onde parou ou começar um novo teste?",
+      "newTest": "Novo Teste",
+      "continue": "Continuar"
+    },
+    "navigation": {
+      "previous": "Anterior",
+      "finish": "Finalizar",
+      "viewFullTest": "Ver Teste Completo"
+    },
+    "status": {
+      "saved": "Salvo",
+      "preview": "Preview",
+      "loginForFull": "Preview • Faça login para o teste completo",
+      "questionsProgress": "{answered} de {total} questões"
     }
   },
   "welcome": {
@@ -233,6 +255,17 @@
     "subtitle": "Acompanhe sua jornada de descoberta dos dons espirituais",
     "newTest": "Novo Teste",
     "refresh": "Atualizar",
+    "myDashboard": "Meu Dashboard",
+    "takeTest": "Fazer Teste",
+    "profile": "Perfil",
+    "admin": "Admin",
+    "home": "Home",
+    "continueTest": "Continuar Teste",
+    "testInProgress": "Teste em Progresso",
+    "discardTest": "Descartar Teste",
+    "deleteError": "Erro ao deletar resultado: {error}",
+    "removing": "Removendo...",
+    "removeTest": "Remover Teste",
     "welcome": {
       "title": "Bem-vindo à sua jornada espiritual!",
       "description": "Você ainda não fez nenhum teste. Que tal descobrir seus dons espirituais agora?",
@@ -244,6 +277,7 @@
       "lastTest": "Último Teste",
       "evolution": "Evolução",
       "growing": "Crescendo",
+      "stable": "Estável",
       "first": "Primeiro"
     },
     "sections": {
@@ -255,6 +289,171 @@
       "takeAnother": "Fazer Outro Teste",
       "fullHistory": "Histórico Completo",
       "view": "Ver"
+    }
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "subtitle": "System administration and management",
+    "backToApp": "Voltar para App",
+    "adminAccess": "Admin",
+    "navigation": {
+      "dashboard": "Dashboard",
+      "users": "Users",
+      "analytics": "Analytics",
+      "content": "Content",
+      "settings": "Settings",
+      "audit": "Audit"
+    },
+    "dashboard": {
+      "title": "Admin Dashboard",
+      "stats": {
+        "totalUsers": "Total Users",
+        "totalQuizzes": "Total Quizzes",
+        "averageScore": "Average Score",
+        "activeUsers": "Active Users",
+        "newUsersThisMonth": "from last month",
+        "completedToday": "completed today",
+        "acrossAllAttempts": "Across all quiz attempts",
+        "activeThisWeek": "Users active this week"
+      },
+      "recentActivity": {
+        "title": "Recent Activity",
+        "noActivity": "No recent activity"
+      },
+      "topGifts": {
+        "title": "Top Spiritual Gifts Distribution",
+        "users": "usuários",
+        "ofTotal": "do total",
+        "noData": "No data available"
+      }
+    },
+    "settings": {
+      "title": "System Settings",
+      "subtitle": "Configure global application settings and quiz preferences",
+      "saveChanges": "Save Changes",
+      "saving": "Saving...",
+      "unsavedChanges": "Unsaved Changes",
+      "tabs": {
+        "quiz": "Quiz Settings",
+        "general": "General"
+      },
+      "quiz": {
+        "title": "Questions per Gift Type",
+        "subtitle": "Configure how many questions each spiritual gift will have in the quiz. Total questions: {total}",
+        "questionsConfig": {
+          "title": "Questions Configuration",
+          "description": "Set the number of questions per spiritual gift. This will apply to all seven motivational gifts from Romans 12:6-8.",
+          "label": "Questions per Gift",
+          "helperText": "Each spiritual gift will have this many questions (Total: {total})",
+          "recommendation": "Recommended: 5 questions per gift (35 total questions)"
+        },
+        "options": {
+          "title": "Quiz Options",
+          "shuffleQuestions": {
+            "label": "Shuffle Questions",
+            "description": "Randomize question order for each quiz"
+          },
+          "showProgress": {
+            "label": "Show Progress",
+            "description": "Display progress bar during quiz"
+          },
+          "allowRetake": {
+            "label": "Allow Retake",
+            "description": "Users can retake the quiz multiple times"
+          }
+        }
+      },
+      "general": {
+        "userAccess": {
+          "title": "User Access & Registration",
+          "description": "Configure how users can access and use the spiritual gifts test.",
+          "enableRegistration": {
+            "label": "Enable User Registration",
+            "description": "Allow new users to create accounts"
+          },
+          "allowGuestQuiz": {
+            "label": "Allow Guest Quizzes", 
+            "description": "Users can take the quiz without creating an account"
+          }
+        },
+        "localization": {
+          "title": "Language & Localization",
+          "description": "Configure default language and localization settings.",
+          "defaultLanguage": {
+            "label": "Default Language",
+            "description": "The default language for new users and guest sessions",
+            "options": {
+              "pt": "Português (Portuguese)",
+              "en": "English", 
+              "es": "Español (Spanish)"
+            }
+          }
+        }
+      }
+    },
+    "analytics": {
+      "title": "Analytics & Insights",
+      "subtitle": "Comprehensive analytics and data insights for the spiritual gifts system",
+      "exportData": "Export Data",
+      "dateRange": {
+        "7d": "Last 7 days",
+        "30d": "Last 30 days", 
+        "90d": "Last 90 days",
+        "1y": "Last year"
+      },
+      "tabs": {
+        "overview": "Overview",
+        "spiritualGifts": "Spiritual Gifts",
+        "demographics": "Demographics",
+        "reports": "Reports"
+      },
+      "overview": {
+        "totalQuizzes": "Total Quizzes",
+        "avgCompletionTime": "Avg Completion Time",
+        "averageScore": "Average Score", 
+        "completionRate": "Completion Rate",
+        "returningUsers": "Returning Users",
+        "mobileUsers": "Mobile Users",
+        "totalCompleted": "Total completed quizzes",
+        "optimalEngagement": "Optimal engagement time",
+        "outOfPossible": "Out of 100 possible",
+        "usersComplete": "Users who complete quiz",
+        "retentionRate": "User retention rate",
+        "viaMobile": "Access via mobile devices",
+        "analyticsTitle": "Analytics Summary",
+        "analyticsDescription": "Real-time analytics data will be displayed here",
+        "chartsComingSoon": "Charts and detailed metrics coming soon",
+        "totalUsersCard": "Total Users",
+        "registeredUsers": "registered users",
+        "activeUsersCard": "Active Users", 
+        "haveCompleted": "have completed quizzes",
+        "mostPopularGift": "Most Popular Gift",
+        "topSpiritualGift": "top spiritual gift"
+      },
+      "spiritualGifts": {
+        "title": "Spiritual Gifts Distribution",
+        "identifications": "identificações",
+        "noData": "No spiritual gifts data available"
+      },
+      "demographics": {
+        "ageDistribution": {
+          "title": "Age Distribution", 
+          "description": "Age demographics data will be available soon",
+          "comingSoon": "User age distribution analysis coming soon"
+        },
+        "geographicDistribution": {
+          "title": "Geographic Distribution",
+          "description": "Geographic distribution data will be available soon",
+          "comingSoon": "User location analysis coming soon"
+        }
+      },
+      "reports": {
+        "title": "Generated Reports",
+        "generateNew": "Generate New Report",
+        "noReports": "No reports generated yet",
+        "firstReport": "Start by generating your first analytics report",
+        "generateReport": "Generate Report"
+      }
     }
   },
   "Index": {

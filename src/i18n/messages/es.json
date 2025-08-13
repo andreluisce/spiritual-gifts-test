@@ -43,9 +43,31 @@
     "restartQuiz": "Reiniciar Prueba",
     "labels": {
       "0": "Nunca",
-      "1": "Raramente",
+      "1": "Raramente", 
       "2": "A veces",
       "3": "Siempre"
+    },
+    "loginRequired": {
+      "title": "Inicio de Sesión Requerido",
+      "description": "Para acceder a la prueba de dones espirituales, necesitas iniciar sesión primero. Esto nos permite guardar tu progreso y proporcionar resultados personalizados.",
+      "button": "Iniciar Sesión"
+    },
+    "continuePrompt": {
+      "title": "¿Continuar prueba?",
+      "description": "Encontramos una prueba en progreso. Tienes {count} respuesta(s) guardada(s). ¿Quieres continuar donde lo dejaste o comenzar una nueva prueba?",
+      "newTest": "Nueva Prueba",
+      "continue": "Continuar"
+    },
+    "navigation": {
+      "previous": "Anterior",
+      "finish": "Finalizar",
+      "viewFullTest": "Ver Prueba Completa"
+    },
+    "status": {
+      "saved": "Guardado",
+      "preview": "Vista Previa",
+      "loginForFull": "Vista Previa • Inicia sesión para la prueba completa",
+      "questionsProgress": "{answered} de {total} preguntas"
     }
   },
   "welcome": {
@@ -61,6 +83,212 @@
     "signingIn": "Iniciando sesión",
     "orContinueWith": "O continúa con",
     "agreement": "Al iniciar sesión, aceptas realizar la evaluación de dones espirituales y recibir resultados personalizados basados en tus respuestas."
+  },
+  "dashboard": {
+    "title": "Mi Panel",
+    "subtitle": "Sigue tu viaje de descubrimiento de los dones espirituales",
+    "newTest": "Nueva Prueba",
+    "refresh": "Actualizar",
+    "myDashboard": "Mi Panel",
+    "takeTest": "Hacer Prueba",
+    "profile": "Perfil",
+    "admin": "Admin",
+    "home": "Inicio",
+    "continueTest": "Continuar Prueba",
+    "testInProgress": "Prueba en Progreso",
+    "discardTest": "Descartar Prueba",
+    "deleteError": "Error al eliminar resultado: {error}",
+    "removing": "Eliminando...",
+    "removeTest": "Eliminar Prueba",
+    "welcome": {
+      "title": "¡Bienvenido a tu viaje espiritual!",
+      "description": "Aún no has hecho ninguna prueba. ¿Qué tal si descubres tus dones espirituales ahora?",
+      "button": "Hacer Mi Primera Prueba"
+    },
+    "stats": {
+      "totalTests": "Pruebas Totales",
+      "mainGift": "Don Principal", 
+      "lastTest": "Última Prueba",
+      "evolution": "Evolución",
+      "growing": "Creciendo",
+      "stable": "Estable",
+      "first": "Primero"
+    },
+    "sections": {
+      "recentResult": "Resultado Más Reciente",
+      "top5Gifts": "Top 5 Dones",
+      "viewDetails": "Ver Detalles",
+      "giftEvolution": "Evolución de Dones",
+      "testHistory": "Historial de Pruebas",
+      "takeAnother": "Hacer Otra Prueba",
+      "fullHistory": "Historial Completo",
+      "view": "Ver"
+    }
+  },
+  "admin": {
+    "title": "Panel de Administración",
+    "subtitle": "Administración y gestión del sistema",
+    "backToApp": "Volver a la App",
+    "adminAccess": "Admin",
+    "navigation": {
+      "dashboard": "Panel",
+      "users": "Usuarios",
+      "analytics": "Analíticas",
+      "content": "Contenido",
+      "settings": "Configuraciones",
+      "audit": "Auditoría"
+    },
+    "dashboard": {
+      "title": "Panel de Administración",
+      "stats": {
+        "totalUsers": "Usuarios Totales",
+        "totalQuizzes": "Pruebas Totales",
+        "averageScore": "Puntuación Promedio",
+        "activeUsers": "Usuarios Activos",
+        "newUsersThisMonth": "del mes pasado",
+        "completedToday": "completadas hoy",
+        "acrossAllAttempts": "En todos los intentos de prueba",
+        "activeThisWeek": "Usuarios activos esta semana"
+      },
+      "recentActivity": {
+        "title": "Actividad Reciente",
+        "noActivity": "No hay actividad reciente"
+      },
+      "topGifts": {
+        "title": "Distribución de los Principales Dones Espirituales",
+        "users": "usuarios",
+        "ofTotal": "del total",
+        "noData": "No hay datos disponibles"
+      }
+    },
+    "settings": {
+      "title": "Configuraciones del Sistema",
+      "subtitle": "Configure las configuraciones globales de la aplicación y las preferencias de la prueba",
+      "saveChanges": "Guardar Cambios",
+      "saving": "Guardando...",
+      "unsavedChanges": "Cambios No Guardados",
+      "tabs": {
+        "quiz": "Configuraciones de Prueba",
+        "general": "General"
+      },
+      "quiz": {
+        "title": "Preguntas por Tipo de Don",
+        "subtitle": "Configure cuántas preguntas tendrá cada don espiritual en la prueba. Total de preguntas: {total}",
+        "questionsConfig": {
+          "title": "Configuración de Preguntas",
+          "description": "Establezca el número de preguntas por don espiritual. Esto se aplicará a todos los siete dones motivacionales de Romanos 12:6-8.",
+          "label": "Preguntas por Don",
+          "helperText": "Cada don espiritual tendrá esta cantidad de preguntas (Total: {total})",
+          "recommendation": "Recomendado: 5 preguntas por don (35 preguntas totales)"
+        },
+        "options": {
+          "title": "Opciones de Prueba",
+          "shuffleQuestions": {
+            "label": "Mezclar Preguntas",
+            "description": "Aleatorizar el orden de las preguntas para cada prueba"
+          },
+          "showProgress": {
+            "label": "Mostrar Progreso",
+            "description": "Mostrar barra de progreso durante la prueba"
+          },
+          "allowRetake": {
+            "label": "Permitir Repetir",
+            "description": "Los usuarios pueden repetir la prueba múltiples veces"
+          }
+        }
+      },
+      "general": {
+        "userAccess": {
+          "title": "Acceso de Usuario y Registro",
+          "description": "Configure cómo los usuarios pueden acceder y usar la prueba de dones espirituales.",
+          "enableRegistration": {
+            "label": "Habilitar Registro de Usuario",
+            "description": "Permitir que nuevos usuarios creen cuentas"
+          },
+          "allowGuestQuiz": {
+            "label": "Permitir Pruebas de Invitado",
+            "description": "Los usuarios pueden tomar la prueba sin crear una cuenta"
+          }
+        },
+        "localization": {
+          "title": "Idioma y Localización",
+          "description": "Configure el idioma predeterminado y las configuraciones de localización.",
+          "defaultLanguage": {
+            "label": "Idioma Predeterminado",
+            "description": "El idioma predeterminado para nuevos usuarios y sesiones de invitado",
+            "options": {
+              "pt": "Português (Portugués)",
+              "en": "English (Inglés)",
+              "es": "Español (Spanish)"
+            }
+          }
+        }
+      }
+    },
+    "analytics": {
+      "title": "Analíticas e Informes",
+      "subtitle": "Analíticas y datos integrales del sistema de dones espirituales",
+      "exportData": "Exportar Datos",
+      "dateRange": {
+        "7d": "Últimos 7 días",
+        "30d": "Últimos 30 días",
+        "90d": "Últimos 90 días",
+        "1y": "Último año"
+      },
+      "tabs": {
+        "overview": "Resumen",
+        "spiritualGifts": "Dones Espirituales",
+        "demographics": "Demografía",
+        "reports": "Reportes"
+      },
+      "overview": {
+        "totalQuizzes": "Pruebas Totales",
+        "avgCompletionTime": "Tiempo Promedio de Finalización",
+        "averageScore": "Puntuación Promedio",
+        "completionRate": "Tasa de Finalización",
+        "returningUsers": "Usuarios Recurrentes",
+        "mobileUsers": "Usuarios Móviles",
+        "totalCompleted": "Total de pruebas completadas",
+        "optimalEngagement": "Tiempo óptimo de participación",
+        "outOfPossible": "De 100 posible",
+        "usersComplete": "Usuarios que completan la prueba",
+        "retentionRate": "Tasa de retención de usuarios",
+        "viaMobile": "Acceso vía dispositivos móviles",
+        "analyticsTitle": "Resumen de Analíticas",
+        "analyticsDescription": "Los datos de analíticas en tiempo real se mostrarán aquí",
+        "chartsComingSoon": "Gráficos y métricas detalladas próximamente",
+        "totalUsersCard": "Usuarios Totales",
+        "registeredUsers": "usuarios registrados",
+        "activeUsersCard": "Usuarios Activos",
+        "haveCompleted": "han completado pruebas",
+        "mostPopularGift": "Don Más Popular",
+        "topSpiritualGift": "don espiritual principal"
+      },
+      "spiritualGifts": {
+        "title": "Distribución de Dones Espirituales",
+        "identifications": "identificaciones",
+        "noData": "No hay datos de dones espirituales disponibles"
+      },
+      "demographics": {
+        "ageDistribution": {
+          "title": "Distribución por Edad",
+          "description": "Los datos demográficos por edad estarán disponibles pronto",
+          "comingSoon": "Análisis de distribución de edad de usuarios próximamente"
+        },
+        "geographicDistribution": {
+          "title": "Distribución Geográfica",
+          "description": "Los datos de distribución geográfica estarán disponibles pronto",
+          "comingSoon": "Análisis de ubicación de usuarios próximamente"
+        }
+      },
+      "reports": {
+        "title": "Reportes Generados",
+        "generateNew": "Generar Nuevo Reporte",
+        "noReports": "No se han generado reportes aún",
+        "firstReport": "Comience generando su primer reporte de analíticas",
+        "generateReport": "Generar Reporte"
+      }
+    }
   },
   "Index": {
     "title": "Prueba de Dones Espirituales"
