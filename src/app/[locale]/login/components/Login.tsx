@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useAuth } from "@/context/AuthContext"
+import { usePublicSettings } from "@/hooks/usePublicSettings"
 import { Button } from "@/components/ui/button"
 import { FcGoogle } from "react-icons/fc"
 import { motion } from "framer-motion"
@@ -10,6 +11,7 @@ import { useTranslations } from 'next-intl'
 
 export function LoginForm() {
     const { signInWithGoogle } = useAuth()
+    const { canRegister, loading: settingsLoading } = usePublicSettings()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const t = useTranslations('login')
@@ -19,6 +21,13 @@ export function LoginForm() {
         setError(null)
 
         try {
+            // Verificar se o registro está habilitado
+            if (!canRegister) {
+                setError('Registro de novos usuários está temporariamente desabilitado.')
+                setLoading(false)
+                return
+            }
+
             await signInWithGoogle()
         } catch (error) {
             setLoading(false)
@@ -75,16 +84,29 @@ export function LoginForm() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.5, duration: 0.6 }}
                         >
-                            <Button
-                                type="button"
-                                variant="outline"
-                                className="w-full h-12 bg-white hover:bg-gray-50 text-gray-700 font-medium border-gray-200 rounded-xl flex items-center justify-center gap-3 transition-all duration-200 shadow-sm hover:shadow-md"
-                                onClick={handleGoogleLogin}
-                                disabled={loading}
-                            >
-                                <FcGoogle className="text-xl" />
-                                {loading ? t('signingIn') : t('continueWithGoogle')}
-                            </Button>
+                            {!canRegister && !settingsLoading ? (
+                                <div className="text-center py-6">
+                                    <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-4">
+                                        <p className="text-yellow-800 text-sm font-medium">
+                                            🔒 Registro Temporariamente Desabilitado
+                                        </p>
+                                        <p className="text-yellow-700 text-xs mt-1">
+                                            Novos registros estão suspensos no momento. Tente novamente mais tarde.
+                                        </p>
+                                    </div>
+                                </div>
+                            ) : (
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    className="w-full h-12 bg-white hover:bg-gray-50 text-gray-700 font-medium border-gray-200 rounded-xl flex items-center justify-center gap-3 transition-all duration-200 shadow-sm hover:shadow-md"
+                                    onClick={handleGoogleLogin}
+                                    disabled={loading || settingsLoading}
+                                >
+                                    <FcGoogle className="text-xl" />
+                                    {loading ? t('signingIn') : t('continueWithGoogle')}
+                                </Button>
+                            )}
                         </motion.div>
 
                         <motion.p
