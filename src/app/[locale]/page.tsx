@@ -19,10 +19,12 @@ import {
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
+import { usePublicSettings } from '@/hooks/usePublicSettings'
 
 export default function HomePage() {
   const [selectedFeature, setSelectedFeature] = useState(0)
   const { user } = useAuth()
+  const { allowGuestQuiz } = usePublicSettings()
 
   const features = [
     {
@@ -123,10 +125,10 @@ export default function HomePage() {
             transition={{ delay: 0.6, duration: 0.8 }}
             className="flex flex-col sm:flex-row gap-4 justify-center items-center"
           >
-            <Link href="/quiz">
+            <Link href={user || allowGuestQuiz ? "/quiz" : "/login?from=home"}>
               <Button size="lg" className="px-8 py-4 text-lg bg-slate-700 hover:bg-slate-800">
                 <Sparkles className="mr-2 h-5 w-5" />
-                Começar
+                {user ? "Começar" : allowGuestQuiz ? "Preview Gratuito" : "Fazer Login"}
               </Button>
             </Link>
 
@@ -278,19 +280,21 @@ export default function HomePage() {
             <p className="text-xl text-slate-300 mb-8 max-w-2xl mx-auto">
               {user
                 ? "Continue sua jornada de autoconhecimento espiritual com nosso teste completo."
-                : "Comece com nosso preview gratuito e descubra uma amostra do que Deus colocou em você."
+                : allowGuestQuiz 
+                  ? "Comece com nosso preview gratuito e descubra uma amostra do que Deus colocou em você."
+                  : "Faça login para acessar o teste completo de dons espirituais."
               }
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link href="/quiz">
+              <Link href={user || allowGuestQuiz ? "/quiz" : "/login?from=home"}>
                 <Button size="lg" className="px-8 py-4 text-lg bg-white text-slate-800 hover:bg-slate-100">
                   <Star className="mr-2 h-5 w-5" />
-                  {user ? "Fazer Teste Completo" : "Começar Preview"}
+                  {user ? "Fazer Teste Completo" : allowGuestQuiz ? "Começar Preview" : "Fazer Login"}
                 </Button>
               </Link>
 
-              {!user && (
+              {!user && allowGuestQuiz && (
                 <p className="text-slate-400 text-sm">
                   • Preview de 3 perguntas • Sem cadastro necessário
                 </p>

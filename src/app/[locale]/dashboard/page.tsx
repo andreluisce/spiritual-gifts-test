@@ -37,6 +37,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { useTranslations, useLocale } from 'next-intl'
 import { formatScore, formatPercentage } from '@/data/quiz-data'
 import Image from 'next/image'
+import CompatibilityAnalysis from '@/components/CompatibilityAnalysis'
 
 const QUIZ_STATE_KEY = 'quiz_in_progress'
 
@@ -55,6 +56,7 @@ export default function DashboardPage() {
   const deleteResultMutation = useDeleteResult()
   const [quizInProgress, setQuizInProgress] = useState<QuizState | null>(null)
   const tCommon = useTranslations('common')
+  const t = useTranslations('dashboard')
 
   const loading = loadingResults || loadingLatestResult || loadingGifts || authLoading
 
@@ -120,7 +122,7 @@ export default function DashboardPage() {
     } catch (error) {
       console.error('❌ Dashboard error deleting result:', error)
       // Could add toast notification here
-      alert(`Erro ao deletar resultado: ${error instanceof Error ? error.message : 'Erro desconhecido'}`)
+      alert(t('deleteError', { error: error instanceof Error ? error.message : 'Erro desconhecido' }))
     }
   }
 
@@ -182,7 +184,7 @@ export default function DashboardPage() {
                     <p className="text-sm font-medium text-slate-800">
                       {user.user_metadata?.full_name || user.email}
                     </p>
-                    <p className="text-xs text-slate-500">Dashboard</p>
+                    <p className="text-xs text-slate-500">{t('title')}</p>
                   </div>
                 </div>
               </PopoverTrigger>
@@ -204,20 +206,26 @@ export default function DashboardPage() {
               <Link href="/">
                 <Button variant="ghost" size="sm" className="text-slate-600">
                   <Home className="h-4 w-4 mr-2" />
-                  Home
+{t('home')}
+                </Button>
+              </Link>
+              <Link href="/profile">
+                <Button variant="ghost" size="sm" className="text-slate-600">
+                  <User className="h-4 w-4 mr-2" />
+{t('profile')}
                 </Button>
               </Link>
               {isAdmin && (
                 <Link href="/admin">
                   <Button variant="ghost" size="sm" className="text-slate-600">
                     <Settings className="h-4 w-4 mr-2" />
-                    Admin
+{t('admin')}
                   </Button>
                 </Link>
               )}
               <Link href="/quiz">
                 <Button variant="outline" size="sm" className="text-slate-600 border-slate-300">
-                  Fazer Teste
+{t('takeTest')}
                 </Button>
               </Link>
             </div>
@@ -228,10 +236,10 @@ export default function DashboardPage() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-800 mb-2">
-              Meu Dashboard
+              {t('myDashboard')}
             </h1>
             <p className="text-gray-600">
-              Acompanhe sua jornada de descoberta dos dons espirituais
+              {t('subtitle')}
             </p>
           </div>
           {quizInProgress && (
@@ -239,7 +247,7 @@ export default function DashboardPage() {
               <Link href="/quiz">
                 <Button className="flex items-center gap-2">
                   <Play className="h-4 w-4" />
-                  Continuar Teste
+{t('continueTest')}
                 </Button>
               </Link>
             </div>
@@ -266,7 +274,7 @@ export default function DashboardPage() {
                     <Link href="/quiz">
                       <Button className="flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white">
                         <Play className="h-4 w-4" />
-                        Continuar Teste
+      {t('continueTest')}
                       </Button>
                     </Link>
                     <Button 
@@ -304,7 +312,7 @@ export default function DashboardPage() {
                 {quizInProgress ? (
                   <>
                     <Play className="h-5 w-5" />
-                    Continuar Teste
+  {t('continueTest')}
                   </>
                 ) : (
                   <>
@@ -377,6 +385,14 @@ export default function DashboardPage() {
                 </CardContent>
               </Card>
             </div>
+
+            {/* Compatibility Analysis */}
+            {latestResult && latestResult.totalScore && (
+              <CompatibilityAnalysis 
+                giftScores={latestResult.totalScore}
+                className="mb-8"
+              />
+            )}
 
             <div className="grid lg:grid-cols-2 gap-8">
               {/* Latest Results */}
