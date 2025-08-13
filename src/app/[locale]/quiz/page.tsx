@@ -12,6 +12,7 @@ import Link from 'next/link'
 import { useQuiz } from '@/hooks/use-quiz'
 import { useTranslations, useLocale } from 'next-intl'
 import { useAuth } from '@/context/AuthContext'
+import { usePublicSettings } from '@/hooks/usePublicSettings'
 import { motion, AnimatePresence } from 'framer-motion'
 import { formatPercentage } from '@/data/quiz-data'
 import Image from 'next/image'
@@ -28,13 +29,17 @@ export default function QuizPage() {
   const tCommon = useTranslations('common')
   const locale = useLocale()
   const { user, signOut, loading: authLoading } = useAuth()
+  const { allowGuestQuiz, settings, loading: settingsLoading } = usePublicSettings()
 
   useEffect(() => {
-    // Only redirect to login after auth is loaded and there's no user
-    if (!authLoading && !user) {
-      router.replace(`/${locale}/login?from=quiz`)
+    // Only redirect to login after auth and settings are loaded
+    if (!authLoading && !settingsLoading && !user) {
+      // Check if guest quiz is allowed
+      if (!allowGuestQuiz) {
+        router.replace(`/${locale}/login?from=quiz`)
+      }
     }
-  }, [user, router, locale, authLoading])
+  }, [user, router, locale, authLoading, settingsLoading, allowGuestQuiz])
 
   const {
     questions,
@@ -157,7 +162,35 @@ export default function QuizPage() {
     return labels[score] || ''
   }
 
-  if (loading) {
+  // Show guest quiz blocked message if not allowed
+  if (!authLoading && !settingsLoading && !user && !allowGuestQuiz) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-gray-100 p-4">
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="text-center max-w-md bg-white rounded-xl shadow-lg p-8"
+        >
+          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <User className="h-8 w-8 text-blue-600" />
+          </div>
+          <h2 className="text-xl font-semibold text-gray-800 mb-3">
+            {t('loginRequired.title')}
+          </h2>
+          <p className="text-gray-600 mb-6">
+            {t('loginRequired.description')}
+          </p>
+          <Link href={`/${locale}/login?from=quiz`}>
+            <Button className="w-full bg-blue-600 hover:bg-blue-700">
+              {t('loginRequired.button')}
+            </Button>
+          </Link>
+        </motion.div>
+      </div>
+    )
+  }
+
+  if (loading || authLoading || settingsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-gray-100">
         <motion.div
@@ -229,11 +262,10 @@ export default function QuizPage() {
                 <BookOpen className="h-6 w-6 text-blue-600" />
               </div>
               <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                Continuar teste?
+                {t('continuePrompt.title')}
               </h3>
               <p className="text-gray-600 mb-6">
-                Encontramos um teste em progresso. Você tem {Object.keys(currentAnswers).length} resposta(s) salva(s).
-                Deseja continuar de onde parou ou começar um novo teste?
+                {t('continuePrompt.description', { count: Object.keys(currentAnswers).length })}
               </p>
               <div className="flex gap-3">
                 <Button
@@ -241,13 +273,13 @@ export default function QuizPage() {
                   onClick={handleStartNew}
                   className="flex-1"
                 >
-                  Novo Teste
+                  {t('continuePrompt.newTest')}
                 </Button>
                 <Button
                   onClick={handleContinue}
                   className="flex-1 bg-blue-600 hover:bg-blue-700"
                 >
-                  Continuar
+                  {t('continuePrompt.continue')}
                 </Button>
               </div>
             </div>
@@ -339,46 +371,48 @@ export default function QuizPage() {
                 current: currentQuestionIndex + 1,
                 total: availableQuestions?.length || 0
               })}
-              {isPreviewMode && <span className="text-amber-600 ml-2">(Preview)</span>}
+              {isPreviewMode && <span className="text-amber-600 ml-2">({t('status.preview')})</span>}
             </span>
             <div className="w-1.5 h-1.5 rounded-full bg-slate-300 hidden md:block" />
           </div>
         </motion.div>
 
-        {/* Barra de progresso — mais fina no mobile */}
-        <motion.div
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          className="mb-4 md:mb-8"
-        >
-          <div className="flex justify-between items-center mb-2 md:mb-3">
-            <span className="text-xs md:text-sm font-medium text-slate-600 flex items-center gap-2">
-              {tCommon('progress')}
-              {hasPersistedState && (
-                <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
-                  Salvo
-                </span>
-              )}
-            </span>
-            <span className="text-xs md:text-sm font-semibold text-slate-700">
-              {formatPercentage(progressValue)}
-            </span>
-          </div>
-          <div className="relative bg-gray-200 rounded-full h-2 md:h-3 overflow-hidden">
-            <motion.div
-              className="absolute left-0 top-0 h-full bg-gradient-to-r from-slate-600 to-slate-700 rounded-full"
-              initial={{ width: 0 }}
-              animate={{ width: `${progressValue}%` }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-            />
-          </div>
-          <div className="flex justify-between text-[10px] md:text-xs text-slate-500 mt-1 md:mt-2">
-            <span>{tCommon('start')}</span>
-            <span>{t('answeredOf', { answered: answeredCount, total: availableQuestions.length })}</span>
-            <span>{tCommon('completed')}</span>
-          </div>
-        </motion.div>
+        {/* Barra de progresso — mais fina no mobile, só mostra se showProgress está ativado */}
+        {(settings?.quiz?.showProgress !== false) && (
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="mb-4 md:mb-8"
+          >
+            <div className="flex justify-between items-center mb-2 md:mb-3">
+              <span className="text-xs md:text-sm font-medium text-slate-600 flex items-center gap-2">
+                {tCommon('progress')}
+                {hasPersistedState && (
+                  <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                    {t('status.saved')}
+                  </span>
+                )}
+              </span>
+              <span className="text-xs md:text-sm font-semibold text-slate-700">
+                {formatPercentage(progressValue)}
+              </span>
+            </div>
+            <div className="relative bg-gray-200 rounded-full h-2 md:h-3 overflow-hidden">
+              <motion.div
+                className="absolute left-0 top-0 h-full bg-gradient-to-r from-slate-600 to-slate-700 rounded-full"
+                initial={{ width: 0 }}
+                animate={{ width: `${progressValue}%` }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+              />
+            </div>
+            <div className="flex justify-between text-[10px] md:text-xs text-slate-500 mt-1 md:mt-2">
+              <span>{tCommon('start')}</span>
+              <span>{t('answeredOf', { answered: answeredCount, total: availableQuestions.length })}</span>
+              <span>{tCommon('completed')}</span>
+            </div>
+          </motion.div>
+        )}
 
         {/* Card da pergunta — sem CardHeader no mobile */}
         <AnimatePresence mode="wait">
@@ -459,15 +493,15 @@ export default function QuizPage() {
             className="flex items-center gap-2 px-4 py-2 border-slate-300 text-slate-700 hover:bg-slate-50 disabled:opacity-50 text-sm md:text-base"
           >
             <ArrowLeft size={16} className="md:hidden" />
-            <span className="hidden md:inline">Anterior</span>
+            <span className="hidden md:inline">{t('navigation.previous')}</span>
           </Button>
 
           <div className="text-center">
             <div className="text-xs md:text-sm text-slate-600 font-medium">
-              {answeredCount} de {availableQuestions.length} questões
+              {t('status.questionsProgress', { answered: answeredCount, total: availableQuestions.length })}
               {isPreviewMode && (
                 <div className="text-[10px] md:text-xs text-amber-600 mt-1">
-                  Preview • Faça login para o teste completo
+                  {t('status.loginForFull')}
                 </div>
               )}
             </div>
@@ -492,7 +526,7 @@ export default function QuizPage() {
                 </>
               ) : (
                 <>
-                  {isPreviewMode ? "Ver Teste Completo" : "Finalizar"}
+                  {isPreviewMode ? t('navigation.viewFullTest') : t('navigation.finish')}
                   <CheckCircle2 size={16} className="md:size-[18px]" />
                 </>
               )}

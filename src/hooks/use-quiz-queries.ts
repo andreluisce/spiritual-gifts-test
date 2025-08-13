@@ -109,11 +109,30 @@ export function useQuizQuestions(locale: string = 'pt') {
     queryKey: [...QUERY_KEYS.questions, locale],
     queryFn: async (): Promise<QuizQuestion[]> => {
       try {
-        // Use the new enhanced quiz generation function with configurable questions per gift
+        // Get system settings to determine questions per gift
+        const { data: settings, error: settingsError } = await supabase.rpc('get_system_settings')
+        
+        let questionsPerGiftConfig = {
+          prophecy: 5,
+          ministry: 5,
+          teaching: 5,
+          exhortation: 5,
+          giving: 5,
+          administration: 5,
+          mercy: 5
+        }
+
+        // Get questions per gift from settings
+        let questionsPerGift = 5; // default
+        if (settings && settings.quiz && typeof settings.quiz.questionsPerGift === 'number') {
+          questionsPerGift = settings.quiz.questionsPerGift;
+        }
+
+        // Use the existing balanced quiz generation function 
         const { data, error } = await supabase.rpc('generate_balanced_quiz', { 
           target_locale: locale,
-          questions_per_gift: 1, // Set to 1 for testing, change to 5 for full quiz
-          user_id_param: null // We can pass user ID later if needed for personalization
+          questions_per_gift: questionsPerGift,
+          user_id_param: null
         })
 
         if (error) {
@@ -143,49 +162,69 @@ export function useQuizQuestions(locale: string = 'pt') {
           quiz_id: item.quiz_id
         }))
         
-        console.log(`Generated balanced quiz with ${questions.length} questions (${questions.length / 9} per gift)`)
+        const expectedTotal = questionsPerGift * 7; // 7 spiritual gifts
+        console.log(`Generated balanced quiz with ${questions.length} questions (${questionsPerGift} per gift, expected: ${expectedTotal})`)
         return questions
       } catch (rpcError) {
         console.warn('Questions RPC not available, trying direct table query')
         
         try {
-          // Try direct table query as fallback
-          const { data: questions, error: tableError } = await supabase
-            .from('question_pool')
-            .select('*')
-            .order('id')
+          // Try direct table query as fallback - limit to configured questions per gift
+          console.warn(`Table fallback: getting ${questionsPerGift} questions per gift`)
+          
+          // Get limited questions per gift from table
+          const giftKeys = ["A_PROPHECY", "B_SERVICE", "C_TEACHING", "D_EXHORTATION", "E_GIVING", "F_LEADERSHIP", "G_MERCY"]
+          const allQuestions: QuizQuestion[] = []
+          
+          for (const giftKey of giftKeys) {
+            const { data: giftQuestions, error: giftError } = await supabase
+              .from('question_pool')
+              .select('*')
+              .eq('gift_key', giftKey)
+              .limit(questionsPerGift)
+              .order('id')
 
-          if (tableError) {
-            console.warn('Direct table query failed:', tableError.message)
-            throw tableError
+            if (giftError) {
+              console.warn(`Error getting questions for ${giftKey}:`, giftError.message)
+              continue
+            }
+
+            if (giftQuestions) {
+              const mappedQuestions = giftQuestions.map((item: {
+                id: number;
+                question_text: string;
+                gift_key: Database['public']['Enums']['gift_key'];
+              }) => ({
+                id: item.id,
+                question: item.question_text || `Question ${item.id}`,
+                gift_key: item.gift_key as Database['public']['Enums']['gift_key'],
+              }))
+              
+              allQuestions.push(...mappedQuestions)
+            }
           }
-
-          // Map to expected format
-          return (questions || []).map((item: {
-            id: number;
-            question_text: string;
-            gift_key: Database['public']['Enums']['gift_key'];
-          }) => ({
-            id: item.id,
-            question: item.question_text || `Question ${item.id}`,
-            gift_key: item.gift_key as Database['public']['Enums']['gift_key'],
-          })) as QuizQuestion[]
+          
+          console.log(`Table fallback generated ${allQuestions.length} questions`)
+          return allQuestions
           
         } catch (tableError) {
           console.warn('All database queries failed, using hardcoded fallback questions')
           
-          // Hardcoded fallback questions
-          const fallbackQuestions: QuizQuestion[] = [
-            { id: 1, question: "Eu me sinto motivado a proclamar a verdade de Deus.", gift_key: "A_PROPHECY" },
-            { id: 2, question: "Eu gosto de ajudar pessoas fazendo coisas práticas.", gift_key: "B_SERVICE" },
-            { id: 3, question: "Eu gosto de explicar conceitos bíblicos para outros.", gift_key: "C_TEACHING" },
-            { id: 4, question: "Eu me sinto chamado a encorajar pessoas desanimadas.", gift_key: "D_EXHORTATION" },
-            { id: 5, question: "Eu sou generoso com meu dinheiro e recursos.", gift_key: "E_GIVING" },
-            { id: 6, question: "Eu gosto de liderar e organizar projetos.", gift_key: "F_LEADERSHIP" },
-            { id: 7, question: "Eu tenho compaixão natural por pessoas que sofrem.", gift_key: "G_MERCY" },
-          ] as QuizQuestion[]
+          // Hardcoded fallback questions - generate proper set for testing
+          const giftKeys = ["A_PROPHECY", "B_SERVICE", "C_TEACHING", "D_EXHORTATION", "E_GIVING", "F_LEADERSHIP", "G_MERCY"]
+          const fallbackQuestions: QuizQuestion[] = []
           
-          return fallbackQuestions.slice(0, 35) // Limit to reasonable number
+          giftKeys.forEach((giftKey, giftIndex) => {
+            for (let i = 1; i <= questionsPerGift; i++) {
+              fallbackQuestions.push({
+                id: giftIndex * questionsPerGift + i,
+                question: `Pergunta ${i} para o dom ${giftKey.replace(/^[A-Z]_/, '')}`,
+                gift_key: giftKey as Database['public']['Enums']['gift_key']
+              })
+            }
+          })
+          
+          return fallbackQuestions
         }
       }
     },

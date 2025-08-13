@@ -24,6 +24,7 @@ import {
 } from '@/hooks/use-quiz-queries'
 import { useLocale } from 'next-intl'
 import { formatScore, formatPercentage } from '@/data/quiz-data'
+import CompatibilityAnalysis from '@/components/CompatibilityAnalysis'
 
 
 export default function ResultsPage() {
@@ -171,6 +172,7 @@ export default function ResultsPage() {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="flex flex-wrap gap-2 w-full mb-4">
             <TabsTrigger value="overview">Visão Geral</TabsTrigger>
+            <TabsTrigger value="compatibility">Análise de Compatibilidade</TabsTrigger>
             <TabsTrigger value="characteristics">Características</TabsTrigger>
             <TabsTrigger value="qualities">Qualidades</TabsTrigger>
             <TabsTrigger value="guidance">Orientações</TabsTrigger>
@@ -233,6 +235,14 @@ export default function ResultsPage() {
                   </Card>
                 ))}
               </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="compatibility" className="space-y-6 mt-[70px] md:mt-[40px]">
+            {result && result.totalScore && (
+              <CompatibilityAnalysis 
+                giftScores={result.totalScore}
+              />
             )}
           </TabsContent>
 
