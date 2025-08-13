@@ -39,6 +39,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [supabase])
 
   const signInWithGoogle = async () => {
+    // Check if registration is enabled before proceeding
+    try {
+      const { data: settingsData } = await supabase.rpc('get_system_settings')
+      
+      if (settingsData && settingsData.general && !settingsData.general.enableRegistration) {
+        throw new Error('Registro de novos usuários está temporariamente desabilitado.')
+      }
+    } catch (error) {
+      // If we can't check settings, allow the registration (fallback)
+      console.warn('Could not check registration settings:', error)
+    }
+
     // Get current locale from URL
     const currentPath = window.location.pathname
     const locale = currentPath.split('/')[1] || 'pt'
