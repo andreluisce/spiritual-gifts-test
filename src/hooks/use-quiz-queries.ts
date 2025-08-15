@@ -18,17 +18,19 @@ export interface Category {
 }
 
 export interface SpiritualGiftData {
-  gift_key: Database['public']['Enums']['gift_key'];
+  gift_key: string;
   name: string;
   definition: string;
-  biblical_references: string;
-  category_name: string;
-  category_key: string;
-  greek_term: string;
-  qualities: Quality[];
-  characteristics: Characteristic[];
-  dangers: Danger[];
-  misunderstandings: Misunderstanding[];
+  biblical_references?: string;
+  category_name?: string;
+  category_key?: string;
+  greek_term?: string;
+  qualities?: Quality[];
+  characteristics?: Characteristic[];
+  dangers?: Danger[];
+  misunderstandings?: Misunderstanding[];
+  orientations?: Orientation[];
+  detailed_biblical_references?: DetailedBiblicalReference[];
 }
 
 export interface Quality {
@@ -49,6 +51,20 @@ export interface Danger {
 
 export interface Misunderstanding {
   misunderstanding: string;
+  order_sequence: number | null;
+}
+
+export interface Orientation {
+  orientation: string;
+  category: string;
+  order_sequence: number | null;
+}
+
+export interface DetailedBiblicalReference {
+  reference: string;
+  verse_text: string;
+  application: string;
+  category: string;
   order_sequence: number | null;
 }
 
@@ -339,6 +355,76 @@ export function useSpiritualGifts(locale: string = 'pt') {
     queryKey: [...QUERY_KEYS.gifts, locale],
     queryFn: async (): Promise<SpiritualGiftData[]> => {
       try {
+        // First, let's try a direct query to get the gifts with category information
+        const { data: directData, error: directError } = await supabase
+          .from('spiritual_gifts')
+          .select(`
+            gift_key,
+            name,
+            definition,
+            biblical_references,
+            category_key,
+            categories!inner (
+              key,
+              name,
+              greek_term,
+              description,
+              purpose
+            ),
+            gift_qualities (
+              quality_name,
+              description,
+              order_sequence
+            ),
+            gift_characteristics (
+              characteristic,
+              order_sequence
+            ),
+            gift_dangers (
+              danger,
+              order_sequence
+            ),
+            gift_misunderstandings (
+              misunderstanding,
+              order_sequence
+            )
+          `)
+          .eq('categories.locale', locale)
+          .order('gift_key')
+
+        if (!directError && directData && directData.length > 0) {
+          console.log('✅ Direct query successful, found gifts:', directData.length)
+          
+          return directData.map((gift: any) => ({
+            gift_key: gift.gift_key,
+            name: gift.name,
+            definition: gift.definition,
+            biblical_references: gift.biblical_references,
+            category_key: gift.category_key,
+            category_name: gift.categories?.name || 'Unknown Category',
+            greek_term: gift.categories?.greek_term || '',
+            qualities: (gift.gift_qualities || []).map((q: any) => ({
+              quality_name: q.quality_name,
+              description: q.description,
+              order_sequence: q.order_sequence
+            })),
+            characteristics: (gift.gift_characteristics || []).map((c: any) => ({
+              characteristic: c.characteristic,
+              order_sequence: c.order_sequence
+            })),
+            dangers: (gift.gift_dangers || []).map((d: any) => ({
+              danger: d.danger,
+              order_sequence: d.order_sequence  
+            })),
+            misunderstandings: (gift.gift_misunderstandings || []).map((m: any) => ({
+              misunderstanding: m.misunderstanding,
+              order_sequence: m.order_sequence
+            }))
+          }))
+        }
+
+        // Fallback to RPC function if direct query fails
+        console.log('⚠️ Direct query failed or returned no data, trying RPC function')
         const { data, error } = await supabase.rpc('get_all_gifts_with_data', {
           p_locale: locale
         })
@@ -351,6 +437,19 @@ export function useSpiritualGifts(locale: string = 'pt') {
         if (!data) {
           console.error('No spiritual gifts data returned from database')
           throw new Error('No spiritual gifts data available')
+        }
+
+        // If not Portuguese and some data is empty, get Portuguese fallback
+        let fallbackData = null
+        if (locale !== 'pt') {
+          try {
+            const { data: ptData } = await supabase.rpc('get_all_gifts_with_data', {
+              p_locale: 'pt'
+            })
+            fallbackData = ptData
+          } catch (fallbackError) {
+            console.warn('Failed to fetch Portuguese fallback data:', fallbackError)
+          }
         }
 
         // Parse JSON response from database function
@@ -379,33 +478,52 @@ export function useSpiritualGifts(locale: string = 'pt') {
         // data is a JSON array
         const gifts = Array.isArray(data) ? data : (data ? [data] : [])
         console.log('🔍 DEBUG - Raw spiritual gifts data from database:', gifts)
+        console.log('🔍 DEBUG - First gift characteristics:', gifts[0]?.characteristics)
+        console.log('🔍 DEBUG - First gift dangers:', gifts[0]?.dangers)
+        console.log('🔍 DEBUG - First gift misunderstandings:', gifts[0]?.misunderstandings)
         
-        return gifts.map((gift: DatabaseGiftData) => ({
-          gift_key: gift.key,
-          name: gift.name,
-          definition: gift.definition,
-          biblical_references: gift.biblical_references,
-          category_name: gift.category?.name || 'Unknown Category',
-          category_key: gift.category?.key || 'unknown',
-          greek_term: gift.category?.greek_term || '',
-          qualities: (gift.qualities || []).map(q => ({
-            quality_name: q.quality_name,
-            description: q.description,
-            order_sequence: q.id
-          })),
-          characteristics: (gift.characteristics || []).map((char, index) => ({
-            characteristic: char,
-            order_sequence: index + 1
-          })),
-          dangers: (gift.dangers || []).map((danger, index) => ({
-            danger: danger,
-            order_sequence: index + 1
-          })),
-          misunderstandings: (gift.misunderstandings || []).map((misunderstanding, index) => ({
-            misunderstanding: misunderstanding,
-            order_sequence: index + 1
-          }))
-        })) as SpiritualGiftData[]
+        return gifts.map((gift: DatabaseGiftData) => {
+          // Find corresponding Portuguese gift for fallback
+          const ptGift = fallbackData ? 
+            (Array.isArray(fallbackData) ? fallbackData : [fallbackData]).find((ptGift: any) => ptGift.key === gift.key) : 
+            null
+
+          return {
+            gift_key: gift.key,
+            name: gift.name,
+            definition: gift.definition,
+            biblical_references: gift.biblical_references,
+            category_name: gift.category?.name || 'Unknown Category',
+            category_key: gift.category?.key || 'unknown',
+            greek_term: gift.category?.greek_term || '',
+            qualities: (gift.qualities || []).map(q => ({
+              quality_name: q.quality_name,
+              description: q.description,
+              order_sequence: q.id
+            })),
+            characteristics: (gift.characteristics && gift.characteristics.length > 0 
+              ? gift.characteristics 
+              : (ptGift?.characteristics || [])
+            ).map((char, index) => ({
+              characteristic: char,
+              order_sequence: index + 1
+            })),
+            dangers: (gift.dangers && gift.dangers.length > 0 
+              ? gift.dangers 
+              : (ptGift?.dangers || [])
+            ).map((danger, index) => ({
+              danger: danger,
+              order_sequence: index + 1
+            })),
+            misunderstandings: (gift.misunderstandings && gift.misunderstandings.length > 0 
+              ? gift.misunderstandings 
+              : (ptGift?.misunderstandings || [])
+            ).map((misunderstanding, index) => ({
+              misunderstanding: misunderstanding,
+              order_sequence: index + 1
+            }))
+          }
+        }) as SpiritualGiftData[]
         
       } catch (error) {
         console.error('Failed to fetch spiritual gifts from database:', error)

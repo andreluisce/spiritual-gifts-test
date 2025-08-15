@@ -55,6 +55,7 @@ export function usePublicSettings() {
     // Helper functions for easy access
     canRegister: settings?.general?.enableRegistration ?? true,
     allowGuestQuiz: settings?.general?.enableGuestQuiz ?? false,
-    defaultLanguage: settings?.general?.defaultLanguage ?? 'pt'
+    defaultLanguage: settings?.general?.defaultLanguage ?? 'pt',
+    debugMode: settings?.quiz?.debugMode ?? false
   }
 }

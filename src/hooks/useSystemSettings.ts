@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase-client'
+import { invalidateCache } from '@/lib/cache-invalidation'
 
 // Types for system settings
 export type QuizSettings = {
@@ -99,6 +100,8 @@ export function useSystemSettings() {
       if (updateError) throw updateError
 
       setSettings(newSettings)
+      // Invalidate cache to ensure consistency across server/client
+      invalidateCache()
       return { success: true }
     } catch (err) {
       console.error('Error updating settings:', err)
@@ -121,6 +124,8 @@ export function useSystemSettings() {
       if (resetError) throw resetError
 
       setSettings(defaultSettings)
+      // Invalidate cache to ensure consistency across server/client
+      invalidateCache()
       return { success: true }
     } catch (err) {
       console.error('Error resetting settings:', err)
