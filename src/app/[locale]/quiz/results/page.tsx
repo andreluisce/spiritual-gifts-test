@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import {
   useLatestResult,
   useSpiritualGifts,
@@ -32,6 +32,8 @@ export default function ResultsPage() {
   const locale = useLocale()
   const { user } = useAuth()
   const [activeTab, setActiveTab] = useState('overview')
+  const t = useTranslations('results')
+  const tCommon = useTranslations('common')
 
   const { data: latestResult, isLoading: loadingResults, error: resultsError } = useLatestResult(user?.id || null)
   const { data: spiritualGiftsData, isLoading: loadingSpiritualGifts } = useSpiritualGifts(locale)
@@ -51,8 +53,12 @@ export default function ResultsPage() {
     )
   }
 
-  const getScorePercentage = (score: number, maxPossibleScore: number = 25): number => {
-    return (score / maxPossibleScore) * 100
+  const getScorePercentage = (score: number, giftKey: string): number => {
+    // Maximum weighted scores for each gift with 5 questions per gift (balanced quiz)
+    // Based on generate_balanced_quiz function analysis
+    const maxScore = 56.406 // All gifts have same max with balanced quiz
+    
+    return (score / maxScore) * 100
   }
 
   // Removed unused handlers for cleaner code
@@ -77,6 +83,8 @@ export default function ResultsPage() {
     console.log('🔍 DEBUG - Top gift key:', topGiftKey)
     console.log('🔍 DEBUG - Top gift data:', topGift)
     console.log('🔍 DEBUG - Top gift characteristics:', topGift?.characteristics)
+    console.log('🔍 DEBUG - Top gift orientations:', topGift?.orientations)
+    console.log('🔍 DEBUG - Top gift detailed_biblical_references:', topGift?.detailed_biblical_references)
     
     return topGift
   }
@@ -102,6 +110,7 @@ export default function ResultsPage() {
     )
   }
 
+  // Debug: log the data to understand the issue
   console.log('🔍 DEBUG - user:', user);
   console.log('🔍 DEBUG - latestResult exists:', !!latestResult);
   console.log('🔍 DEBUG - spiritualGiftsData:', spiritualGiftsData);
@@ -146,6 +155,10 @@ export default function ResultsPage() {
   });
 
   const topGiftWithData = getTopGiftWithData()
+  
+  // Debug logging
+  console.log('🔍 DEBUG - topGiftWithData dangers:', topGiftWithData?.dangers)
+  console.log('🔍 DEBUG - topGiftWithData misunderstandings:', topGiftWithData?.misunderstandings)
 
   // Calculate rankings considering tied scores
   const calculateRankings = () => {
@@ -188,10 +201,10 @@ export default function ResultsPage() {
             <Gift className="h-16 w-16 text-blue-600" />
           </div>
           <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            Seus Dons Espirituais
+            {t('title')}
           </h1>
           <p className="text-gray-600">
-            Resultado do teste realizado em {new Date(latestResult.createdAt).toLocaleDateString('pt-BR')}
+            {t('resultDate', { date: new Date(latestResult.createdAt).toLocaleDateString(locale === 'pt' ? 'pt-BR' : locale === 'es' ? 'es-ES' : 'en-US') })}
           </p>
         </div>
 
@@ -200,7 +213,7 @@ export default function ResultsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Award className="h-5 w-5" />
-              Seus Principais Dons Espirituais
+              {t('topGifts')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -218,7 +231,7 @@ export default function ResultsPage() {
                     <p className="font-semibold">{giftName}</p>
                     {rank === 1 && topGiftWithData && (
                       <p className="text-xs text-gray-500 mt-1">
-Dom Espiritual
+                        Dom Espiritual
                       </p>
                     )}
                   </div>
@@ -230,11 +243,11 @@ Dom Espiritual
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="flex flex-wrap gap-2 w-full mb-4">
-            <TabsTrigger value="overview">Visão Geral</TabsTrigger>
-            <TabsTrigger value="characteristics">Características</TabsTrigger>
-            <TabsTrigger value="qualities">Qualidades</TabsTrigger>
-            <TabsTrigger value="dangers">Cuidados</TabsTrigger>
-            <TabsTrigger value="guidance">Orientações</TabsTrigger>
+            <TabsTrigger value="overview">{t('tabs.overview')}</TabsTrigger>
+            <TabsTrigger value="characteristics">{t('tabs.characteristics')}</TabsTrigger>
+            <TabsTrigger value="qualities">{t('tabs.qualities')}</TabsTrigger>
+            <TabsTrigger value="dangers">{t('tabs.precautions')}</TabsTrigger>
+            <TabsTrigger value="guidance">{t('tabs.guidance')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6 mt-[70px] md:mt-[40px]">
@@ -243,17 +256,17 @@ Dom Espiritual
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Target className="h-5 w-5" />
-                  Pontuação Detalhada
+                  {t('detailedScores')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 {sortedScores.map(({ giftKey, score }, index) => {
                   const gift = getGiftByKey(giftKey)!  // Safe now due to filter above
 
-                  const percentage = getScorePercentage(score)
+                  const percentage = getScorePercentage(score, giftKey)
 
                   return (
-                    <div key={giftKey}>
+                    <div key={`${giftKey}-${index}`}>
                       <div className="flex justify-between items-center mb-2">
                         <div>
                           <h3 className="font-semibold text-lg">{gift.name}</h3>
@@ -261,12 +274,12 @@ Dom Espiritual
                         </div>
                         <div className="text-right">
                           <div className="text-2xl font-bold text-blue-600">{formatScore(score, 0)}</div>
-                          <div className="text-sm text-gray-500">pontos</div>
+                          <div className="text-sm text-gray-500">{tCommon('points')}</div>
                         </div>
                       </div>
                       <Progress value={percentage} className="h-3 mb-2" />
                       <div className="text-sm text-gray-500 mb-4">
-                        {formatPercentage(percentage)} de afinidade
+                        {t('affinity', { percentage: formatPercentage(percentage) })}
                       </div>
                       {index < sortedScores.length - 1 && <Separator />}
                     </div>
@@ -374,41 +387,171 @@ Dom Espiritual
             )}
           </TabsContent>
 
+          <TabsContent value="dangers" className="space-y-6 mt-[70px] md:mt-[40px]">
+            {topGiftWithData && topGiftWithData.dangers && topGiftWithData.dangers.length > 0 ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <AlertTriangle className="h-5 w-5 text-yellow-600" />
+                    {t('precautionsTitle')}
+                  </CardTitle>
+                  <p className="text-gray-600">
+                    {t('precautionsDescription')}
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-3">
+                    {topGiftWithData.dangers?.map((danger, index) => (
+                      <div key={index} className="flex items-start gap-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                        <Badge variant="outline" className="mt-1 bg-yellow-100 text-yellow-800">
+                          {index + 1}
+                        </Badge>
+                        <div className="flex-1">
+                          <p className="text-gray-800">{danger.danger}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* Misunderstandings section */}
+                  <div className="mt-6">
+                    <h4 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                      <AlertTriangle className="h-4 w-4 text-red-600" />
+                      {t('misunderstandingsTitle')}
+                    </h4>
+                    <div className="grid gap-3">
+                      {topGiftWithData.misunderstandings?.map((misunderstanding, index) => (
+                        <div key={index} className="flex items-start gap-3 p-3 bg-red-50 rounded-lg border border-red-200">
+                          <Badge variant="outline" className="mt-1 bg-red-100 text-red-800">
+                            {index + 1}
+                          </Badge>
+                          <div className="flex-1">
+                            <p className="text-gray-800">{misunderstanding.misunderstanding}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <Alert>
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>
+                  {t('notAvailable.precautions')}
+                </AlertDescription>
+              </Alert>
+            )}
+          </TabsContent>
 
           <TabsContent value="guidance" className="space-y-6 mt-[70px] md:mt-[40px]">
             {topGiftWithData ? (
               <>
+                {/* Orientações Práticas */}
+                {topGiftWithData.orientations && topGiftWithData.orientations.length > 0 ? (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Lightbulb className="h-5 w-5 text-green-600" />
+                        {t('orientationsTitle')}
+                      </CardTitle>
+                      <p className="text-gray-600">
+                        {t('orientationsDescription')}
+                      </p>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {/* Group orientations by category */}
+                        {['spiritual', 'practical', 'development'].map((category) => {
+                          const categoryOrientations = topGiftWithData.orientations?.filter(
+                            (orientation: any) => orientation.category === category
+                          )
+                          
+                          if (!categoryOrientations || categoryOrientations.length === 0) return null
+                          
+                          return (
+                            <div key={category}>
+                              <h4 className="font-semibold text-gray-800 mb-2 flex items-center gap-2">
+                                {category === 'spiritual' && <BookOpen className="h-4 w-4 text-blue-600" />}
+                                {category === 'practical' && <Target className="h-4 w-4 text-green-600" />}
+                                {category === 'development' && <Lightbulb className="h-4 w-4 text-purple-600" />}
+                                {category === 'spiritual' ? 'Orientações Espirituais' : 
+                                 category === 'practical' ? 'Orientações Práticas' : 
+                                 'Desenvolvimento'}
+                              </h4>
+                              <div className="grid gap-2">
+                                {categoryOrientations.map((orientation: any, index: number) => (
+                                  <div key={`${category}-orientation-${index}`} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border">
+                                    <Badge variant="outline" className="mt-1">
+                                      {index + 1}
+                                    </Badge>
+                                    <p className="text-gray-700 flex-1">{orientation.orientation}</p>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ) : null}
 
-                {/* Biblical References */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <BookOpen className="h-5 w-5" />
-                      Referências Bíblicas
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {(topGiftWithData.biblicalReferences?.length ?? 0) > 0 ? (
-                      <div className="flex flex-wrap gap-2">
-                        {topGiftWithData.biblicalReferences?.map((reference, index) => (
-                          <Badge key={index} variant="outline" className="text-blue-600">
-                            {reference}
-                          </Badge>
+                {/* Biblical References Detailed */}
+                {topGiftWithData.detailed_biblical_references && topGiftWithData.detailed_biblical_references.length > 0 ? (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <BookOpen className="h-5 w-5 text-blue-600" />
+                        {t('biblicalReferencesTitle')}
+                      </CardTitle>
+                      <p className="text-gray-600">
+                        {t('biblicalReferencesDescription')}
+                      </p>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {topGiftWithData.detailed_biblical_references.map((ref: any, index: number) => (
+                          <div key={`biblical-ref-${index}-${ref.reference}`} className="border border-blue-200 rounded-lg p-4 bg-blue-50">
+                            <div className="flex items-start gap-3">
+                              <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-300">
+                                {ref.reference}
+                              </Badge>
+                              <div className="flex-1">
+                                <blockquote className="text-blue-900 font-medium italic mb-2 border-l-4 border-blue-300 pl-3">
+                                  "{ref.verse_text}"
+                                </blockquote>
+                                <p className="text-blue-800 text-sm">
+                                  {ref.application}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
                         ))}
                       </div>
-                    ) : (
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <BookOpen className="h-5 w-5" />
+                        {t('biblicalReferencesTitle')}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
                       <p className="text-gray-500 italic">
-                        Referências bíblicas específicas em desenvolvimento.
+                        {t('notAvailable.biblicalReferences')}
                       </p>
-                    )}
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                )}
               </>
             ) : (
               <Alert>
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
-                  Orientações detalhadas não disponíveis para análise completa.
+                  {t('notAvailable.guidance')}
                 </AlertDescription>
               </Alert>
             )}

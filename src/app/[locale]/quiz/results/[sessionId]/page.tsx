@@ -49,8 +49,12 @@ export default function ResultsPage() {
   //   return topGiftDetails?.[0] // Return the highest scoring gift
   // }
 
-  const getScorePercentage = (score: number, maxPossibleScore: number = 25): number => {
-    return (score / maxPossibleScore) * 100
+  const getScorePercentage = (score: number, giftKey: string): number => {
+    // Maximum weighted scores for each gift with 5 questions per gift (balanced quiz)
+    // Based on generate_balanced_quiz function analysis
+    const maxScore = 56.406 // All gifts have same max with balanced quiz
+    
+    return (score / maxScore) * 100
   }
 
   // Removed unused handlers for cleaner code
@@ -189,7 +193,7 @@ export default function ResultsPage() {
               </CardHeader>
               <CardContent className="space-y-6">
                 {sortedScores.map(({ giftKey, giftName, definition, score }, index) => {
-                  const percentage = getScorePercentage(score)
+                  const percentage = getScorePercentage(score, giftKey)
 
                   return (
                     <div key={giftKey}>

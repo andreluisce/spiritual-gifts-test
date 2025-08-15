@@ -20,69 +20,57 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
 import { usePublicSettings } from '@/hooks/usePublicSettings'
+import { LanguageToggle } from '@/components/LanguageToggle'
+import { useTranslations } from 'next-intl'
 
 export default function HomePage() {
   const [selectedFeature, setSelectedFeature] = useState(0)
   const { user } = useAuth()
   const { allowGuestQuiz } = usePublicSettings()
+  const t = useTranslations('home')
+  const tCommon = useTranslations('common')
 
-  const features = [
-    {
-      icon: BookOpen,
-      title: "Baseado nas Escrituras",
-      description: "Fundamentado em textos bíblicos e estudos teológicos sólidos"
-    },
-    {
-      icon: Heart,
-      title: "Autoconhecimento Espiritual",
-      description: "Descubra como Deus trabalha através de você de forma única"
-    },
-    {
-      icon: Users,
-      title: "Crescimento na Comunidade",
-      description: "Entenda seu papel no Corpo de Cristo e na Igreja"
-    },
-    {
-      icon: Trophy,
-      title: "Histórico Personalizado",
-      description: "Acompanhe sua jornada espiritual e crescimento ao longo do tempo"
-    }
-  ]
+  const features = t.raw('features.items').map((feature: any, index: number) => ({
+    icon: [BookOpen, Heart, Users, Trophy][index],
+    title: feature.title,
+    description: feature.description
+  }))
 
-  const categories = [
-    {
-      name: "Motivações",
-      greek: "Karismation",
-      icon: Heart,
-      color: "text-red-500",
-      bgColor: "bg-red-50",
-      borderColor: "border-red-200",
-      description: "7 dons fundamentais que são a base da personalidade cristã"
-    },
-    {
-      name: "Ministérios",
-      greek: "Diakonion",
-      icon: Users,
-      color: "text-green-500",
-      bgColor: "bg-green-50",
-      borderColor: "border-green-200",
-      description: "12 ministérios para servir ao Corpo de Cristo"
-    },
-    {
-      name: "Manifestações",
-      greek: "Energias Planerosis",
-      icon: Crown,
-      color: "text-purple-500",
-      bgColor: "bg-purple-50",
-      borderColor: "border-purple-200",
-      description: "9 manifestações do poder sobrenatural de Deus"
-    }
-  ]
+  const categories = t.raw('categories.items').map((category: any, index: number) => ({
+    name: category.name,
+    greek: category.greek,
+    icon: [Heart, Users, Crown][index],
+    color: ["text-red-500", "text-green-500", "text-purple-500"][index],
+    bgColor: ["bg-red-50", "bg-green-50", "bg-purple-50"][index],
+    borderColor: ["border-red-200", "border-green-200", "border-purple-200"][index],
+    description: category.description
+  }))
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-stone-100">
+      {/* Header with Language Toggle */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <BookOpen className="h-6 w-6 text-slate-600" />
+            <span className="font-semibold text-slate-800 hidden sm:inline">{t('title')} {t('titleHighlight')}</span>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            {user && (
+              <Link href="/dashboard">
+                <Button variant="ghost" size="sm">
+                  Dashboard
+                </Button>
+              </Link>
+            )}
+            <LanguageToggle size="sm" />
+          </div>
+        </div>
+      </header>
+
       {/* Hero Section */}
-      <section className="relative py-20 px-4 overflow-hidden">
+      <section className="relative py-20 px-4 overflow-hidden mt-16">
         {/* Decorative elements */}
         <div className="absolute top-20 left-10 w-24 h-24 bg-slate-200 rounded-full opacity-40 blur-xl"></div>
         <div className="absolute bottom-20 right-20 w-32 h-32 bg-stone-200 rounded-full opacity-30 blur-xl"></div>
@@ -105,8 +93,8 @@ export default function HomePage() {
             transition={{ delay: 0.2, duration: 0.8 }}
             className="text-5xl md:text-6xl font-bold text-slate-800 mb-6"
           >
-            Descubra Seus
-            <span className="block text-slate-600">Dons Espirituais</span>
+            {t('title')}
+            <span className="block text-slate-600">{t('titleHighlight')}</span>
           </motion.h1>
 
           <motion.p
@@ -115,8 +103,7 @@ export default function HomePage() {
             transition={{ delay: 0.4, duration: 0.8 }}
             className="text-xl text-slate-600 mb-8 max-w-3xl mx-auto leading-relaxed"
           >
-            Um teste abrangente baseado nas três categorias bíblicas de dons espirituais.
-            Compreenda como Deus trabalha através de você e encontre seu lugar no Corpo de Cristo.
+            {t('subtitle')}
           </motion.p>
 
           <motion.div
@@ -128,7 +115,7 @@ export default function HomePage() {
             <Link href={user || allowGuestQuiz ? "/quiz" : "/login?from=home"}>
               <Button size="lg" className="px-8 py-4 text-lg bg-slate-700 hover:bg-slate-800">
                 <Sparkles className="mr-2 h-5 w-5" />
-                {user ? "Começar" : allowGuestQuiz ? "Preview Gratuito" : "Fazer Login"}
+                {user ? t('cta.primary') : allowGuestQuiz ? t('cta.primary') : t('cta.secondary')}
               </Button>
             </Link>
 
@@ -136,13 +123,13 @@ export default function HomePage() {
               <Link href="/dashboard">
                 <Button variant="outline" size="lg" className="px-8 py-4 text-lg border-slate-300">
                   <Trophy className="mr-2 h-5 w-5" />
-                  Meu Dashboard
+                  {tCommon('dashboard')}
                 </Button>
               </Link>
             ) : (
               <Link href="/gifts">
                 <Button variant="outline" size="lg" className="px-8 py-4 text-lg border-slate-300">
-                  Conhecer os Dons
+                  {t('features.title')}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
@@ -157,11 +144,11 @@ export default function HomePage() {
           >
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4" />
-              <span>3-5 minutos</span>
+              <span>3-5 {t('stats.tests')}</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4" />
-              <span>Biblicamente fundamentado</span>
+              <span>{t('features.items.0.title')}</span>
             </div>
           </motion.div>
         </div>
@@ -178,11 +165,10 @@ export default function HomePage() {
             className="text-center mb-12"
           >
             <h2 className="text-3xl font-bold text-slate-800 mb-4">
-              As Três Categorias de Dons
+              {t('categories.title')}
             </h2>
             <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              Baseado na classificação bíblica dos dons espirituais, nosso teste avalia todas as dimensões
-              de como Deus trabalha através de cada pessoa.
+              {t('categories.subtitle')}
             </p>
           </motion.div>
 
@@ -231,7 +217,7 @@ export default function HomePage() {
             className="text-center mb-12"
           >
             <h2 className="text-3xl font-bold text-slate-800 mb-4">
-              Por Que Fazer Este Teste?
+              {t('features.title')}
             </h2>
           </motion.div>
 
@@ -275,14 +261,14 @@ export default function HomePage() {
             viewport={{ once: true }}
           >
             <h2 className="text-4xl font-bold mb-6">
-              Pronto Para Descobrir Seus Dons?
+              {t('cta.title')}
             </h2>
             <p className="text-xl text-slate-300 mb-8 max-w-2xl mx-auto">
               {user
-                ? "Continue sua jornada de autoconhecimento espiritual com nosso teste completo."
+                ? t('subtitle')
                 : allowGuestQuiz 
-                  ? "Comece com nosso preview gratuito e descubra uma amostra do que Deus colocou em você."
-                  : "Faça login para acessar o teste completo de dons espirituais."
+                  ? t('subtitle')
+                  : t('subtitle')
               }
             </p>
 
@@ -290,13 +276,13 @@ export default function HomePage() {
               <Link href={user || allowGuestQuiz ? "/quiz" : "/login?from=home"}>
                 <Button size="lg" className="px-8 py-4 text-lg bg-white text-slate-800 hover:bg-slate-100">
                   <Star className="mr-2 h-5 w-5" />
-                  {user ? "Fazer Teste Completo" : allowGuestQuiz ? "Começar Preview" : "Fazer Login"}
+                  {user ? t('cta.primary') : allowGuestQuiz ? t('cta.primary') : t('cta.secondary')}
                 </Button>
               </Link>
 
               {!user && allowGuestQuiz && (
                 <p className="text-slate-400 text-sm">
-                  • Preview de 3 perguntas • Sem cadastro necessário
+                  • {t('stats.questions')} • {t('cta.secondary')}
                 </p>
               )}
             </div>

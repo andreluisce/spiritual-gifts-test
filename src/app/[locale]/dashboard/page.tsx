@@ -38,6 +38,7 @@ import { useTranslations, useLocale } from 'next-intl'
 import { formatScore, formatPercentage } from '@/data/quiz-data'
 import Image from 'next/image'
 import CompatibilityAnalysis from '@/components/CompatibilityAnalysis'
+import { LanguageToggleCompact } from '@/components/LanguageToggle'
 
 const QUIZ_STATE_KEY = 'quiz_in_progress'
 
@@ -223,6 +224,7 @@ export default function DashboardPage() {
                   </Button>
                 </Link>
               )}
+              <LanguageToggleCompact />
               <Link href="/quiz">
                 <Button variant="outline" size="sm" className="text-slate-600 border-slate-300">
 {t('takeTest')}

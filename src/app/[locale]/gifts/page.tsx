@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -31,6 +31,7 @@ export default function GiftsPage() {
   const router = useRouter()
   const { user } = useAuth()
   const locale = useLocale()
+  const t = useTranslations('gifts')
 
   const handleDiscoverGifts = useCallback(() => {
     if (!user) {
@@ -48,10 +49,20 @@ export default function GiftsPage() {
 
   const loading = loadingSpiritualGifts || loadingCategories
 
-  const filteredGifts = spiritualGiftsData?.filter(gift =>
+  // Filter motivational gifts only (for the motivations tab)
+  const motivationalGifts = spiritualGiftsData?.filter(gift => 
+    gift.category_key === 'motivations'
+  ) || []
+
+  // Debug logging
+  console.log('spiritualGiftsData:', spiritualGiftsData?.slice(0, 2))
+  console.log('spiritualGiftsData categories:', spiritualGiftsData?.map(g => g.category_key))
+  console.log('motivationalGifts:', motivationalGifts?.slice(0, 2))
+
+  const filteredGifts = motivationalGifts.filter(gift =>
     gift.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     gift.definition.toLowerCase().includes(searchTerm.toLowerCase())
-  ) || []
+  )
 
   const filteredMinistries = ministries?.filter(ministry =>
     ministry.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -80,21 +91,21 @@ export default function GiftsPage() {
             <Heart className="h-16 w-16 text-blue-600" />
           </div>
           <h1 className="text-4xl font-bold text-gray-800 mb-2">
-            Dons Espirituais
+            {t('title')}
           </h1>
           <p className="text-xl text-gray-600 mb-6">
-            As Três Categorias: Motivações, Ministérios e Manifestações
+            {t('subtitle')}
           </p>
 
           {/* Call to Action */}
           <div className="flex flex-wrap gap-4 justify-center">
             <Button size="lg" className="flex items-center gap-2" onClick={handleDiscoverGifts}>
               <Star className="h-5 w-5" />
-              Descobrir Meus Dons
+              {t('discoverMyGifts')}
             </Button>
             <Link href="/dashboard">
               <Button variant="outline" size="lg">
-                Meu Histórico
+                {t('myHistory')}
               </Button>
             </Link>
           </div>
@@ -128,7 +139,7 @@ export default function GiftsPage() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
-              placeholder="Buscar dons, ministérios ou manifestações"
+              placeholder={t('searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -140,15 +151,15 @@ export default function GiftsPage() {
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="motivations" className="flex items-center gap-2">
               <Heart className="h-4 w-4" />
-              Motivações
+              {t('categories.motivations')}
             </TabsTrigger>
             <TabsTrigger value="ministries" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
-              Ministérios
+              {t('categories.ministries')}
             </TabsTrigger>
             <TabsTrigger value="manifestations" className="flex items-center gap-2">
               <Crown className="h-4 w-4" />
-              Manifestações
+              {t('categories.manifestations')}
             </TabsTrigger>
           </TabsList>
 
@@ -179,7 +190,7 @@ export default function GiftsPage() {
                             {gift.category_name}
                           </Badge>
                           <div className="text-xs text-gray-500">
-                            {gift.characteristics?.length || 0} características
+                            {gift.characteristics?.length || 0} {t('giftDetails.characteristics')}
                           </div>
                         </div>
                       </CardContent>
@@ -195,13 +206,13 @@ export default function GiftsPage() {
                     <Card>
                       <CardHeader>
                         <CardTitle className="text-2xl">{selectedGift.name}</CardTitle>
-                        <p className="text-sm text-gray-500">Dom Espiritual</p>
+                        <p className="text-sm text-gray-500">{t('title')}</p>
                       </CardHeader>
                       <CardContent className="space-y-6">
                         <div>
                           <h3 className="font-semibold mb-2 flex items-center gap-2">
                             <BookOpen className="h-4 w-4" />
-                            Descrição
+                            {t('giftDetails.description')}
                           </h3>
                           <p className="text-gray-700">{selectedGift.definition}</p>
                         </div>
@@ -211,7 +222,7 @@ export default function GiftsPage() {
                         <div>
                           <h3 className="font-semibold mb-3 flex items-center gap-2">
                             <Target className="h-4 w-4" />
-                            Qualidades a Desenvolver
+                            {t('giftDetails.qualitiesToDevelop')}
                           </h3>
                           <div className="space-y-2 md:max-h-none md:overflow-visible max-h-40 overflow-y-auto">
                             {selectedGift.qualities?.map((quality, index) => (
@@ -235,7 +246,7 @@ export default function GiftsPage() {
                         <div>
                           <h3 className="font-semibold mb-3 flex items-center gap-2">
                             <Lightbulb className="h-4 w-4" />
-                            Características
+                            {t('giftDetails.characteristics')}
                           </h3>
                           <div className="space-y-2 md:max-h-none md:overflow-visible max-h-40 overflow-y-auto">
                             {selectedGift.characteristics?.map((char, index) => (
@@ -249,11 +260,44 @@ export default function GiftsPage() {
 
                         <Separator />
 
+                        <div>
+                          <h3 className="font-semibold mb-3 flex items-center gap-2">
+                            <Lightbulb className="h-4 w-4 text-yellow-600" />
+                            {t('giftDetails.precautions')}
+                          </h3>
+                          <div className="space-y-2 md:max-h-none md:overflow-visible max-h-40 overflow-y-auto">
+                            {selectedGift.dangers?.map((danger, index) => (
+                              <div key={index} className="flex items-start gap-2">
+                                <div className="w-2 h-2 bg-yellow-600 rounded-full mt-2 flex-shrink-0"></div>
+                                <span className="text-gray-700 text-sm">{danger.danger}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <Separator />
+
+                        <div>
+                          <h3 className="font-semibold mb-3 flex items-center gap-2">
+                            <Lightbulb className="h-4 w-4 text-red-600" />
+                            {t('giftDetails.misunderstandings')}
+                          </h3>
+                          <div className="space-y-2 md:max-h-none md:overflow-visible max-h-40 overflow-y-auto">
+                            {selectedGift.misunderstandings?.map((misunderstanding, index) => (
+                              <div key={index} className="flex items-start gap-2">
+                                <div className="w-2 h-2 bg-red-600 rounded-full mt-2 flex-shrink-0"></div>
+                                <span className="text-gray-700 text-sm">{misunderstanding.misunderstanding}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <Separator />
 
                         <div className="pt-4">
                           <Link href="/quiz">
                             <Button className="w-full">
-                              Descobrir Se Tenho Este Dom
+                              {t('giftDetails.discoverIfIHave')}
                             </Button>
                           </Link>
                         </div>
@@ -264,10 +308,10 @@ export default function GiftsPage() {
                       <CardContent className="text-center py-12">
                         <Heart className="h-12 w-12 text-red-400 mx-auto mb-4" />
                         <p className="text-gray-500 mb-4">
-                          Selecione um dom espiritual para ver mais detalhes
+                          {t('giftDetails.selectGift')}
                         </p>
                         <p className="text-sm text-gray-400">
-                          Os dons de motivação são impulsos básicos implantados por Deus
+                          {t('giftDetails.motivationsDescription')}
                         </p>
                       </CardContent>
                     </Card>
@@ -342,15 +386,14 @@ export default function GiftsPage() {
         {/* Bottom CTA */}
         <div className="text-center mt-16">
           <h2 className="text-2xl font-bold text-gray-800 mb-4">
-            Pronto para descobrir seus dons?
+            {t('cta.title')}
           </h2>
           <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-            Nosso teste foi desenvolvido com base nas Escrituras e no documento &ldquo;Dons Espirituais - As Três Categorias&rdquo;
-            para ajudar você a identificar e compreender os dons que Deus lhe concedeu.
+            {t('cta.description')}
           </p>
           <Button size="lg" className="flex items-center gap-2 mx-auto" onClick={handleDiscoverGifts}>
             <Star className="h-5 w-5" />
-            Fazer o Teste Agora
+            {t('cta.button')}
           </Button>
         </div>
       </div>

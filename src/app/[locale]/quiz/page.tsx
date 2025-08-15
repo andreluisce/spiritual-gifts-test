@@ -16,6 +16,7 @@ import { usePublicSettings } from '@/hooks/usePublicSettings'
 import { motion, AnimatePresence } from 'framer-motion'
 import { formatPercentage } from '@/data/quiz-data'
 import Image from 'next/image'
+import { LanguageToggleCompact } from '@/components/LanguageToggle'
 
 export default function QuizPage() {
   const [progressValue, setProgressValue] = useState(0)
@@ -29,7 +30,7 @@ export default function QuizPage() {
   const tCommon = useTranslations('common')
   const locale = useLocale()
   const { user, signOut, loading: authLoading } = useAuth()
-  const { allowGuestQuiz, settings, loading: settingsLoading } = usePublicSettings()
+  const { allowGuestQuiz, settings, loading: settingsLoading, debugMode } = usePublicSettings()
 
   useEffect(() => {
     // Only redirect to login after auth and settings are loaded
@@ -63,7 +64,8 @@ export default function QuizPage() {
 
   const currentQuestion = availableQuestions && availableQuestions.length > 0 ? availableQuestions[currentQuestionIndex] : null
   const answeredCount = Object.keys(currentAnswers).length
-  const progress = availableQuestions && availableQuestions.length > 0 ? (answeredCount / availableQuestions.length) * 100 : 0
+  const currentPosition = currentQuestionIndex + 1
+  const progress = availableQuestions && availableQuestions.length > 0 ? (currentQuestionIndex / availableQuestions.length) * 100 : 0
   const isLastQuestion = availableQuestions ? currentQuestionIndex === availableQuestions.length - 1 : false
   const canProceed = currentQuestion ? currentAnswers[currentQuestion.id] !== undefined : false
 
@@ -335,12 +337,22 @@ export default function QuizPage() {
                 </div>
               </PopoverContent>
             </Popover>
-            <Link href="/dashboard">
-              <Button variant="outline" size="sm" className="text-slate-600 border-slate-300">
-                {tCommon('dashboard')}
-              </Button>
-            </Link>
+            <div className="flex items-center gap-3">
+              <LanguageToggleCompact />
+              <Link href="/dashboard">
+                <Button variant="outline" size="sm" className="text-slate-600 border-slate-300">
+                  {tCommon('dashboard')}
+                </Button>
+              </Link>
+            </div>
           </motion.div>
+        )}
+
+        {/* Language toggle for non-logged users (mobile) */}
+        {!user && (
+          <div className="flex justify-end mb-4 md:hidden">
+            <LanguageToggleCompact />
+          </div>
         )}
 
         {/* Header principal — compacto no mobile */}
@@ -368,7 +380,7 @@ export default function QuizPage() {
             <div className="w-1.5 h-1.5 rounded-full bg-slate-300 hidden md:block" />
             <span className="font-medium">
               {t('questionOf', {
-                current: currentQuestionIndex + 1,
+                current: currentPosition,
                 total: availableQuestions?.length || 0
               })}
               {isPreviewMode && <span className="text-amber-600 ml-2">({t('status.preview')})</span>}
@@ -408,9 +420,65 @@ export default function QuizPage() {
             </div>
             <div className="flex justify-between text-[10px] md:text-xs text-slate-500 mt-1 md:mt-2">
               <span>{tCommon('start')}</span>
-              <span>{t('answeredOf', { answered: answeredCount, total: availableQuestions.length })}</span>
+              <span>{t('answeredOf', { answered: currentPosition, total: availableQuestions.length })}</span>
               <span>{tCommon('completed')}</span>
             </div>
+          </motion.div>
+        )}
+
+        {/* Debug Panel */}
+        {debugMode && currentQuestion && (
+          <motion.div
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            className="mb-4"
+          >
+            <Card className="border-orange-200 bg-orange-50">
+              <CardContent className="p-4">
+                <div className="text-xs">
+                  <div className="flex flex-wrap gap-4 text-orange-800">
+                    <span><strong>Dom:</strong> {currentQuestion.gift_key}</span>
+                    <span><strong>Classe:</strong> {currentQuestion.weight_class || 'P1'}</span>
+                    <span><strong>ID:</strong> {currentQuestion.id}</span>
+                    {currentQuestion.quiz_id && <span><strong>Quiz ID:</strong> {currentQuestion.quiz_id}</span>}
+                  </div>
+                  
+                  {/* Current Scores */}
+                  <div className="mt-2 pt-2 border-t border-orange-200">
+                    <div className="text-xs font-semibold text-orange-700 mb-1">Pontuações Atuais:</div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                      {Object.entries(currentAnswers).length > 0 ? (
+                        // Calculate current scores by gift
+                        (() => {
+                          const scoresByGift: Record<string, number> = {}
+                          const countsByGift: Record<string, number> = {}
+                          
+                          Object.entries(currentAnswers).forEach(([questionId, score]) => {
+                            const q = questions?.find(q => q.id === parseInt(questionId))
+                            if (q) {
+                              if (!scoresByGift[q.gift_key]) {
+                                scoresByGift[q.gift_key] = 0
+                                countsByGift[q.gift_key] = 0
+                              }
+                              scoresByGift[q.gift_key] += score
+                              countsByGift[q.gift_key] += 1
+                            }
+                          })
+                          
+                          return Object.entries(scoresByGift).map(([gift, score]) => (
+                            <span key={gift} className="text-orange-700">
+                              <strong>{gift.replace(/^[A-Z]_/, '')}:</strong> {score}/{countsByGift[gift]*3}
+                            </span>
+                          ))
+                        })()
+                      ) : (
+                        <span className="text-orange-600 italic">Nenhuma resposta ainda</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </motion.div>
         )}
 
@@ -440,21 +508,22 @@ export default function QuizPage() {
                       key={score}
                       whileHover={{ scale: 1.01 }}
                       whileTap={{ scale: 0.99 }}
-                      className={`relative rounded-lg border transition-all duration-200 ${selectedAnswer === score
+                      className={`relative rounded-lg border transition-all duration-200 cursor-pointer ${selectedAnswer === score
                         ? 'border-slate-400 shadow bg-slate-50'
                         : 'border-slate-200 hover:border-slate-300'
                         }`}
+                      onClick={() => handleAnswer(score)}
                     >
                       <div className="p-3 md:p-4">
                         <div className="flex items-center space-x-3">
                           <RadioGroupItem
                             value={score.toString()}
                             id={`score-${score}`}
-                            className="h-4 w-4 md:h-5 md:w-5 border-slate-300 text-slate-700 data-[state=checked]:border-slate-600 data-[state=checked]:bg-slate-600"
+                            className="h-4 w-4 md:h-5 md:w-5 border-slate-300 text-slate-700 data-[state=checked]:border-slate-600 data-[state=checked]:bg-slate-600 pointer-events-none"
                           />
                           <Label
                             htmlFor={`score-${score}`}
-                            className="flex-1 cursor-pointer text-sm md:text-base font-medium text-slate-700"
+                            className="flex-1 text-sm md:text-base font-medium text-slate-700 pointer-events-none"
                           >
                             <div className="flex items-center justify-between">
                               <span>{getScoreLabel(score)}</span>
@@ -498,7 +567,7 @@ export default function QuizPage() {
 
           <div className="text-center">
             <div className="text-xs md:text-sm text-slate-600 font-medium">
-              {t('status.questionsProgress', { answered: answeredCount, total: availableQuestions.length })}
+              {t('status.questionsProgress', { answered: currentPosition, total: availableQuestions.length })}
               {isPreviewMode && (
                 <div className="text-[10px] md:text-xs text-amber-600 mt-1">
                   {t('status.loginForFull')}

@@ -35,6 +35,7 @@ import {
   BarChart3
 } from 'lucide-react'
 import { useSystemSettings } from '@/hooks/useSystemSettings'
+import { LanguageStatusIndicator } from '@/components/LanguageStatusIndicator'
 
 type SettingsCategory = 'quiz' | 'general'
 
@@ -268,6 +269,16 @@ export default function AdminSettingsPage() {
                       onCheckedChange={(checked) => handleSettingChange('quiz', 'allowRetake', checked)}
                     />
                   </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Debug Mode</label>
+                      <p className="text-xs text-gray-500">Show detailed question info during quiz (gift type, weight class, current scores)</p>
+                    </div>
+                    <Switch
+                      checked={settings?.quiz?.debugMode || false}
+                      onCheckedChange={(checked) => handleSettingChange('quiz', 'debugMode', checked)}
+                    />
+                  </div>
                 </div>
               </div>
             </CardContent>
@@ -336,6 +347,15 @@ export default function AdminSettingsPage() {
                   <option value="en">{t('general.localization.defaultLanguage.options.en')}</option>
                   <option value="es">{t('general.localization.defaultLanguage.options.es')}</option>
                 </select>
+                
+                {/* Language Status Indicator */}
+                <div className="mt-3 p-3 bg-gray-50 rounded-md border">
+                  <LanguageStatusIndicator />
+                  <p className="text-xs text-gray-500 mt-2">
+                    💡 Alterações no idioma padrão afetam novos usuários e redirecionamentos automáticos. 
+                    Usuários existentes podem continuar usando o idioma de sua preferência.
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>
