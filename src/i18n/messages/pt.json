@@ -23,72 +23,99 @@
     "noQuestions": "Nenhuma pergunta encontrada",
     "errorLoading": "Erro ao carregar"
   },
+  "home": {
+    "title": "Descubra Seus",
+    "titleHighlight": "Dons Espirituais",
+    "subtitle": "Uma jornada de autoconhecimento baseada nas Escrituras Sagradas para descobrir como Deus trabalha através de você de forma única.",
+    "cta": {
+      "title": "Pronto Para Descobrir Seus Dons?",
+      "primary": "Começar Teste Gratuito",
+      "secondary": "Entrar na Conta"
+    },
+    "features": {
+      "title": "Por que fazer este teste?",
+      "items": [
+        {
+          "title": "Baseado nas Escrituras",
+          "description": "Fundamentado em textos bíblicos e estudos teológicos sólidos"
+        },
+        {
+          "title": "Autoconhecimento Espiritual",
+          "description": "Descubra como Deus trabalha através de você de forma única"
+        },
+        {
+          "title": "Crescimento na Comunidade",
+          "description": "Entenda seu papel no Corpo de Cristo e na Igreja"
+        },
+        {
+          "title": "Histórico Personalizado",
+          "description": "Acompanhe sua jornada espiritual e crescimento ao longo do tempo"
+        }
+      ]
+    },
+    "categories": {
+      "title": "Três Categorias de Dons",
+      "subtitle": "Baseadas em 1 Coríntios 12:4-6",
+      "items": [
+        {
+          "name": "Motivações",
+          "greek": "Karismation",
+          "description": "7 dons fundamentais que são a base da personalidade cristã"
+        },
+        {
+          "name": "Ministérios",
+          "greek": "Diakonion",
+          "description": "12 ministérios para servir ao Corpo de Cristo"
+        },
+        {
+          "name": "Manifestações",
+          "greek": "Energias Planerosis",
+          "description": "9 manifestações do poder sobrenatural de Deus"
+        }
+      ]
+    },
+    "stats": {
+      "title": "Estatísticas do Teste",
+      "users": "usuários",
+      "tests": "testes realizados",
+      "questions": "perguntas balanceadas",
+      "accuracy": "precisão na análise"
+    },
+    "testimonials": {
+      "title": "O que dizem nossos usuários",
+      "items": [
+        {
+          "name": "Maria Silva",
+          "role": "Líder de Ministério",
+          "text": "Este teste me ajudou a entender melhor meus dons e como posso servir melhor na igreja."
+        },
+        {
+          "name": "João Santos",
+          "role": "Pastor",
+          "text": "Uma ferramenta valiosa para ajudar os membros da igreja a descobrirem seus chamados."
+        },
+        {
+          "name": "Ana Costa",
+          "role": "Missionária",
+          "text": "Resultado muito preciso que confirmou minha vocação missionária."
+        }
+      ]
+    },
+    "footer": {
+      "description": "Descubra seus dons espirituais através de um teste fundamentado nas Escrituras.",
+      "links": {
+        "about": "Sobre",
+        "contact": "Contato",
+        "privacy": "Privacidade",
+        "terms": "Termos"
+      }
+    }
+  },
   "nav": {
     "home": "Início",
     "quiz": "Quiz",
     "dashboard": "Painel",
     "gifts": "Dons"
-  },
-  "home": {
-    "title": "Teste de Dons Espirituais",
-    "subtitle": "Descubra seus dons espirituais e chamado",
-    "heroTitle": "Descubra Seus Dons Espirituais",
-    "heroSubtitle": "Descubra como Deus o projetou exclusivamente para servir ao Seu reino. Faça nossa avaliação abrangente de dons espirituais e encontre seu chamado.",
-    "startAssessment": "Iniciar Sua Avaliação",
-    "continueWithGoogle": "Continuar com Google",
-    "signInToStart": "Entre para Começar",
-    "beginAssessment": "Começar Avaliação Agora",
-    "whyTakeAssessment": "Por que Fazer Esta Avaliação?",
-    "assessmentDescription": "Junte-se a milhares que encontraram clareza em seu chamado. Sua avaliação de dons espirituais está a apenas um clique de distância.",
-    "features": {
-      "scriptural": {
-        "title": "Baseado nas Escrituras",
-        "description": "Fundamentado em textos bíblicos e estudos teológicos sólidos"
-      },
-      "discover": {
-        "title": "Descubra Seus Dons",
-        "description": "Descubra como Deus trabalha através de você de forma única"
-      },
-      "purpose": {
-        "title": "Encontre Seu Propósito",
-        "description": "Entenda seu papel no Corpo de Cristo e na Igreja"
-      },
-      "history": {
-        "title": "Histórico Personalizado",
-        "description": "Acompanhe sua jornada espiritual e crescimento ao longo do tempo"
-      }
-    },
-    "categories": {
-      "title": "As Três Categorias de Dons",
-      "subtitle": "Baseado na classificação bíblica dos dons espirituais, nosso teste avalia todas as dimensões de como Deus trabalha através de cada pessoa.",
-      "motivations": {
-        "title": "Motivações",
-        "count": "7 dons",
-        "description": "7 dons fundamentais que são a base da personalidade cristã"
-      },
-      "ministries": {
-        "title": "Ministérios", 
-        "count": "12 ministérios",
-        "description": "12 ministérios para servir ao Corpo de Cristo"
-      },
-      "manifestations": {
-        "title": "Manifestações",
-        "count": "9 manifestações", 
-        "description": "9 manifestações do poder sobrenatural de Deus"
-      }
-    },
-    "cta": {
-      "title": "Pronto Para Descobrir Seus Dons?",
-      "subtitle": "Continue sua jornada de autoconhecimento espiritual com nosso teste completo.",
-      "description": "Comece com nosso preview gratuito e descubra uma amostra do que Deus colocou em você.",
-      "fullTest": "Fazer Teste Completo",
-      "preview": "Começar Preview",
-      "previewFeatures": "• Preview de 3 perguntas • Sem cadastro necessário"
-    },
-    "stats": {
-      "duration": "3-5 minutos",
-      "foundation": "Biblicamente fundamentado"
-    }
   },
   "quiz": {
     "title": "Teste de Dons Espirituais",
@@ -165,7 +192,7 @@
     "searchPlaceholder": "Buscar dons, ministérios ou manifestações",
     "categories": {
       "motivations": "Motivações",
-      "ministries": "Ministérios", 
+      "ministries": "Ministérios",
       "manifestations": "Manifestações"
     },
     "giftTypes": {
@@ -174,12 +201,13 @@
       "declaration": "DECLARAÇÃO"
     },
     "giftDetails": {
-      "characteristics": "características",
+      "characteristics": "Características",
       "description": "Descrição",
       "qualitiesToDevelop": "Qualidades a Desenvolver",
-      "additionalCharacteristics": "características adicionais",
+      "additionalCharacteristics": "Características adicionais",
       "precautions": "Cuidados",
       "additionalPrecautions": "cuidados adicionais",
+      "misunderstandings": "Possíveis Mal-entendidos",
       "discoverIfIHave": "Descobrir Se Tenho Este Dom",
       "selectGift": "Selecione um dom espiritual para ver mais detalhes",
       "motivationsDescription": "Os dons de motivação são impulsos básicos implantados por Deus",
@@ -219,11 +247,16 @@
     "misunderstandingsDescription": "Como seu dom pode ser interpretado pelos outros",
     "biblicalReferences": "Referências Bíblicas",
     "biblicalReferencesInDevelopment": "Referências bíblicas específicas em desenvolvimento.",
+    "orientationsTitle": "Orientações Práticas",
+    "orientationsDescription": "Direcionamentos práticos para desenvolver e exercer seu dom espiritual principal",
+    "biblicalReferencesTitle": "Referências Bíblicas Detalhadas",
+    "biblicalReferencesDescription": "Versículos bíblicos específicos com aplicações práticas para seu dom",
     "notAvailable": {
       "main": "Dados completos do dom principal não disponíveis. Mostrando informações básicas.",
       "qualities": "Dados de qualidades não disponíveis para análise completa.",
       "precautions": "Dados de cuidados não disponíveis para análise completa.",
-      "guidance": "Orientações detalhadas não disponíveis para análise completa."
+      "guidance": "Orientações detalhadas não disponíveis para análise completa.",
+      "biblicalReferences": "Referências bíblicas específicas em desenvolvimento."
     },
     "actions": {
       "fullReport": "Relatório Completo (PDF)",
@@ -241,7 +274,7 @@
     "questions": "Perguntas ({count}):",
     "stats": {
       "totalQuestions": "Total de Perguntas:",
-      "totalScore": "Pontuação Total:", 
+      "totalScore": "Pontuação Total:",
       "averagePerQuestion": "Média por Pergunta:",
       "percentOfTotal": "% do Total:"
     },
@@ -273,7 +306,7 @@
     },
     "stats": {
       "totalTests": "Total de Testes",
-      "mainGift": "Dom Principal", 
+      "mainGift": "Dom Principal",
       "lastTest": "Último Teste",
       "evolution": "Evolução",
       "growing": "Crescendo",
@@ -372,7 +405,7 @@
             "description": "Allow new users to create accounts"
           },
           "allowGuestQuiz": {
-            "label": "Allow Guest Quizzes", 
+            "label": "Allow Guest Quizzes",
             "description": "Users can take the quiz without creating an account"
           }
         },
@@ -384,7 +417,7 @@
             "description": "The default language for new users and guest sessions",
             "options": {
               "pt": "Português (Portuguese)",
-              "en": "English", 
+              "en": "English",
               "es": "Español (Spanish)"
             }
           }
@@ -397,7 +430,7 @@
       "exportData": "Export Data",
       "dateRange": {
         "7d": "Last 7 days",
-        "30d": "Last 30 days", 
+        "30d": "Last 30 days",
         "90d": "Last 90 days",
         "1y": "Last year"
       },
@@ -410,7 +443,7 @@
       "overview": {
         "totalQuizzes": "Total Quizzes",
         "avgCompletionTime": "Avg Completion Time",
-        "averageScore": "Average Score", 
+        "averageScore": "Average Score",
         "completionRate": "Completion Rate",
         "returningUsers": "Returning Users",
         "mobileUsers": "Mobile Users",
@@ -425,7 +458,7 @@
         "chartsComingSoon": "Charts and detailed metrics coming soon",
         "totalUsersCard": "Total Users",
         "registeredUsers": "registered users",
-        "activeUsersCard": "Active Users", 
+        "activeUsersCard": "Active Users",
         "haveCompleted": "have completed quizzes",
         "mostPopularGift": "Most Popular Gift",
         "topSpiritualGift": "top spiritual gift"
@@ -437,7 +470,7 @@
       },
       "demographics": {
         "ageDistribution": {
-          "title": "Age Distribution", 
+          "title": "Age Distribution",
           "description": "Age demographics data will be available soon",
           "comingSoon": "User age distribution analysis coming soon"
         },

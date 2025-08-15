@@ -30,16 +30,92 @@
     "gifts": "Gifts"
   },
   "home": {
-    "title": "Spiritual Gifts Test",
-    "subtitle": "Discover your spiritual gifts and calling",
-    "heroTitle": "Discover Your Spiritual Gifts",
-    "heroSubtitle": "Uncover how God has uniquely designed you to serve His kingdom. Take our comprehensive spiritual gifts assessment and find your calling.",
-    "startAssessment": "Start Your Assessment",
-    "continueWithGoogle": "Continue with Google",
-    "signInToStart": "Sign In to Start",
-    "beginAssessment": "Begin Assessment Now",
-    "whyTakeAssessment": "Why Take This Assessment?",
-    "assessmentDescription": "Join thousands who have found clarity in their calling. Your spiritual gifts assessment is just one click away."
+    "title": "Discover Your",
+    "titleHighlight": "Spiritual Gifts",
+    "subtitle": "A journey of self-discovery based on Sacred Scripture to discover how God works through you in a unique way.",
+    "cta": {
+      "title": "Ready To Discover Your Gifts?",
+      "primary": "Start Free Test",
+      "secondary": "Sign In"
+    },
+    "features": {
+      "title": "Why take this test?",
+      "items": [
+        {
+          "title": "Scripture-Based",
+          "description": "Founded on biblical texts and solid theological studies"
+        },
+        {
+          "title": "Spiritual Self-Discovery",
+          "description": "Discover how God works through you uniquely"
+        },
+        {
+          "title": "Community Growth",
+          "description": "Understand your role in the Body of Christ and the Church"
+        },
+        {
+          "title": "Personal History",
+          "description": "Track your spiritual journey and growth over time"
+        }
+      ]
+    },
+    "categories": {
+      "title": "Three Categories of Gifts",
+      "subtitle": "Based on 1 Corinthians 12:4-6",
+      "items": [
+        {
+          "name": "Motivations",
+          "greek": "Karismation",
+          "description": "7 fundamental gifts that are the foundation of Christian personality"
+        },
+        {
+          "name": "Ministries", 
+          "greek": "Diakonion",
+          "description": "12 ministries to serve the Body of Christ"
+        },
+        {
+          "name": "Manifestations",
+          "greek": "Energias Planerosis", 
+          "description": "9 manifestations of God's supernatural power"
+        }
+      ]
+    },
+    "stats": {
+      "title": "Test Statistics",
+      "users": "users",
+      "tests": "tests completed",
+      "questions": "balanced questions",
+      "accuracy": "analysis accuracy"
+    },
+    "testimonials": {
+      "title": "What our users say",
+      "items": [
+        {
+          "name": "Mary Johnson",
+          "role": "Ministry Leader",
+          "text": "This test helped me better understand my gifts and how I can serve better in church."
+        },
+        {
+          "name": "John Smith",
+          "role": "Pastor",
+          "text": "A valuable tool to help church members discover their callings."
+        },
+        {
+          "name": "Sarah Wilson",
+          "role": "Missionary",
+          "text": "Very accurate result that confirmed my missionary vocation."
+        }
+      ]
+    },
+    "footer": {
+      "description": "Discover your spiritual gifts through a Scripture-based test.",
+      "links": {
+        "about": "About",
+        "contact": "Contact",
+        "privacy": "Privacy",
+        "terms": "Terms"
+      }
+    }
   },
   "quiz": {
     "title": "Spiritual Gifts Test",
@@ -312,6 +388,44 @@
         "firstReport": "Start by generating your first analytics report",
         "generateReport": "Generate Report"
       }
+    }
+  },
+  "gifts": {
+    "title": "Spiritual Gifts",
+    "subtitle": "The Three Categories: Motivations, Ministries and Manifestations",
+    "discoverMyGifts": "Discover My Gifts",
+    "myHistory": "My History",
+    "searchPlaceholder": "Search gifts, ministries or manifestations",
+    "categories": {
+      "motivations": "Motivations",
+      "ministries": "Ministries", 
+      "manifestations": "Manifestations"
+    },
+    "giftTypes": {
+      "discernment": "DISCERNMENT",
+      "power": "POWER",
+      "declaration": "DECLARATION"
+    },
+    "giftDetails": {
+      "characteristics": "characteristics",
+      "description": "Description",
+      "qualitiesToDevelop": "Qualities to Develop",
+      "additionalCharacteristics": "additional characteristics",
+      "precautions": "Precautions",
+      "additionalPrecautions": "additional precautions",
+      "misunderstandings": "Possible Misunderstandings",
+      "discoverIfIHave": "Discover If I Have This Gift",
+      "selectGift": "Select a spiritual gift to see more details",
+      "motivationsDescription": "Motivation gifts are basic impulses implanted by God",
+      "classification": {
+        "main": "Main",
+        "others": "Others"
+      }
+    },
+    "cta": {
+      "title": "Ready to discover your gifts?",
+      "description": "Our test was developed based on Scripture and the document \"Spiritual Gifts - The Three Categories\" to help you identify and understand the gifts God has given you.",
+      "button": "Take the Test Now"
     }
   },
   "Index": {

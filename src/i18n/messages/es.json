@@ -12,7 +12,16 @@
     "processing": "Procesando",
     "signIn": "Iniciar Sesión",
     "signOut": "Cerrar Sesión",
-    "getStarted": "Comenzar"
+    "getStarted": "Comenzar",
+    "dashboard": "Panel",
+    "points": "puntos",
+    "questions": "preguntas",
+    "completed": "Completado",
+    "start": "Inicio",
+    "progress": "Progreso",
+    "downloadPdf": "Descargar PDF",
+    "noQuestions": "No se encontraron preguntas",
+    "errorLoading": "Error al cargar"
   },
   "nav": {
     "home": "Inicio",
@@ -21,16 +30,92 @@
     "gifts": "Dones"
   },
   "home": {
-    "title": "Prueba de Dones Espirituales",
-    "subtitle": "Descubre tus dones espirituales y llamado",
-    "heroTitle": "Descubre Tus Dones Espirituales",
-    "heroSubtitle": "Descubre cómo Dios te ha diseñado únicamente para servir a Su reino. Realiza nuestra evaluación integral de dones espirituales y encuentra tu llamado.",
-    "startAssessment": "Comenzar Tu Evaluación",
-    "continueWithGoogle": "Continuar con Google",
-    "signInToStart": "Inicia Sesión para Comenzar",
-    "beginAssessment": "Comenzar Evaluación Ahora",
-    "whyTakeAssessment": "¿Por qué Hacer Esta Evaluación?",
-    "assessmentDescription": "Únete a miles que han encontrado claridad en su llamado. Tu evaluación de dones espirituales está a solo un clic de distancia."
+    "title": "Descubre Tus",
+    "titleHighlight": "Dones Espirituales",
+    "subtitle": "Un viaje de autodescubrimiento basado en las Sagradas Escrituras para descubrir cómo Dios obra a través de ti de manera única.",
+    "cta": {
+      "title": "¿Listo Para Descubrir Tus Dones?",
+      "primary": "Comenzar Prueba Gratuita",
+      "secondary": "Iniciar Sesión"
+    },
+    "features": {
+      "title": "¿Por qué hacer esta prueba?",
+      "items": [
+        {
+          "title": "Basada en las Escrituras",
+          "description": "Fundamentada en textos bíblicos y estudios teológicos sólidos"
+        },
+        {
+          "title": "Autodescubrimiento Espiritual",
+          "description": "Descubre cómo Dios obra a través de ti de manera única"
+        },
+        {
+          "title": "Crecimiento en la Comunidad",
+          "description": "Comprende tu papel en el Cuerpo de Cristo y la Iglesia"
+        },
+        {
+          "title": "Historial Personalizado",
+          "description": "Sigue tu jornada espiritual y crecimiento a lo largo del tiempo"
+        }
+      ]
+    },
+    "categories": {
+      "title": "Tres Categorías de Dones",
+      "subtitle": "Basadas en 1 Corintios 12:4-6",
+      "items": [
+        {
+          "name": "Motivaciones",
+          "greek": "Karismation",
+          "description": "7 dones fundamentales que son la base de la personalidad cristiana"
+        },
+        {
+          "name": "Ministerios",
+          "greek": "Diakonion",
+          "description": "12 ministerios para servir al Cuerpo de Cristo"
+        },
+        {
+          "name": "Manifestaciones",
+          "greek": "Energias Planerosis",
+          "description": "9 manifestaciones del poder sobrenatural de Dios"
+        }
+      ]
+    },
+    "stats": {
+      "title": "Estadísticas de la Prueba",
+      "users": "usuarios",
+      "tests": "pruebas completadas",
+      "questions": "preguntas balanceadas",
+      "accuracy": "precisión en el análisis"
+    },
+    "testimonials": {
+      "title": "Lo que dicen nuestros usuarios",
+      "items": [
+        {
+          "name": "María González",
+          "role": "Líder de Ministerio",
+          "text": "Esta prueba me ayudó a entender mejor mis dones y cómo puedo servir mejor en la iglesia."
+        },
+        {
+          "name": "Juan Martínez",
+          "role": "Pastor",
+          "text": "Una herramienta valiosa para ayudar a los miembros de la iglesia a descubrir sus llamados."
+        },
+        {
+          "name": "Ana López",
+          "role": "Misionera",
+          "text": "Resultado muy preciso que confirmó mi vocación misionera."
+        }
+      ]
+    },
+    "footer": {
+      "description": "Descubre tus dones espirituales a través de una prueba basada en las Escrituras.",
+      "links": {
+        "about": "Acerca de",
+        "contact": "Contacto",
+        "privacy": "Privacidad",
+        "terms": "Términos"
+      }
+    }
   },
   "quiz": {
     "title": "Prueba de Dones Espirituales",
@@ -43,7 +128,7 @@
     "restartQuiz": "Reiniciar Prueba",
     "labels": {
       "0": "Nunca",
-      "1": "Raramente", 
+      "1": "Raramente",
       "2": "A veces",
       "3": "Siempre"
     },
@@ -107,7 +192,7 @@
     },
     "stats": {
       "totalTests": "Pruebas Totales",
-      "mainGift": "Don Principal", 
+      "mainGift": "Don Principal",
       "lastTest": "Última Prueba",
       "evolution": "Evolución",
       "growing": "Creciendo",
@@ -288,6 +373,44 @@
         "firstReport": "Comience generando su primer reporte de analíticas",
         "generateReport": "Generar Reporte"
       }
+    }
+  },
+  "gifts": {
+    "title": "Dones Espirituales",
+    "subtitle": "Las Tres Categorías: Motivaciones, Ministerios y Manifestaciones",
+    "discoverMyGifts": "Descubrir Mis Dones",
+    "myHistory": "Mi Historial",
+    "searchPlaceholder": "Buscar dones, ministerios o manifestaciones",
+    "categories": {
+      "motivations": "Motivaciones",
+      "ministries": "Ministerios",
+      "manifestations": "Manifestaciones"
+    },
+    "giftTypes": {
+      "discernment": "DISCERNIMIENTO",
+      "power": "PODER",
+      "declaration": "DECLARACIÓN"
+    },
+    "giftDetails": {
+      "characteristics": "Características",
+      "description": "Descripción",
+      "qualitiesToDevelop": "Cualidades a Desarrollar",
+      "additionalCharacteristics": "Características adicionales",
+      "precautions": "Precauciones",
+      "additionalPrecautions": "precauciones adicionales",
+      "misunderstandings": "Posibles Malentendidos",
+      "discoverIfIHave": "Descubrir Si Tengo Este Don",
+      "selectGift": "Selecciona un don espiritual para ver más detalles",
+      "motivationsDescription": "Los dones de motivación son impulsos básicos implantados por Dios",
+      "classification": {
+        "main": "Principal",
+        "others": "Otros"
+      }
+    },
+    "cta": {
+      "title": "¿Listo para descubrir tus dones?",
+      "description": "Nuestra prueba fue desarrollada basándose en las Escrituras y el documento \"Dones Espirituales - Las Tres Categorías\" para ayudarte a identificar y comprender los dones que Dios te ha concedido.",
+      "button": "Hacer la Prueba Ahora"
     }
   },
   "Index": {
