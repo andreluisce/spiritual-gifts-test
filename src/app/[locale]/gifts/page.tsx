@@ -13,9 +13,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Search, BookOpen, Heart, Star,
   Target, Lightbulb,
-  Users, Crown
+  Users, Crown, ArrowLeft
 } from 'lucide-react'
 import Link from 'next/link'
+import { LanguageToggleCompact } from '@/components/LanguageToggle'
 import {
   useSpiritualGifts,
   useCategories,
@@ -54,10 +55,6 @@ export default function GiftsPage() {
     gift.category_key === 'motivations'
   ) || []
 
-  // Debug logging
-  console.log('spiritualGiftsData:', spiritualGiftsData?.slice(0, 2))
-  console.log('spiritualGiftsData categories:', spiritualGiftsData?.map(g => g.category_key))
-  console.log('motivationalGifts:', motivationalGifts?.slice(0, 2))
 
   const filteredGifts = motivationalGifts.filter(gift =>
     gift.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -85,6 +82,21 @@ export default function GiftsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="max-w-7xl mx-auto p-4 py-8">
+        {/* Navigation */}
+        <div className="flex justify-between items-center mb-4">
+          {user && (
+            <Link href="/dashboard">
+              <Button variant="ghost" size="sm" className="flex items-center gap-2">
+                <ArrowLeft className="h-4 w-4" />
+                <span className="hidden sm:inline">Dashboard</span>
+              </Button>
+            </Link>
+          )}
+          <div className="ml-auto">
+            <LanguageToggleCompact />
+          </div>
+        </div>
+        
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">

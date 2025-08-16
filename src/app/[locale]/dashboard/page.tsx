@@ -33,12 +33,9 @@ import {
 import { Link } from '@/i18n/navigation'
 import { useUserResults, useLatestResult, useSpiritualGifts, useDeleteResult, type SpiritualGiftData } from '@/hooks/use-quiz-queries'
 import { useAuth } from '@/context/AuthContext'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { useTranslations, useLocale } from 'next-intl'
 import { formatScore, formatPercentage } from '@/data/quiz-data'
-import Image from 'next/image'
 import CompatibilityAnalysis from '@/components/CompatibilityAnalysis'
-import { LanguageToggleCompact } from '@/components/LanguageToggle'
 
 const QUIZ_STATE_KEY = 'quiz_in_progress'
 
@@ -108,18 +105,14 @@ export default function DashboardPage() {
 
   const handleDeleteResult = async (sessionId: string) => {
     if (!user?.id) {
-      console.error('❌ No user ID available for delete operation')
       return
     }
-    
-    console.log('🗑️ Dashboard: Initiating delete for session:', sessionId)
     
     try {
       await deleteResultMutation.mutateAsync({
         sessionId,
         userId: user.id
       })
-      console.log('✅ Successfully deleted result from dashboard')
     } catch (error) {
       console.error('❌ Dashboard error deleting result:', error)
       // Could add toast notification here
@@ -161,86 +154,15 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="max-w-7xl mx-auto p-4 py-8">
-        {/* User Header */}
-        {user && (
-          <div className="flex items-center justify-between mb-6">
-            <Popover>
-              <PopoverTrigger asChild>
-                <div className="flex items-center gap-3 cursor-pointer">
-                  <div className="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center overflow-hidden">
-                    {user.user_metadata?.avatar_url ? (
-                      <Image
-                        src={user.user_metadata.avatar_url}
-                        alt="Avatar"
-                        width={40}
-                        height={40}
-                        className="w-10 h-10 rounded-full"
-                      />
-                    ) : (
-                      <User className="h-5 w-5 text-slate-600" />
-                    )}
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-slate-800">
-                      {user.user_metadata?.full_name || user.email}
-                    </p>
-                    <p className="text-xs text-slate-500">{t('title')}</p>
-                  </div>
-                </div>
-              </PopoverTrigger>
-              <PopoverContent className="w-56 p-2">
-                <div className="flex flex-col space-y-2">
-                  <p className="text-sm font-medium leading-none">
-                    {user.user_metadata?.full_name || user.email}
-                  </p>
-                  <p className="text-xs leading-none text-muted-foreground">
-                    {user.email}
-                  </p>
-                  <Button variant="ghost" className="w-full justify-start" onClick={signOut}>
-                    {tCommon('signOut')}
-                  </Button>
-                </div>
-              </PopoverContent>
-            </Popover>
-            <div className="flex gap-2">
-              <Link href="/">
-                <Button variant="ghost" size="sm" className="text-slate-600">
-                  <Home className="h-4 w-4 mr-2" />
-{t('home')}
-                </Button>
-              </Link>
-              <Link href="/profile">
-                <Button variant="ghost" size="sm" className="text-slate-600">
-                  <User className="h-4 w-4 mr-2" />
-{t('profile')}
-                </Button>
-              </Link>
-              {isAdmin && (
-                <Link href="/admin">
-                  <Button variant="ghost" size="sm" className="text-slate-600">
-                    <Settings className="h-4 w-4 mr-2" />
-{t('admin')}
-                  </Button>
-                </Link>
-              )}
-              <LanguageToggleCompact />
-              <Link href="/quiz">
-                <Button variant="outline" size="sm" className="text-slate-600 border-slate-300">
-{t('takeTest')}
-                </Button>
-              </Link>
-            </div>
-          </div>
-        )}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
 
         {/* Main Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 sm:mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
               {t('myDashboard')}
             </h1>
-            <p className="text-gray-600">
+            <p className="text-sm sm:text-base text-gray-600">
               {t('subtitle')}
             </p>
           </div>
@@ -266,11 +188,10 @@ export default function DashboardPage() {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-amber-800 mb-2">
-                    Teste em Progresso
+                    {t('testInProgress')}
                   </h3>
                   <p className="text-amber-700 mb-4">
-                    Você tem um teste em andamento com {Object.keys(quizInProgress.answers).length} resposta(s) salva(s). 
-                    Continue de onde parou para não perder seu progresso.
+                    {t('welcome.testInProgress')}
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3">
                     <Link href="/quiz">
@@ -326,60 +247,60 @@ export default function DashboardPage() {
             </Link>
           </div>
         ) : (
-          <div className="space-y-8">
+          <div className="space-y-6 sm:space-y-8">
             {/* Quick Stats */}
-            <div className="grid md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
               <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-4">
-                    <div className="p-2 bg-blue-100 rounded-lg">
-                      <BarChart3 className="h-6 w-6 text-blue-600" />
+                <CardContent className="p-4 sm:p-6">
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
+                      <BarChart3 className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
                     </div>
-                    <div>
-                      <p className="text-sm text-gray-600">{t('stats.totalTests')}</p>
-                      <p className="text-2xl font-bold">{results.length}</p>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs sm:text-sm text-gray-600 truncate">{t('stats.totalTests')}</p>
+                      <p className="text-xl sm:text-2xl font-bold">{results.length}</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
               <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-4">
-                    <div className="p-2 bg-green-100 rounded-lg">
-                      <Award className="h-6 w-6 text-green-600" />
+                <CardContent className="p-4 sm:p-6">
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <div className="p-2 bg-green-100 rounded-lg flex-shrink-0">
+                      <Award className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
                     </div>
-                    <div>
-                      <p className="text-sm text-gray-600">{t('stats.mainGift')}</p>
-                      <p className="text-lg font-bold">{latestResult?.topGifts[0] || 'N/A'}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-4">
-                    <div className="p-2 bg-purple-100 rounded-lg">
-                      <Calendar className="h-6 w-6 text-purple-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-600">{t('stats.lastTest')}</p>
-                      <p className="text-sm font-semibold">{latestResult ? formatDate(latestResult.createdAt) : 'N/A'}</p>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs sm:text-sm text-gray-600 truncate">{t('stats.mainGift')}</p>
+                      <p className="text-sm sm:text-lg font-bold truncate">{latestResult?.topGifts[0] || 'N/A'}</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
               <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-4">
-                    <div className="p-2 bg-orange-100 rounded-lg">
-                      <TrendingUp className="h-6 w-6 text-orange-600" />
+                <CardContent className="p-4 sm:p-6">
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <div className="p-2 bg-purple-100 rounded-lg flex-shrink-0">
+                      <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
                     </div>
-                    <div>
-                      <p className="text-sm text-gray-600">{t('stats.evolution')}</p>
-                      <p className="text-lg font-bold">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs sm:text-sm text-gray-600 truncate">{t('stats.lastTest')}</p>
+                      <p className="text-xs sm:text-sm font-semibold truncate">{latestResult ? formatDate(latestResult.createdAt) : 'N/A'}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="p-4 sm:p-6">
+                  <div className="flex items-center gap-3 sm:gap-4">
+                    <div className="p-2 bg-orange-100 rounded-lg flex-shrink-0">
+                      <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-orange-600" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs sm:text-sm text-gray-600 truncate">{t('stats.evolution')}</p>
+                      <p className="text-sm sm:text-lg font-bold truncate">
                         {results.length > 1 ? t('stats.growing') : t('stats.first')}
                       </p>
                     </div>
@@ -396,7 +317,7 @@ export default function DashboardPage() {
               />
             )}
 
-            <div className="grid lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8">
               {/* Latest Results */}
               <Card>
                 <CardHeader>
@@ -490,10 +411,10 @@ export default function DashboardPage() {
                       <div className="text-center py-8">
                         <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                         <p className="text-gray-500 mb-4">
-                          Faça mais testes para ver sua evolução
+                          {t('sections.takeAnother')}
                         </p>
                         <Link href="/quiz">
-                          <Button size="sm">Fazer Outro Teste</Button>
+                          <Button size="sm">{t('sections.takeAnother')}</Button>
                         </Link>
                       </div>
                     </CardContent>
@@ -505,69 +426,73 @@ export default function DashboardPage() {
             {/* Historical Results */}
             <Card>
               <CardHeader>
-                <CardTitle>Histórico Completo</CardTitle>
+                <CardTitle>{t('sections.fullHistory')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {results.map((result, index) => (
                     <div key={result.sessionId}>
-                      <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50">
-                        <div>
+                      <div className="p-4 rounded-lg bg-gray-50 space-y-3">
+                        {/* Header row with badge and date */}
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                           <div className="flex items-center gap-3">
                             <Badge variant={index === 0 ? "default" : "secondary"}>
-                              {index === 0 ? 'Mais Recente' : `#${index + 1}`}
+                              {index === 0 ? t('sections.mostRecent') : `#${index + 1}`}
                             </Badge>
-                            <span className="font-medium">
+                            <span className="font-medium text-sm">
                               {formatDate(result.createdAt)}
                             </span>
                           </div>
-                          <div className="mt-2 flex flex-wrap gap-2">
-                            {result.topGifts.slice(0, 3).map((gift, i) => (
-                              <Badge key={i} variant="outline" className="text-xs">
-                                {gift}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                        <div className="flex gap-2">
-                          <Link href={`/quiz/results/${result.sessionId}`}>
-                            <Button variant="outline" size="sm" className="flex items-center gap-2">
-                              <Eye className="h-4 w-4" />
-                              Ver
-                            </Button>
-                          </Link>
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button 
-                                variant="outline" 
-                                size="sm" 
-                                className="flex items-center gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
-                                disabled={deleteResultMutation.isPending}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                                Remover
+                          
+                          {/* Action buttons - responsive layout */}
+                          <div className="flex flex-col sm:flex-row gap-2 sm:flex-shrink-0 w-full sm:w-auto">
+                            <Link href={`/quiz/results/${result.sessionId}`} className="flex-1 sm:flex-none">
+                              <Button variant="outline" size="sm" className="w-full sm:w-auto flex items-center justify-center gap-1">
+                                <Eye className="h-4 w-4" />
+                                <span>{t('sections.view')}</span>
                               </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Confirmar Remoção</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Tem certeza que deseja remover este teste de {formatDate(result.createdAt)}? 
-                                  Esta ação não pode ser desfeita e todos os dados do teste serão perdidos permanentemente.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => handleDeleteResult(result.sessionId)}
-                                  className="bg-red-600 hover:bg-red-700 text-white"
+                            </Link>
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button 
+                                  variant="outline" 
+                                  size="sm" 
+                                  className="w-full sm:w-auto flex items-center justify-center gap-1 text-red-600 hover:text-red-700 hover:bg-red-50"
                                   disabled={deleteResultMutation.isPending}
                                 >
-                                  {deleteResultMutation.isPending ? 'Removendo...' : 'Remover Teste'}
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
+                                  <Trash2 className="h-4 w-4" />
+                                  <span>{t('sections.remove')}</span>
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>{t('sections.confirmRemoval')}</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    {t('sections.confirmRemovalDescription', { date: formatDate(result.createdAt) })}
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>{tCommon('cancel')}</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => handleDeleteResult(result.sessionId)}
+                                    className="bg-red-600 hover:bg-red-700 text-white"
+                                    disabled={deleteResultMutation.isPending}
+                                  >
+                                    {deleteResultMutation.isPending ? t('sections.removing') : t('sections.removeTest')}
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
+                        </div>
+                        
+                        {/* Gifts badges row */}
+                        <div className="flex flex-wrap gap-2">
+                          {result.topGifts.slice(0, 3).map((gift, i) => (
+                            <Badge key={i} variant="outline" className="text-xs">
+                              {gift}
+                            </Badge>
+                          ))}
                         </div>
                       </div>
                       {index < results.length - 1 && <Separator className="my-4" />}
