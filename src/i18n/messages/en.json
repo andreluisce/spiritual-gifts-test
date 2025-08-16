@@ -522,7 +522,15 @@
     "dataNotAvailable": "Data not available",
     "clickToHide": "Click to hide",
     "clickToExpand": "Click to expand",
-    "characteristicsNotAvailable": "Characteristics not available for this gift."
+    "characteristicsTitle": "Characteristics of the Gift of {giftName}",
+    "characteristicsDescription": "Characteristics of your main gift: {giftName}",
+    "characteristicsNotAvailable": "Characteristics not available for this gift.",
+    "allGiftsCharacteristicsTitle": "Characteristics of All Your Gifts",
+    "allGiftsCharacteristicsDescription": "Explore the characteristics of all spiritual gifts identified in your profile",
+    "qualitiesNotAvailable": "Qualities not available for this gift.",
+    "generalGuidanceTitle": "General Guidance for All Your Gifts",
+    "generalGuidanceDescription": "Important advice for the balanced development of your spiritual gifts",
+    "guidanceNotAvailable": "Detailed guidance not available for this gift at the moment."
   },
   "Index": {
     "title": "Spiritual Gifts Test"

@@ -33,7 +33,7 @@ export default function CharacteristicsPage() {
   if (!result || !spiritualGiftsData) {
     return (
       <div className="text-center py-8">
-        <p className="text-gray-500">Dados não disponíveis</p>
+        <p className="text-gray-500">{t('dataNotAvailable')}</p>
       </div>
     )
   }
@@ -52,11 +52,11 @@ export default function CharacteristicsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Lightbulb className="h-5 w-5" />
-            Características Detalhadas
+            {topGiftData ? t('characteristicsTitle', { giftName: topGiftData.name }) : t('characteristicsTitle', { giftName: '' })}
           </CardTitle>
           {topGiftData && (
             <p className="text-sm text-gray-600">
-              Características do seu dom principal: <strong>{topGiftData.name}</strong>
+              {t('characteristicsDescription', { giftName: topGiftData.name })}
             </p>
           )}
         </CardHeader>
@@ -74,7 +74,7 @@ export default function CharacteristicsPage() {
             <Alert>
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
-                Nenhuma característica disponível para este dom.
+                {t('characteristicsNotAvailable')}
               </AlertDescription>
             </Alert>
           )}
@@ -85,10 +85,10 @@ export default function CharacteristicsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">
-            Características de Todos os Seus Dons
+            {t('allGiftsCharacteristicsTitle')}
           </CardTitle>
           <p className="text-sm text-gray-600">
-            Explore as características de todos os dons espirituais identificados no seu perfil
+            {t('allGiftsCharacteristicsDescription')}
           </p>
         </CardHeader>
         <CardContent className="space-y-6">

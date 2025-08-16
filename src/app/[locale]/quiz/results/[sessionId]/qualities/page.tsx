@@ -117,7 +117,7 @@ export default function QualitiesPage() {
                   </div>
                 ) : (
                   <p className="text-xs text-gray-500 italic">
-                    Qualidades não disponíveis para este dom.
+                    {t('qualitiesNotAvailable')}
                   </p>
                 )}
               </div>

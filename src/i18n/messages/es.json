@@ -507,7 +507,15 @@
     "dataNotAvailable": "Datos no disponibles",
     "clickToHide": "Haz clic para ocultar",
     "clickToExpand": "Haz clic para expandir",
-    "characteristicsNotAvailable": "Características no disponibles para este don."
+    "characteristicsTitle": "Características del Don de {giftName}",
+    "characteristicsDescription": "Características de tu don principal: {giftName}",
+    "characteristicsNotAvailable": "Características no disponibles para este don.",
+    "allGiftsCharacteristicsTitle": "Características de Todos tus Dones",
+    "allGiftsCharacteristicsDescription": "Explora las características de todos los dones espirituales identificados en tu perfil",
+    "qualitiesNotAvailable": "Cualidades no disponibles para este don.",
+    "generalGuidanceTitle": "Orientación General para Todos tus Dones",
+    "generalGuidanceDescription": "Consejos importantes para el desarrollo equilibrado de tus dones espirituales",
+    "guidanceNotAvailable": "Orientación detallada no disponible para este don en este momento."
   },
   "Index": {
     "title": "Prueba de Dones Espirituales"

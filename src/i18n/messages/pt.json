@@ -239,7 +239,6 @@
     },
     "detailedScores": "Pontuação Detalhada",
     "affinity": "{percentage}% de afinidade",
-    "characteristicsTitle": "Características do Dom de {giftName}",
     "qualitiesTitle": "Qualidades a Desenvolver",
     "qualitiesDescription": "Sete qualidades importantes para desenvolver no dom de {giftName}",
     "precautionsTitle": "Cuidados e Perigos",
@@ -335,7 +334,15 @@
     "dataNotAvailable": "Dados não disponíveis",
     "clickToHide": "Clique para ocultar",
     "clickToExpand": "Clique para expandir",
-    "characteristicsNotAvailable": "Características não disponíveis para este dom."
+    "characteristicsTitle": "Características do Dom de {giftName}",
+    "characteristicsDescription": "Características do seu dom principal: {giftName}",
+    "characteristicsNotAvailable": "Características não disponíveis para este dom.",
+    "allGiftsCharacteristicsTitle": "Características de Todos os Seus Dons",
+    "allGiftsCharacteristicsDescription": "Explore as características de todos os dons espirituais identificados no seu perfil",
+    "qualitiesNotAvailable": "Qualidades não disponíveis para este dom.",
+    "generalGuidanceTitle": "Orientações Gerais para Todos os Seus Dons",
+    "generalGuidanceDescription": "Conselhos importantes para o desenvolvimento equilibrado dos seus dons espirituais",
+    "guidanceNotAvailable": "Orientações detalhadas não disponíveis para este dom no momento."
   },
   "report": {
     "title": "Relatório de Dons Espirituais",

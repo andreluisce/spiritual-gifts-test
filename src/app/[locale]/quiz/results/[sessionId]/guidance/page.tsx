@@ -107,10 +107,10 @@ export default function GuidancePage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <BookOpen className="h-5 w-5 text-blue-600" />
-            Orientações Gerais para Todos os Seus Dons
+            {t('generalGuidanceTitle')}
           </CardTitle>
           <p className="text-sm text-gray-600">
-            Conselhos importantes para o desenvolvimento equilibrado dos seus dons espirituais
+            {t('generalGuidanceDescription')}
           </p>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -174,7 +174,7 @@ export default function GuidancePage() {
         <Alert>
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            Orientações detalhadas não disponíveis para este dom no momento.
+            {t('guidanceNotAvailable')}
           </AlertDescription>
         </Alert>
       )}
