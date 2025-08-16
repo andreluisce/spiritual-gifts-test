@@ -511,22 +511,22 @@ export function useSpiritualGifts(locale: string = 'pt') {
               ? gift.characteristics 
               : (ptGift?.characteristics || [])
             ).map((char, index) => ({
-              characteristic: char,
-              order_sequence: index + 1
+              characteristic: typeof char === 'string' ? char : char.characteristic,
+              order_sequence: typeof char === 'string' ? index + 1 : (char.order_sequence || index + 1)
             })),
             dangers: (gift.dangers && gift.dangers.length > 0 
               ? gift.dangers 
               : (ptGift?.dangers || [])
             ).map((danger, index) => ({
-              danger: danger,
-              order_sequence: index + 1
+              danger: typeof danger === 'string' ? danger : danger.danger,
+              order_sequence: typeof danger === 'string' ? index + 1 : (danger.order_sequence || index + 1)
             })),
             misunderstandings: (gift.misunderstandings && gift.misunderstandings.length > 0 
               ? gift.misunderstandings 
               : (ptGift?.misunderstandings || [])
             ).map((misunderstanding, index) => ({
-              misunderstanding: misunderstanding,
-              order_sequence: index + 1
+              misunderstanding: typeof misunderstanding === 'string' ? misunderstanding : misunderstanding.misunderstanding,
+              order_sequence: typeof misunderstanding === 'string' ? index + 1 : (misunderstanding.order_sequence || index + 1)
             }))
           }
         }) as SpiritualGiftData[]
