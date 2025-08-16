@@ -120,7 +120,7 @@ const MINISTRY_RECOMMENDATIONS: MinistryRecommendation[] = [
     ]
   },
   {
-    ministryName: 'Liderança e Administração',
+    ministryName: 'Liderança',
     description: 'Coordenação de ministérios e liderança organizacional',
     requiredGifts: ['F_LEADERSHIP'],
     optimalGifts: ['F_LEADERSHIP', 'C_TEACHING', 'A_PROPHECY'],

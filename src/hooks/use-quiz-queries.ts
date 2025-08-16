@@ -277,21 +277,21 @@ export function useCategories(locale: string = 'pt') {
         return [
           {
             key: 'motivational',
-            name: 'MOTIVAÇÕES',
+            name: 'Motivações',
             greek_term: 'Karismata',
             description: 'Dons básicos motivacionais dados por Deus',
             purpose: 'Impulsos básicos para servir'
           },
           {
             key: 'ministries',
-            name: 'MINISTÉRIOS',
+            name: 'Ministérios',
             greek_term: 'Diakoniai',
             description: 'Formas de serviço cristão',
             purpose: 'Canais de ministério'
           },
           {
             key: 'manifestations',
-            name: 'MANIFESTAÇÕES',
+            name: 'Manifestações',
             greek_term: 'Phanerosis',
             description: 'Manifestações visíveis do Espírito',
             purpose: 'Demonstrações do poder de Deus'
@@ -375,27 +375,32 @@ export function useSpiritualGifts(locale: string = 'pt') {
               description,
               purpose
             ),
-            gift_qualities (
+            qualities (
               quality_name,
               description,
               order_sequence
             ),
-            gift_characteristics (
+            characteristics (
               characteristic,
               order_sequence
             ),
-            gift_dangers (
+            dangers (
               danger,
               order_sequence
             ),
-            gift_misunderstandings (
+            misunderstandings (
               misunderstanding,
               order_sequence
             )
           `)
+          .eq('locale', locale)
           .eq('categories.locale', locale)
           .order('gift_key')
 
+        if (directError) {
+          console.error('❌ Direct query error:', directError)
+        }
+        
         if (!directError && directData && directData.length > 0) {
           console.log('✅ Direct query successful, found gifts:', directData.length)
           
@@ -407,20 +412,20 @@ export function useSpiritualGifts(locale: string = 'pt') {
             category_key: gift.category_key || gift.categories?.key || 'motivations',
             category_name: gift.categories?.name || 'Unknown Category',
             greek_term: gift.categories?.greek_term || '',
-            qualities: (gift.gift_qualities || []).map((q: any) => ({
+            qualities: (gift.qualities || []).map((q: any) => ({
               quality_name: q.quality_name,
               description: q.description,
               order_sequence: q.order_sequence
             })),
-            characteristics: (gift.gift_characteristics || []).map((c: any) => ({
+            characteristics: (gift.characteristics || []).map((c: any) => ({
               characteristic: c.characteristic,
               order_sequence: c.order_sequence
             })),
-            dangers: (gift.gift_dangers || []).map((d: any) => ({
+            dangers: (gift.dangers || []).map((d: any) => ({
               danger: d.danger,
               order_sequence: d.order_sequence  
             })),
-            misunderstandings: (gift.gift_misunderstandings || []).map((m: any) => ({
+            misunderstandings: (gift.misunderstandings || []).map((m: any) => ({
               misunderstanding: m.misunderstanding,
               order_sequence: m.order_sequence
             }))
@@ -503,7 +508,7 @@ export function useSpiritualGifts(locale: string = 'pt') {
             name: gift.name,
             definition: gift.definition,
             biblical_references: gift.biblical_references,
-            category_name: gift.category?.name || 'MOTIVAÇÕES',
+            category_name: gift.category?.name || 'Motivações',
             category_key: gift.category?.key || 'motivations',
             greek_term: gift.category?.greek_term || 'Karismation',
             qualities: (gift.qualities || []).map(q => ({
