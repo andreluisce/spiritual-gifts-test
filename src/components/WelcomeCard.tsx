@@ -14,17 +14,6 @@ export function WelcomeCard({ user }: WelcomeCardProps) {
   const t = useTranslations('welcome')
   
   // Debug: log user data to see what Google provides
-  console.log('User data from Google Auth:', {
-    user,
-    metadata: user.user_metadata,
-    email: user.email
-  })
-  
-  // Extract data from user metadata (Google Auth data)
-  const userData = user.user_metadata || {}
-  const displayName = userData.full_name || userData.name || user.email?.split('@')[0] || 'Friend'
-  const avatarUrl = userData.avatar_url || userData.picture || null
-  
   // Extract first name from full name or use email prefix
   const getFirstName = (name: string) => {
     return name.split(' ')[0]

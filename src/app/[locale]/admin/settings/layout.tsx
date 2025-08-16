@@ -16,7 +16,8 @@ import {
   Save,
   ArrowLeft,
   BookOpen,
-  Sparkles
+  Sparkles,
+  Mail
 } from 'lucide-react'
 import { useSystemSettings } from '@/hooks/useSystemSettings'
 
@@ -61,7 +62,6 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
     try {
       await updateSettings(settings)
       // Show success toast or notification
-      console.log('Settings saved successfully')
     } catch (error) {
       console.error('Failed to save settings:', error)
     }
@@ -85,6 +85,12 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
       label: 'IA & Análise',
       icon: <Sparkles className="h-4 w-4" />,
       description: 'AI analysis configuration'
+    },
+    {
+      href: '/admin/settings/email',
+      label: 'Email & Notificações',
+      icon: <Mail className="h-4 w-4" />,
+      description: 'Email service configuration using Resend'
     }
   ]
 
@@ -195,6 +201,12 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
                 <span className="text-gray-600">AI Analysis</span>
                 <Badge variant={settings?.ai?.showAIButton ? "default" : "secondary"}>
                   {settings?.ai?.showAIButton ? 'Visible' : 'Hidden'}
+                </Badge>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-gray-600">Email Service</span>
+                <Badge variant={process.env.RESEND_API_KEY ? "default" : "destructive"}>
+                  {process.env.RESEND_API_KEY ? 'Configured' : 'Not Set'}
                 </Badge>
               </div>
             </CardContent>

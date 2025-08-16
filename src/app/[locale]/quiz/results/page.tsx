@@ -80,11 +80,6 @@ export default function ResultsPage() {
     const topGiftKey = scores.reduce((a, b) => a[1] > b[1] ? a : b)[0]
     const topGift = getGiftByKey(topGiftKey)
     
-    console.log('🔍 DEBUG - Top gift key:', topGiftKey)
-    console.log('🔍 DEBUG - Top gift data:', topGift)
-    console.log('🔍 DEBUG - Top gift characteristics:', topGift?.characteristics)
-    console.log('🔍 DEBUG - Top gift orientations:', topGift?.orientations)
-    console.log('🔍 DEBUG - Top gift detailed_biblical_references:', topGift?.detailed_biblical_references)
     
     return topGift
   }
@@ -111,12 +106,8 @@ export default function ResultsPage() {
   }
 
   // Debug: log the data to understand the issue
-  console.log('🔍 DEBUG - user:', user);
-  console.log('🔍 DEBUG - latestResult exists:', !!latestResult);
-  console.log('🔍 DEBUG - spiritualGiftsData:', spiritualGiftsData);
 
   if (!latestResult) {
-    console.log('🔍 DEBUG - No latestResult, returning no results page');
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -130,21 +121,16 @@ export default function ResultsPage() {
   }
 
   // Debug: log the data to understand the issue
-  console.log('🔍 DEBUG - latestResult:', latestResult);
-  console.log('🔍 DEBUG - latestResult.totalScore:', latestResult?.totalScore);
 
   const allScores = spiritualGiftsData
     ? spiritualGiftsData.map(gift => {
-        console.log(`🔍 DEBUG - Processing gift:`, gift);
         const score = latestResult.totalScore[gift.gift_key] || 0;
-        console.log(`🔍 DEBUG - Gift ${gift.gift_key}: score = ${score}`);
         return {
           giftKey: gift.gift_key,
           score: score,
         };
       }).filter(scoreData => {
         const giftFound = getGiftByKey(scoreData.giftKey) !== undefined;
-        console.log(`🔍 DEBUG - Gift ${scoreData.giftKey} found: ${giftFound}`);
         return giftFound;
       })
     : [];
@@ -157,8 +143,6 @@ export default function ResultsPage() {
   const topGiftWithData = getTopGiftWithData()
   
   // Debug logging
-  console.log('🔍 DEBUG - topGiftWithData dangers:', topGiftWithData?.dangers)
-  console.log('🔍 DEBUG - topGiftWithData misunderstandings:', topGiftWithData?.misunderstandings)
 
   // Calculate rankings considering tied scores
   const calculateRankings = () => {
@@ -318,7 +302,7 @@ export default function ResultsPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Lightbulb className="h-5 w-5" />
-                    Características do Dom de {topGiftWithData.name}
+                    {t('characteristicsTitle', {giftName: topGiftWithData.name})}
                   </CardTitle>
                   <p className="text-gray-600">{topGiftWithData.description}</p>
                 </CardHeader>
@@ -339,7 +323,7 @@ export default function ResultsPage() {
               <Alert>
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
-                  Dados completos do dom principal não disponíveis. Mostrando informações básicas.
+                  {t('notAvailable.main')}
                 </AlertDescription>
               </Alert>
             )}
@@ -351,10 +335,10 @@ export default function ResultsPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Target className="h-5 w-5" />
-                    Qualidades a Desenvolver
+                    {t('qualitiesTitle')}
                   </CardTitle>
                   <p className="text-gray-600">
-                    Qualidades importantes para desenvolver no dom de {topGiftWithData.name}
+                    {t('qualitiesDescription', {giftName: topGiftWithData.name})}
                   </p>
                 </CardHeader>
                 <CardContent>
@@ -563,24 +547,24 @@ export default function ResultsPage() {
           <Link href={`/${locale}/quiz/report`}>
             <Button variant="default" className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700">
               <FileText size={16} />
-              Relatório Completo (PDF)
+              {t('actions.fullReport')}
             </Button>
           </Link>
 
           <Button variant="outline" onClick={retakeQuiz} className="flex items-center gap-2">
             <RotateCcw size={16} />
-            Refazer Teste
+            {t('actions.retakeTest')}
           </Button>
 
           <Link href="/gifts">
             <Button variant="outline">
-              Ver Todos os Dons
+              {t('actions.viewAllGifts')}
             </Button>
           </Link>
 
           <Link href="/dashboard">
             <Button variant="outline">
-              Meu Histórico
+              {t('actions.myHistory')}
             </Button>
           </Link>
         </div>

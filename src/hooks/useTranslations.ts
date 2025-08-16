@@ -288,7 +288,6 @@ export function useTranslations() {
       } else if (type === 'ui') {
         // For UI translations, we would typically update a dedicated translations table
         // For now, we'll just log this as it's mock data
-        console.log('UI translation update:', translationId, updates)
       }
 
       return { success: true }

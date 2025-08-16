@@ -36,16 +36,6 @@ export default function CompatibilityAnalysis({ giftScores, className }: Compati
   const { showAIButton, loading: settingsLoading } = useAIAnalysisSettings()
   const [isGenerating, setIsGenerating] = useState(false)
   
-  // Debug logs
-  console.log('🔍 CompatibilityAnalysis: Current state:', {
-    hasAIAnalysis,
-    isLoading,
-    showAIButton,
-    settingsLoading,
-    compatibilitiesLength: compatibilities.length,
-    hasAIEnhancedAnalysis: !!compatibilities[0]?.aiEnhancedAnalysis,
-    firstCompatibility: compatibilities[0]
-  })
 
   const handleGenerateAIAnalysis = async () => {
     setIsGenerating(true)
