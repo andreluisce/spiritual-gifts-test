@@ -27,7 +27,7 @@ export function useAdminCheck(userId: string | null) {
           .single()
 
         setIsAdmin(!!data && !error)
-      } catch (error) {
+      } catch {
         setIsAdmin(false)
       } finally {
         setLoading(false)
@@ -56,7 +56,7 @@ export function useAdminUsers() {
           .eq('role', 'admin')
 
         if (data && !error) {
-          setAdminUserIds(new Set(data.map(row => row.user_id)))
+          setAdminUserIds(new Set(data.map((row: { user_id: string }) => row.user_id)))
         }
       } catch (error) {
         console.error('Error fetching admin users:', error)

@@ -140,8 +140,7 @@ export function useAuditLogger() {
       setLogging(true)
       setError(null)
 
-      // Get current user
-      const { data: { user } } = await supabase.auth.getUser()
+      // Get current user (authentication handled by RLS)
 
       // Log the event
       const { error: logError } = await supabase

@@ -97,6 +97,44 @@ export interface GiftCompleteData {
   misunderstandings: Misunderstanding[];
 }
 
+// Interface for raw gift data from database
+interface RawGiftData {
+  gift_key: string;
+  name: string;
+  definition: string;
+  biblical_references: string;
+  category_key?: string;
+  category_name?: string;
+  categories?: {
+    key: string;
+    name: string;
+    greek_term: string;
+  };
+  qualities?: Array<{
+    quality_name: string;
+    description: string;
+    order_sequence: number;
+  }>;
+  characteristics?: Array<{
+    characteristic: string;
+    order_sequence: number;
+  }>;
+  dangers?: Array<{
+    danger: string;
+    order_sequence: number;
+  }>;
+  misunderstandings?: Array<{
+    misunderstanding: string;
+    order_sequence: number;
+  }>;
+}
+
+// Interface for fallback gift data
+interface FallbackGiftData {
+  key: string;
+  [key: string]: unknown;
+}
+
 export interface TopGiftDetail {
   gift_key: Database['public']['Enums']['gift_key'];
   gift_name: string;
@@ -108,7 +146,6 @@ export interface TopGiftDetail {
   greek_term: string;
 }
 
-type DbAnswer = Database['public']['Tables']['answers']['Insert']
 
 // Query Keys
 const QUERY_KEYS = {
@@ -124,28 +161,20 @@ export function useQuizQuestions(locale: string = 'pt') {
   return useQuery({
     queryKey: [...QUERY_KEYS.questions, locale],
     queryFn: async (): Promise<QuizQuestion[]> => {
+      // Get questions per gift from settings
+      let questionsPerGift = 5; // default
+
       try {
         // Get system settings to determine questions per gift
-        const { data: settings, error: settingsError } = await supabase.rpc('get_system_settings')
-        
-        const questionsPerGiftConfig = {
-          prophecy: 5,
-          ministry: 5,
-          teaching: 5,
-          exhortation: 5,
-          giving: 5,
-          administration: 5,
-          mercy: 5
-        }
+        const { data: settings } = await supabase.rpc('get_system_settings')
 
-        // Get questions per gift from settings
-        let questionsPerGift = 5; // default
+
         if (settings && settings.quiz && typeof settings.quiz.questionsPerGift === 'number') {
           questionsPerGift = settings.quiz.questionsPerGift;
         }
 
-        // Use the existing balanced quiz generation function 
-        const { data, error } = await supabase.rpc('generate_balanced_quiz', { 
+        // Use the existing balanced quiz generation function
+        const { data, error } = await supabase.rpc('generate_balanced_quiz', {
           target_locale: locale,
           questions_per_gift: questionsPerGift,
           user_id_param: null
@@ -161,10 +190,10 @@ export function useQuizQuestions(locale: string = 'pt') {
         }
 
         // Map the comprehensive response to QuizQuestion format
-        const questions: QuizQuestion[] = data.map((item: { 
+        const questions: QuizQuestion[] = data.map((item: {
           quiz_id: string;
-          question_id: number; 
-          question_text: string; 
+          question_id: number;
+          question_text: string;
           gift_key: string;
           weight_class: string;
           question_order: number;
@@ -181,21 +210,21 @@ export function useQuizQuestions(locale: string = 'pt') {
           reverse_scored: item.reverse_scored,
           default_weight: item.default_weight
         }))
-        
+
         const expectedTotal = questionsPerGift * 7; // 7 spiritual gifts
         console.log(`Generated balanced quiz with ${questions.length} questions (${questionsPerGift} per gift, expected: ${expectedTotal})`)
         return questions
-      } catch (rpcError) {
+      } catch {
         console.warn('Questions RPC not available, trying direct table query')
-        
+
         try {
           // Try direct table query as fallback - limit to configured questions per gift
           console.warn(`Table fallback: getting ${questionsPerGift} questions per gift`)
-          
+
           // Get limited questions per gift from table
           const giftKeys = ["A_PROPHECY", "B_SERVICE", "C_TEACHING", "D_EXHORTATION", "E_GIVING", "F_LEADERSHIP", "G_MERCY"]
           const allQuestions: QuizQuestion[] = []
-          
+
           for (const giftKey of giftKeys) {
             const { data: giftQuestions, error: giftError } = await supabase
               .from('question_pool')
@@ -219,21 +248,21 @@ export function useQuizQuestions(locale: string = 'pt') {
                 question: item.question_text || `Question ${item.id}`,
                 gift_key: item.gift_key as Database['public']['Enums']['gift_key'],
               }))
-              
+
               allQuestions.push(...mappedQuestions)
             }
           }
-          
+
           console.log(`Table fallback generated ${allQuestions.length} questions`)
           return allQuestions
-          
-        } catch (tableError) {
+
+        } catch {
           console.warn('All database queries failed, using hardcoded fallback questions')
-          
+
           // Hardcoded fallback questions - generate proper set for testing
           const giftKeys = ["A_PROPHECY", "B_SERVICE", "C_TEACHING", "D_EXHORTATION", "E_GIVING", "F_LEADERSHIP", "G_MERCY"]
           const fallbackQuestions: QuizQuestion[] = []
-          
+
           giftKeys.forEach((giftKey, giftIndex) => {
             for (let i = 1; i <= questionsPerGift; i++) {
               fallbackQuestions.push({
@@ -243,7 +272,7 @@ export function useQuizQuestions(locale: string = 'pt') {
               })
             }
           })
-          
+
           return fallbackQuestions
         }
       }
@@ -270,9 +299,9 @@ export function useCategories(locale: string = 'pt') {
         }
 
         return data || [];
-      } catch (rpcError) {
+      } catch {
         console.warn('Categories function not available, using static fallback');
-        
+
         // Fallback categories
         return [
           {
@@ -319,7 +348,7 @@ export function useMinistries(locale: string = 'pt') {
         }
 
         return data || [];
-      } catch (rpcError) {
+      } catch {
         console.warn('Ministries function not available, using static fallback');
         return [] as Ministry[];
       }
@@ -344,7 +373,7 @@ export function useManifestations(locale: string = 'pt') {
         }
 
         return data || [];
-      } catch (rpcError) {
+      } catch {
         console.warn('Manifestations function not available, using static fallback');
         return [] as Manifestation[];
       }
@@ -400,11 +429,11 @@ export function useSpiritualGifts(locale: string = 'pt') {
         if (directError) {
           console.error('❌ Direct query error:', directError)
         }
-        
+
         if (!directError && directData && directData.length > 0) {
           console.log('✅ Direct query successful, found gifts:', directData.length)
-          
-          return directData.map((gift: any) => ({
+
+          return directData.map((gift: RawGiftData) => ({
             gift_key: gift.gift_key,
             name: gift.name,
             definition: gift.definition,
@@ -412,20 +441,20 @@ export function useSpiritualGifts(locale: string = 'pt') {
             category_key: gift.category_key || gift.categories?.key || 'motivations',
             category_name: gift.categories?.name || 'Unknown Category',
             greek_term: gift.categories?.greek_term || '',
-            qualities: (gift.qualities || []).map((q: any) => ({
+            qualities: (gift.qualities || []).map((q) => ({
               quality_name: q.quality_name,
               description: q.description,
               order_sequence: q.order_sequence
             })),
-            characteristics: (gift.characteristics || []).map((c: any) => ({
+            characteristics: (gift.characteristics || []).map((c) => ({
               characteristic: c.characteristic,
               order_sequence: c.order_sequence
             })),
-            dangers: (gift.dangers || []).map((d: any) => ({
+            dangers: (gift.dangers || []).map((d) => ({
               danger: d.danger,
-              order_sequence: d.order_sequence  
+              order_sequence: d.order_sequence
             })),
-            misunderstandings: (gift.misunderstandings || []).map((m: any) => ({
+            misunderstandings: (gift.misunderstandings || []).map((m) => ({
               misunderstanding: m.misunderstanding,
               order_sequence: m.order_sequence
             }))
@@ -489,57 +518,57 @@ export function useSpiritualGifts(locale: string = 'pt') {
           dangers: string[]
           misunderstandings: string[]
         }
-        
+
         // data is a JSON array
         const gifts = Array.isArray(data) ? data : (data ? [data] : [])
         console.log('🔍 DEBUG - Raw spiritual gifts data from database:', gifts)
         console.log('🔍 DEBUG - First gift characteristics:', gifts[0]?.characteristics)
         console.log('🔍 DEBUG - First gift dangers:', gifts[0]?.dangers)
         console.log('🔍 DEBUG - First gift misunderstandings:', gifts[0]?.misunderstandings)
-        
+
         return gifts.map((gift: DatabaseGiftData) => {
           // Find corresponding Portuguese gift for fallback
-          const ptGift = fallbackData ? 
-            (Array.isArray(fallbackData) ? fallbackData : [fallbackData]).find((ptGift: any) => ptGift.key === gift.key) : 
+          const ptGift = fallbackData ?
+            (Array.isArray(fallbackData) ? fallbackData : [fallbackData]).find((ptGift: FallbackGiftData) => ptGift.key === gift.key) :
             null
 
           return {
-            gift_key: gift.gift_key || gift.key,
+            gift_key: gift.key,
             name: gift.name,
             definition: gift.definition,
             biblical_references: gift.biblical_references,
-            category_name: gift.category?.name || 'Motivações',
-            category_key: gift.category?.key || 'motivations',
-            greek_term: gift.category?.greek_term || 'Karismation',
+            category_name: gift.category?.name,
+            category_key: gift.category?.key,
+            greek_term: gift.category?.greek_term,
             qualities: (gift.qualities || []).map(q => ({
               quality_name: q.quality_name,
               description: q.description,
               order_sequence: q.id
             })),
-            characteristics: (gift.characteristics && gift.characteristics.length > 0 
-              ? gift.characteristics 
+            characteristics: (gift.characteristics && gift.characteristics.length > 0
+              ? gift.characteristics
               : (ptGift?.characteristics || [])
-            ).map((char, index) => ({
+            ).map((char: string | { characteristic: string; order_sequence?: number }, index: number) => ({
               characteristic: typeof char === 'string' ? char : char.characteristic,
               order_sequence: typeof char === 'string' ? index + 1 : (char.order_sequence || index + 1)
             })),
-            dangers: (gift.dangers && gift.dangers.length > 0 
-              ? gift.dangers 
+            dangers: (gift.dangers && gift.dangers.length > 0
+              ? gift.dangers
               : (ptGift?.dangers || [])
-            ).map((danger, index) => ({
+            ).map((danger: string | { danger: string; order_sequence?: number }, index: number) => ({
               danger: typeof danger === 'string' ? danger : danger.danger,
               order_sequence: typeof danger === 'string' ? index + 1 : (danger.order_sequence || index + 1)
             })),
-            misunderstandings: (gift.misunderstandings && gift.misunderstandings.length > 0 
-              ? gift.misunderstandings 
+            misunderstandings: (gift.misunderstandings && gift.misunderstandings.length > 0
+              ? gift.misunderstandings
               : (ptGift?.misunderstandings || [])
-            ).map((misunderstanding, index) => ({
+            ).map((misunderstanding: string | { misunderstanding: string; order_sequence?: number }, index: number) => ({
               misunderstanding: typeof misunderstanding === 'string' ? misunderstanding : misunderstanding.misunderstanding,
               order_sequence: typeof misunderstanding === 'string' ? index + 1 : (misunderstanding.order_sequence || index + 1)
             }))
           }
         }) as SpiritualGiftData[]
-        
+
       } catch (error) {
         console.error('Failed to fetch spiritual gifts from database:', error)
         throw new Error('Unable to load spiritual gifts data from database. Please check your connection.')
@@ -659,11 +688,9 @@ export function useSubmitQuiz() {
     mutationFn: async ({
       userId,
       answers,
-      gifts
     }: {
       userId: string
       answers: Record<number, number>
-      gifts?: SpiritualGift[] // Made optional since backend handles this now
     }) => {
       // Use the comprehensive backend function
       const { data, error } = await supabase.rpc('submit_complete_quiz', {
@@ -682,7 +709,7 @@ export function useSubmitQuiz() {
       }
 
       const result = data[0]
-      
+
       return {
         sessionId: result.session_id,
         topGifts: result.top_gifts_names || [],
@@ -705,7 +732,7 @@ export function useDeleteResult() {
   return useMutation({
     mutationFn: async ({ sessionId, userId }: { sessionId: string; userId: string }) => {
       console.log('🗑️ Attempting to delete session:', { sessionId, userId })
-      
+
       // First, delete all answers for this session
       const { error: answersError, count: answersCount } = await supabase
         .from('answers')
@@ -791,7 +818,7 @@ export function useResultBySessionId(sessionId: string) {
           .sort(([, a], [, b]) => b - a)
           .slice(0, 5)
           .map(([giftKey]) => {
-            const gift = gifts.find((g: any) => g.key === giftKey)
+            const gift = gifts.find((g: { key: string }) => g.key === giftKey)
             return gift?.name || giftKey
           })
 
@@ -853,13 +880,7 @@ export function useTopGiftDetails(sessionId: string, locale: string = 'pt') {
   });
 }
 
-// Helper functions moved to backend - keeping for legacy compatibility only
-function getTopGiftsFromScores(totalScore: Record<string, number>): string[] {
-  return Object.entries(totalScore)
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, 5)
-    .map(([giftKey]) => giftKey)
-}
+// Helper functions moved to backend
 
 export function getTopGifts(totalScore: Record<string, number>, gifts: { key: string; name: string }[]): string[] {
   return Object.entries(totalScore)

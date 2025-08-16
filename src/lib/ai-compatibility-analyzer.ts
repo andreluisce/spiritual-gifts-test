@@ -1,11 +1,5 @@
 // AI-powered compatibility analysis using free services
 import type { Database } from '@/lib/database.types'
-import { createClient } from '@supabase/supabase-js'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
 
 export interface AICompatibilityAnalysis {
   personalizedInsights: string
@@ -15,6 +9,26 @@ export interface AICompatibilityAnalysis {
   developmentPlan: string
   practicalApplications: string[]
   confidence: number
+}
+
+// Interface for optional structured data
+interface StructuredAnalysisData {
+  quizMetrics?: {
+    completionTime: number
+    certaintyLevel: number
+    responsePattern: string
+  }
+  userContext?: {
+    age?: number
+    experience?: string
+    ministry?: string
+  }
+  additionalGifts?: Array<{
+    name: string
+    score: number
+    confidence: number
+  }>
+  [key: string]: unknown
 }
 
 export interface UserGiftProfile {
@@ -90,7 +104,7 @@ class AICompatibilityAnalyzer {
 
   async analyzeCompatibility(
     userProfile: UserGiftProfile,
-    structuredData?: any
+    structuredData?: StructuredAnalysisData
   ): Promise<AICompatibilityAnalysis> {
     console.log('🤖 AI Analyzer: Starting analysis for', userProfile.primaryGift.name)
     try {
@@ -111,7 +125,7 @@ class AICompatibilityAnalyzer {
 
   private buildAnalysisPrompt(
     profile: UserGiftProfile,
-    structuredData?: any
+    structuredData?: StructuredAnalysisData
   ): string {
     const { primaryGift, secondaryGifts, locale = 'pt' } = profile
     
@@ -389,7 +403,7 @@ export const aiCompatibilityAnalyzer = new AICompatibilityAnalyzer()
 export function useAICompatibilityAnalysis() {
   const analyzeProfile = async (
     profile: UserGiftProfile,
-    structuredData?: any
+    structuredData?: StructuredAnalysisData
   ) => {
     return await aiCompatibilityAnalyzer.analyzeCompatibility(profile, structuredData)
   }
@@ -400,7 +414,7 @@ export function useAICompatibilityAnalysis() {
 // Server-side function for API routes
 export async function generateAICompatibilityAnalysis(
   profile: UserGiftProfile,
-  structuredData?: any
+  structuredData?: StructuredAnalysisData
 ): Promise<AICompatibilityAnalysis> {
   return await aiCompatibilityAnalyzer.analyzeCompatibility(profile, structuredData)
 }
