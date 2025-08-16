@@ -32,8 +32,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const isAdmin = user.user_metadata?.role === 'admin'
-    if (!isAdmin) {
+    // Check if user is admin using our database function
+    const { data: isAdminData, error: adminError } = await supabase
+      .rpc('is_admin_user')
+    
+    if (adminError || !isAdminData) {
+      console.log('❌ Admin check failed:', adminError)
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
     }
 

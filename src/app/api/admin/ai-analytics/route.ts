@@ -35,10 +35,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Check admin role
-    const isAdmin = user.user_metadata?.role === 'admin'
-    if (!isAdmin) {
-      console.log('❌ AI Analytics API: Non-admin user attempted to access analytics')
+    // Check if user is admin using our database function
+    const { data: isAdminData, error: adminError } = await supabase
+      .rpc('is_admin_user')
+    
+    if (adminError || !isAdminData) {
+      console.log('❌ AI Analytics API: Non-admin user attempted to access analytics:', adminError)
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
     }
 

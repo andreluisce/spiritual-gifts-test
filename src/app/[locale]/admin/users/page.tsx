@@ -50,6 +50,7 @@ import Link from 'next/link'
 import { formatScore } from '@/data/quiz-data'
 import { useUsersWithStats, useAdminStats, useDeleteUser, useUpdateUser, UserWithStats } from '@/hooks/useAdminData'
 import { useUserActivities, useActivityStats } from '@/hooks/useUserActivity'
+import { useAdminUsers } from '@/hooks/useAdminCheck'
 
 // All data comes from the database - no mock data
 
@@ -93,6 +94,7 @@ export default function AdminUsersPage() {
   const { updateUser, updating } = useUpdateUser()
   const { activities, loading: activitiesLoading } = useUserActivities(100)
   const { stats: activityStats, loading: activityStatsLoading } = useActivityStats()
+  const { adminUserIds } = useAdminUsers()
 
   useEffect(() => {
     if (!loading && (!user || !isAdmin)) {
@@ -454,7 +456,7 @@ export default function AdminUsersPage() {
                         <h3 className="text-sm font-medium text-gray-900">
                           {user.user_metadata?.name || (user.email ? user.email.split('@')[0] : '') || 'Unknown'}
                         </h3>
-                        {(user.user_metadata?.role || 'user') === 'admin' && (
+                        {adminUserIds.has(user.id) && (
                           <Crown className="h-4 w-4 text-yellow-500" />
                         )}
                       </div>

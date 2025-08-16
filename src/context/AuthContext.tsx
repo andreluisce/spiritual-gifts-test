@@ -8,6 +8,7 @@ type AuthContextType = {
   user: User | null
   loading: boolean
   isAdmin: boolean
+  adminLoading: boolean
   signInWithGoogle: () => Promise<void>
   signOut: () => Promise<void>
 }
@@ -17,7 +18,34 @@ const AuthContext = createContext<AuthContextType | null>(null)
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [adminLoading, setAdminLoading] = useState(false)
   const [supabase] = useState(() => createClient())
+
+  // Function to check admin status using the database
+  const checkAdminStatus = async (currentUser: User | null) => {
+    if (!currentUser) {
+      setIsAdmin(false)
+      return
+    }
+
+    setAdminLoading(true)
+    try {
+      const { data: isAdminData, error } = await supabase.rpc('is_admin_user')
+      
+      if (error) {
+        console.error('Error checking admin status:', error)
+        setIsAdmin(false)
+      } else {
+        setIsAdmin(!!isAdminData)
+      }
+    } catch (error) {
+      console.error('Error checking admin status:', error)
+      setIsAdmin(false)
+    } finally {
+      setAdminLoading(false)
+    }
+  }
 
   useEffect(() => {
     // Get initial user
@@ -25,14 +53,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data: { user } } = await supabase.auth.getUser()
       setUser(user)
       setLoading(false)
+      
+      // Check admin status for the initial user
+      await checkAdminStatus(user)
     }
 
     getUser()
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user ?? null)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      const newUser = session?.user ?? null
+      setUser(newUser)
       setLoading(false)
+      
+      // Check admin status when user changes
+      await checkAdminStatus(newUser)
     })
 
     return () => subscription.unsubscribe()
@@ -65,15 +100,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     await supabase.auth.signOut()
+    setIsAdmin(false) // Reset admin status on signout
   }
-
-  const isAdmin = user?.user_metadata?.role === 'admin'
 
   return (
     <AuthContext.Provider value={{
       user,
       loading,
       isAdmin,
+      adminLoading,
       signInWithGoogle,
       signOut
     }}>
