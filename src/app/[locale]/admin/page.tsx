@@ -171,7 +171,7 @@ export default function AdminDashboard() {
                   </div>
                 ))
               ) : activities && activities.length > 0 ? (
-                activities.slice(0, 5).map((activity, index) => (
+                activities.slice(0, 5).map((activity) => (
                   <div key={activity.id} className="flex items-center space-x-3">
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center ${getActivityColor(activity.type)}`}>
                       {getActivityIcon(activity.type)}

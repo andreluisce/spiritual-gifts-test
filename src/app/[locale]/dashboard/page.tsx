@@ -25,16 +25,13 @@ import {
   Eye,
   AlertCircle,
   Play,
-  Trash2,
-  User,
-  Home,
-  Settings
+  Trash2
 } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
 import { useUserResults, useLatestResult, useSpiritualGifts, useDeleteResult, type SpiritualGiftData } from '@/hooks/use-quiz-queries'
 import { useAuth } from '@/context/AuthContext'
 import { useTranslations, useLocale } from 'next-intl'
-import { formatScore, formatPercentage } from '@/data/quiz-data'
+import { formatScore } from '@/data/quiz-data'
 import CompatibilityAnalysis from '@/components/CompatibilityAnalysis'
 
 const QUIZ_STATE_KEY = 'quiz_in_progress'
@@ -46,7 +43,7 @@ interface QuizState {
 }
 
 export default function DashboardPage() {
-  const { user, signOut, isAdmin, loading: authLoading } = useAuth()
+  const { user, loading: authLoading } = useAuth()
   const locale = useLocale()
   const { data: results, isLoading: loadingResults } = useUserResults(user?.id || null)
   const { data: latestResult, isLoading: loadingLatestResult } = useLatestResult(user?.id || null)

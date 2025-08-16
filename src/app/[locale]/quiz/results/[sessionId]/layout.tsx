@@ -23,7 +23,6 @@ import {
 import {
   useResultBySessionId,
   useSpiritualGifts,
-  useCategories,
 } from '@/hooks/use-quiz-queries'
 import { useLocale } from 'next-intl'
 import { formatScore } from '@/data/quiz-data'
@@ -47,9 +46,8 @@ export default function ResultsLayout({ children }: ResultsLayoutProps) {
 
   const { data: result, isLoading: loadingResults, error: resultsError } = useResultBySessionId(sessionId)
   const { data: spiritualGiftsData, isLoading: loadingSpiritualGifts } = useSpiritualGifts(locale)
-  const { data: categories, isLoading: loadingCategories } = useCategories(locale)
 
-  const loading = loadingResults || loadingSpiritualGifts || loadingCategories
+  const loading = loadingResults || loadingSpiritualGifts
 
   if (loading) {
     return (

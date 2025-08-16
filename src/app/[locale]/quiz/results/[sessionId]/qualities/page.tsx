@@ -93,7 +93,7 @@ export default function QualitiesPage() {
           </p>
         </CardHeader>
         <CardContent className="space-y-6">
-          {sortedScores.slice(0, 5).map(({ giftKey, score }) => {
+          {sortedScores.slice(0, 5).map(({ giftKey }) => {
             const giftData = spiritualGiftsData.find(gift => gift.gift_key === giftKey)
             if (!giftData) return null
 

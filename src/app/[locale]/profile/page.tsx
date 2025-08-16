@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useAuth } from '@/context/AuthContext'
 import { useRouter } from '@/i18n/navigation'
 import { useEffect, useState } from 'react'
@@ -10,7 +11,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Badge } from '@/components/ui/badge'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,7 +30,6 @@ import {
   Camera,
   Save,
   ArrowLeft,
-  Shield,
   Edit3,
   CheckCircle,
   Clock,
@@ -74,7 +73,7 @@ export default function ProfilePage() {
   const [showSuccessDialog, setShowSuccessDialog] = useState(false)
 
   // Fetch profile data
-  const { profile, loading: profileLoading, error: profileError } = useProfile()
+  const { profile, loading: profileLoading } = useProfile()
   const { updateProfile, updating } = useUpdateProfile()
   const { updateAvatar, uploading } = useUpdateAvatar()
   const { activities, loading: activitiesLoading } = useUserActivities(10, user?.id)
@@ -114,10 +113,10 @@ export default function ProfilePage() {
         bio: profile.bio || '',
         location: profile.location || '',
         birth_date: profile.birth_date || '',
-        age_range: profile.age_range || '',
-        country: profile.country || '',
-        city: profile.city || '',
-        state_province: profile.state_province || ''
+        age_range: (profile as { age_range?: string }).age_range || '',
+        country: (profile as { country?: string }).country || '',
+        city: (profile as { city?: string }).city || '',
+        state_province: (profile as { state_province?: string }).state_province || ''
       })
     }
   }, [profile, reset])
@@ -270,9 +269,11 @@ export default function ProfilePage() {
                 <div className="relative">
                   <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center overflow-hidden">
                     {avatarPreview || profile.avatar_url ? (
-                      <img 
-                        src={avatarPreview || profile.avatar_url} 
+                      <Image 
+                        src={avatarPreview || profile.avatar_url || '/default-avatar.png'} 
                         alt="Avatar"
+                        width={96}
+                        height={96}
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -374,7 +375,7 @@ export default function ProfilePage() {
                     Faixa Etária
                   </label>
                   <Select
-                    value={profile?.age_range || ''}
+                    value={(profile as { age_range?: string })?.age_range || ''}
                     onValueChange={(value) => {
                       register('age_range').onChange({ target: { value } })
                     }}

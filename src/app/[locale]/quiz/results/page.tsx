@@ -14,6 +14,21 @@ import {
   Target, Lightbulb,
   Award, Users, Church, FileText
 } from 'lucide-react'
+
+// Type definitions
+interface Orientation {
+  orientation: string
+  category: string
+  order_sequence: number | null
+}
+
+interface BiblicalReference {
+  reference: string
+  verse_text: string
+  application: string
+  category: string
+  order_sequence: number | null
+}
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useLocale, useTranslations } from 'next-intl'
@@ -45,15 +60,8 @@ export default function ResultsPage() {
     return spiritualGiftsData?.find(gift => gift.gift_key === key)
   }
 
-  // Get extended spiritual gift data based on quiz results
-  const getExtendedGiftData = (giftName: string): SpiritualGiftData | undefined => {
-    if (!giftName || !spiritualGiftsData) return undefined;
-    return spiritualGiftsData?.find(gift => 
-      gift.name?.toLowerCase().includes(giftName.toLowerCase())
-    )
-  }
 
-  const getScorePercentage = (score: number, giftKey: string): number => {
+  const getScorePercentage = (score: number): number => {
     // Maximum weighted scores for each gift with 5 questions per gift (balanced quiz)
     // Based on generate_balanced_quiz function analysis
     const maxScore = 56.406 // All gifts have same max with balanced quiz
@@ -247,7 +255,7 @@ export default function ResultsPage() {
                 {sortedScores.map(({ giftKey, score }, index) => {
                   const gift = getGiftByKey(giftKey)!  // Safe now due to filter above
 
-                  const percentage = getScorePercentage(score, giftKey)
+                  const percentage = getScorePercentage(score)
 
                   return (
                     <div key={`${giftKey}-${index}`}>
@@ -304,7 +312,7 @@ export default function ResultsPage() {
                     <Lightbulb className="h-5 w-5" />
                     {t('characteristicsTitle', {giftName: topGiftWithData.name})}
                   </CardTitle>
-                  <p className="text-gray-600">{topGiftWithData.description}</p>
+                  <p className="text-gray-600">{topGiftWithData.definition}</p>
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-3">
@@ -448,7 +456,7 @@ export default function ResultsPage() {
                         {/* Group orientations by category */}
                         {['spiritual', 'practical', 'development'].map((category) => {
                           const categoryOrientations = topGiftWithData.orientations?.filter(
-                            (orientation: any) => orientation.category === category
+                            (orientation: Orientation) => orientation.category === category
                           )
                           
                           if (!categoryOrientations || categoryOrientations.length === 0) return null
@@ -464,7 +472,7 @@ export default function ResultsPage() {
                                  'Desenvolvimento'}
                               </h4>
                               <div className="grid gap-2">
-                                {categoryOrientations.map((orientation: any, index: number) => (
+                                {categoryOrientations.map((orientation: Orientation, index: number) => (
                                   <div key={`${category}-orientation-${index}`} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border">
                                     <Badge variant="outline" className="mt-1">
                                       {index + 1}
@@ -495,7 +503,7 @@ export default function ResultsPage() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
-                        {topGiftWithData.detailed_biblical_references.map((ref: any, index: number) => (
+                        {topGiftWithData.detailed_biblical_references.map((ref: BiblicalReference, index: number) => (
                           <div key={`biblical-ref-${index}-${ref.reference}`} className="border border-blue-200 rounded-lg p-4 bg-blue-50">
                             <div className="flex items-start gap-3">
                               <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-300">
@@ -503,7 +511,7 @@ export default function ResultsPage() {
                               </Badge>
                               <div className="flex-1">
                                 <blockquote className="text-blue-900 font-medium italic mb-2 border-l-4 border-blue-300 pl-3">
-                                  "{ref.verse_text}"
+                                  &quot;{ref.verse_text}&quot;
                                 </blockquote>
                                 <p className="text-blue-800 text-sm">
                                   {ref.application}

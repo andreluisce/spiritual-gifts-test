@@ -12,7 +12,7 @@ import { useQuiz } from '@/hooks/use-quiz'
 import { useTranslations, useLocale } from 'next-intl'
 import { useAuth } from '@/context/AuthContext'
 import { usePublicSettings } from '@/hooks/usePublicSettings'
-import { calculateOptionScores, responseOptions } from '@/data/quiz-data'
+import { calculateOptionScores } from '@/data/quiz-data'
 import { motion, AnimatePresence } from 'framer-motion'
 import { formatPercentage } from '@/data/quiz-data'
 import { LanguageToggleCompact } from '@/components/LanguageToggle'
@@ -28,7 +28,7 @@ export default function QuizPage() {
   const t = useTranslations('quiz')
   const tCommon = useTranslations('common')
   const locale = useLocale()
-  const { user, signOut, loading: authLoading } = useAuth()
+  const { user, loading: authLoading } = useAuth()
   const { allowGuestQuiz, settings, loading: settingsLoading, debugMode } = usePublicSettings()
 
   useEffect(() => {

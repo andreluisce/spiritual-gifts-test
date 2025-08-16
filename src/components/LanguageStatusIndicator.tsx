@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Globe, Loader2 } from 'lucide-react'
 
 export function LanguageStatusIndicator() {
-  const { settings, loading, defaultLanguage } = usePublicSettings()
+  const { loading, defaultLanguage } = usePublicSettings()
   const [currentPath, setCurrentPath] = useState('')
 
   useEffect(() => {
