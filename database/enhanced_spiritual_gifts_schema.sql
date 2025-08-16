@@ -454,7 +454,7 @@ insert into public.spiritual_gifts(gift_key, locale, category_key, name, definit
   ('C_TEACHING','pt','motivations','ENSINO','Pesquisar, esclarecer e preparar material bíblico para outros','Rm 12:3-8; 1Pe 4:10; 1Co 12:4'),
   ('D_EXHORTATION','pt','motivations','EXORTAÇÃO','Estimular a fé e aconselhar rumo à ação espiritual','Rm 12:3-8; 1Pe 4:10; 1Co 12:4'),
   ('E_GIVING','pt','motivations','CONTRIBUIÇÃO','Entregar recursos pessoais para expansão de ministérios','Rm 12:3-8; 1Pe 4:10; 1Co 12:4'),
-  ('F_LEADERSHIP','pt','motivations','ADMINISTRAÇÃO','Coordenar atividades rumo a um alvo comum','Rm 12:3-8; 1Pe 4:10; 1Co 12:4'),
+  ('F_LEADERSHIP','pt','motivations','LIDERANÇA','Coordenar atividades rumo a um alvo comum','Rm 12:3-8; 1Pe 4:10; 1Co 12:4'),
   ('G_MERCY','pt','motivations','MISERICÓRDIA','Identificar-se com aflitos para consolá-los','Rm 12:3-8; 1Pe 4:10; 1Co 12:4')
 on conflict (gift_key, locale) do update
 set category_key=excluded.category_key, name=excluded.name, definition=excluded.definition, biblical_references=excluded.biblical_references;
@@ -539,7 +539,7 @@ insert into public.qualities(gift_key, locale, quality_name, order_sequence) val
   ('E_GIVING','pt','Humildade',7)
 on conflict (gift_key,locale,order_sequence) do nothing;
 
--- ADMINISTRAÇÃO - 7 qualidades
+-- LIDERANÇA - 7 qualidades
 insert into public.qualities(gift_key, locale, quality_name, order_sequence) values
   ('F_LEADERSHIP','pt','Sabedoria (compreensão das áreas chaves da vida)',1),
   ('F_LEADERSHIP','pt','Integridade (pureza de coração e honestidade exterior)',2),
@@ -642,7 +642,7 @@ insert into public.biblical_activities(key, locale, activity_name, biblical_refe
   ('teaching','pt','Ensino','Gl 3:16','"... instruí-vos e aconselhai-vos mutuamente em toda a sabedoria..."'),
   ('exhortation','pt','Exortação','Hb 3:13','"... exortai-vos mutuamente cada dia..."'),
   ('giving','pt','Contribuição','Mt 10:8; Lc 6:38; Rm 12:13','"... de graça recebeste, de graça daí" - "... daí, e dar-se-vos-a..." - "... Compartilhai as necessidades dos santos..."'),
-  ('leadership','pt','Administração','I Tm 3:4; Pv 17:2; 16:32; Ef 6:4','"... e que governe bem a sua própria casa..."'),
+  ('leadership','pt','Liderança','I Tm 3:4; Pv 17:2; 16:32; Ef 6:4','"... e que governe bem a sua própria casa..."'),
   ('mercy','pt','Misericórdia','Lc 10:33-37; Gl 3:12; Gl 6:2','Jesus ilustrou a misericórdia na história do bom samaritano - "Revesti-vos... de afetos da misericórdia..." - "Levai as cargas uns dos outros"')
 on conflict (key, locale) do update
 set activity_name=excluded.activity_name, biblical_reference=excluded.biblical_reference, biblical_text=excluded.biblical_text;

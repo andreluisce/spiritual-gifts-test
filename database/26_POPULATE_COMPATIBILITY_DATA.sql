@@ -65,7 +65,7 @@ VALUES
 INSERT INTO public.ministry_recommendations (ministry_key, locale, ministry_name, description)
 VALUES
 ('teaching_preaching', 'pt', 'Ensino e Pregação', 'Ministério focado no ensino da Palavra e pregação expositiva'),
-('leadership_admin', 'pt', 'Liderança e Administração', 'Coordenação de ministérios e liderança organizacional'),
+('leadership_admin', 'pt', 'Liderança', 'Coordenação de ministérios e liderança organizacional'),
 ('counseling_care', 'pt', 'Aconselhamento e Cuidado Pastoral', 'Ministério de cuidado, aconselhamento e restauração'),
 ('social_ministry', 'pt', 'Ministério Social e Diaconia', 'Serviço prático e assistência às necessidades da comunidade'),
 ('evangelism_missions', 'pt', 'Evangelismo e Missões', 'Compartilhamento do evangelho e expansão do Reino'),
