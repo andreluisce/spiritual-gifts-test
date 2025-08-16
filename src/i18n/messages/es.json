@@ -10,6 +10,7 @@
     "tryAgain": "Intentar Nuevamente",
     "reload": "Recargar",
     "processing": "Procesando",
+    "cancel": "Cancelar",
     "signIn": "Iniciar Sesión",
     "signOut": "Cerrar Sesión",
     "getStarted": "Comenzar",
@@ -206,9 +207,15 @@
       "viewDetails": "Ver Detalles",
       "giftEvolution": "Evolución de Dones",
       "testHistory": "Historial de Pruebas",
-      "takeAnother": "Hacer Otra Prueba",
+      "takeAnother": "Haz más pruebas para ver tu evolución",
       "fullHistory": "Historial Completo",
       "view": "Ver",
+      "remove": "Eliminar",
+      "mostRecent": "Más Reciente",
+      "confirmRemoval": "Confirmar Eliminación",
+      "confirmRemovalDescription": "¿Estás seguro de que quieres eliminar esta prueba del {date}? Esta acción no se puede deshacer y todos los datos de la prueba se perderán permanentemente.",
+      "removing": "Eliminando...",
+      "removeTest": "Eliminar Prueba",
       "compareWithPrevious": "Comparación con la prueba anterior"
     }
   },
@@ -374,6 +381,90 @@
         "noReports": "No se han generado reportes aún",
         "firstReport": "Comience generando su primer reporte de analíticas",
         "generateReport": "Generar Reporte"
+      },
+      "ai": {
+        "title": "Configuraciones de IA",
+        "subtitle": "Configure cuándo y cómo está disponible el análisis de IA para los usuarios",
+        "aiAnalysisConfig": {
+          "title": "Configuración del Análisis de IA",
+          "description": "Configure cuándo y cómo está disponible el análisis de IA para los usuarios"
+        },
+        "showAIButton": {
+          "label": "Mostrar Botón de Análisis IA",
+          "description": "Cuando esté habilitado, los usuarios verán el botón 'Generar Análisis IA' en su página de resultados"
+        },
+        "autoGenerate": {
+          "label": "Generar Análisis Automáticamente",
+          "description": "Generar automáticamente análisis de IA para todos los cuestionarios completados"
+        },
+        "cacheStrategy": {
+          "label": "Estrategia de Caché",
+          "description": "Elija cómo se almacenan en caché y reutilizan los análisis de IA para optimizar el rendimiento y los costos",
+          "giftScores": "Por Puntuación de Dones - Reutilizar análisis para usuarios con puntuaciones idénticas",
+          "session": "Por Sesión - Análisis único para cada sesión del cuestionario",
+          "user": "Por Usuario - Un análisis por usuario (resultados más recientes)"
+        },
+        "serviceSettings": {
+          "title": "Configuraciones del Servicio de IA",
+          "description": "Configure parámetros y comportamiento del servicio de IA"
+        },
+        "model": {
+          "label": "Modelo de IA",
+          "gpt35": "GPT-3.5 Turbo (Rápido, Económico)",
+          "gpt4": "GPT-4 (Mayor Calidad, Más Caro)",
+          "gpt4turbo": "GPT-4 Turbo (Mejor Equilibrio)"
+        },
+        "maxTokens": {
+          "label": "Máximo de Tokens de Respuesta",
+          "description": "Longitud máxima del análisis generado por IA (100-4000 tokens)"
+        },
+        "temperature": {
+          "label": "Creatividad de Respuesta (Temperatura)",
+          "description": "Valores más altos hacen las respuestas más creativas pero menos predecibles",
+          "veryConservative": "Muy Conservador (0.1)",
+          "conservative": "Conservador (0.3)",
+          "balanced": "Equilibrado (0.5)",
+          "creative": "Creativo (0.7)",
+          "veryCreative": "Muy Creativo (0.9)"
+        },
+        "testAI": {
+          "label": "Probar Servicio de IA",
+          "description": "Pruebe la configuración del servicio de IA con datos de muestra",
+          "button": "Probar Análisis IA",
+          "testing": "Probando Servicio de IA..."
+        },
+        "contentSettings": {
+          "title": "Configuraciones de Contenido del Análisis",
+          "description": "Configure qué información se incluye en los análisis de IA"
+        },
+        "includePersonalDevelopment": {
+          "label": "Incluir Sugerencias de Desarrollo Personal",
+          "description": "La IA proporcionará sugerencias específicas para desarrollar dones espirituales"
+        },
+        "includeMinistryOpportunities": {
+          "label": "Incluir Oportunidades de Ministerio",
+          "description": "La IA sugerirá formas específicas de usar los dones en contextos ministeriales"
+        },
+        "includeBiblicalReferences": {
+          "label": "Incluir Referencias Bíblicas",
+          "description": "La IA incluirá versículos y pasajes bíblicos relevantes"
+        },
+        "analysisLanguage": {
+          "label": "Idioma del Análisis",
+          "auto": "Detectar automáticamente de la preferencia del usuario",
+          "pt": "Portugués",
+          "en": "Inglés",
+          "es": "Español"
+        },
+        "usageOverview": {
+          "title": "Resumen de Uso",
+          "description": "Estadísticas actuales de uso del análisis de IA y caché",
+          "totalAnalyses": "Total de Análisis",
+          "cacheHits": "Aciertos de Caché",
+          "apiCalls": "Llamadas de API",
+          "aiButtonStatus": "Estado del Botón IA",
+          "note": "Nota: Las estadísticas detalladas de uso estarán disponibles una vez que se implemente el sistema de análisis. Las configuraciones actuales se están guardando automáticamente."
+        }
       }
     }
   },
@@ -383,6 +474,15 @@
     "discoverMyGifts": "Descubrir Mis Dones",
     "myHistory": "Mi Historial",
     "searchPlaceholder": "Buscar dones, ministerios o manifestaciones",
+    "names": {
+      "A_PROPHECY": "Profecía",
+      "B_SERVICE": "Servicio",
+      "C_TEACHING": "Enseñanza",
+      "D_EXHORTATION": "Exhortación",
+      "E_GIVING": "Contribución",
+      "F_LEADERSHIP": "Liderazgo",
+      "G_MERCY": "Misericordia"
+    },
     "categories": {
       "motivations": "Motivaciones",
       "ministries": "Ministerios",
@@ -429,6 +529,13 @@
       "qualities": "Cualidades",
       "precautions": "Precauciones",
       "guidance": "Orientaciones"
+    },
+    "tabDescriptions": {
+      "overview": "Resumen de tus resultados",
+      "compatibility": "Análisis de compatibilidad",
+      "characteristics": "Características detalladas",
+      "qualities": "Cualidades de tus dones",
+      "guidance": "Orientaciones prácticas"
     },
     "detailedScores": "Puntuación Detallada",
     "affinity": "{percentage}% de afinidad",
@@ -510,13 +617,30 @@
     "clickToExpand": "Haz clic para expandir",
     "characteristicsTitle": "Características del Don de {giftName}",
     "characteristicsDescription": "Características de tu don principal: {giftName}",
+    "qualitiesTitle": "Cualidades a Desarrollar",
+    "qualitiesDescription": "Siete cualidades importantes para desarrollar en el don de {giftName}",
+    "precautionsTitle": "Precauciones y Peligros",
+    "precautionsDescription": "Aspectos importantes a observar para un ejercicio saludable del don",
+    "misunderstandingsTitle": "Posibles Malentendidos",
+    "misunderstandingsDescription": "Conceptos erróneos frecuentes sobre el don: {giftName}",
     "characteristicsNotAvailable": "Características no disponibles para este don.",
     "allGiftsCharacteristicsTitle": "Características de Todos tus Dones",
     "allGiftsCharacteristicsDescription": "Explora las características de todos los dones espirituales identificados en tu perfil",
     "qualitiesNotAvailable": "Cualidades no disponibles para este don.",
     "generalGuidanceTitle": "Orientación General para Todos tus Dones",
     "generalGuidanceDescription": "Consejos importantes para el desarrollo equilibrado de tus dones espirituales",
-    "guidanceNotAvailable": "Orientación detallada no disponible para este don en este momento."
+    "guidanceNotAvailable": "Orientación detallada no disponible para este don en este momento.",
+    "orientationsTitle": "Orientación Práctica",
+    "orientationsDescription": "Direcciones prácticas para desarrollar y ejercer tu don espiritual principal",
+    "biblicalReferencesTitle": "Referencias Bíblicas Detalladas",
+    "biblicalReferencesDescription": "Versículos bíblicos específicos con aplicaciones prácticas para tu don",
+    "notAvailable": {
+      "main": "Datos completos del don principal no disponibles. Mostrando información básica.",
+      "qualities": "Datos de cualidades no disponibles para análisis completo.",
+      "precautions": "Datos de precauciones no disponibles para análisis completo.",
+      "guidance": "Orientación detallada no disponible para análisis completo.",
+      "biblicalReferences": "Referencias bíblicas específicas en desarrollo."
+    }
   },
   "Index": {
     "title": "Prueba de Dones Espirituales"

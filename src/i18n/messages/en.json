@@ -10,6 +10,7 @@
     "tryAgain": "Try Again",
     "reload": "Reload",
     "processing": "Processing",
+    "cancel": "Cancel",
     "signIn": "Sign In",
     "signOut": "Sign Out",
     "getStarted": "Get Started",
@@ -221,9 +222,15 @@
       "viewDetails": "View Details",
       "giftEvolution": "Gifts Evolution",
       "testHistory": "Test History",
-      "takeAnother": "Take Another Test",
+      "takeAnother": "Take more tests to see your evolution",
       "fullHistory": "Full History",
       "view": "View",
+      "remove": "Remove",
+      "mostRecent": "Most Recent",
+      "confirmRemoval": "Confirm Removal",
+      "confirmRemovalDescription": "Are you sure you want to remove this test from {date}? This action cannot be undone and all test data will be permanently lost.",
+      "removing": "Removing...",
+      "removeTest": "Remove Test",
       "compareWithPrevious": "Comparison with previous test"
     }
   },
@@ -325,6 +332,90 @@
             }
           }
         }
+      },
+      "ai": {
+        "title": "AI Settings",
+        "subtitle": "Configure when and how AI analysis is available to users",
+        "aiAnalysisConfig": {
+          "title": "AI Analysis Configuration",
+          "description": "Configure when and how AI analysis is available to users"
+        },
+        "showAIButton": {
+          "label": "Show AI Analysis Button",
+          "description": "When enabled, users will see the 'Generate AI Analysis' button on their results page"
+        },
+        "autoGenerate": {
+          "label": "Auto-Generate Analysis",
+          "description": "Automatically generate AI analysis for all completed quizzes"
+        },
+        "cacheStrategy": {
+          "label": "Cache Strategy",
+          "description": "Choose how AI analyses are cached and reused to optimize performance and costs",
+          "giftScores": "By Gift Scores - Reuse analysis for users with identical gift scores",
+          "session": "By Session - Unique analysis for each quiz session",
+          "user": "By User - One analysis per user (latest results)"
+        },
+        "serviceSettings": {
+          "title": "AI Service Settings",
+          "description": "Configure AI service parameters and behavior"
+        },
+        "model": {
+          "label": "AI Model",
+          "gpt35": "GPT-3.5 Turbo (Fast, Cost-effective)",
+          "gpt4": "GPT-4 (Higher Quality, More Expensive)",
+          "gpt4turbo": "GPT-4 Turbo (Best Balance)"
+        },
+        "maxTokens": {
+          "label": "Max Response Tokens",
+          "description": "Maximum length of AI-generated analysis (100-4000 tokens)"
+        },
+        "temperature": {
+          "label": "Response Creativity (Temperature)",
+          "description": "Higher values make responses more creative but less predictable",
+          "veryConservative": "Very Conservative (0.1)",
+          "conservative": "Conservative (0.3)",
+          "balanced": "Balanced (0.5)",
+          "creative": "Creative (0.7)",
+          "veryCreative": "Very Creative (0.9)"
+        },
+        "testAI": {
+          "label": "Test AI Service",
+          "description": "Test the AI service configuration with sample data",
+          "button": "Test AI Analysis",
+          "testing": "Testing AI Service..."
+        },
+        "contentSettings": {
+          "title": "Analysis Content Settings",
+          "description": "Configure what information is included in AI analyses"
+        },
+        "includePersonalDevelopment": {
+          "label": "Include Personal Development Suggestions",
+          "description": "AI will provide specific suggestions for developing spiritual gifts"
+        },
+        "includeMinistryOpportunities": {
+          "label": "Include Ministry Opportunities",
+          "description": "AI will suggest specific ways to use gifts in ministry contexts"
+        },
+        "includeBiblicalReferences": {
+          "label": "Include Biblical References",
+          "description": "AI will include relevant Bible verses and passages"
+        },
+        "analysisLanguage": {
+          "label": "Analysis Language",
+          "auto": "Auto-detect from user preference",
+          "pt": "Portuguese",
+          "en": "English",
+          "es": "Spanish"
+        },
+        "usageOverview": {
+          "title": "Usage Overview",
+          "description": "Current AI analysis usage and cache statistics",
+          "totalAnalyses": "Total Analyses",
+          "cacheHits": "Cache Hits",
+          "apiCalls": "API Calls",
+          "aiButtonStatus": "AI Button Status",
+          "note": "Note: Detailed usage statistics will be available once the analytics system is implemented. Current settings are being saved automatically."
+        }
       }
     },
     "analytics": {
@@ -398,6 +489,15 @@
     "discoverMyGifts": "Discover My Gifts",
     "myHistory": "My History",
     "searchPlaceholder": "Search gifts, ministries or manifestations",
+    "names": {
+      "A_PROPHECY": "Prophecy",
+      "B_SERVICE": "Service",
+      "C_TEACHING": "Teaching",
+      "D_EXHORTATION": "Exhortation",
+      "E_GIVING": "Giving",
+      "F_LEADERSHIP": "Leadership",
+      "G_MERCY": "Mercy"
+    },
     "categories": {
       "motivations": "Motivations",
       "ministries": "Ministries", 
@@ -444,6 +544,13 @@
       "qualities": "Qualities",
       "precautions": "Precautions",
       "guidance": "Guidance"
+    },
+    "tabDescriptions": {
+      "overview": "Overview of your results",
+      "compatibility": "Compatibility analysis",
+      "characteristics": "Detailed characteristics",
+      "qualities": "Qualities of your gifts",
+      "guidance": "Practical guidance"
     },
     "detailedScores": "Detailed Scores",
     "affinity": "{percentage}% affinity",
@@ -525,13 +632,30 @@
     "clickToExpand": "Click to expand",
     "characteristicsTitle": "Characteristics of the Gift of {giftName}",
     "characteristicsDescription": "Characteristics of your main gift: {giftName}",
+    "qualitiesTitle": "Qualities to Develop",
+    "qualitiesDescription": "Seven important qualities to develop in the gift of {giftName}",
+    "precautionsTitle": "Precautions and Dangers",
+    "precautionsDescription": "Important aspects to observe for a healthy exercise of the gift",
+    "misunderstandingsTitle": "Possible Misunderstandings",
+    "misunderstandingsDescription": "Common misconceptions about the gift: {giftName}",
     "characteristicsNotAvailable": "Characteristics not available for this gift.",
     "allGiftsCharacteristicsTitle": "Characteristics of All Your Gifts",
     "allGiftsCharacteristicsDescription": "Explore the characteristics of all spiritual gifts identified in your profile",
     "qualitiesNotAvailable": "Qualities not available for this gift.",
     "generalGuidanceTitle": "General Guidance for All Your Gifts",
     "generalGuidanceDescription": "Important advice for the balanced development of your spiritual gifts",
-    "guidanceNotAvailable": "Detailed guidance not available for this gift at the moment."
+    "guidanceNotAvailable": "Detailed guidance not available for this gift at the moment.",
+    "orientationsTitle": "Practical Guidance",
+    "orientationsDescription": "Practical directions to develop and exercise your main spiritual gift",
+    "biblicalReferencesTitle": "Detailed Biblical References",
+    "biblicalReferencesDescription": "Specific biblical verses with practical applications for your gift",
+    "notAvailable": {
+      "main": "Complete main gift data not available. Showing basic information.",
+      "qualities": "Qualities data not available for complete analysis.",
+      "precautions": "Precautions data not available for complete analysis.",
+      "guidance": "Detailed guidance not available for complete analysis.",
+      "biblicalReferences": "Specific biblical references in development."
+    }
   },
   "Index": {
     "title": "Spiritual Gifts Test"

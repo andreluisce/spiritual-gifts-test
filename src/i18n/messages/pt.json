@@ -10,6 +10,7 @@
     "tryAgain": "Tentar Novamente",
     "reload": "Recarregar",
     "processing": "Processando",
+    "cancel": "Cancelar",
     "signIn": "Entrar",
     "signOut": "Sair",
     "getStarted": "Começar",
@@ -190,6 +191,15 @@
     "discoverMyGifts": "Descobrir Meus Dons",
     "myHistory": "Meu Histórico",
     "searchPlaceholder": "Buscar dons, ministérios ou manifestações",
+    "names": {
+      "A_PROPHECY": "Profecia",
+      "B_SERVICE": "Serviço",
+      "C_TEACHING": "Ensino",
+      "D_EXHORTATION": "Exortação",
+      "E_GIVING": "Contribuição",
+      "F_LEADERSHIP": "Liderança",
+      "G_MERCY": "Misericórdia"
+    },
     "categories": {
       "motivations": "Motivações",
       "ministries": "Ministérios",
@@ -237,6 +247,13 @@
       "precautions": "Cuidados",
       "guidance": "Orientações"
     },
+    "tabDescriptions": {
+      "overview": "Visão geral dos seus resultados",
+      "compatibility": "Análise de compatibilidade",
+      "characteristics": "Características detalhadas",
+      "qualities": "Qualidades dos seus dons",
+      "guidance": "Orientações práticas"
+    },
     "detailedScores": "Pontuação Detalhada",
     "affinity": "{percentage}% de afinidade",
     "qualitiesTitle": "Qualidades a Desenvolver",
@@ -244,6 +261,7 @@
     "precautionsTitle": "Cuidados e Perigos",
     "precautionsDescription": "Aspectos importantes a observar para um exercício saudável do dom",
     "misunderstandingsTitle": "Possíveis Mal-entendidos",
+    "misunderstandingsDescription": "Conceitos errôneos frequentes sobre o dom: {giftName}",
     "misunderstandingsDescription": "Como seu dom pode ser interpretado pelos outros",
     "biblicalReferences": "Referências Bíblicas",
     "biblicalReferencesInDevelopment": "Referências bíblicas específicas em desenvolvimento.",
@@ -399,9 +417,15 @@
       "viewDetails": "Ver Detalhes",
       "giftEvolution": "Evolução dos Dons",
       "testHistory": "Histórico de Testes",
-      "takeAnother": "Fazer Outro Teste",
+      "takeAnother": "Faça mais testes para ver sua evolução",
       "fullHistory": "Histórico Completo",
       "view": "Ver",
+      "remove": "Remover",
+      "mostRecent": "Mais Recente",
+      "confirmRemoval": "Confirmar Remoção",
+      "confirmRemovalDescription": "Tem certeza que deseja remover este teste de {date}? Esta ação não pode ser desfeita e todos os dados do teste serão perdidos permanentemente.",
+      "removing": "Removendo...",
+      "removeTest": "Remover Teste",
       "compareWithPrevious": "Comparação com o teste anterior"
     }
   },
@@ -502,6 +526,90 @@
               "es": "Español (Spanish)"
             }
           }
+        }
+      },
+      "ai": {
+        "title": "Configurações de IA",
+        "subtitle": "Configure quando e como a análise de IA está disponível para os usuários",
+        "aiAnalysisConfig": {
+          "title": "Configuração da Análise de IA",
+          "description": "Configure quando e como a análise de IA está disponível para os usuários"
+        },
+        "showAIButton": {
+          "label": "Mostrar Botão de Análise IA",
+          "description": "Quando habilitado, os usuários verão o botão 'Gerar Análise IA' na página de resultados"
+        },
+        "autoGenerate": {
+          "label": "Gerar Análise Automaticamente",
+          "description": "Gerar automaticamente análise IA para todos os questionários concluídos"
+        },
+        "cacheStrategy": {
+          "label": "Estratégia de Cache",
+          "description": "Escolha como as análises de IA são armazenadas em cache e reutilizadas para otimizar desempenho e custos",
+          "giftScores": "Por Pontuação de Dons - Reutilizar análise para usuários com pontuações idênticas",
+          "session": "Por Sessão - Análise única para cada sessão do questionário",
+          "user": "Por Usuário - Uma análise por usuário (resultados mais recentes)"
+        },
+        "serviceSettings": {
+          "title": "Configurações do Serviço de IA",
+          "description": "Configure parâmetros e comportamento do serviço de IA"
+        },
+        "model": {
+          "label": "Modelo de IA",
+          "gpt35": "GPT-3.5 Turbo (Rápido, Econômico)",
+          "gpt4": "GPT-4 (Maior Qualidade, Mais Caro)",
+          "gpt4turbo": "GPT-4 Turbo (Melhor Equilíbrio)"
+        },
+        "maxTokens": {
+          "label": "Máximo de Tokens de Resposta",
+          "description": "Comprimento máximo da análise gerada pela IA (100-4000 tokens)"
+        },
+        "temperature": {
+          "label": "Criatividade da Resposta (Temperatura)",
+          "description": "Valores mais altos tornam as respostas mais criativas, mas menos previsíveis",
+          "veryConservative": "Muito Conservador (0.1)",
+          "conservative": "Conservador (0.3)",
+          "balanced": "Equilibrado (0.5)",
+          "creative": "Criativo (0.7)",
+          "veryCreative": "Muito Criativo (0.9)"
+        },
+        "testAI": {
+          "label": "Testar Serviço de IA",
+          "description": "Teste a configuração do serviço de IA com dados de exemplo",
+          "button": "Testar Análise IA",
+          "testing": "Testando Serviço de IA..."
+        },
+        "contentSettings": {
+          "title": "Configurações de Conteúdo da Análise",
+          "description": "Configure que informações são incluídas nas análises de IA"
+        },
+        "includePersonalDevelopment": {
+          "label": "Incluir Sugestões de Desenvolvimento Pessoal",
+          "description": "A IA fornecerá sugestões específicas para desenvolver dons espirituais"
+        },
+        "includeMinistryOpportunities": {
+          "label": "Incluir Oportunidades de Ministério",
+          "description": "A IA sugerirá maneiras específicas de usar os dons em contextos ministeriais"
+        },
+        "includeBiblicalReferences": {
+          "label": "Incluir Referências Bíblicas",
+          "description": "A IA incluirá versículos e passagens bíblicas relevantes"
+        },
+        "analysisLanguage": {
+          "label": "Idioma da Análise",
+          "auto": "Detectar automaticamente pela preferência do usuário",
+          "pt": "Português",
+          "en": "Inglês",
+          "es": "Espanhol"
+        },
+        "usageOverview": {
+          "title": "Visão Geral do Uso",
+          "description": "Estatísticas atuais de uso da análise de IA e cache",
+          "totalAnalyses": "Total de Análises",
+          "cacheHits": "Acertos de Cache",
+          "apiCalls": "Chamadas de API",
+          "aiButtonStatus": "Status do Botão IA",
+          "note": "Nota: Estatísticas detalhadas de uso estarão disponíveis assim que o sistema de análise for implementado. As configurações atuais estão sendo salvas automaticamente."
         }
       }
     },
