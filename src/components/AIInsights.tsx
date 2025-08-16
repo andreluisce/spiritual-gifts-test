@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -12,7 +12,7 @@ import {
   AlertCircle, CheckCircle2, ArrowRight
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { aiCompatibilityAnalyzer, type UserGiftProfile, type AICompatibilityAnalysis } from '@/lib/ai-compatibility-analyzer'
+import { type UserGiftProfile, type AICompatibilityAnalysis } from '@/lib/ai-compatibility-analyzer'
 import type { Database } from '@/lib/database.types'
 
 interface AIInsightsProps {
@@ -29,7 +29,7 @@ export default function AIInsights({ giftScores, topGifts, sessionId, locale = '
   const [error, setError] = useState<string | null>(null)
   const [hasAnalyzed, setHasAnalyzed] = useState(false)
 
-  const generateAIAnalysis = async () => {
+  const generateAIAnalysis = useCallback(async () => {
     if (topGifts.length === 0) return
 
     setIsLoading(true)
@@ -79,14 +79,14 @@ export default function AIInsights({ giftScores, topGifts, sessionId, locale = '
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [topGifts, giftScores, sessionId, locale])
 
   // Auto-generate on mount if we have data
   useEffect(() => {
     if (topGifts.length > 0 && !hasAnalyzed) {
       generateAIAnalysis()
     }
-  }, [topGifts, hasAnalyzed])
+  }, [topGifts, hasAnalyzed, generateAIAnalysis])
 
   const getConfidenceColor = (confidence: number) => {
     if (confidence >= 80) return 'text-green-600 bg-green-50'

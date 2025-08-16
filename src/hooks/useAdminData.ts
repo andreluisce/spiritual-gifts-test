@@ -34,6 +34,42 @@ export type GiftDistribution = {
   percentage: number
 }
 
+// Interface for raw user data from RPC function
+interface RawUserData {
+  id: string
+  email: string
+  created_at: string
+  last_sign_in_at: string | null
+  user_metadata?: {
+    name?: string
+    full_name?: string
+    role?: string
+    avatar_url?: string
+    picture?: string
+  }
+  quiz_count: number
+  avg_score: number
+  status: 'active' | 'inactive'
+}
+
+// Interface for raw activity data
+interface RawActivityData {
+  id: string
+  user_email: string
+  user_name: string
+  action: string
+  type: string
+  created_at: string
+}
+
+// Interface for raw gift distribution data
+interface RawGiftDistributionData {
+  gift_id: number
+  gift_name: string
+  count: number
+  percentage: number
+}
+
 export type AdminStats = {
   totalUsers: number
   activeUsers: number
@@ -52,6 +88,48 @@ export type RecentActivity = {
   action: string
   type: 'quiz' | 'user' | 'content' | 'system'
   created_at: string
+}
+
+// Interface for analytics data
+interface AnalyticsData {
+  totalUsers: number
+  activeUsers: number
+  totalQuizzes: number
+  averageScore: number
+  dateRange: string
+  [key: string]: unknown
+}
+
+// Interface for system status
+interface SystemStatus {
+  database: {
+    status: 'healthy' | 'degraded' | 'down'
+    responseTime: number
+  }
+  email: {
+    status: 'healthy' | 'degraded' | 'down'
+    lastSent: string | null
+  }
+  storage: {
+    status: 'healthy' | 'degraded' | 'down'
+    usage: number
+  }
+  [key: string]: unknown
+}
+
+// Interface for demographics data
+interface DemographicsData {
+  ageRange: string
+  count: number
+  percentage: number
+}
+
+// Interface for geographic distribution
+interface GeographicData {
+  country: string
+  region?: string
+  count: number
+  percentage: number
 }
 
 // Hook for admin dashboard overview using RPC
@@ -117,7 +195,7 @@ export function useUsersWithStats() {
         if (usersError) throw usersError
 
         if (usersData) {
-          const usersWithStats = usersData.map((user: any) => ({
+          const usersWithStats = usersData.map((user: RawUserData) => ({
             id: user.id,
             email: user.email || '',
             created_at: user.created_at,
@@ -167,7 +245,7 @@ export function useRecentActivity(limit: number = 10) {
         if (activityError) throw activityError
 
         if (activityData) {
-          const activities: RecentActivity[] = activityData.map((activity: any) => ({
+          const activities: RecentActivity[] = activityData.map((activity: RawActivityData) => ({
             id: activity.id,
             user_email: activity.user_email || 'Unknown',
             user_name: activity.user_name || activity.user_email?.split('@')[0],
@@ -211,7 +289,7 @@ export function useGiftDistribution() {
         if (distributionError) throw distributionError
 
         if (distributionData) {
-          const distribution = distributionData.map((item: any) => ({
+          const distribution = distributionData.map((item: RawGiftDistributionData) => ({
             gift_id: item.gift_id,
             gift_name: item.gift_name,
             count: item.count,
@@ -236,7 +314,7 @@ export function useGiftDistribution() {
 
 // Hook for analytics data with date range
 export function useAnalyticsData(dateRange: '7d' | '30d' | '90d' | '1y' = '30d') {
-  const [analytics, setAnalytics] = useState<any>(null)
+  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [supabase] = useState(() => createClient())
@@ -361,7 +439,7 @@ export function useUpdateUserRole() {
 
 // Hook for system status
 export function useSystemStatus() {
-  const [systemStatus, setSystemStatus] = useState<any>(null)
+  const [systemStatus, setSystemStatus] = useState<SystemStatus | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [supabase] = useState(() => createClient())
@@ -396,7 +474,7 @@ export function useSystemStatus() {
 
 // Hook for age demographics
 export function useAgeDemographics() {
-  const [demographics, setDemographics] = useState<any[]>([])
+  const [demographics, setDemographics] = useState<DemographicsData[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [supabase] = useState(() => createClient())
@@ -426,7 +504,7 @@ export function useAgeDemographics() {
 
 // Hook for geographic distribution
 export function useGeographicDistribution() {
-  const [distribution, setDistribution] = useState<any[]>([])
+  const [distribution, setDistribution] = useState<GeographicData[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [supabase] = useState(() => createClient())

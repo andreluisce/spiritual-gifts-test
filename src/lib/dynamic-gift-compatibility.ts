@@ -49,6 +49,36 @@ export interface GiftSynergyData {
   }>
 }
 
+// Raw data interfaces for database responses
+interface RawMinistryData {
+  ministry_key: string
+  ministry_name: string
+  description: string
+  compatibility_score: number
+  matched_gifts: number
+  total_required: number
+  responsibilities?: Array<{ responsibility: string }>
+  growth_areas?: Array<{ area: string }>
+}
+
+interface ResponsibilityData {
+  responsibility: string
+}
+
+interface GrowthAreaData {
+  area: string
+}
+
+// Interface for compatibility history
+interface CompatibilityHistory {
+  id: string
+  user_id: string
+  analysis_data: Record<string, unknown>
+  created_at: string
+  updated_at: string
+  [key: string]: unknown
+}
+
 class DynamicCompatibilityAnalyzer {
   
   /**
@@ -96,15 +126,15 @@ class DynamicCompatibilityAnalyzer {
         return []
       }
 
-      return (data || []).map((ministry: any) => ({
+      return (data || []).map((ministry: RawMinistryData) => ({
         ministryKey: ministry.ministry_key,
         ministryName: ministry.ministry_name,
         description: ministry.description,
         compatibilityScore: ministry.compatibility_score,
         matchedGifts: ministry.matched_gifts,
         totalRequired: ministry.total_required,
-        responsibilities: ministry.responsibilities?.map((r: any) => r.responsibility) || [],
-        growthAreas: ministry.growth_areas?.map((g: any) => g.area) || []
+        responsibilities: ministry.responsibilities?.map((r: ResponsibilityData) => r.responsibility) || [],
+        growthAreas: ministry.growth_areas?.map((g: GrowthAreaData) => g.area) || []
       }))
     } catch (error) {
       console.error('Error in getMinistryRecommendations:', error)
@@ -247,7 +277,7 @@ class DynamicCompatibilityAnalyzer {
   /**
    * Get user's previous compatibility analyses
    */
-  async getUserCompatibilityHistory(userId: string): Promise<any[]> {
+  async getUserCompatibilityHistory(userId: string): Promise<CompatibilityHistory[]> {
     try {
       const { data, error } = await supabase
         .from('gift_compatibility_analysis')

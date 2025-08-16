@@ -33,17 +33,7 @@ interface QuizState {
   answers: Record<number, number>
   currentQuestionIndex: number
   startedAt: number
-  questionOrder?: number[] // Array of original question IDs in shuffled order
-}
-
-// Fisher-Yates shuffle algorithm for array randomization
-function shuffleArray<T>(array: T[]): T[] {
-  const shuffled = [...array]
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
-  }
-  return shuffled
+  questionOrder?: number[] // Array of question IDs in backend-defined order
 }
 
 export function useQuiz(locale: string = 'pt'): UseQuizReturn {
@@ -51,7 +41,7 @@ export function useQuiz(locale: string = 'pt'): UseQuizReturn {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0)
   const [hasPersistedState, setHasPersistedState] = useState<boolean>(false)
   const [questionOrder, setQuestionOrder] = useState<number[]>([])
-  const [shuffledQuestions, setShuffledQuestions] = useState<QuizQuestion[]>([])
+  const [orderedQuestions, setOrderedQuestions] = useState<QuizQuestion[]>([])
 
   const questionsQuery = useQuizQuestions(locale)
   const giftsQuery = useSpiritualGifts(locale)
@@ -66,7 +56,7 @@ export function useQuiz(locale: string = 'pt'): UseQuizReturn {
       )
       
       setQuestionOrder(orderedQuestions.map(q => q.id))
-      setShuffledQuestions(orderedQuestions)
+      setOrderedQuestions(orderedQuestions)
     }
   }, [questionsQuery.data])
 
@@ -165,7 +155,7 @@ export function useQuiz(locale: string = 'pt'): UseQuizReturn {
     setCurrentAnswers({})
     setCurrentQuestionIndex(0)
     setQuestionOrder([])
-    setShuffledQuestions([])
+    setOrderedQuestions([])
 
     // Clear persisted state
     if (typeof window !== 'undefined') {
@@ -184,7 +174,7 @@ export function useQuiz(locale: string = 'pt'): UseQuizReturn {
   }, [questionsQuery, giftsQuery])
 
   return {
-    questions: shuffledQuestions.length > 0 ? shuffledQuestions : questionsQuery.data,
+    questions: orderedQuestions.length > 0 ? orderedQuestions : questionsQuery.data,
     loading,
     error,
     currentAnswers,

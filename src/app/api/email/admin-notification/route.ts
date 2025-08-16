@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
             activity_data: {
               notification_type: type,
               target_user: userEmail,
-              email_id: result.id
+              email_id: result.success ? (result as { success: true; id: string }).id : null
             }
           })
       }
@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         message: 'Admin notification sent successfully',
-        emailId: result.id
+        emailId: (result as { success: true; id: string }).id
       })
     } else {
       console.error('❌ Admin Notification API: Failed to send notification:', result.error)

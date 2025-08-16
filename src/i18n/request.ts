@@ -1,14 +1,14 @@
 // src/i18n/request.ts
 import { getRequestConfig } from 'next-intl/server';
 import { hasLocale } from 'next-intl';
-import { getDynamicRouting, staticRouting, getSupportedLocales } from './dynamic-routing';
-import { getDefaultLanguage } from '@/lib/server-settings';
+import { staticRouting, getSupportedLocales } from './dynamic-routing';
+import { getDefaultLanguageStatic } from '@/lib/server-settings';
 
 export default getRequestConfig(async ({ requestLocale }) => {
   try {
     const requested = await requestLocale;
     const supportedLocales = getSupportedLocales();
-    const defaultLanguage = await getDefaultLanguage();
+    const defaultLanguage = await getDefaultLanguageStatic();
     
     // Check if requested locale is supported
     const locale = hasLocale(supportedLocales, requested)

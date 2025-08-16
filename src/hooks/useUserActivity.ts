@@ -63,8 +63,8 @@ export function useUserActivities(limit: number = 50, userId?: string) {
           const mappedActivities: UserActivity[] = data.map((activity: RawUserActivity) => ({
             id: activity.id,
             user_id: activity.user_id,
-            user_email: activity.user_email,
-            user_name: activity.user_name,
+            user_email: activity.users?.email || '',
+            user_name: activity.users?.full_name || '',
             activity_type: activity.activity_type,
             activity_description: activity.activity_description || '',
             ip_address: activity.ip_address,

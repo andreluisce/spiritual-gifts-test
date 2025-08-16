@@ -11,14 +11,20 @@ interface GiftGroup {
   definition_pt?: string
   definition_en?: string
   definition_es?: string
+  [key: string]: string | undefined
 }
 
 interface QuestionGroup {
   id: number
   gift: string
+  text?: string
   text_pt?: string
   text_en?: string
   text_es?: string
+  pt?: string
+  en?: string
+  es?: string
+  [key: string]: string | number | undefined
 }
 
 interface CharacteristicGroup {
@@ -27,6 +33,37 @@ interface CharacteristicGroup {
   characteristic_pt?: string
   characteristic_en?: string
   characteristic_es?: string
+  pt?: string
+  en?: string
+  es?: string
+  [key: string]: string | number | undefined
+}
+
+// Raw data interfaces
+interface RawGiftData {
+  gift_key: string
+  name: string
+  definition: string
+  locale: string
+}
+
+interface RawQuestionData {
+  id: number
+  gift: string
+  text: string
+}
+
+interface RawQuestionTranslation {
+  question_id: number
+  locale: string
+  text: string
+}
+
+interface RawCharacteristicData {
+  id: number
+  gift_key: string
+  locale: string
+  [key: string]: string | number
 }
 
 // Types
@@ -67,8 +104,8 @@ export function useTranslations() {
 
         if (giftsData) {
           // Group by gift_key
-          const giftGroups: Record<string, any> = {}
-          giftsData.forEach(gift => {
+          const giftGroups: Record<string, GiftGroup> = {}
+          giftsData.forEach((gift: RawGiftData) => {
             if (!giftGroups[gift.gift_key]) {
               giftGroups[gift.gift_key] = { gift_key: gift.gift_key }
             }
@@ -118,9 +155,9 @@ export function useTranslations() {
             .select('question_id, locale, text')
 
           if (!qtError && questionTranslations) {
-            const questionGroups: Record<string, any> = {}
+            const questionGroups: Record<string, QuestionGroup> = {}
             
-            questionsData.forEach(question => {
+            questionsData.forEach((question: RawQuestionData) => {
               questionGroups[question.id] = {
                 id: question.id,
                 gift: question.gift,
@@ -128,7 +165,7 @@ export function useTranslations() {
               }
             })
 
-            questionTranslations.forEach(trans => {
+            questionTranslations.forEach((trans: RawQuestionTranslation) => {
               if (questionGroups[trans.question_id]) {
                 questionGroups[trans.question_id][trans.locale] = trans.text
               }
@@ -162,9 +199,9 @@ export function useTranslations() {
             .select(`id, gift_key, ${tableInfo.field}, locale`)
 
           if (!charError && charData) {
-            const charGroups: Record<string, any> = {}
+            const charGroups: Record<string, CharacteristicGroup> = {}
             
-            charData.forEach(char => {
+            charData.forEach((char: RawCharacteristicData) => {
               const key = `${char.id}`
               if (!charGroups[key]) {
                 charGroups[key] = {

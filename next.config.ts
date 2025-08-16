@@ -15,4 +15,22 @@ export default withNextIntl({
         //   },
         // ],
     },
+    webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+        // Fix for Supabase Realtime WebSocket factory critical dependency warning
+        config.resolve.fallback = {
+            ...config.resolve.fallback,
+            ws: false,
+        };
+
+        // Ignore WebSocket dynamic require warnings in Supabase Realtime
+        config.ignoreWarnings = [
+            ...(config.ignoreWarnings || []),
+            {
+                module: /node_modules\/@supabase\/realtime-js/,
+                message: /Critical dependency/,
+            },
+        ];
+
+        return config;
+    },
 });

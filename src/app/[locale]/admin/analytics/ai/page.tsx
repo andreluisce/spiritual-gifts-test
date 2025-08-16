@@ -16,21 +16,67 @@ interface AIGiftData {
 
 interface AITimelineData {
   date: string
+  analysis_date: string
   analyses_count: number
+  daily_analyses: number
   unique_users: number
 }
 
-interface AIActivityData {
+
+// Interface for AI recent activity from hook
+interface AIRecentActivity {
   id: string
   user_email: string
-  gift_combination: string
+  is_cached: boolean
+  primary_gift: string
   confidence_score: number
   created_at: string
 }
 
+// Interface for AI analytics overview
+interface AIOverview {
+  total_analyses?: number
+  analyses_today?: number
+  analyses_this_week?: number
+  cache_hit_rate?: number
+  cache_hits?: number
+  api_calls?: number
+  avg_response_time?: number
+  avg_confidence_score?: number
+  most_analyzed_gift?: string
+  unique_users?: number
+  [key: string]: unknown
+}
+
+// Interface for system status
+interface AISystemStatus {
+  status?: 'healthy' | 'degraded' | 'down'
+  response_time?: number
+  last_check?: string
+  ai_button_enabled?: boolean
+  auto_generate_enabled?: boolean
+  cache_strategy?: string
+  system_health_score?: number
+  [key: string]: unknown
+}
+
+// Interface for the complete AI analytics data
+interface AIAnalyticsData {
+  overview?: AIOverview
+  timeline?: AITimelineData[]
+  byGift?: AIGiftData[]
+  systemStatus?: AISystemStatus
+  [key: string]: unknown
+}
+
 export default function AIAnalyticsPage() {
   const [refreshing, setRefreshing] = useState(false)
-  const { data: allData, loading, error, refetch } = useAIAnalytics('all')
+  const { data: allData, loading, error, refetch } = useAIAnalytics('all') as {
+    data: AIAnalyticsData
+    loading: boolean
+    error: string | null
+    refetch: () => Promise<void>
+  }
   const { activities, loading: activitiesLoading, refetch: refetchActivities } = useAIRecentActivity(20)
 
   const handleRefresh = async () => {
@@ -60,10 +106,10 @@ export default function AIAnalyticsPage() {
     )
   }
 
-  const overview = allData.overview || {}
-  const timeline = allData.timeline || []
-  const byGift = allData.byGift || []
-  const systemStatus = allData.systemStatus || {}
+  const overview: AIOverview = allData?.overview || {}
+  const timeline: AITimelineData[] = allData?.timeline || []
+  const byGift: AIGiftData[] = allData?.byGift || []
+  const systemStatus: AISystemStatus = allData?.systemStatus || {}
 
   return (
     <div className="space-y-6">
@@ -228,7 +274,7 @@ export default function AIAnalyticsPage() {
             <p className="text-gray-500 text-center py-6">Nenhuma atividade recente encontrada</p>
           ) : (
             <div className="space-y-3">
-              {activities.slice(0, 10).map((activity: AIActivityData) => (
+              {activities.slice(0, 10).map((activity: AIRecentActivity) => (
                 <div key={activity.id} className="flex items-center justify-between p-3 border rounded-lg">
                   <div className="flex items-center gap-3">
                     {activity.is_cached ? (
@@ -273,7 +319,7 @@ export default function AIAnalyticsPage() {
                 Total nos últimos 30 dias: {timeline.reduce((sum: number, day: AITimelineData) => sum + day.analyses_count, 0)} análises
               </div>
               <div className="grid grid-cols-7 gap-1 text-xs">
-                {timeline.slice(-7).map((day: AITimelineData, index: number) => (
+                {timeline.slice(-7).map((day: AITimelineData, index) => (
                   <div key={index} className="text-center">
                     <div className="text-gray-500">
                       {new Date(day.analysis_date).toLocaleDateString('pt-BR', { weekday: 'short' })}

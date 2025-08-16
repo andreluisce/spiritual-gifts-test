@@ -30,7 +30,7 @@ import {
   AlertTriangle
 } from 'lucide-react'
 import Link from 'next/link'
-import { useTranslations } from '@/hooks/useTranslations'
+import { useTranslations, type Translation } from '@/hooks/useTranslations'
 
 export default function AdminTranslationsPage() {
   const { user, isAdmin, loading } = useAuth()
@@ -77,8 +77,8 @@ export default function AdminTranslationsPage() {
   ) || []
 
   const getCompletionStatus = (translation: Translation) => {
-    const languages = ['pt', 'en', 'es']
-    const completed = languages.filter(lang => translation[lang] && translation[lang].trim() !== '').length
+    const languages: (keyof Pick<Translation, 'pt' | 'en' | 'es'>)[] = ['pt', 'en', 'es']
+    const completed = languages.filter(lang => translation[lang] && translation[lang]?.trim() !== '').length
     return { completed, total: languages.length, percentage: (completed / languages.length) * 100 }
   }
 

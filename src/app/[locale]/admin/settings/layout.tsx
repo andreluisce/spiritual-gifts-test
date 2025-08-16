@@ -12,10 +12,8 @@ import { cn } from '@/lib/utils'
 import {
   Settings,
   HelpCircle,
-  BarChart3,
   Save,
   ArrowLeft,
-  BookOpen,
   Sparkles,
   Mail
 } from 'lucide-react'

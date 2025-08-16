@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
-  BarChart3,
   Users,
   FileText,
   Calendar,
@@ -18,7 +17,8 @@ import {
   Brain,
   Plus,
   Trash2,
-  RefreshCw
+  RefreshCw,
+  BarChart3
 } from 'lucide-react'
 import { formatScore, formatPercentage } from '@/data/quiz-data'
 import { 
@@ -33,17 +33,6 @@ import { useReports, useQuickReport } from '@/hooks/useReports'
 // All data comes from the database - no mock data
 
 // Type definitions for analytics data
-interface AgeDemographic {
-  age_range: string
-  count: number
-  percentage: number
-}
-
-interface GeographicDistribution {
-  location: string
-  user_count: number
-  percentage: number
-}
 
 type DateRange = '7d' | '30d' | '90d' | '1y'
 
@@ -96,7 +85,7 @@ export default function AdminAnalyticsPage() {
         <div className="flex items-center gap-4">
           <select
             value={dateRange}
-            onChange={(e) => setDateRange(e.target.value)}
+            onChange={(e) => setDateRange(e.target.value as DateRange)}
             className="px-3 py-2 border rounded-md text-sm border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
             <option value="7d">{t('dateRange.7d')}</option>
@@ -128,7 +117,7 @@ export default function AdminAnalyticsPage() {
                 <FileText className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{(realAnalytics?.overview?.totalQuizzes || realStats?.totalQuizzes || 0).toLocaleString()}</div>
+                <div className="text-2xl font-bold">{((realAnalytics?.overview as { totalQuizzes?: number })?.totalQuizzes || (realStats as { totalQuizzes?: number })?.totalQuizzes || 0).toLocaleString()}</div>
                 <div className="flex items-center gap-1 text-xs text-muted-foreground">
                   <FileText className="h-3 w-3" />
                   {t('overview.totalCompleted')}
@@ -142,7 +131,7 @@ export default function AdminAnalyticsPage() {
                 <FileText className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{formatScore(realAnalytics?.overview?.avgCompletionTime || 0, 1)} min</div>
+                <div className="text-2xl font-bold">{formatScore((realAnalytics?.overview as { avgCompletionTime?: number })?.avgCompletionTime || 0, 1)} min</div>
                 <p className="text-xs text-muted-foreground">
                   {t('overview.optimalEngagement')}
                 </p>
@@ -155,7 +144,7 @@ export default function AdminAnalyticsPage() {
                 <BarChart3 className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{formatScore(realAnalytics?.overview?.avgScore || realStats?.averageScore || 0, 1)}</div>
+                <div className="text-2xl font-bold">{formatScore((realAnalytics?.overview as { avgScore?: number })?.avgScore || (realStats as { averageScore?: number })?.averageScore || 0, 1)}</div>
                 <p className="text-xs text-muted-foreground">
                   {t('overview.outOfPossible')}
                 </p>
@@ -168,7 +157,7 @@ export default function AdminAnalyticsPage() {
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{formatPercentage(realAnalytics?.overview?.completionRate || 0, 1)}</div>
+                <div className="text-2xl font-bold">{formatPercentage((realAnalytics?.overview as { completionRate?: number })?.completionRate || 0, 1)}</div>
                 <p className="text-xs text-muted-foreground">
                   {t('overview.usersComplete')}
                 </p>
@@ -181,7 +170,7 @@ export default function AdminAnalyticsPage() {
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{formatPercentage(realAnalytics?.overview?.returningUsers || 0, 1)}</div>
+                <div className="text-2xl font-bold">{formatPercentage((realAnalytics?.overview as { returningUsers?: number })?.returningUsers || 0, 1)}</div>
                 <p className="text-xs text-muted-foreground">
                   {t('overview.retentionRate')}
                 </p>
@@ -194,7 +183,7 @@ export default function AdminAnalyticsPage() {
                 <Globe className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{formatPercentage(realAnalytics?.overview?.mobileUsers || 0, 1)}</div>
+                <div className="text-2xl font-bold">{formatPercentage((realAnalytics?.overview as { mobileUsers?: number })?.mobileUsers || 0, 1)}</div>
                 <p className="text-xs text-muted-foreground">
                   {t('overview.viaMobile')}
                 </p>
@@ -333,10 +322,10 @@ export default function AdminAnalyticsPage() {
                   </div>
                 ) : ageDemographics && ageDemographics.length > 0 ? (
                   <div className="space-y-4">
-                    {ageDemographics.map((group: AgeDemographic, index: number) => (
+                    {ageDemographics.map((group, index) => (
                       <div key={index} className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">{group.age_range}</span>
+                          <span className="text-sm font-medium">{group.ageRange}</span>
                           <span className="text-sm text-gray-500">
                             {group.count} ({formatPercentage(group.percentage)})
                           </span>
@@ -377,12 +366,12 @@ export default function AdminAnalyticsPage() {
                   </div>
                 ) : geoDistribution && geoDistribution.length > 0 ? (
                   <div className="space-y-4">
-                    {geoDistribution.map((location: GeographicDistribution, index: number) => (
+                    {geoDistribution.map((location, index) => (
                       <div key={index} className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">{location.location}</span>
+                          <span className="text-sm font-medium">{location.country}</span>
                           <span className="text-sm text-gray-500">
-                            {location.user_count} ({formatPercentage(location.percentage)})
+                            {location.count} ({formatPercentage(location.percentage)})
                           </span>
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-2">

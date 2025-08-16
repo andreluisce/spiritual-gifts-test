@@ -38,16 +38,17 @@ import {
   Heart,
   HandHeart,
   GraduationCap,
-  Gift,
   Crown,
-  Zap
+  Zap,
+  Gift as GiftIcon
 } from 'lucide-react'
 import Link from 'next/link'
 import { 
   useSpiritualGifts, useQuestions, useCharacteristics, 
   useUpdateGift, useUpdateQuestion, useUpdateCharacteristic,
   useCreateGift, useCreateQuestion, useCreateCharacteristic,
-  useDeleteGift, useDeleteQuestion, useDeleteCharacteristic
+  useDeleteGift, useDeleteQuestion, useDeleteCharacteristic,
+  type Gift, type Question, type Characteristic
 } from '@/hooks/useContentData'
 
 // All data comes from the database - no mock data
@@ -188,7 +189,7 @@ export default function AdminContentPage() {
         }
       case 'CONTRIBUIÇÃO':
         return {
-          icon: <Gift className="h-6 w-6" />,
+          icon: <GiftIcon className="h-6 w-6" />,
           bgColor: 'bg-green-100',
           iconColor: 'text-green-600',
           borderColor: 'border-green-200'
@@ -230,7 +231,10 @@ export default function AdminContentPage() {
       questionEn: '',
       contentPt: '',
       contentEn: '',
-      selectedGift: ''
+      selectedGift: '',
+      giftKey: gift.giftKey || '',
+      category: 'KARISMATA',
+      characteristicType: 'characteristic' as 'characteristic' | 'danger' | 'misunderstanding' as 'characteristic' | 'danger' | 'misunderstanding'
     })
   }
 
@@ -247,7 +251,10 @@ export default function AdminContentPage() {
       questionEn: question.questionEn,
       contentPt: '',
       contentEn: '',
-      selectedGift: question.giftName
+      selectedGift: question.giftName,
+      giftKey: question.giftKey || '',
+      category: 'KARISMATA',
+      characteristicType: 'characteristic' as 'characteristic' | 'danger' | 'misunderstanding' as 'characteristic' | 'danger' | 'misunderstanding'
     })
   }
 
@@ -264,7 +271,10 @@ export default function AdminContentPage() {
       questionEn: '',
       contentPt: characteristic.contentPt,
       contentEn: characteristic.contentEn,
-      selectedGift: characteristic.giftName
+      selectedGift: characteristic.giftName,
+      giftKey: characteristic.giftKey || '',
+      category: 'KARISMATA',
+      characteristicType: characteristic.type || 'characteristic'
     })
   }
 
@@ -275,7 +285,8 @@ export default function AdminContentPage() {
       let result
 
       if (editingType === 'gift') {
-        result = await updateGift(editingItem.id, {
+        const giftItem = editingItem as Gift
+        result = await updateGift(giftItem.id, {
           name: editForm.name,
           nameEn: editForm.nameEn,
           description: editForm.description,
@@ -284,8 +295,9 @@ export default function AdminContentPage() {
         })
       } else if (editingType === 'question') {
         // Find the gift key for the selected gift
+        const questionItem = editingItem as Question
         const selectedGiftData = giftsData.find(gift => gift.name === editForm.selectedGift)
-        result = await updateQuestion(editingItem.id, {
+        result = await updateQuestion(questionItem.id, {
           questionPt: editForm.questionPt,
           questionEn: editForm.questionEn,
           isActive: editForm.isActive,
@@ -293,8 +305,9 @@ export default function AdminContentPage() {
         })
       } else if (editingType === 'characteristic') {
         // Find the gift key for the selected gift
+        const characteristicItem = editingItem as Characteristic
         const selectedGiftData = giftsData.find(gift => gift.name === editForm.selectedGift)
-        result = await updateCharacteristic(editingItem.id, editingItem.type, {
+        result = await updateCharacteristic(characteristicItem.id, characteristicItem.type, {
           contentPt: editForm.contentPt,
           contentEn: editForm.contentEn,
           isActive: editForm.isActive,
@@ -315,7 +328,10 @@ export default function AdminContentPage() {
           questionEn: '',
           contentPt: '',
           contentEn: '',
-          selectedGift: ''
+          selectedGift: '',
+          giftKey: '',
+          category: 'KARISMATA',
+          characteristicType: 'characteristic' as 'characteristic' | 'danger' | 'misunderstanding' as 'characteristic' | 'danger' | 'misunderstanding'
         })
         // Refresh the page to show updated data
         window.location.reload()
@@ -345,7 +361,7 @@ export default function AdminContentPage() {
       selectedGift: '',
       giftKey: '',
       category: 'KARISMATA',
-      characteristicType: 'characteristic'
+      characteristicType: 'characteristic' as 'characteristic' | 'danger' | 'misunderstanding'
     })
   }
 
@@ -365,7 +381,7 @@ export default function AdminContentPage() {
       selectedGift: '',
       giftKey: '',
       category: 'KARISMATA',
-      characteristicType: 'characteristic'
+      characteristicType: 'characteristic' as 'characteristic' | 'danger' | 'misunderstanding'
     })
   }
 
@@ -419,11 +435,14 @@ export default function AdminContentPage() {
       let result
       
       if (type === 'gift') {
-        result = await deleteGift(item.giftKey)
+        const giftItem = item as Gift
+        result = await deleteGift(giftItem.giftKey)
       } else if (type === 'question') {
-        result = await deleteQuestion(item.id)
+        const questionItem = item as Question
+        result = await deleteQuestion(questionItem.id)
       } else if (type === 'characteristic') {
-        result = await deleteCharacteristic(item.id, item.type)
+        const characteristicItem = item as Characteristic
+        result = await deleteCharacteristic(characteristicItem.id, characteristicItem.type)
       }
 
       if (result?.success) {

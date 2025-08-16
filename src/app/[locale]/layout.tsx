@@ -6,6 +6,9 @@ import { AppHeader } from '@/components/AppHeader';
 import { routing } from '@/i18n/routing';
 import '../globals.css';
 
+// Force dynamic rendering for all locale routes since they use authentication
+export const dynamic = 'force-dynamic';
+
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }

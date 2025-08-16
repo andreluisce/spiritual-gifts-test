@@ -114,7 +114,7 @@ export default function GuidancePage() {
           </p>
         </CardHeader>
         <CardContent className="space-y-6">
-          {sortedScores.slice(0, 3).map(({ giftKey, score }) => {
+          {sortedScores.slice(0, 3).map(({ giftKey }) => {
             const giftData = spiritualGiftsData.find(gift => gift.gift_key === giftKey)
             if (!giftData) return null
 
@@ -136,7 +136,7 @@ export default function GuidancePage() {
                       Cuidados
                     </h4>
                     <div className="space-y-2">
-                      {giftData.dangers.map((danger, index) => (
+                      {giftData.dangers?.map((danger, index) => (
                         <div key={index} className="flex items-start gap-2">
                           <div className="w-1.5 h-1.5 bg-amber-500 rounded-full mt-2 flex-shrink-0"></div>
                           <p className="text-sm text-gray-700">{danger.danger}</p>
@@ -153,7 +153,7 @@ export default function GuidancePage() {
                       Mal-entendidos
                     </h4>
                     <div className="space-y-2">
-                      {giftData.misunderstandings.map((misunderstanding, index) => (
+                      {giftData.misunderstandings?.map((misunderstanding, index) => (
                         <div key={index} className="flex items-start gap-2">
                           <div className="w-1.5 h-1.5 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
                           <p className="text-sm text-gray-700">{misunderstanding.misunderstanding}</p>

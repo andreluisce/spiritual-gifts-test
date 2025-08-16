@@ -11,6 +11,7 @@ interface SystemSettings {
   }
   quiz?: {
     debugMode?: boolean
+    showProgress?: boolean
   }
 }
 

@@ -7,7 +7,6 @@ import { Lightbulb, AlertTriangle } from 'lucide-react'
 import {
   useResultBySessionId,
   useSpiritualGifts,
-  type SpiritualGiftData,
 } from '@/hooks/use-quiz-queries'
 import { useLocale, useTranslations } from 'next-intl'
 
@@ -92,7 +91,7 @@ export default function CharacteristicsPage() {
           </p>
         </CardHeader>
         <CardContent className="space-y-6">
-          {sortedScores.slice(0, 5).map(({ giftKey, score }) => {
+          {sortedScores.slice(0, 5).map(({ giftKey }) => {
             const giftData = spiritualGiftsData.find(gift => gift.gift_key === giftKey)
             if (!giftData) return null
 
@@ -102,7 +101,7 @@ export default function CharacteristicsPage() {
                   {giftData.name}
                 </h3>
                 <p className="text-sm text-gray-600 mb-3">{giftData.definition}</p>
-                
+
                 {giftData.characteristics && giftData.characteristics.length > 0 ? (
                   <div className="space-y-2">
                     {giftData.characteristics.map((char, charIndex) => (

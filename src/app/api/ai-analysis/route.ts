@@ -25,21 +25,21 @@ export async function POST(request: NextRequest) {
         },
       }
     )
-    
+
     // Check authentication
     console.log('🔐 AI Analysis API: Checking authentication...')
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError) {
       console.error('❌ AI Analysis API: Auth error:', authError)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-    
+
     if (!user) {
       console.log('❌ AI Analysis API: No user found')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-    
+
     console.log('✅ AI Analysis API: User authenticated:', user.id)
 
     console.log('📥 AI Analysis API: Reading request body...')
@@ -56,8 +56,8 @@ export async function POST(request: NextRequest) {
     console.log('🔍 AI Analysis API: Validating profile data...')
     if (!profile?.primaryGift?.key) {
       console.error('❌ AI Analysis API: Missing profile data')
-      return NextResponse.json({ 
-        error: 'Missing required profile data' 
+      return NextResponse.json({
+        error: 'Missing required profile data'
       }, { status: 400 })
     }
     console.log('✅ AI Analysis API: Profile validated, primary gift:', profile.primaryGift.key)
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
             confidence: cached.confidence_score
           }
 
-          return NextResponse.json({ 
+          return NextResponse.json({
             analysis,
             cached: true,
             cacheType: 'gift_scores',
@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
               confidence: cached.confidence_score
             }
 
-            return NextResponse.json({ 
+            return NextResponse.json({
               analysis,
               cached: true,
               cacheType: 'session',
@@ -150,7 +150,7 @@ export async function POST(request: NextRequest) {
         ...profile.secondaryGifts.map(g => g.key)
       ]
 
-      const { data: insertData, error: insertError } = await supabase
+      const { error: insertError } = await supabase
         .from('ai_analysis_cache')
         .insert({
           user_id: user.id,
@@ -209,7 +209,7 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('📤 AI Analysis API: Returning successful response')
-    return NextResponse.json({ 
+    return NextResponse.json({
       analysis,
       cached: false,
       generatedAt: new Date().toISOString()
@@ -245,7 +245,7 @@ export async function GET(request: NextRequest) {
         },
       }
     )
-    
+
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
@@ -256,8 +256,8 @@ export async function GET(request: NextRequest) {
     const sessionId = searchParams.get('sessionId')
 
     if (!sessionId) {
-      return NextResponse.json({ 
-        error: 'sessionId is required' 
+      return NextResponse.json({
+        error: 'sessionId is required'
       }, { status: 400 })
     }
 
@@ -270,8 +270,8 @@ export async function GET(request: NextRequest) {
     }
 
     if (!data || data.length === 0) {
-      return NextResponse.json({ 
-        error: 'No analysis found for this session' 
+      return NextResponse.json({
+        error: 'No analysis found for this session'
       }, { status: 404 })
     }
 
@@ -286,7 +286,7 @@ export async function GET(request: NextRequest) {
       confidence: cached.confidence_score
     }
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       analysis,
       cached: true,
       cacheDate: cached.created_at

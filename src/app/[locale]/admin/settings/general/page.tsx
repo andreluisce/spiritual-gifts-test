@@ -13,7 +13,7 @@ export default function GeneralSettingsPage() {
   const t = useTranslations('admin.settings.general')
   const { settings, updateSettings } = useSystemSettings()
 
-  const handleSettingChange = (key: string, value: any) => {
+  const handleSettingChange = (key: string, value: string | boolean | number) => {
     if (!settings) return
 
     const newSettings = { ...settings }

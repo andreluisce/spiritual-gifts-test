@@ -18,7 +18,7 @@ export async function middleware(request: NextRequest) {
     // Get dynamic routing configuration
     const dynamicRouting = await getDynamicRouting();
     const intlMiddleware = createMiddleware(dynamicRouting);
-    
+
     // Create Supabase client
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -39,17 +39,17 @@ export async function middleware(request: NextRequest) {
 
     // Refresh session and get user
     const { data: { user } } = await supabase.auth.getUser();
-    
+
     // Check if this is an auth callback (just need code parameter)
     const isAuthCallback = request.nextUrl.searchParams.has('code');
 
     // Skip static files and assets
-    const isStaticFile = request.nextUrl.pathname.includes('.') && 
+    const isStaticFile = request.nextUrl.pathname.includes('.') &&
       !request.nextUrl.pathname.includes('/api/');
 
     // Public routes and auth callbacks don't need authentication
     const publicRoutes = ['/login'];
-    const isPublicRoute = publicRoutes.some(route => 
+    const isPublicRoute = publicRoutes.some(route =>
       request.nextUrl.pathname.includes(route)
     );
 

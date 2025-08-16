@@ -1,6 +1,6 @@
 // src/i18n/dynamic-routing.ts
 import { defineRouting } from 'next-intl/routing'
-import { getDefaultLanguage } from '@/lib/server-settings'
+import { getDefaultLanguageStatic } from '@/lib/server-settings'
 
 // Static routing configuration for fallback
 export const staticRouting = defineRouting({
@@ -11,7 +11,7 @@ export const staticRouting = defineRouting({
 // Dynamic routing function that gets default language from database
 export async function getDynamicRouting() {
   try {
-    const defaultLanguage = await getDefaultLanguage()
+    const defaultLanguage = await getDefaultLanguageStatic()
     
     // Validate that the default language is supported
     const supportedLocales = ['en', 'pt', 'es'] as const

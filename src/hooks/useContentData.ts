@@ -37,6 +37,9 @@ interface RawGiftData {
 interface RawQuestionData {
   id: number
   gift: string
+  text: string
+  is_active: boolean
+  updated_at: string
   question_pool: {
     gift: string
   }
@@ -100,7 +103,7 @@ export function useSpiritualGifts() {
 
           const questionsPerGift: Record<string, number> = {}
           if (!questionsError && questionCounts) {
-            questionCounts.forEach(q => {
+            questionCounts.forEach((q: { gift: string }) => {
               questionsPerGift[q.gift] = (questionsPerGift[q.gift] || 0) + 1
             })
           }
@@ -163,7 +166,7 @@ export function useQuestions() {
 
         const giftNames: Record<string, string> = {}
         if (!giftsError && giftsData) {
-          giftsData.forEach(gift => {
+          giftsData.forEach((gift: { gift_key: string; name: string }) => {
             giftNames[gift.gift_key] = gift.name
           })
         }
@@ -176,7 +179,7 @@ export function useQuestions() {
 
         const translations: Record<string, Record<string, string>> = {}
         if (!translationsError && translationsData) {
-          translationsData.forEach(trans => {
+          translationsData.forEach((trans: { question_id: string; field: string; text: string; locale: string }) => {
             if (!translations[trans.question_id]) {
               translations[trans.question_id] = {}
             }
@@ -232,7 +235,7 @@ export function useCharacteristics() {
 
         const giftNames: Record<string, string> = {}
         if (!giftsError && giftsData) {
-          giftsData.forEach(gift => {
+          giftsData.forEach((gift: { gift_key: string; name: string }) => {
             giftNames[gift.gift_key] = gift.name
           })
         }
@@ -464,8 +467,8 @@ export function useUpdateQuestion() {
         is_active: boolean
         gift?: string
       } = {
-        text: updates.questionPt,
-        is_active: updates.isActive
+        text: updates.questionPt || '',
+        is_active: updates.isActive ?? true
       }
       
       if (updates.giftKey) {
@@ -556,7 +559,7 @@ export function useUpdateCharacteristic() {
       const numericId = characteristicId.split('-')[1]
 
       // Update the content and gift assignment
-      const updateData: Record<string, string> = {
+      const updateData: Record<string, string | undefined> = {
         [fieldName]: updates.contentPt
       }
       

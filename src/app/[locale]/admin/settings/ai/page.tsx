@@ -18,7 +18,7 @@ export default function AISettingsPage() {
   const { overview: aiStats, loading: statsLoading } = useAIOverviewStats()
   const { testAIService, testing: testingAI, result: testResult } = useAIServiceTest()
 
-  const handleSettingChange = (key: string, value: any) => {
+  const handleSettingChange = (key: string, value: string | boolean | number) => {
     if (!settings) return
 
     const newSettings = { ...settings }

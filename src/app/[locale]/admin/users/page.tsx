@@ -29,11 +29,9 @@ import {
   Download,
   UserPlus,
   Shield,
-  ShieldCheck,
   Mail,
   Calendar,
   Activity,
-  MoreHorizontal,
   Edit,
   Trash2,
   ArrowLeft,
@@ -48,7 +46,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { formatScore } from '@/data/quiz-data'
-import { useUsersWithStats, useAdminStats, useDeleteUser, useUpdateUser, UserWithStats } from '@/hooks/useAdminData'
+import { useUsersWithStats, useAdminStats, useUpdateUser, UserWithStats } from '@/hooks/useAdminData'
 import { useUserActivities, useActivityStats } from '@/hooks/useUserActivity'
 import { useAdminUsers } from '@/hooks/useAdminCheck'
 
@@ -57,8 +55,8 @@ import { useAdminUsers } from '@/hooks/useAdminCheck'
 // Validation schema for user editing
 const userEditSchema = z.object({
   displayName: z.string().min(1, 'Display name is required').max(100, 'Display name must be less than 100 characters'),
-  role: z.enum(['user', 'admin'], { required_error: 'Role is required' }),
-  status: z.enum(['active', 'inactive', 'suspended'], { required_error: 'Status is required' })
+  role: z.enum(['user', 'admin']),
+  status: z.enum(['active', 'inactive', 'suspended'])
 })
 
 type UserEditForm = z.infer<typeof userEditSchema>
@@ -88,9 +86,8 @@ export default function AdminUsersPage() {
   })
   
   // Fetch real data
-  const { users: realUsers, loading: usersLoading, error: usersError } = useUsersWithStats()
+  const { users: realUsers, loading: usersLoading } = useUsersWithStats()
   const { stats: realStats, loading: statsLoading } = useAdminStats()
-  const { deleteUser, deleting } = useDeleteUser()
   const { updateUser, updating } = useUpdateUser()
   const { activities, loading: activitiesLoading } = useUserActivities(100)
   const { stats: activityStats, loading: activityStatsLoading } = useActivityStats()
@@ -125,10 +122,10 @@ export default function AdminUsersPage() {
   }
   
   const filteredUsers = usersData.filter(user => {
-    const userName = user.user_metadata?.name || user.name || (user.email ? user.email.split('@')[0] : '') || ''
+    const userName = user.user_metadata?.name || (user.email ? user.email.split('@')[0] : '') || ''
     const matchesSearch = userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          (user.email ? user.email.toLowerCase().includes(searchTerm.toLowerCase()) : false)
-    const userRole = user.user_metadata?.role || user.role || 'user'
+    const userRole = user.user_metadata?.role || 'user'
     const matchesRole = selectedRole === 'all' || userRole === selectedRole
     const matchesStatus = selectedStatus === 'all' || user.status === selectedStatus
     
@@ -148,9 +145,6 @@ export default function AdminUsersPage() {
     return role === 'admin' ? <Crown className="h-4 w-4" /> : <Users className="h-4 w-4" />
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR')
-  }
 
   const getActivityIcon = (type: string) => {
     switch (type) {
@@ -195,7 +189,7 @@ export default function AdminUsersPage() {
     setEditingUser(user)
     reset({
       displayName: user.user_metadata?.name || (user.email ? user.email.split('@')[0] : '') || '',
-      role: user.user_metadata?.role || 'user',
+      role: (user.user_metadata?.role as 'user' | 'admin') || 'user',
       status: user.status || 'active'
     })
   }
@@ -347,7 +341,7 @@ export default function AdminUsersPage() {
                 <UserX className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{statsData.suspendedUsers}</div>
+                <div className="text-2xl font-bold">{(statsData as { suspendedUsers?: number }).suspendedUsers || 0}</div>
                 <p className="text-xs text-muted-foreground">
                   Require attention
                 </p>
@@ -379,8 +373,8 @@ export default function AdminUsersPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       <Badge variant="outline" className="flex items-center gap-1">
-                        {getRoleIcon(user.user_metadata?.role || user.role || 'user')}
-                        {user.user_metadata?.role || user.role || 'user'}
+                        {getRoleIcon(user.user_metadata?.role || 'user')}
+                        {user.user_metadata?.role || 'user'}
                       </Badge>
                       <Badge className={getUserStatusColor(user.status)}>
                         {user.status}
@@ -685,7 +679,7 @@ export default function AdminUsersPage() {
                   </div>
                 ) : activityStats?.topActivities ? (
                   <div className="space-y-4">
-                    {activityStats.topActivities.slice(0, 5).map((activity, index) => (
+                    {activityStats.topActivities.slice(0, 5).map((activity) => (
                       <div key={activity.type} className="space-y-2">
                         <div className="flex items-center justify-between text-sm">
                           <div className="flex items-center gap-2">

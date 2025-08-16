@@ -30,13 +30,13 @@ export default function HomePage() {
   const t = useTranslations('home')
   const tCommon = useTranslations('common')
 
-  const features = t.raw('features.items').map((feature: any, index: number) => ({
+  const features = t.raw('features.items').map((feature: { title: string; description: string }, index: number) => ({
     icon: [BookOpen, Heart, Users, Trophy][index],
     title: feature.title,
     description: feature.description
   }))
 
-  const categories = t.raw('categories.items').map((category: any, index: number) => ({
+  const categories = t.raw('categories.items').map((category: { name: string; greek: string; description: string }, index: number) => ({
     name: category.name,
     greek: category.greek,
     icon: [Heart, Users, Crown][index],
@@ -173,7 +173,7 @@ export default function HomePage() {
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {categories.map((category, index) => (
+            {categories.map((category: { name: string; greek: string; icon: React.ComponentType<{ className?: string }>; color: string; bgColor: string; borderColor: string; description: string }, index: number) => (
               <Link href="/gifts" key={category.name}>
                 <motion.div
                   initial={{ y: 50, opacity: 0 }}
@@ -222,7 +222,7 @@ export default function HomePage() {
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, index) => (
+            {features.map((feature: { icon: React.ComponentType<{ className?: string }>; title: string; description: string }, index: number) => (
               <Link href={feature.title === 'Histórico Personalizado' ? '/dashboard' : '/gifts'} key={index}>
                 <motion.div
                   initial={{ y: 50, opacity: 0 }}

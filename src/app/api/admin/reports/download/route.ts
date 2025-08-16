@@ -98,7 +98,7 @@ export async function GET(request: NextRequest) {
 
     switch (format.toLowerCase()) {
       case 'csv':
-        content = formatAsCSV(report.data)
+        content = formatAsCSV(report.data as ReportData)
         contentType = 'text/csv'
         fileName = `${baseFileName}.csv`
         break
@@ -110,7 +110,7 @@ export async function GET(request: NextRequest) {
         break
       
       case 'txt':
-        content = formatAsText(report.data, report)
+        content = formatAsText(report.data as ReportData, report as ReportRecord)
         contentType = 'text/plain'
         fileName = `${baseFileName}.txt`
         break

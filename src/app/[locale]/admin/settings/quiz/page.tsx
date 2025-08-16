@@ -13,20 +13,20 @@ export default function QuizSettingsPage() {
   const t = useTranslations('admin.settings.quiz')
   const { settings, updateSettings } = useSystemSettings()
 
-  const handleSettingChange = (key: string, value: any) => {
+  const handleSettingChange = (key: string, value: string | boolean | number) => {
     if (!settings) return
 
     const newSettings = { ...settings }
     
     if (key.includes('.')) {
       const keys = key.split('.')
-      let current = newSettings.quiz as any
+      let current = newSettings.quiz as Record<string, unknown>
       
       for (let i = 0; i < keys.length - 1; i++) {
         if (!current[keys[i]]) {
           current[keys[i]] = {}
         }
-        current = current[keys[i]]
+        current = current[keys[i]] as Record<string, unknown>
       }
       
       current[keys[keys.length - 1]] = value
