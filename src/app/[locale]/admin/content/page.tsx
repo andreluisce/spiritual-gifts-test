@@ -193,7 +193,7 @@ export default function AdminContentPage() {
           iconColor: 'text-green-600',
           borderColor: 'border-green-200'
         }
-      case 'ADMINISTRAÇÃO':
+      case 'LIDERANÇA':
         return {
           icon: <Crown className="h-6 w-6" />,
           bgColor: 'bg-purple-100',

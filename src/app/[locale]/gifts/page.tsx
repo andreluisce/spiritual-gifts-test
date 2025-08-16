@@ -118,9 +118,9 @@ export default function GiftsPage() {
               <Card key={category.key} className="text-center">
                 <CardHeader>
                   <div className="flex justify-center mb-2">
-                    {category.name === 'MOTIVAÇÕES' && <Heart className="h-8 w-8 text-red-500" />}
-                    {category.name === 'MINISTÉRIOS' && <Users className="h-8 w-8 text-green-500" />}
-                    {category.name === 'MANIFESTAÇÕES' && <Crown className="h-8 w-8 text-purple-500" />}
+                    {category.key === 'motivational' && <Heart className="h-8 w-8 text-red-500" />}
+                    {category.key === 'ministries' && <Users className="h-8 w-8 text-green-500" />}
+                    {category.key === 'manifestations' && <Crown className="h-8 w-8 text-purple-500" />}
                   </div>
                   <CardTitle className="text-xl">{category.name}</CardTitle>
                   <p className="text-sm text-gray-600 italic">{category.greek_term}</p>

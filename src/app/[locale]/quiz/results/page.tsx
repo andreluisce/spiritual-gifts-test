@@ -295,9 +295,9 @@ export default function ResultsPage() {
                   <Card key={category.key}>
                     <CardHeader>
                       <CardTitle className="text-lg flex items-center gap-2">
-                        {category.name === 'MOTIVAÇÕES' && <Heart className="h-5 w-5" />}
-                        {category.name === 'MINISTÉRIOS' && <Users className="h-5 w-5" />}
-                        {category.name === 'MANIFESTAÇÕES' && <Church className="h-5 w-5" />}
+                        {category.key === 'motivational' && <Heart className="h-5 w-5" />}
+                        {category.key === 'ministries' && <Users className="h-5 w-5" />}
+                        {category.key === 'manifestations' && <Church className="h-5 w-5" />}
                         {category.name}
                       </CardTitle>
                       <p className="text-sm text-gray-600">{category.greek_term}</p>
