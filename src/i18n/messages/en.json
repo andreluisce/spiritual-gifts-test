@@ -521,7 +521,8 @@
     "diverse": "Diverse",
     "dataNotAvailable": "Data not available",
     "clickToHide": "Click to hide",
-    "clickToExpand": "Click to expand"
+    "clickToExpand": "Click to expand",
+    "characteristicsNotAvailable": "Characteristics not available for this gift."
   },
   "Index": {
     "title": "Spiritual Gifts Test"

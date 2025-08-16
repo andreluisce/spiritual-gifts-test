@@ -506,7 +506,8 @@
     "diverse": "Diversa",
     "dataNotAvailable": "Datos no disponibles",
     "clickToHide": "Haz clic para ocultar",
-    "clickToExpand": "Haz clic para expandir"
+    "clickToExpand": "Haz clic para expandir",
+    "characteristicsNotAvailable": "Características no disponibles para este don."
   },
   "Index": {
     "title": "Prueba de Dones Espirituales"

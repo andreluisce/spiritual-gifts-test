@@ -334,7 +334,8 @@
     "diverse": "Diversa",
     "dataNotAvailable": "Dados não disponíveis",
     "clickToHide": "Clique para ocultar",
-    "clickToExpand": "Clique para expandir"
+    "clickToExpand": "Clique para expandir",
+    "characteristicsNotAvailable": "Características não disponíveis para este dom."
   },
   "report": {
     "title": "Relatório de Dons Espirituais",

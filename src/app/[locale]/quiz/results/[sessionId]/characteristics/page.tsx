@@ -114,7 +114,7 @@ export default function CharacteristicsPage() {
                   </div>
                 ) : (
                   <p className="text-xs text-gray-500 italic">
-                    Características não disponíveis para este dom.
+                    {t('characteristicsNotAvailable')}
                   </p>
                 )}
               </div>
