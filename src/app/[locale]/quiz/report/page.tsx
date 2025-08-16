@@ -30,16 +30,16 @@ export default function QuizReportPage() {
   useEffect(() => {
     async function fetchUserAnswers() {
       if (!latestResult?.sessionId || !questions) return
-      
+
       try {
         const { data, error } = await createClient()
           .from('answers')
           .select('question_id, score')
           .eq('session_id', latestResult.sessionId)
-        
+
         if (!error && data) {
           const answersMap: Record<number, number> = {}
-          data.forEach(answer => {
+          data.forEach((answer: { question_id: number | null; score: number }) => {
             if (answer.question_id !== null) {
               answersMap[answer.question_id] = answer.score
             }
@@ -50,7 +50,7 @@ export default function QuizReportPage() {
         console.warn('Erro ao buscar respostas:', err)
       }
     }
-    
+
     fetchUserAnswers()
   }, [latestResult?.sessionId, questions])
 
@@ -63,7 +63,7 @@ export default function QuizReportPage() {
       const totalScore = questionsForGift.reduce((sum, q) => {
         return sum + (userAnswers[q.id] || 0)
       }, 0)
-      
+
       return {
         gift,
         questions: questionsForGift,
@@ -76,13 +76,13 @@ export default function QuizReportPage() {
   }
 
   const giftGroups = getQuestionsByGift()
-  
+
   // Dados para o gráfico de pizza
   const pieChartData = giftGroups.map(group => ({
     name: group.gift.name,
     value: group.totalScore,
-    percentage: giftGroups.reduce((sum, g) => sum + g.totalScore, 0) > 0 
-      ? formatScore((group.totalScore / giftGroups.reduce((sum, g) => sum + g.totalScore, 0)) * 100, 1)
+    percentage: giftGroups.reduce((sum, g) => sum + g.totalScore, 0) > 0
+      ? (group.totalScore / giftGroups.reduce((sum, g) => sum + g.totalScore, 0)) * 100
       : 0
   }))
 
@@ -160,13 +160,13 @@ export default function QuizReportPage() {
     <>
       <style jsx global>{`
         @media print {
-          @page { 
-            margin: 1.5cm; 
-            size: A4 portrait; 
+          @page {
+            margin: 1.5cm;
+            size: A4 portrait;
             orphans: 2;
             widows: 2;
           }
-          
+
           /* Reset and base layout */
           html, body {
             background: white !important;
@@ -178,12 +178,12 @@ export default function QuizReportPage() {
             width: 100% !important;
             height: 100% !important;
           }
-          
+
           /* Hide elements for print */
           .print\\:hidden,
           button,
           .print\\:block { display: none !important; }
-          
+
           /* Main container */
           .min-h-screen {
             min-height: auto !important;
@@ -192,45 +192,45 @@ export default function QuizReportPage() {
             margin: 0 !important;
             width: 100% !important;
           }
-          
+
           .max-w-4xl {
             max-width: 100% !important;
             margin: 0 !important;
             padding: 0 !important;
             width: 100% !important;
           }
-          
+
           /* Typography */
-          h1 { 
-            font-size: 16px !important; 
-            margin: 0 0 15px 0 !important; 
+          h1 {
+            font-size: 16px !important;
+            margin: 0 0 15px 0 !important;
             text-align: center !important;
             font-weight: bold !important;
           }
-          h2 { 
-            font-size: 14px !important; 
-            margin: 0 0 10px 0 !important; 
+          h2 {
+            font-size: 14px !important;
+            margin: 0 0 10px 0 !important;
             font-weight: bold !important;
           }
-          h3, h4 { 
-            font-size: 12px !important; 
-            margin: 0 0 8px 0 !important; 
+          h3, h4 {
+            font-size: 12px !important;
+            margin: 0 0 8px 0 !important;
             font-weight: bold !important;
           }
-          
-          .text-xl, .text-2xl { 
-            font-size: 14px !important; 
-            font-weight: bold !important; 
+
+          .text-xl, .text-2xl {
+            font-size: 14px !important;
+            font-weight: bold !important;
             margin: 0 0 8px 0 !important;
           }
-          .text-lg { 
-            font-size: 12px !important; 
-            font-weight: bold !important; 
+          .text-lg {
+            font-size: 12px !important;
+            font-weight: bold !important;
             margin: 0 0 6px 0 !important;
           }
           .text-sm { font-size: 10px !important; }
           .text-xs { font-size: 9px !important; }
-          
+
           /* Card styling */
           .shadow-lg {
             box-shadow: none !important;
@@ -243,13 +243,13 @@ export default function QuizReportPage() {
             width: 100% !important;
             position: relative !important;
           }
-          
+
           /* Card content spacing */
-          .p-6, .p-4, .p-3 { 
-            padding: 8px !important; 
+          .p-6, .p-4, .p-3 {
+            padding: 8px !important;
             margin: 0 !important;
           }
-          
+
           /* Page break logic - every 3rd group starts new page */
           .space-y-6 > div:nth-child(3n+1) {
             page-break-before: always !important;
@@ -257,40 +257,40 @@ export default function QuizReportPage() {
           .space-y-6 > div:first-child {
             page-break-before: auto !important;
           }
-          
+
           /* Flex layouts */
           .flex { display: flex !important; }
           .justify-between { justify-content: space-between !important; }
           .items-center { align-items: center !important; }
           .gap-3, .gap-2 { gap: 8px !important; }
-          
+
           /* Backgrounds */
           .bg-blue-100 { background: #f0f0f0 !important; }
           .bg-slate-50 { background: #f8f8f8 !important; }
           .text-blue-600, .text-green-600 { color: #000 !important; font-weight: bold !important; }
           .text-slate-800, .text-slate-700, .text-slate-600 { color: #333 !important; }
           .text-gray-600, .text-gray-500 { color: #666 !important; }
-          
+
           /* Grid layouts */
-          .grid-cols-2 { 
-            display: grid !important; 
-            grid-template-columns: 1fr 1fr !important; 
-            gap: 8px !important; 
+          .grid-cols-2 {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 8px !important;
             margin: 0 !important;
           }
-          
+
           /* Space control */
           .space-y-2 > * + * { margin-top: 6px !important; }
           .space-y-4 > * + * { margin-top: 10px !important; }
           .space-y-6 > * + * { margin-top: 0 !important; } /* Reset for main container */
-          
+
           /* Ensure proper spacing for questions list */
           .border-l-4 {
             border-left: 3px solid #ddd !important;
             padding-left: 8px !important;
             margin: 0 0 6px 0 !important;
           }
-          
+
           /* Hide chart for print but show summary at end */
           .print-page-break.hidden.print\\:block {
             display: block !important;
@@ -301,240 +301,240 @@ export default function QuizReportPage() {
       `}</style>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-stone-100 p-4">
         <div className="max-w-4xl mx-auto py-4 md:py-8" ref={printRef}>
-        
-        {/* Header */}
-        <motion.div
-          initial={{ y: -30, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="text-center mb-6 md:mb-8"
-        >
-          <div className="flex justify-center mb-4">
+
+          {/* Header */}
+          <motion.div
+            initial={{ y: -30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="text-center mb-6 md:mb-8"
+          >
+            <div className="flex justify-center mb-4">
+              <motion.div
+                animate={{ y: [0, -2, 0] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                className="bg-white rounded-full p-4 shadow-lg"
+              >
+                <FileText className="h-8 w-8 md:h-10 md:w-10 text-slate-600" />
+              </motion.div>
+            </div>
+
+            <h1 className="text-2xl md:text-3xl font-bold text-slate-800 mb-3 print-compact-title">
+              Relatório de Dons Espirituais
+            </h1>
+            <p className="text-slate-600 mb-4">
+              Análise detalhada das {questions?.length || 0} perguntas agrupadas por dons espirituais
+              {latestResult && (
+                <span className="block text-sm">
+                  Resultado de: {new Date(latestResult.createdAt).toLocaleDateString('pt-BR')}
+                </span>
+              )}
+            </p>
+
+            {/* Navigation buttons */}
+            <div className="flex justify-center gap-4 mb-6 print:hidden">
+              <Button
+                variant="outline"
+                onClick={() => router.back()}
+                className="flex items-center gap-2 border-slate-300 text-slate-700 hover:bg-slate-50"
+              >
+                <ArrowLeft size={16} />
+                Voltar
+              </Button>
+
+              <Button
+                onClick={handleDownloadPDF}
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                <Download size={16} />
+                Baixar PDF
+              </Button>
+            </div>
+          </motion.div>
+
+          {/* Gráfico de Pizza */}
+          {giftGroups.length > 0 && (
             <motion.div
-              animate={{ y: [0, -2, 0] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              className="bg-white rounded-full p-4 shadow-lg"
+              initial={{ y: 30, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+              className="mb-8 print:hidden"
             >
-              <FileText className="h-8 w-8 md:h-10 md:w-10 text-slate-600" />
+              <Card className="shadow-lg border border-slate-200 bg-white">
+                <CardHeader>
+                  <CardTitle className="text-xl font-semibold text-slate-800 text-center">
+                    Distribuição de Pontuação por Dom Espiritual
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="w-full h-80">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={pieChartData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={({ name, percentage }) => `${name}: ${formatPercentage(percentage, 1)}`}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                        >
+                          {pieChartData.map((_, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
             </motion.div>
-          </div>
+          )}
 
-          <h1 className="text-2xl md:text-3xl font-bold text-slate-800 mb-3 print-compact-title">
-            Relatório de Dons Espirituais
-          </h1>
-          <p className="text-slate-600 mb-4">
-            Análise detalhada das {questions?.length || 0} perguntas agrupadas por dons espirituais
-            {latestResult && (
-              <span className="block text-sm">
-                Resultado de: {new Date(latestResult.createdAt).toLocaleDateString('pt-BR')}
-              </span>
-            )}
-          </p>
-
-          {/* Navigation buttons */}
-          <div className="flex justify-center gap-4 mb-6 print:hidden">
-            <Button 
-              variant="outline" 
-              onClick={() => router.back()}
-              className="flex items-center gap-2 border-slate-300 text-slate-700 hover:bg-slate-50"
-            >
-              <ArrowLeft size={16} />
-              Voltar
-            </Button>
-            
-            <Button 
-              onClick={handleDownloadPDF}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white"
-            >
-              <Download size={16} />
-              Baixar PDF
-            </Button>
-          </div>
-        </motion.div>
-
-        {/* Gráfico de Pizza */}
-        {giftGroups.length > 0 && (
+          {/* Dons Espirituais Agrupados */}
           <motion.div
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="mb-8 print:hidden"
+            transition={{ delay: 0.4, duration: 0.6 }}
+            className="space-y-6"
           >
-            <Card className="shadow-lg border border-slate-200 bg-white">
-              <CardHeader>
-                <CardTitle className="text-xl font-semibold text-slate-800 text-center">
-                  Distribuição de Pontuação por Dom Espiritual
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="w-full h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={pieChartData}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({name, percentage}) => `${name}: ${percentage}%`}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="value"
-                      >
-                        {pieChartData.map((_, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        )}
+            {giftGroups.map((group, groupIndex) => (
+              <Card key={group.gift.key} className="shadow-lg border border-slate-200 bg-white">
+                <CardHeader>
+                  <CardTitle className="text-xl font-semibold text-slate-800 flex items-center justify-between">
+                    <span className="flex items-center gap-3">
+                      <div
+                        className="w-4 h-4 rounded-full"
+                        style={{ backgroundColor: COLORS[groupIndex % COLORS.length] }}
+                      />
+                      {group.gift.name}
+                    </span>
+                    <div className="text-right">
+                      <div className="text-2xl font-bold text-blue-600">{group.totalScore}</div>
+                      <div className="text-sm text-gray-500">pontos</div>
+                    </div>
+                  </CardTitle>
+                  <p className="text-gray-600">
+                    {group.gift.description}
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  {/* Lista de perguntas do dom */}
+                  <div className="space-y-2">
+                    <h4 className="font-medium text-slate-700 mb-3">
+                      Perguntas ({group.questions.length}):
+                    </h4>
+                    {group.questions.map((question, questionIndex) => {
+                      const userAnswer = userAnswers[question.id]
+                      const hasAnswer = userAnswer !== undefined
 
-        {/* Dons Espirituais Agrupados */}
-        <motion.div
-          initial={{ y: 30, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.6 }}
-          className="space-y-6"
-        >
-          {giftGroups.map((group, groupIndex) => (
-            <Card key={group.gift.key} className="shadow-lg border border-slate-200 bg-white">
-              <CardHeader>
-                <CardTitle className="text-xl font-semibold text-slate-800 flex items-center justify-between">
-                  <span className="flex items-center gap-3">
-                    <div 
-                      className="w-4 h-4 rounded-full" 
-                      style={{ backgroundColor: COLORS[groupIndex % COLORS.length] }}
-                    />
-                    {group.gift.name}
-                  </span>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-blue-600">{group.totalScore}</div>
-                    <div className="text-sm text-gray-500">pontos</div>
-                  </div>
-                </CardTitle>
-                <p className="text-gray-600">
-                  {group.gift.description}
-                </p>
-              </CardHeader>
-              <CardContent>
-                {/* Lista de perguntas do dom */}
-                <div className="space-y-2">
-                  <h4 className="font-medium text-slate-700 mb-3">
-                    Perguntas ({group.questions.length}):
-                  </h4>
-                  {group.questions.map((question, questionIndex) => {
-                    const userAnswer = userAnswers[question.id]
-                    const hasAnswer = userAnswer !== undefined
-                    
-                    return (
-                      <div key={question.id} className="border-l-4 border-gray-200 pl-4 py-2">
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="flex-1">
-                            <span className="font-medium text-sm text-slate-600">
-                              {questionIndex + 1}.
-                            </span>
-                            <span className="text-sm text-slate-800 ml-2">
-                              {question.question}
-                            </span>
-                          </div>
-                          {hasAnswer && (
-                            <div className="flex-shrink-0 bg-blue-100 px-3 py-1 rounded-full">
-                              <span className="text-sm font-bold text-blue-800">
-                                {getScoreLabel(userAnswer)} ({userAnswer})
+                      return (
+                        <div key={question.id} className="border-l-4 border-gray-200 pl-4 py-2">
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex-1">
+                              <span className="font-medium text-sm text-slate-600">
+                                {questionIndex + 1}.
+                              </span>
+                              <span className="text-sm text-slate-800 ml-2">
+                                {question.question}
                               </span>
                             </div>
-                          )}
+                            {hasAnswer && (
+                              <div className="flex-shrink-0 bg-blue-100 px-3 py-1 rounded-full">
+                                <span className="text-sm font-bold text-blue-800">
+                                  {getScoreLabel(userAnswer)} ({userAnswer})
+                                </span>
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    )
-                  })}
-                </div>
-                
-                {/* Pontuação detalhada */}
-                <div className="mt-4 p-3 bg-slate-50 rounded-lg">
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="font-medium text-slate-600">Total de Perguntas:</span>
-                      <span className="ml-2 font-bold">{group.questions.length}</span>
-                    </div>
-                    <div>
-                      <span className="font-medium text-slate-600">Pontuação Total:</span>
-                      <span className="ml-2 font-bold text-blue-600">{group.totalScore}</span>
-                    </div>
-                    <div>
-                      <span className="font-medium text-slate-600">Média por Pergunta:</span>
-                      <span className="ml-2 font-bold">
-                        {formatScore(group.totalScore / group.questions.length, 1)}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="font-medium text-slate-600">% do Total:</span>
-                      <span className="ml-2 font-bold text-green-600">
-                        {pieChartData.find(p => p.name === group.gift.name)?.percentage}%
-                      </span>
-                    </div>
+                      )
+                    })}
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </motion.div>
 
-        {/* Gráfico no final para impressão */}
-        {giftGroups.length > 0 && (
-          <div className="print-page-break mt-8 hidden print:block">
-            <div className="text-center mb-4">
-              <h2 className="text-xl font-bold text-slate-800">Gráfico de Distribuição dos Dons</h2>
-            </div>
-            <div className="w-full flex justify-center">
-              <div className="text-center max-w-md">
-                <h3 className="text-lg font-semibold mb-4">Distribuição de Pontuação por Dom Espiritual</h3>
-                {giftGroups.map((group, index) => (
-                  <div key={group.gift.key} className="flex items-center justify-between py-2 border-b text-sm">
-                    <div className="flex items-center gap-2">
-                      <div 
-                        className="w-4 h-4 rounded-full border" 
-                        style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                      />
-                      <span>{group.gift.name}</span>
-                    </div>
-                    <div className="text-right">
-                      <span className="font-bold">{group.totalScore} pts</span>
-                      <span className="text-gray-600 ml-2 text-xs">
-                        ({pieChartData.find(p => p.name === group.gift.name)?.percentage}%)
-                      </span>
+                  {/* Pontuação detalhada */}
+                  <div className="mt-4 p-3 bg-slate-50 rounded-lg">
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span className="font-medium text-slate-600">Total de Perguntas:</span>
+                        <span className="ml-2 font-bold">{group.questions.length}</span>
+                      </div>
+                      <div>
+                        <span className="font-medium text-slate-600">Pontuação Total:</span>
+                        <span className="ml-2 font-bold text-blue-600">{group.totalScore}</span>
+                      </div>
+                      <div>
+                        <span className="font-medium text-slate-600">Média por Pergunta:</span>
+                        <span className="ml-2 font-bold">
+                          {formatScore(group.totalScore / group.questions.length, 1)}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="font-medium text-slate-600">% do Total:</span>
+                        <span className="ml-2 font-bold text-green-600">
+                          {formatPercentage(pieChartData.find(p => p.name === group.gift.name)?.percentage || 0, 1)}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                ))}
+                </CardContent>
+              </Card>
+            ))}
+          </motion.div>
+
+          {/* Gráfico no final para impressão */}
+          {giftGroups.length > 0 && (
+            <div className="print-page-break mt-8 hidden print:block">
+              <div className="text-center mb-4">
+                <h2 className="text-xl font-bold text-slate-800">Gráfico de Distribuição dos Dons</h2>
+              </div>
+              <div className="w-full flex justify-center">
+                <div className="text-center max-w-md">
+                  <h3 className="text-lg font-semibold mb-4">Distribuição de Pontuação por Dom Espiritual</h3>
+                  {giftGroups.map((group, index) => (
+                    <div key={group.gift.key} className="flex items-center justify-between py-2 border-b text-sm">
+                      <div className="flex items-center gap-2">
+                        <div
+                          className="w-4 h-4 rounded-full border"
+                          style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                        />
+                        <span>{group.gift.name}</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-bold">{group.totalScore} pts</span>
+                        <span className="text-gray-600 ml-2 text-xs">
+                          ({formatPercentage(pieChartData.find(p => p.name === group.gift.name)?.percentage || 0, 1)})
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Footer */}
-        <motion.div
-          initial={{ y: 30, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.6 }}
-          className="mt-8 text-center"
-        >
-          <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-            <h3 className="text-lg font-semibold text-slate-800 mb-2">
-              Total de Perguntas
-            </h3>
-            <p className="text-3xl font-bold text-slate-700 mb-2">
-              {questions.length}
-            </p>
-            <p className="text-sm text-slate-600">
-              Perguntas organizadas para avaliar os 7 dons espirituais principais
-            </p>
-          </div>
-        </motion.div>
+          {/* Footer */}
+          <motion.div
+            initial={{ y: 30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+            className="mt-8 text-center"
+          >
+            <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+              <h3 className="text-lg font-semibold text-slate-800 mb-2">
+                Total de Perguntas
+              </h3>
+              <p className="text-3xl font-bold text-slate-700 mb-2">
+                {questions.length}
+              </p>
+              <p className="text-sm text-slate-600">
+                Perguntas organizadas para avaliar os 7 dons espirituais principais
+              </p>
+            </div>
+          </motion.div>
         </div>
       </div>
     </>
