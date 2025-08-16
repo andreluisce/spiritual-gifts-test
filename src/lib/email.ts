@@ -26,7 +26,7 @@ export interface AdminNotificationData {
   type: 'new_user' | 'quiz_completed' | 'report_generated' | 'system_alert'
   userName: string
   userEmail: string
-  details: any
+  details: Record<string, unknown>
   timestamp: string
 }
 
@@ -43,16 +43,46 @@ export class EmailService {
     try {
       console.log('📧 EmailService: Sending email to:', data.to)
       
-      const result = await resend.emails.send({
+      const emailPayload: {
+        from: string
+        to: string[]
+        subject: string
+        html?: string
+        text?: string
+        react?: unknown
+        replyTo?: string
+        cc?: string[]
+        bcc?: string[]
+      } = {
         from: this.from,
         to: Array.isArray(data.to) ? data.to : [data.to],
         subject: data.subject,
-        html: data.html,
-        text: data.text,
-        reply_to: data.reply_to,
-        cc: data.cc,
-        bcc: data.bcc
-      })
+      }
+
+      // Add html and text, ensuring at least one is provided
+      if (data.html) {
+        emailPayload.html = data.html
+      }
+      if (data.text) {
+        emailPayload.text = data.text
+      }
+      if (!data.html && !data.text) {
+        emailPayload.text = data.subject // fallback to subject as text
+      }
+
+      // Add optional fields
+      if (data.reply_to) {
+        emailPayload.replyTo = data.reply_to
+      }
+      if (data.cc) {
+        emailPayload.cc = data.cc
+      }
+      if (data.bcc) {
+        emailPayload.bcc = data.bcc
+      }
+
+      // Type assertion needed because Resend has complex union types for email options
+      const result = await resend.emails.send(emailPayload as Parameters<typeof resend.emails.send>[0])
 
       console.log('✅ EmailService: Email sent successfully:', result.data?.id)
       return { success: true, id: result.data?.id }
