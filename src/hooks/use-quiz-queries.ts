@@ -400,7 +400,7 @@ export function useSpiritualGifts(locale: string = 'pt') {
             name: gift.name,
             definition: gift.definition,
             biblical_references: gift.biblical_references,
-            category_key: gift.category_key,
+            category_key: gift.category_key || gift.categories?.key || 'motivations',
             category_name: gift.categories?.name || 'Unknown Category',
             greek_term: gift.categories?.greek_term || '',
             qualities: (gift.gift_qualities || []).map((q: any) => ({
@@ -437,6 +437,12 @@ export function useSpiritualGifts(locale: string = 'pt') {
         if (!data) {
           console.error('No spiritual gifts data returned from database')
           throw new Error('No spiritual gifts data available')
+        }
+
+        console.log('RPC function returned data:', data?.length, 'gifts')
+        if (data && data.length > 0) {
+          console.log('First gift from RPC:', data[0])
+          console.log('Category from first RPC gift:', data[0]?.category)
         }
 
         // If not Portuguese and some data is empty, get Portuguese fallback
@@ -489,13 +495,13 @@ export function useSpiritualGifts(locale: string = 'pt') {
             null
 
           return {
-            gift_key: gift.key,
+            gift_key: gift.gift_key || gift.key,
             name: gift.name,
             definition: gift.definition,
             biblical_references: gift.biblical_references,
-            category_name: gift.category?.name || 'Unknown Category',
-            category_key: gift.category?.key || 'unknown',
-            greek_term: gift.category?.greek_term || '',
+            category_name: gift.category?.name || 'MOTIVAÇÕES',
+            category_key: gift.category?.key || 'motivations',
+            greek_term: gift.category?.greek_term || 'Karismation',
             qualities: (gift.qualities || []).map(q => ({
               quality_name: q.quality_name,
               description: q.description,
