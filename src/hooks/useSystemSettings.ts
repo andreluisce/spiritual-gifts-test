@@ -1,148 +1,140 @@
-'use client'
+import { useState, useEffect } from 'react'
+import { useAuth } from '@/context/AuthContext'
 
-import { useEffect, useState } from 'react'
-import { createClient } from '@/lib/supabase-client'
-import { invalidateCache } from '@/lib/cache-invalidation'
-
-// Types for system settings
-export type QuizSettings = {
-  questionsPerGift: number
-  shuffleQuestions: boolean
-  showProgress: boolean
-  allowRetake: boolean
-}
-
-export type GeneralSettings = {
-  siteName: string
-  siteDescription: string
-  enableRegistration: boolean
-  enableGuestQuiz: boolean
-  maintenanceMode: boolean
-  contactEmail: string
-  defaultLanguage: string
-}
-
-export type SystemSettings = {
-  quiz: QuizSettings
-  general: GeneralSettings
-}
-
-// Default settings
-const defaultSettings: SystemSettings = {
+export interface SystemSettings {
   quiz: {
-    questionsPerGift: 5,
-    shuffleQuestions: true,
-    showProgress: true,
-    allowRetake: true
-  },
+    debugMode: boolean
+    allowRetake: boolean
+    showProgress: boolean
+    questionsPerGift: number
+    shuffleQuestions: boolean
+  }
   general: {
-    siteName: 'Spiritual Gifts Test',
-    siteDescription: 'Discover your motivational gifts through biblical assessment',
-    enableRegistration: true,
-    enableGuestQuiz: false,
-    maintenanceMode: false,
-    contactEmail: 'admin@spiritualgifts.app',
-    defaultLanguage: 'pt'
+    siteName: string
+    contactEmail: string
+    defaultLanguage: string
+    enableGuestQuiz: boolean
+    maintenanceMode: boolean
+    siteDescription: string
+    enableRegistration: boolean
+  }
+  ai: {
+    enableAIAnalysis: boolean
+    aiAnalysisDescription: string
+    showAIButton: boolean
   }
 }
 
-// Hook for managing system settings
 export function useSystemSettings() {
+  const { user } = useAuth()
   const [settings, setSettings] = useState<SystemSettings | null>(null)
   const [loading, setLoading] = useState(true)
-  const [updating, setUpdating] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [supabase] = useState(() => createClient())
+
+  const fetchSettings = async () => {
+    try {
+      console.log('🔧 useSystemSettings: Fetching settings...')
+      setLoading(true)
+      setError(null)
+
+      const response = await fetch('/api/settings', {
+        credentials: 'include'
+      })
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch settings: ${response.status}`)
+      }
+
+      const data = await response.json()
+      console.log('✅ useSystemSettings: Settings fetched successfully')
+      setSettings(data)
+    } catch (err) {
+      console.error('❌ useSystemSettings: Error fetching settings:', err)
+      setError(err instanceof Error ? err.message : 'Unknown error')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const updateSettings = async (newSettings: SystemSettings) => {
+    try {
+      console.log('🔧 useSystemSettings: Updating settings...')
+      setError(null)
+
+      const response = await fetch('/api/settings', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(newSettings)
+      })
+
+      if (!response.ok) {
+        throw new Error(`Failed to update settings: ${response.status}`)
+      }
+
+      const data = await response.json()
+      console.log('✅ useSystemSettings: Settings updated successfully')
+      setSettings(data)
+      return data
+    } catch (err) {
+      console.error('❌ useSystemSettings: Error updating settings:', err)
+      setError(err instanceof Error ? err.message : 'Unknown error')
+      throw err
+    }
+  }
 
   useEffect(() => {
-    const fetchSettings = async () => {
+    if (user) {
+      fetchSettings()
+    }
+  }, [user])
+
+  return {
+    settings,
+    loading,
+    error,
+    refetch: fetchSettings,
+    updateSettings
+  }
+}
+
+// Hook specifically for AI analysis setting (public access)
+export function useAIAnalysisSettings() {
+  const [showAIButton, setShowAIButton] = useState(false)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchAISettings = async () => {
       try {
-        setLoading(true)
-        
-        // Try to fetch settings from database
-        const { data: settingsData, error: settingsError } = await supabase
-          .from('system_settings')
-          .select('*')
-          .single()
+        console.log('🤖 useAIAnalysisSettings: Fetching AI settings...')
+        const response = await fetch('/api/settings', {
+          credentials: 'include'
+        })
 
-        if (settingsError && settingsError.code !== 'PGRST116') {
-          throw settingsError
-        }
-
-        if (settingsData && settingsData.settings) {
-          setSettings(settingsData.settings)
+        if (response.ok) {
+          const data = await response.json()
+          const aiSettings = data.ai || { showAIButton: false }
+          console.log('✅ useAIAnalysisSettings: AI settings fetched:', aiSettings)
+          setShowAIButton(aiSettings.showAIButton || false)
         } else {
-          // Use default settings if none exist
-          setSettings(defaultSettings)
+          console.log('❌ useAIAnalysisSettings: Failed to fetch settings, defaulting to false')
+          setShowAIButton(false)
         }
-      } catch (err) {
-        console.error('Error fetching settings:', err)
-        setError(err instanceof Error ? err.message : 'Failed to fetch settings')
-        // Fallback to default settings on error
-        setSettings(defaultSettings)
+      } catch (error) {
+        console.warn('❌ useAIAnalysisSettings: Error fetching AI settings:', error)
+        setShowAIButton(false)
       } finally {
         setLoading(false)
       }
     }
 
-    fetchSettings()
-  }, [supabase])
-
-  const updateSettings = async (newSettings: SystemSettings) => {
-    try {
-      setUpdating(true)
-      setError(null)
-
-      // Use RPC function to update settings
-      const { data, error: updateError } = await supabase
-        .rpc('update_system_settings', { new_settings: newSettings })
-
-      if (updateError) throw updateError
-
-      setSettings(newSettings)
-      // Invalidate cache to ensure consistency across server/client
-      invalidateCache()
-      return { success: true }
-    } catch (err) {
-      console.error('Error updating settings:', err)
-      setError(err instanceof Error ? err.message : 'Failed to update settings')
-      return { success: false, error: err }
-    } finally {
-      setUpdating(false)
-    }
-  }
-
-  const resetToDefaults = async () => {
-    try {
-      setUpdating(true)
-      setError(null)
-
-      // Use RPC function to reset to default settings
-      const { data, error: resetError } = await supabase
-        .rpc('update_system_settings', { new_settings: defaultSettings })
-
-      if (resetError) throw resetError
-
-      setSettings(defaultSettings)
-      // Invalidate cache to ensure consistency across server/client
-      invalidateCache()
-      return { success: true }
-    } catch (err) {
-      console.error('Error resetting settings:', err)
-      setError(err instanceof Error ? err.message : 'Failed to reset settings')
-      return { success: false, error: err }
-    } finally {
-      setUpdating(false)
-    }
-  }
-
+    fetchAISettings()
+  }, [])
 
   return {
-    settings,
-    loading,
-    updating,
-    error,
-    updateSettings,
-    resetToDefaults
+    showAIButton,
+    loading
   }
 }
