@@ -4,7 +4,7 @@ import { cookies } from 'next/headers'
 import type { Database } from '@/lib/database.types'
 
 // GET endpoint to retrieve generated reports list
-export async function GET(request: NextRequest) {
+export async function GET() {
   console.log('📊 Reports API: GET request received')
   try {
     const cookieStore = await cookies()

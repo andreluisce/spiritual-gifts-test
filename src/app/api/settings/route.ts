@@ -4,7 +4,7 @@ import { cookies } from 'next/headers'
 import type { Database } from '@/lib/database.types'
 
 // GET endpoint to retrieve system settings
-export async function GET(request: NextRequest) {
+export async function GET() {
   console.log('🔧 Settings API: GET request received')
   try {
     const cookieStore = await cookies()
