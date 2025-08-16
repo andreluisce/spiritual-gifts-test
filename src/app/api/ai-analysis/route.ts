@@ -28,19 +28,19 @@ export async function POST(request: NextRequest) {
     
     // Check authentication
     console.log('🔐 AI Analysis API: Checking authentication...')
-    const { data: { session }, error: authError } = await supabase.auth.getSession()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
     
     if (authError) {
       console.error('❌ AI Analysis API: Auth error:', authError)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     
-    if (!session?.user) {
-      console.log('❌ AI Analysis API: No session or user found')
+    if (!user) {
+      console.log('❌ AI Analysis API: No user found')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     
-    console.log('✅ AI Analysis API: User authenticated:', session.user.id)
+    console.log('✅ AI Analysis API: User authenticated:', user.id)
 
     console.log('📥 AI Analysis API: Reading request body...')
     const body = await request.json()
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
       try {
         console.log('🔍 AI Analysis API: Checking cache for user and gift scores...')
         const { data: cachedByScores, error: cacheByScoresError } = await supabase.rpc('get_ai_analysis_by_user_and_scores', {
-          p_user_id: session.user.id,
+          p_user_id: user.id,
           p_gift_scores: giftScores
         })
 
@@ -153,7 +153,7 @@ export async function POST(request: NextRequest) {
       const { data: insertData, error: insertError } = await supabase
         .from('ai_analysis_cache')
         .insert({
-          user_id: session.user.id,
+          user_id: user.id,
           session_id: sessionId,
           gift_scores: giftScores,
           primary_gifts: primaryGifts,
@@ -247,8 +247,8 @@ export async function GET(request: NextRequest) {
     )
     
     // Check authentication
-    const { data: { session }, error: authError } = await supabase.auth.getSession()
-    if (authError || !session?.user) {
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 

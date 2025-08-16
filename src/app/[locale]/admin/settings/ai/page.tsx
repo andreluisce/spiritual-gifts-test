@@ -11,11 +11,13 @@ import { useSystemSettings } from '@/hooks/useSystemSettings'
 import { useTranslations } from 'next-intl'
 import { Sparkles, Brain, Zap, Database, Settings2, AlertCircle } from 'lucide-react'
 import { useState } from 'react'
+import { useAIOverviewStats, useAIServiceTest } from '@/hooks/useAIAnalytics'
 
 export default function AISettingsPage() {
   const t = useTranslations('admin.settings.ai')
   const { settings, updateSettings } = useSystemSettings()
-  const [testingAI, setTestingAI] = useState(false)
+  const { overview: aiStats, loading: statsLoading } = useAIOverviewStats()
+  const { testAIService, testing: testingAI, result: testResult } = useAIServiceTest()
 
   const handleSettingChange = (key: string, value: any) => {
     if (!settings) return
@@ -30,28 +32,7 @@ export default function AISettingsPage() {
   }
 
   const handleTestAI = async () => {
-    setTestingAI(true)
-    
-    try {
-      const response = await fetch('/api/ai-analysis', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          test: true,
-          giftScores: { leadership: 5, administration: 4, teaching: 3, evangelism: 2, prophecy: 1, shepherding: 3, mercy: 2 }
-        })
-      })
-      
-      if (response.ok) {
-        alert('AI service is working correctly!')
-      } else {
-        alert('AI service test failed. Check console for details.')
-      }
-    } catch (error) {
-      alert('Error testing AI service: ' + error)
-    } finally {
-      setTestingAI(false)
-    }
+    await testAIService()
   }
 
   if (!settings) {
@@ -69,10 +50,10 @@ export default function AISettingsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-purple-600" />
-            AI Analysis Configuration
+            {t('aiAnalysisConfig.title')}
           </CardTitle>
           <CardDescription>
-            Configure when and how AI analysis is available to users
+            {t('aiAnalysisConfig.description')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -82,10 +63,10 @@ export default function AISettingsPage() {
               <Brain className="h-4 w-4 text-gray-500" />
               <div className="space-y-0.5">
                 <Label htmlFor="show-ai-button" className="text-sm font-medium cursor-pointer">
-                  Show AI Analysis Button
+                  {t('showAIButton.label')}
                 </Label>
                 <p className="text-xs text-gray-500">
-                  When enabled, users will see the "Generate AI Analysis" button on their results page
+                  {t('showAIButton.description')}
                 </p>
               </div>
             </div>
@@ -102,10 +83,10 @@ export default function AISettingsPage() {
               <Zap className="h-4 w-4 text-gray-500" />
               <div className="space-y-0.5">
                 <Label htmlFor="auto-generate" className="text-sm font-medium cursor-pointer">
-                  Auto-Generate Analysis
+                  {t('autoGenerate.label')}
                 </Label>
                 <p className="text-xs text-gray-500">
-                  Automatically generate AI analysis for all completed quizzes
+                  {t('autoGenerate.description')}
                 </p>
               </div>
             </div>
@@ -120,7 +101,7 @@ export default function AISettingsPage() {
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <Database className="h-4 w-4 text-gray-500" />
-              <Label className="text-sm font-medium">Cache Strategy</Label>
+              <Label className="text-sm font-medium">{t('cacheStrategy.label')}</Label>
             </div>
             <Select
               value={settings.ai.cacheStrategy || 'gift_scores'}
@@ -131,18 +112,18 @@ export default function AISettingsPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="gift_scores">
-                  By Gift Scores - Reuse analysis for users with identical gift scores
+                  {t('cacheStrategy.giftScores')}
                 </SelectItem>
                 <SelectItem value="session">
-                  By Session - Unique analysis for each quiz session
+                  {t('cacheStrategy.session')}
                 </SelectItem>
                 <SelectItem value="user">
-                  By User - One analysis per user (latest results)
+                  {t('cacheStrategy.user')}
                 </SelectItem>
               </SelectContent>
             </Select>
             <p className="text-xs text-gray-500">
-              Choose how AI analyses are cached and reused to optimize performance and costs
+              {t('cacheStrategy.description')}
             </p>
           </div>
         </CardContent>
@@ -153,16 +134,16 @@ export default function AISettingsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Settings2 className="h-5 w-5 text-blue-600" />
-            AI Service Settings
+            {t('serviceSettings.title')}
           </CardTitle>
           <CardDescription>
-            Configure AI service parameters and behavior
+            {t('serviceSettings.description')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Model Selection */}
           <div className="space-y-2">
-            <Label htmlFor="ai-model">AI Model</Label>
+            <Label htmlFor="ai-model">{t('model.label')}</Label>
             <Select
               value={settings.ai.model || 'gpt-3.5-turbo'}
               onValueChange={(value) => handleSettingChange('model', value)}
@@ -171,16 +152,16 @@ export default function AISettingsPage() {
                 <SelectValue placeholder="Select AI model" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="gpt-3.5-turbo">GPT-3.5 Turbo (Fast, Cost-effective)</SelectItem>
-                <SelectItem value="gpt-4">GPT-4 (Higher Quality, More Expensive)</SelectItem>
-                <SelectItem value="gpt-4-turbo">GPT-4 Turbo (Best Balance)</SelectItem>
+                <SelectItem value="gpt-3.5-turbo">{t('model.gpt35')}</SelectItem>
+                <SelectItem value="gpt-4">{t('model.gpt4')}</SelectItem>
+                <SelectItem value="gpt-4-turbo">{t('model.gpt4turbo')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           {/* Max Tokens */}
           <div className="space-y-2">
-            <Label htmlFor="max-tokens">Max Response Tokens</Label>
+            <Label htmlFor="max-tokens">{t('maxTokens.label')}</Label>
             <Input
               id="max-tokens"
               type="number"
@@ -191,13 +172,13 @@ export default function AISettingsPage() {
               className="w-32"
             />
             <p className="text-xs text-gray-500">
-              Maximum length of AI-generated analysis (100-4000 tokens)
+              {t('maxTokens.description')}
             </p>
           </div>
 
           {/* Temperature */}
           <div className="space-y-2">
-            <Label htmlFor="temperature">Response Creativity (Temperature)</Label>
+            <Label htmlFor="temperature">{t('temperature.label')}</Label>
             <Select
               value={settings.ai.temperature?.toString() || '0.7'}
               onValueChange={(value) => handleSettingChange('temperature', parseFloat(value))}
@@ -206,15 +187,15 @@ export default function AISettingsPage() {
                 <SelectValue placeholder="Select creativity level" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="0.1">Very Conservative (0.1)</SelectItem>
-                <SelectItem value="0.3">Conservative (0.3)</SelectItem>
-                <SelectItem value="0.5">Balanced (0.5)</SelectItem>
-                <SelectItem value="0.7">Creative (0.7)</SelectItem>
-                <SelectItem value="0.9">Very Creative (0.9)</SelectItem>
+                <SelectItem value="0.1">{t('temperature.veryConservative')}</SelectItem>
+                <SelectItem value="0.3">{t('temperature.conservative')}</SelectItem>
+                <SelectItem value="0.5">{t('temperature.balanced')}</SelectItem>
+                <SelectItem value="0.7">{t('temperature.creative')}</SelectItem>
+                <SelectItem value="0.9">{t('temperature.veryCreative')}</SelectItem>
               </SelectContent>
             </Select>
             <p className="text-xs text-gray-500">
-              Higher values make responses more creative but less predictable
+              {t('temperature.description')}
             </p>
           </div>
 
@@ -224,10 +205,10 @@ export default function AISettingsPage() {
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <AlertCircle className="h-4 w-4 text-orange-500" />
-              <Label className="text-sm font-medium">Test AI Service</Label>
+              <Label className="text-sm font-medium">{t('testAI.label')}</Label>
             </div>
             <p className="text-xs text-gray-500">
-              Test the AI service configuration with sample data
+              {t('testAI.description')}
             </p>
             <Button 
               onClick={handleTestAI}
@@ -238,12 +219,12 @@ export default function AISettingsPage() {
               {testingAI ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
-                  Testing AI Service...
+                  {t('testAI.testing')}
                 </>
               ) : (
                 <>
                   <Zap className="h-4 w-4 mr-2" />
-                  Test AI Analysis
+                  {t('testAI.button')}
                 </>
               )}
             </Button>
@@ -256,10 +237,10 @@ export default function AISettingsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Brain className="h-5 w-5 text-green-600" />
-            Analysis Content Settings
+            {t('contentSettings.title')}
           </CardTitle>
           <CardDescription>
-            Configure what information is included in AI analyses
+            {t('contentSettings.description')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -267,10 +248,10 @@ export default function AISettingsPage() {
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
               <Label htmlFor="include-development" className="text-sm font-medium cursor-pointer">
-                Include Personal Development Suggestions
+                {t('includePersonalDevelopment.label')}
               </Label>
               <p className="text-xs text-gray-500">
-                AI will provide specific suggestions for developing spiritual gifts
+                {t('includePersonalDevelopment.description')}
               </p>
             </div>
             <Switch
@@ -284,10 +265,10 @@ export default function AISettingsPage() {
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
               <Label htmlFor="include-ministry" className="text-sm font-medium cursor-pointer">
-                Include Ministry Opportunities
+                {t('includeMinistryOpportunities.label')}
               </Label>
               <p className="text-xs text-gray-500">
-                AI will suggest specific ways to use gifts in ministry contexts
+                {t('includeMinistryOpportunities.description')}
               </p>
             </div>
             <Switch
@@ -301,10 +282,10 @@ export default function AISettingsPage() {
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
               <Label htmlFor="include-biblical" className="text-sm font-medium cursor-pointer">
-                Include Biblical References
+                {t('includeBiblicalReferences.label')}
               </Label>
               <p className="text-xs text-gray-500">
-                AI will include relevant Bible verses and passages
+                {t('includeBiblicalReferences.description')}
               </p>
             </div>
             <Switch
@@ -316,7 +297,7 @@ export default function AISettingsPage() {
 
           {/* Analysis Language */}
           <div className="space-y-2">
-            <Label htmlFor="analysis-language">Analysis Language</Label>
+            <Label htmlFor="analysis-language">{t('analysisLanguage.label')}</Label>
             <Select
               value={settings.ai.analysisLanguage || 'auto'}
               onValueChange={(value) => handleSettingChange('analysisLanguage', value)}
@@ -325,10 +306,10 @@ export default function AISettingsPage() {
                 <SelectValue placeholder="Select analysis language" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="auto">Auto-detect from user preference</SelectItem>
-                <SelectItem value="pt">Portuguese</SelectItem>
-                <SelectItem value="en">English</SelectItem>
-                <SelectItem value="es">Spanish</SelectItem>
+                <SelectItem value="auto">{t('analysisLanguage.auto')}</SelectItem>
+                <SelectItem value="pt">{t('analysisLanguage.pt')}</SelectItem>
+                <SelectItem value="en">{t('analysisLanguage.en')}</SelectItem>
+                <SelectItem value="es">{t('analysisLanguage.es')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -340,40 +321,72 @@ export default function AISettingsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Database className="h-5 w-5 text-indigo-600" />
-            Usage Overview
+            {t('usageOverview.title')}
           </CardTitle>
           <CardDescription>
-            Current AI analysis usage and cache statistics
+            {t('usageOverview.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div className="space-y-1">
-              <p className="text-2xl font-bold text-blue-600">--</p>
-              <p className="text-xs text-gray-500">Total Analyses</p>
+              <p className="text-2xl font-bold text-blue-600">
+                {statsLoading ? '...' : (aiStats?.total_analyses || 0)}
+              </p>
+              <p className="text-xs text-gray-500">{t('usageOverview.totalAnalyses')}</p>
             </div>
             <div className="space-y-1">
-              <p className="text-2xl font-bold text-green-600">--</p>
-              <p className="text-xs text-gray-500">Cache Hits</p>
+              <p className="text-2xl font-bold text-green-600">
+                {statsLoading ? '...' : (aiStats?.cache_hits || 0)}
+              </p>
+              <p className="text-xs text-gray-500">{t('usageOverview.cacheHits')}</p>
             </div>
             <div className="space-y-1">
-              <p className="text-2xl font-bold text-orange-600">--</p>
-              <p className="text-xs text-gray-500">API Calls</p>
+              <p className="text-2xl font-bold text-orange-600">
+                {statsLoading ? '...' : (aiStats?.api_calls || 0)}
+              </p>
+              <p className="text-xs text-gray-500">{t('usageOverview.apiCalls')}</p>
             </div>
             <div className="space-y-1">
               <p className="text-2xl font-bold text-purple-600">
                 {settings.ai.showAIButton ? 'ON' : 'OFF'}
               </p>
-              <p className="text-xs text-gray-500">AI Button Status</p>
+              <p className="text-xs text-gray-500">{t('usageOverview.aiButtonStatus')}</p>
             </div>
           </div>
           
-          <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-xs text-blue-700">
-              <strong>Note:</strong> Detailed usage statistics will be available once the analytics system is implemented.
-              Current settings are being saved automatically.
-            </p>
-          </div>
+          {testResult && (
+            <div className={`mt-4 p-3 border rounded-lg ${
+              testResult.success 
+                ? 'bg-green-50 border-green-200' 
+                : 'bg-red-50 border-red-200'
+            }`}>
+              <p className={`text-xs ${
+                testResult.success ? 'text-green-700' : 'text-red-700'
+              }`}>
+                <strong>{testResult.success ? '✅ Teste bem-sucedido:' : '❌ Teste falhou:'}</strong> {testResult.message}
+              </p>
+            </div>
+          )}
+          
+          {aiStats && (
+            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="grid grid-cols-2 gap-4 text-xs text-blue-700">
+                <div>
+                  <strong>Taxa de Cache:</strong> {aiStats.cache_hit_rate}%
+                </div>
+                <div>
+                  <strong>Confiança Média:</strong> {aiStats.avg_confidence_score || 0}%
+                </div>
+                <div>
+                  <strong>Análises Hoje:</strong> {aiStats.analyses_today}
+                </div>
+                <div>
+                  <strong>Dom Mais Analisado:</strong> {aiStats.most_analyzed_gift}
+                </div>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

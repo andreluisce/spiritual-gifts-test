@@ -39,6 +39,7 @@ import {
   Building
 } from 'lucide-react'
 import Link from 'next/link'
+import { LanguageToggleCompact } from '@/components/LanguageToggle'
 import { useProfile, useUpdateProfile, useUpdateAvatar, ProfileUpdateData } from '@/hooks/useProfile'
 import {
   Select,
@@ -214,13 +215,14 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
       {/* Header */}
       <div className="mb-8">
-        <div className="flex items-center gap-4 mb-4">
+        <div className="flex items-center justify-between mb-4">
           <Link href="/dashboard">
             <Button variant="outline" size="sm">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Voltar ao Dashboard
             </Button>
           </Link>
+          <LanguageToggleCompact />
         </div>
         
         <div className="flex items-center justify-between">

@@ -16,7 +16,11 @@ import {
   Download,
   ArrowLeft,
   Globe,
-  Brain
+  Brain,
+  Plus,
+  ExternalLink,
+  Trash2,
+  RefreshCw
 } from 'lucide-react'
 import Link from 'next/link'
 import { formatScore, formatPercentage } from '@/data/quiz-data'
@@ -27,6 +31,7 @@ import {
   useAgeDemographics,
   useGeographicDistribution 
 } from '@/hooks/useAdminData'
+import { useReports, useQuickReport } from '@/hooks/useReports'
 
 // All data comes from the database - no mock data
 
@@ -43,6 +48,8 @@ export default function AdminAnalyticsPage() {
   const { stats: realStats, loading: statsLoading } = useAdminStats()
   const { demographics: ageDemographics, loading: ageLoading } = useAgeDemographics()
   const { distribution: geoDistribution, loading: geoLoading } = useGeographicDistribution()
+  const { reports, loading: reportsLoading, generateReport, deleteReport, downloadReport } = useReports()
+  const { generateQuickReport, generating } = useQuickReport()
 
   useEffect(() => {
     if (!loading && (!user || !isAdmin)) {
@@ -405,19 +412,119 @@ export default function AdminAnalyticsPage() {
                   <FileText className="h-5 w-5" />
                   {t('reports.title')}
                 </CardTitle>
-                <Button>
-                  <Calendar className="h-4 w-4 mr-2" />
-                  {t('reports.generateNew')}
-                </Button>
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline"
+                    onClick={() => generateQuickReport('comprehensive', dateRange as any)}
+                    disabled={generating}
+                  >
+                    {generating ? (
+                      <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Plus className="h-4 w-4 mr-2" />
+                    )}
+                    Gerar Relatório Rápido
+                  </Button>
+                </div>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-12">
-                <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">{t('reports.noReports')}</h3>
-                <p className="text-gray-600 mb-4">{t('reports.firstReport')}</p>
-                <Button>{t('reports.generateReport')}</Button>
-              </div>
+              {reportsLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                </div>
+              ) : reports.length === 0 ? (
+                <div className="text-center py-12">
+                  <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">{t('reports.noReports')}</h3>
+                  <p className="text-gray-600 mb-4">{t('reports.firstReport')}</p>
+                  <Button 
+                    onClick={() => generateQuickReport('comprehensive', dateRange as any)}
+                    disabled={generating}
+                  >
+                    {generating ? (
+                      <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Calendar className="h-4 w-4 mr-2" />
+                    )}
+                    {t('reports.generateReport')}
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {reports.map((report) => (
+                    <div key={report.id} className="border rounded-lg p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3">
+                            <FileText className="h-5 w-5 text-blue-600" />
+                            <div>
+                              <h4 className="font-medium">{report.title}</h4>
+                              <p className="text-sm text-gray-600">{report.description}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-4 mt-2">
+                            <Badge variant="outline">
+                              {report.report_type.replace('_', ' ')}
+                            </Badge>
+                            <Badge variant="secondary">
+                              {report.format.toUpperCase()}
+                            </Badge>
+                            <span className="text-xs text-gray-500">
+                              {new Date(report.created_at).toLocaleDateString('pt-BR')}
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              {report.download_count} downloads
+                            </span>
+                            {report.file_size && (
+                              <span className="text-xs text-gray-500">
+                                {(report.file_size / 1024).toFixed(1)} KB
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => downloadReport(report.id, 'json')}
+                          >
+                            <Download className="h-4 w-4 mr-1" />
+                            JSON
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => downloadReport(report.id, 'csv')}
+                          >
+                            <Download className="h-4 w-4 mr-1" />
+                            CSV
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => downloadReport(report.id, 'txt')}
+                          >
+                            <Download className="h-4 w-4 mr-1" />
+                            TXT
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => {
+                              if (confirm('Tem certeza que deseja deletar este relatório?')) {
+                                deleteReport(report.id)
+                              }
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

@@ -128,7 +128,7 @@ export function useQuizQuestions(locale: string = 'pt') {
         // Get system settings to determine questions per gift
         const { data: settings, error: settingsError } = await supabase.rpc('get_system_settings')
         
-        let questionsPerGiftConfig = {
+        const questionsPerGiftConfig = {
           prophecy: 5,
           ministry: 5,
           teaching: 5,

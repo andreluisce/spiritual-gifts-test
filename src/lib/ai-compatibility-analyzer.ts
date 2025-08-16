@@ -251,7 +251,7 @@ ${t.finalInstruction}
     
     try {
       // Step 1: Remove everything before the first { and after the last }
-      let cleanResponse = response
+      const cleanResponse = response
         .replace(/^[\s\S]*?(?=\{)/, '') // Remove everything before first {
         .replace(/\}[\s\S]*$/, '}') // Remove everything after last }
         .replace(/Here's.*?(?=\{)/gi, '') // Remove AI response prefix

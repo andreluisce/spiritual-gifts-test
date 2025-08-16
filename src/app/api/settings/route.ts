@@ -28,14 +28,14 @@ export async function GET(request: NextRequest) {
 
     // Check authentication
     console.log('🔐 Settings API: Checking authentication...')
-    const { data: { session }, error: authError } = await supabase.auth.getSession()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
     
-    if (authError || !session?.user) {
+    if (authError || !user) {
       console.log('❌ Settings API: Unauthorized access attempt')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    console.log('✅ Settings API: User authenticated:', session.user.id)
+    console.log('✅ Settings API: User authenticated:', user.id)
 
     // Get system settings
     const { data: settings, error: settingsError } = await supabase
@@ -86,49 +86,51 @@ export async function PUT(request: NextRequest) {
 
     // Check authentication and admin role
     console.log('🔐 Settings API: Checking admin authentication...')
-    const { data: { session }, error: authError } = await supabase.auth.getSession()
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
     
-    if (authError || !session?.user) {
+    if (authError || !user) {
       console.log('❌ Settings API: Unauthorized access attempt')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Check if user is admin
-    const { data: userData, error: userError } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', session.user.id)
-      .single()
-
-    if (userError || userData?.role !== 'admin') {
-      console.log('❌ Settings API: Non-admin user attempted to update settings')
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
-    }
-
-    console.log('✅ Settings API: Admin user authenticated:', session.user.id)
-
     // Parse request body
     const body = await request.json()
-    console.log('📥 Settings API: Update data received')
+    console.log('📥 Settings API: Update data received for user:', user.id)
+    console.log('🔍 Settings API: User metadata role:', user.user_metadata?.role)
 
-    // Update settings
-    const { data: updatedSettings, error: updateError } = await supabase
-      .from('system_settings')
-      .update({ 
-        settings: body,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', 1)
-      .select('settings')
-      .single()
+    // Use the database function which handles admin checking via RLS
+    const { data: updateResult, error: updateError } = await supabase
+      .rpc('update_system_settings', { new_settings: body })
 
     if (updateError) {
       console.error('❌ Settings API: Error updating settings:', updateError)
-      return NextResponse.json({ error: 'Failed to update settings' }, { status: 500 })
+      console.log('❌ Settings API: Update error details:', {
+        code: updateError.code,
+        message: updateError.message,
+        details: updateError.details
+      })
+      return NextResponse.json({ 
+        error: 'Failed to update settings', 
+        details: updateError.message 
+      }, { status: 500 })
+    }
+
+    if (!updateResult) {
+      console.log('❌ Settings API: Update function returned false (probably not admin)')
+      return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
+    }
+
+    // Get the updated settings to return
+    const { data: settings, error: fetchError } = await supabase
+      .rpc('get_system_settings')
+
+    if (fetchError) {
+      console.error('❌ Settings API: Error fetching updated settings:', fetchError)
+      return NextResponse.json({ error: 'Settings updated but failed to fetch' }, { status: 500 })
     }
 
     console.log('✅ Settings API: Settings updated successfully')
-    return NextResponse.json(updatedSettings.settings)
+    return NextResponse.json(settings)
 
   } catch (error) {
     console.error('Settings API PUT Error:', error)

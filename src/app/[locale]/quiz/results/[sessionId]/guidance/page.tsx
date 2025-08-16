@@ -32,7 +32,7 @@ export default function GuidancePage() {
   if (!result || !spiritualGiftsData) {
     return (
       <div className="text-center py-8">
-        <p className="text-gray-500">Dados não disponíveis</p>
+        <p className="text-gray-500">{t('dataNotAvailable')}</p>
       </div>
     )
   }
@@ -56,10 +56,10 @@ export default function GuidancePage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-amber-700">
                   <AlertTriangle className="h-5 w-5" />
-                  Cuidados e Precauções
+                  {t('precautionsTitle')}
                 </CardTitle>
                 <p className="text-sm text-gray-600">
-                  Aspectos importantes a considerar no desenvolvimento do dom: <strong>{topGiftData.name}</strong>
+                  {t('precautionsDescription')}
                 </p>
               </CardHeader>
               <CardContent>
@@ -81,10 +81,10 @@ export default function GuidancePage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-red-700">
                   <BookOpen className="h-5 w-5" />
-                  Mal-Entendidos Comuns
+                  {t('misunderstandingsTitle')}
                 </CardTitle>
                 <p className="text-sm text-gray-600">
-                  Conceitos errôneos frequentes sobre o dom: <strong>{topGiftData.name}</strong>
+                  {t('misunderstandingsDescription', { giftName: topGiftData.name })}
                 </p>
               </CardHeader>
               <CardContent>

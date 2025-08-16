@@ -16,6 +16,7 @@ import {
   Shield
 } from 'lucide-react'
 import Link from 'next/link'
+import { LanguageToggleCompact } from '@/components/LanguageToggle'
 
 export default function AdminLayout({
   children,
@@ -62,6 +63,7 @@ export default function AdminLayout({
           </div>
           
           <div className="flex items-center gap-4">
+            <LanguageToggleCompact />
             <Link href="/dashboard">
               <Button variant="outline" size="sm" className="flex items-center gap-2 hover:bg-gray-50 border-gray-300">
                 <ArrowLeft className="h-4 w-4" />

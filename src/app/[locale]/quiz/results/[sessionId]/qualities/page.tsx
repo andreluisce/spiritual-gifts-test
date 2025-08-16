@@ -32,7 +32,7 @@ export default function QualitiesPage() {
   if (!result || !spiritualGiftsData) {
     return (
       <div className="text-center py-8">
-        <p className="text-gray-500">Dados não disponíveis</p>
+        <p className="text-gray-500">{t('dataNotAvailable')}</p>
       </div>
     )
   }
@@ -51,11 +51,11 @@ export default function QualitiesPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Target className="h-5 w-5" />
-            Qualidades a Desenvolver
+            {t('qualitiesTitle')}
           </CardTitle>
           {topGiftData && (
             <p className="text-sm text-gray-600">
-              Qualidades recomendadas para o seu dom principal: <strong>{topGiftData.name}</strong>
+              {t('qualitiesDescription', { giftName: topGiftData.name })}
             </p>
           )}
         </CardHeader>
@@ -75,7 +75,7 @@ export default function QualitiesPage() {
             <Alert>
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
-                Nenhuma qualidade disponível para este dom.
+                {t('qualitiesNotAvailable')}
               </AlertDescription>
             </Alert>
           )}
