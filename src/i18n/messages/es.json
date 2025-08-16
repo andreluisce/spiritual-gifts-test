@@ -188,6 +188,7 @@
     "welcome": {
       "title": "¡Bienvenido a tu viaje espiritual!",
       "description": "Aún no has hecho ninguna prueba. ¿Qué tal si descubres tus dones espirituales ahora?",
+      "testInProgress": "Tienes una prueba en progreso. Continúa donde lo dejaste o comienza una nueva prueba.",
       "button": "Hacer Mi Primera Prueba"
     },
     "stats": {

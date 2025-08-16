@@ -305,8 +305,8 @@ export default function DashboardPage() {
             </h2>
             <p className="text-gray-600 mb-8 max-w-md mx-auto">
               {quizInProgress 
-                ? "Você tem um teste em progresso. Continue de onde parou ou comece um novo teste."
-                : "Você ainda não fez nenhum teste. Que tal descobrir seus dons espirituais agora?"
+                ? t('welcome.testInProgress')
+                : t('welcome.description')
               }
             </p>
             <Link href="/quiz">
@@ -319,7 +319,7 @@ export default function DashboardPage() {
                 ) : (
                   <>
                     <Award className="h-5 w-5" />
-                    Fazer Meu Primeiro Teste
+                    {t('welcome.button')}
                   </>
                 )}
               </Button>

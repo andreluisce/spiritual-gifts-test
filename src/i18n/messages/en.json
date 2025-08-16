@@ -203,6 +203,7 @@
     "welcome": {
       "title": "Welcome to your spiritual journey!",
       "description": "You haven't taken any tests yet. How about discovering your spiritual gifts now?",
+      "testInProgress": "You have a test in progress. Continue where you left off or start a new test.",
       "button": "Take My First Test"
     },
     "stats": {

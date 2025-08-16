@@ -381,6 +381,7 @@
     "welcome": {
       "title": "Bem-vindo à sua jornada espiritual!",
       "description": "Você ainda não fez nenhum teste. Que tal descobrir seus dons espirituais agora?",
+      "testInProgress": "Você tem um teste em progresso. Continue de onde parou ou comece um novo teste.",
       "button": "Fazer Meu Primeiro Teste"
     },
     "stats": {
