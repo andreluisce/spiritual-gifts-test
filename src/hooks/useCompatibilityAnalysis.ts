@@ -132,7 +132,7 @@ export function useCompatibilityAnalysis(
           ministryRecommendations,
           insights,
           isLoading: false,
-          hasAIAnalysis: !!aiAnalysis,
+          hasAIAnalysis: !!(aiAnalysis && aiAnalysis.personalizedInsights && aiAnalysis.strengthsDescription),
           regenerateAnalysis: async () => {
             if (!giftScores) return
             
