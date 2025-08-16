@@ -289,7 +289,20 @@
       "highlyRecommended": "Altamente Recomendado",
       "recommended": "Recomendado",
       "consider": "Considerar",
-      "completeTest": "Complete o teste para ver sua análise de compatibilidade"
+      "completeTest": "Complete o teste para ver sua análise de compatibilidade",
+      "personalizedAnalysisAI": "Análise Personalizada com IA",
+      "compatibilityAndAI": "Análise de Compatibilidade e IA",
+      "compatibilityDescription": "Esta seção mostra como seus dons espirituais trabalham juntos e oferece análises personalizadas com inteligência artificial para insights mais profundos.",
+      "compatibilityDataNotAvailable": "Dados de compatibilidade não disponíveis",
+      "personalizedAnalysis": "Sua Análise Personalizada",
+      "mainStrengths": "Suas Principais Forças",
+      "growthGuidance": "Orientações para Seu Crescimento",
+      "recommendedMinistriesForYou": "Ministérios Recomendados para Você",
+      "spiritualDevelopmentPlan": "Seu Plano de Desenvolvimento Espiritual",
+      "practicalApplications": "Como Aplicar Seus Dons na Prática",
+      "regenerateAIAnalysis": "Regenerar Análise IA",
+      "generatingPersonalizedAnalysis": "Gerando sua análise personalizada...",
+      "aiProcessingResults": "Nossa IA está processando seus resultados para criar insights únicos"
     },
     "actions": {
       "fullReport": "Relatório Completo (PDF)",
@@ -321,20 +334,7 @@
     "diverse": "Diversa",
     "dataNotAvailable": "Dados não disponíveis",
     "clickToHide": "Clique para ocultar",
-    "clickToExpand": "Clique para expandir",
-    "personalizedAnalysisAI": "Análise Personalizada com IA",
-    "compatibilityAndAI": "Análise de Compatibilidade e IA",
-    "compatibilityDescription": "Esta seção mostra como seus dons espirituais trabalham juntos e oferece análises personalizadas com inteligência artificial para insights mais profundos.",
-    "compatibilityDataNotAvailable": "Dados de compatibilidade não disponíveis",
-    "personalizedAnalysis": "Sua Análise Personalizada",
-    "mainStrengths": "Suas Principais Forças",
-    "growthGuidance": "Orientações para Seu Crescimento",
-    "recommendedMinistriesForYou": "Ministérios Recomendados para Você",
-    "spiritualDevelopmentPlan": "Seu Plano de Desenvolvimento Espiritual",
-    "practicalApplications": "Como Aplicar Seus Dons na Prática",
-    "regenerateAIAnalysis": "Regenerar Análise IA",
-    "generatingPersonalizedAnalysis": "Gerando sua análise personalizada...",
-    "aiProcessingResults": "Nossa IA está processando seus resultados para criar insights únicos"
+    "clickToExpand": "Clique para expandir"
   },
   "report": {
     "title": "Relatório de Dons Espirituais",
