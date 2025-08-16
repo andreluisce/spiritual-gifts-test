@@ -27,7 +27,7 @@ export default function CompatibilityPage() {
   if (!result || !result.totalScore) {
     return (
       <div className="text-center py-8">
-        <p className="text-gray-500">{t('compatibilityDataNotAvailable')}</p>
+        <p className="text-gray-500">{t('compatibility.compatibilityDataNotAvailable')}</p>
       </div>
     )
   }
@@ -46,9 +46,9 @@ export default function CompatibilityPage() {
           <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
             <Info className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
             <div className="text-sm text-blue-800">
-              <p className="font-medium mb-1">{t('compatibilityAndAI')}</p>
+              <p className="font-medium mb-1">{t('compatibility.compatibilityAndAI')}</p>
               <p>
-                {t('compatibilityDescription')}
+                {t('compatibility.compatibilityDescription')}
               </p>
             </div>
           </div>
@@ -60,7 +60,7 @@ export default function CompatibilityPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-purple-600" />
-            {t('personalizedAnalysisAI')}
+            {t('compatibility.personalizedAnalysisAI')}
           </CardTitle>
         </CardHeader>
         <CardContent>
