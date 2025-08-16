@@ -66,10 +66,10 @@ class AICompatibilityAnalyzer {
   }
 
   private selectBestAvailableService(): keyof typeof AI_SERVICES {
-    // Check which service has API key available
-    if (process.env.GROQ_API_KEY) return 'GROQ'
-    if (process.env.TOGETHER_API_KEY) return 'TOGETHER'
-    if (process.env.HUGGINGFACE_API_KEY) return 'HUGGINGFACE'
+    // Check which service has API key available (both server and client-side)
+    if (process.env.GROQ_API_KEY || process.env.NEXT_PUBLIC_GROQ_API_KEY) return 'GROQ'
+    if (process.env.TOGETHER_API_KEY || process.env.NEXT_PUBLIC_TOGETHER_API_KEY) return 'TOGETHER'
+    if (process.env.HUGGINGFACE_API_KEY || process.env.NEXT_PUBLIC_HUGGINGFACE_API_KEY) return 'HUGGINGFACE'
     
     // Default to Groq (most reliable free tier)
     return 'GROQ'
@@ -78,11 +78,11 @@ class AICompatibilityAnalyzer {
   private getApiKey(): string {
     switch (this.service) {
       case 'GROQ':
-        return process.env.GROQ_API_KEY || ''
+        return process.env.GROQ_API_KEY || process.env.NEXT_PUBLIC_GROQ_API_KEY || ''
       case 'TOGETHER':
-        return process.env.TOGETHER_API_KEY || ''
+        return process.env.TOGETHER_API_KEY || process.env.NEXT_PUBLIC_TOGETHER_API_KEY || ''
       case 'HUGGINGFACE':
-        return process.env.HUGGINGFACE_API_KEY || ''
+        return process.env.HUGGINGFACE_API_KEY || process.env.NEXT_PUBLIC_HUGGINGFACE_API_KEY || ''
       default:
         return ''
     }
@@ -92,14 +92,20 @@ class AICompatibilityAnalyzer {
     userProfile: UserGiftProfile,
     structuredData?: any
   ): Promise<AICompatibilityAnalysis> {
+    console.log('🤖 AI Analyzer: Starting analysis for', userProfile.primaryGift.name)
     try {
       const prompt = this.buildAnalysisPrompt(userProfile, structuredData)
+      console.log('🤖 AI Analyzer: Calling AI service')
       const response = await this.callAIService(prompt)
       
-      return this.parseAIResponse(response)
+      const result = this.parseAIResponse(response)
+      console.log('✅ AI Analyzer: Analysis successful', { hasInsights: !!result.personalizedInsights })
+      return result
     } catch (error) {
-      console.warn('AI analysis failed, using fallback:', error)
-      return this.getFallbackAnalysis(userProfile)
+      console.warn('❌ AI analysis failed, using fallback:', error)
+      const fallback = this.getFallbackAnalysis(userProfile)
+      console.log('🔄 AI Analyzer: Using fallback analysis', { hasInsights: !!fallback.personalizedInsights })
+      return fallback
     }
   }
 
@@ -112,20 +118,20 @@ class AICompatibilityAnalyzer {
     // Language-specific prompts
     const prompts = {
       pt: {
-        systemRole: 'Você é um consultor especializado em dons espirituais cristãos. Analise o perfil a seguir e forneça insights personalizados:',
+        systemRole: 'Você é um consultor especializado em dons espirituais cristãos. Fale diretamente com a pessoa em primeira pessoa (você), usando um tom abraçador e encorajador. Analise o perfil a seguir:',
         userProfile: 'PERFIL DO USUÁRIO:',
         primaryGift: 'Dom Principal',
         secondaryGifts: 'Dons Secundários',
         points: 'pontos',
         structuredData: 'DADOS ESTRUTURADOS:',
-        requestFormat: 'Por favor, forneça uma análise em português brasileiro no seguinte formato JSON:',
-        personalizedInsights: 'Análise personalizada da combinação única de dons deste usuário',
-        strengthsDescription: 'Descrição das principais forças desta combinação',
-        challengesGuidance: 'Orientações sobre possíveis desafios e como superá-los',
-        ministryRecommendations: ['lista', 'de', 'ministérios', 'recomendados'],
-        developmentPlan: 'Plano de desenvolvimento espiritual personalizado',
-        practicalApplications: ['aplicações', 'práticas', 'específicas'],
-        finalInstruction: 'Seja específico, prático e focado na aplicação dos dons no contexto da igreja local brasileira.'
+        requestFormat: 'IMPORTANTE: Responda APENAS com JSON válido em português brasileiro, sem texto adicional antes ou depois. Use este formato exato:',
+        personalizedInsights: 'Você possui uma combinação única de dons que revela muito sobre como Deus quer usar você no Seu reino. Fale sobre essa combinação de forma abraçadora.',
+        strengthsDescription: 'Suas principais forças incluem essas características especiais que Deus plantou em você',
+        challengesGuidance: 'Alguns pontos de atenção para você crescer ainda mais nesses dons',
+        ministryRecommendations: ['ministérios onde você pode brilhar', 'áreas de serviço ideais para você'],
+        developmentPlan: 'Um plano personalizado para você desenvolver esses dons que Deus lhe deu',
+        practicalApplications: ['maneiras práticas de usar seus dons', 'aplicações do dia a dia'],
+        finalInstruction: 'Use sempre "você" e seja encorajador, abraçador e específico sobre como essa pessoa pode usar seus dons na igreja local brasileira. RESPONDA APENAS COM JSON VÁLIDO, SEM TEXTO EXTRA.'
       },
       en: {
         systemRole: 'You are a consultant specialized in Christian spiritual gifts. Analyze the following profile and provide personalized insights:',
@@ -241,23 +247,53 @@ ${t.finalInstruction}
 
   private parseAIResponse(response: string): AICompatibilityAnalysis {
     try {
-      // Try to extract JSON from response
-      const jsonMatch = response.match(/\{[\s\S]*\}/)
+      // Remove any text before JSON and extract JSON
+      let cleanResponse = response
+        .replace(/^[\s\S]*?(?=\{)/, '') // Remove everything before the first {
+        .replace(/Here's the analysis in JSON format:\s*/gi, '') // Remove AI response prefix
+      
+      const jsonMatch = cleanResponse.match(/\{[\s\S]*\}/)
       if (jsonMatch) {
-        const parsed = JSON.parse(jsonMatch[0])
+        let jsonString = jsonMatch[0]
+        
+        // Clean up common JSON issues
+        jsonString = jsonString
+          .replace(/\*\*[^*]*\*\*/g, '') // Remove markdown bold
+          .replace(/\n\s*\n/g, ' ') // Replace double newlines with space
+          .replace(/"\s*\+\s*"/g, '') // Remove string concatenation
+          
+        console.log('🔧 AI Analyzer: Cleaned JSON string:', jsonString.substring(0, 200) + '...')
+        
+        const parsed = JSON.parse(jsonString)
+        
+        // Clean up fields that might have malformed content
+        const cleanField = (field: string) => {
+          if (!field) return ''
+          return field
+            .replace(/\*\*[^*]*\*\*/g, '') // Remove markdown bold
+            .replace(/^\s*["']|["']\s*$/g, '') // Remove quotes
+            .replace(/^Here's the analysis in JSON format:\s*/i, '') // Remove AI response prefix
+            .trim()
+        }
+        
         return {
-          personalizedInsights: parsed.personalizedInsights || '',
-          strengthsDescription: parsed.strengthsDescription || '',
-          challengesGuidance: parsed.challengesGuidance || '',
-          ministryRecommendations: parsed.ministryRecommendations || [],
-          developmentPlan: parsed.developmentPlan || '',
-          practicalApplications: parsed.practicalApplications || [],
+          personalizedInsights: cleanField(parsed.personalizedInsights) || 'Análise personalizada não disponível.',
+          strengthsDescription: cleanField(parsed.strengthsDescription) || 'Pontos fortes identificados.',
+          challengesGuidance: cleanField(parsed.challengesGuidance) || 'Orientações para desenvolvimento.',
+          ministryRecommendations: Array.isArray(parsed.ministryRecommendations) 
+            ? parsed.ministryRecommendations.filter((m: unknown) => typeof m === 'string' && m.trim())
+            : ['Ministério baseado nos seus dons principais'],
+          developmentPlan: cleanField(parsed.developmentPlan) || 'Plano de desenvolvimento personalizado.',
+          practicalApplications: Array.isArray(parsed.practicalApplications) 
+            ? parsed.practicalApplications.filter((a: unknown) => typeof a === 'string' && a.trim())
+            : ['Aplicação prática dos seus dons'],
           confidence: parsed.confidence || 70
         }
       }
       
       throw new Error('No JSON found in response')
     } catch (error) {
+      console.warn('🔧 AI Analyzer: JSON parsing failed, using text extraction:', error)
       // If parsing fails, try to extract insights from text
       return this.extractInsightsFromText(response)
     }
@@ -301,7 +337,7 @@ ${t.finalInstruction}
       // Add more templates as needed
     }
     
-    const template = fallbackTemplates[primaryGift.key] || fallbackTemplates['A_PROPHECY']
+    const template = fallbackTemplates[primaryGift.key as keyof typeof fallbackTemplates] || fallbackTemplates['A_PROPHECY']
     
     return {
       personalizedInsights: template.insights,

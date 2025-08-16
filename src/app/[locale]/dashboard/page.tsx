@@ -287,7 +287,7 @@ export default function DashboardPage() {
                       }}
                       className="border-amber-300 text-amber-700 hover:bg-amber-100"
                     >
-                      Descartar Teste
+                      {t('discardTest')}
                     </Button>
                   </div>
                 </div>
@@ -301,7 +301,7 @@ export default function DashboardPage() {
           <div className="text-center py-16">
             <Award className="h-24 w-24 text-gray-400 mx-auto mb-6" />
             <h2 className="text-2xl font-bold text-gray-700 mb-4">
-              Bem-vindo à sua jornada espiritual!
+              {t('welcome.title')}
             </h2>
             <p className="text-gray-600 mb-8 max-w-md mx-auto">
               {quizInProgress 
@@ -336,7 +336,7 @@ export default function DashboardPage() {
                       <BarChart3 className="h-6 w-6 text-blue-600" />
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Total de Testes</p>
+                      <p className="text-sm text-gray-600">{t('stats.totalTests')}</p>
                       <p className="text-2xl font-bold">{results.length}</p>
                     </div>
                   </div>
@@ -350,7 +350,7 @@ export default function DashboardPage() {
                       <Award className="h-6 w-6 text-green-600" />
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Dom Principal</p>
+                      <p className="text-sm text-gray-600">{t('stats.mainGift')}</p>
                       <p className="text-lg font-bold">{latestResult?.topGifts[0] || 'N/A'}</p>
                     </div>
                   </div>
@@ -364,7 +364,7 @@ export default function DashboardPage() {
                       <Calendar className="h-6 w-6 text-purple-600" />
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Último Teste</p>
+                      <p className="text-sm text-gray-600">{t('stats.lastTest')}</p>
                       <p className="text-sm font-semibold">{latestResult ? formatDate(latestResult.createdAt) : 'N/A'}</p>
                     </div>
                   </div>
@@ -378,9 +378,9 @@ export default function DashboardPage() {
                       <TrendingUp className="h-6 w-6 text-orange-600" />
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Evolução</p>
+                      <p className="text-sm text-gray-600">{t('stats.evolution')}</p>
                       <p className="text-lg font-bold">
-                        {results.length > 1 ? 'Crescendo' : 'Primeiro'}
+                        {results.length > 1 ? t('stats.growing') : t('stats.first')}
                       </p>
                     </div>
                   </div>
@@ -401,14 +401,14 @@ export default function DashboardPage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
-                    <span>Resultado Mais Recente</span>
+                    <span>{t('sections.recentResult')}</span>
                     <Badge>{latestResult ? formatDate(latestResult.createdAt) : 'N/A'}</Badge>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     <div>
-                      <h4 className="font-semibold mb-3">Top 5 Dons</h4>
+                      <h4 className="font-semibold mb-3">{t('sections.top5Gifts')}</h4>
                       <div className="space-y-3">
                         {latestResult?.topGifts.slice(0, 5).map((giftName, index) => {
                           const giftKey = Object.entries(latestResult.totalScore)
@@ -439,7 +439,7 @@ export default function DashboardPage() {
                       <Link href="/quiz/results">
                         <Button variant="outline" size="sm" className="flex items-center gap-2">
                           <Eye className="h-4 w-4" />
-                          Ver Detalhes
+                          {t('sections.viewDetails')}
                         </Button>
                       </Link>
                     </div>
@@ -453,12 +453,12 @@ export default function DashboardPage() {
                 return evolution ? (
                   <Card>
                     <CardHeader>
-                      <CardTitle>Evolução dos Dons</CardTitle>
+                      <CardTitle>{t('sections.giftEvolution')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
                         <p className="text-sm text-gray-600">
-                          Comparação com o teste anterior
+                          {t('sections.compareWithPrevious')}
                         </p>
                         <div className="space-y-3">
                           {evolution.map((item, index) => (
@@ -484,7 +484,7 @@ export default function DashboardPage() {
                 ) : (
                   <Card>
                     <CardHeader>
-                      <CardTitle>Histórico de Testes</CardTitle>
+                      <CardTitle>{t('sections.testHistory')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="text-center py-8">

@@ -222,7 +222,8 @@
       "testHistory": "Test History",
       "takeAnother": "Take Another Test",
       "fullHistory": "Full History",
-      "view": "View"
+      "view": "View",
+      "compareWithPrevious": "Comparison with previous test"
     }
   },
   "admin": {
@@ -475,7 +476,20 @@
       "highlyRecommended": "Highly Recommended",
       "recommended": "Recommended",
       "consider": "Consider",
-      "completeTest": "Complete the test to see your compatibility analysis"
+      "completeTest": "Complete the test to see your compatibility analysis",
+      "personalizedAnalysisAI": "Personalized AI Analysis",
+      "compatibilityAndAI": "Compatibility and AI Analysis",
+      "compatibilityDescription": "This section shows how your spiritual gifts work together and offers personalized AI analyses for deeper insights.",
+      "compatibilityDataNotAvailable": "Compatibility data not available",
+      "personalizedAnalysis": "Your Personalized Analysis",
+      "mainStrengths": "Your Main Strengths",
+      "growthGuidance": "Guidance for Your Growth",
+      "recommendedMinistriesForYou": "Recommended Ministries for You",
+      "spiritualDevelopmentPlan": "Your Spiritual Development Plan",
+      "practicalApplications": "How to Apply Your Gifts in Practice",
+      "regenerateAIAnalysis": "Regenerate AI Analysis",
+      "generatingPersonalizedAnalysis": "Generating your personalized analysis...",
+      "aiProcessingResults": "Our AI is processing your results to create unique insights"
     },
     "actions": {
       "fullReport": "Full Report (PDF)",
@@ -483,7 +497,31 @@
       "viewAllGifts": "View All Gifts",
       "myHistory": "My History",
       "backToDashboard": "Back to Dashboard"
-    }
+    },
+    "backToDashboard": "Back to Dashboard",
+    "yourTopGift": "Your top gift",
+    "yourResults": "Your results",
+    "sessionId": "Session ID",
+    "resultsSummary": "Results Summary",
+    "primaryGift": "Primary Gift",
+    "strength": "Strength",
+    "giftsEvaluated": "Gifts Evaluated",
+    "sections": "Sections",
+    "retakeQuiz": "Retake Quiz",
+    "takeQuiz": "Take Quiz",
+    "testDate": "Test Date",
+    "biblicalBase": "Biblical Base",
+    "exploreGifts": "Explore your gifts",
+    "nextAction": "Next Action",
+    "compatibilityLevel": "Compatibility",
+    "uniqueProfile": "Unique Profile",
+    "excellent": "Excellent",
+    "good": "Good",
+    "balanced": "Balanced",
+    "diverse": "Diverse",
+    "dataNotAvailable": "Data not available",
+    "clickToHide": "Click to hide",
+    "clickToExpand": "Click to expand"
   },
   "Index": {
     "title": "Spiritual Gifts Test"

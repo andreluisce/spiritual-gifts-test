@@ -207,7 +207,8 @@
       "testHistory": "Historial de Pruebas",
       "takeAnother": "Hacer Otra Prueba",
       "fullHistory": "Historial Completo",
-      "view": "Ver"
+      "view": "Ver",
+      "compareWithPrevious": "Comparación con la prueba anterior"
     }
   },
   "admin": {
@@ -460,7 +461,20 @@
       "highlyRecommended": "Altamente Recomendado",
       "recommended": "Recomendado",
       "consider": "Considerar",
-      "completeTest": "Completa la prueba para ver tu análisis de compatibilidad"
+      "completeTest": "Completa la prueba para ver tu análisis de compatibilidad",
+      "personalizedAnalysisAI": "Análisis Personalizado con IA",
+      "compatibilityAndAI": "Análisis de Compatibilidad e IA",
+      "compatibilityDescription": "Esta sección muestra cómo tus dones espirituales trabajan juntos y ofrece análisis personalizados con inteligencia artificial para conocimientos más profundos.",
+      "compatibilityDataNotAvailable": "Datos de compatibilidad no disponibles",
+      "personalizedAnalysis": "Tu Análisis Personalizado",
+      "mainStrengths": "Tus Principales Fortalezas",
+      "growthGuidance": "Orientación para Tu Crecimiento",
+      "recommendedMinistriesForYou": "Ministerios Recomendados para Ti",
+      "spiritualDevelopmentPlan": "Tu Plan de Desarrollo Espiritual",
+      "practicalApplications": "Cómo Aplicar Tus Dones en la Práctica",
+      "regenerateAIAnalysis": "Regenerar Análisis IA",
+      "generatingPersonalizedAnalysis": "Generando tu análisis personalizado...",
+      "aiProcessingResults": "Nuestra IA está procesando tus resultados para crear conocimientos únicos"
     },
     "actions": {
       "fullReport": "Informe Completo (PDF)",
@@ -468,7 +482,31 @@
       "viewAllGifts": "Ver Todos los Dones",
       "myHistory": "Mi Historial",
       "backToDashboard": "Volver al Panel"
-    }
+    },
+    "backToDashboard": "Volver al Panel",
+    "yourTopGift": "Tu don principal",
+    "yourResults": "Tus resultados",
+    "sessionId": "ID de sesión",
+    "resultsSummary": "Resumen de Resultados",
+    "primaryGift": "Don Principal",
+    "strength": "Fortaleza",
+    "giftsEvaluated": "Dones Evaluados",
+    "sections": "Secciones",
+    "retakeQuiz": "Repetir Prueba",
+    "takeQuiz": "Hacer Prueba",
+    "testDate": "Fecha de Prueba",
+    "biblicalBase": "Base Bíblica",
+    "exploreGifts": "Explora tus dones",
+    "nextAction": "Próxima Acción",
+    "compatibilityLevel": "Compatibilidad",
+    "uniqueProfile": "Perfil Único",
+    "excellent": "Excelente",
+    "good": "Buena",
+    "balanced": "Equilibrada",
+    "diverse": "Diversa",
+    "dataNotAvailable": "Datos no disponibles",
+    "clickToHide": "Haz clic para ocultar",
+    "clickToExpand": "Haz clic para expandir"
   },
   "Index": {
     "title": "Prueba de Dones Espirituales"
