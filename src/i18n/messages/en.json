@@ -456,6 +456,27 @@
       "viewAllCharacteristics": "View All Characteristics",
       "viewAllQualities": "View All Qualities"
     },
+    "compatibility": {
+      "generateAI": "Generate AI Analysis",
+      "generating": "Generating...",
+      "aiBadge": "AI",
+      "basicAnalysis": "Basic Analysis Active",
+      "aiDescription": "Click \"Generate AI Analysis\" to get more detailed personalized insights about your spiritual gifts and specific recommendations.",
+      "profileAnalysis": "Your Profile Analysis",
+      "dominantPattern": "Dominant Pattern",
+      "developmentSuggestions": "Development Suggestions",
+      "giftCompatibility": "Compatibility Between Your Gifts",
+      "strengthAreas": "Strength Areas",
+      "attentionPoints": "Attention Points",
+      "recommendedMinistries": "Recommended Ministries",
+      "mainResponsibilities": "Main Responsibilities",
+      "growthAreas": "Growth Areas",
+      "essentialGifts": "Essential Gifts",
+      "highlyRecommended": "Highly Recommended",
+      "recommended": "Recommended",
+      "consider": "Consider",
+      "completeTest": "Complete the test to see your compatibility analysis"
+    },
     "actions": {
       "fullReport": "Full Report (PDF)",
       "retakeTest": "Retake Test",

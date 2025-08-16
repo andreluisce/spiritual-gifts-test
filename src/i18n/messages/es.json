@@ -441,6 +441,27 @@
       "viewAllCharacteristics": "Ver Todas las Características",
       "viewAllQualities": "Ver Todas las Cualidades"
     },
+    "compatibility": {
+      "generateAI": "Generar Análisis IA",
+      "generating": "Generando...",
+      "aiBadge": "IA",
+      "basicAnalysis": "Análisis Básico Activo",
+      "aiDescription": "Haz clic en \"Generar Análisis IA\" para obtener insights personalizados más detallados sobre tus dones espirituales y recomendaciones específicas.",
+      "profileAnalysis": "Análisis de Tu Perfil",
+      "dominantPattern": "Patrón Dominante",
+      "developmentSuggestions": "Sugerencias de Desarrollo",
+      "giftCompatibility": "Compatibilidad Entre Tus Dones",
+      "strengthAreas": "Áreas de Fortaleza",
+      "attentionPoints": "Puntos de Atención",
+      "recommendedMinistries": "Ministerios Recomendados",
+      "mainResponsibilities": "Principales Responsabilidades",
+      "growthAreas": "Áreas de Crecimiento",
+      "essentialGifts": "Dones Esenciales",
+      "highlyRecommended": "Altamente Recomendado",
+      "recommended": "Recomendado",
+      "consider": "Considerar",
+      "completeTest": "Completa la prueba para ver tu análisis de compatibilidad"
+    },
     "actions": {
       "fullReport": "Informe Completo (PDF)",
       "retakeTest": "Repetir Prueba",

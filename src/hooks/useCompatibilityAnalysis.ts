@@ -17,6 +17,8 @@ interface CompatibilityAnalysisResult {
     developmentSuggestions: string[]
   }
   isLoading: boolean
+  hasAIAnalysis: boolean
+  regenerateAnalysis: () => Promise<void>
 }
 
 export function useCompatibilityAnalysis(
@@ -32,7 +34,9 @@ export function useCompatibilityAnalysis(
       balanceAnalysis: '',
       developmentSuggestions: []
     },
-    isLoading: true
+    isLoading: true,
+    hasAIAnalysis: false,
+    regenerateAnalysis: async () => {}
   })
 
   useEffect(() => {
@@ -127,7 +131,51 @@ export function useCompatibilityAnalysis(
           compatibilities,
           ministryRecommendations,
           insights,
-          isLoading: false
+          isLoading: false,
+          hasAIAnalysis: !!aiAnalysis,
+          regenerateAnalysis: async () => {
+            if (!giftScores) return
+            
+            setAnalysis(prev => ({ ...prev, isLoading: true }))
+            
+            try {
+              const userProfile: UserGiftProfile = {
+                primaryGift: {
+                  key: topGifts[0] as Database['public']['Enums']['gift_key'],
+                  name: topGifts[0]?.replace(/^[A-Z]_/, '') || 'Unknown',
+                  score: giftScores[topGifts[0]] || 0
+                },
+                secondaryGifts: topGifts.slice(1, 3).map(giftKey => ({
+                  key: giftKey as Database['public']['Enums']['gift_key'],
+                  name: giftKey.replace(/^[A-Z]_/, ''),
+                  score: giftScores[giftKey] || 0
+                })),
+                locale: 'pt'
+              }
+              
+              const newAiAnalysis = await aiCompatibilityAnalyzer.analyzeCompatibility(userProfile)
+              
+              if (newAiAnalysis) {
+                const newInsights = {
+                  dominantPattern: newAiAnalysis.personalizedInsights?.split('.')[0] || insights.dominantPattern,
+                  balanceAnalysis: newAiAnalysis.strengthsDescription || insights.balanceAnalysis,
+                  developmentSuggestions: newAiAnalysis.practicalApplications || insights.developmentSuggestions
+                }
+                
+                setAnalysis(prev => ({
+                  ...prev,
+                  insights: newInsights,
+                  hasAIAnalysis: true,
+                  isLoading: false
+                }))
+              } else {
+                setAnalysis(prev => ({ ...prev, isLoading: false }))
+              }
+            } catch (error) {
+              console.error('Error regenerating AI analysis:', error)
+              setAnalysis(prev => ({ ...prev, isLoading: false }))
+            }
+          }
         })
       } catch (error) {
         console.error('Error in compatibility analysis:', error)
@@ -139,7 +187,9 @@ export function useCompatibilityAnalysis(
             balanceAnalysis: 'Unable to complete analysis at this time.',
             developmentSuggestions: []
           },
-          isLoading: false
+          isLoading: false,
+          hasAIAnalysis: false,
+          regenerateAnalysis: async () => {}
         })
       }
     }

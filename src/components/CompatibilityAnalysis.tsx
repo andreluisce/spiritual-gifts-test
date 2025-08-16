@@ -13,10 +13,15 @@ import {
   Star,
   Lightbulb,
   ArrowRight,
-  Award
+  Award,
+  Sparkles,
+  RefreshCw
 } from 'lucide-react'
 import { useCompatibilityAnalysis } from '@/hooks/useCompatibilityAnalysis'
 import { spiritualGifts } from '@/data/quiz-data'
+import { Button } from '@/components/ui/button'
+import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 
 interface CompatibilityAnalysisProps {
   giftScores: Record<string, number>
@@ -24,7 +29,20 @@ interface CompatibilityAnalysisProps {
 }
 
 export default function CompatibilityAnalysis({ giftScores, className }: CompatibilityAnalysisProps) {
-  const { compatibilities, ministryRecommendations, insights } = useCompatibilityAnalysis(giftScores)
+  const t = useTranslations('results.compatibility')
+  const { compatibilities, ministryRecommendations, insights, hasAIAnalysis, isLoading, regenerateAnalysis } = useCompatibilityAnalysis(giftScores)
+  const [isGenerating, setIsGenerating] = useState(false)
+
+  const handleGenerateAIAnalysis = async () => {
+    setIsGenerating(true)
+    try {
+      await regenerateAnalysis()
+    } catch (error) {
+      console.error('Error generating AI analysis:', error)
+    } finally {
+      setIsGenerating(false)
+    }
+  }
 
   const getGiftName = (giftKey: string): string => {
     return spiritualGifts.find(g => g.key === giftKey)?.name || giftKey
@@ -63,16 +81,44 @@ export default function CompatibilityAnalysis({ giftScores, className }: Compati
       {insights.dominantPattern && (
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Lightbulb className="h-5 w-5 text-yellow-600" />
-              Análise do Seu Perfil
+            <CardTitle className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Lightbulb className="h-5 w-5 text-yellow-600" />
+                {t('profileAnalysis')}
+                {hasAIAnalysis && (
+                  <Badge variant="outline" className="text-xs bg-gradient-to-r from-purple-50 to-blue-50 text-purple-700 border-purple-200">
+                    <Sparkles className="h-3 w-3 mr-1" />
+                    {t('aiBadge')}
+                  </Badge>
+                )}
+              </div>
+              {!hasAIAnalysis && !isLoading && (
+                <Button
+                  onClick={handleGenerateAIAnalysis}
+                  disabled={isGenerating}
+                  size="sm"
+                  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                >
+                  {isGenerating ? (
+                    <>
+                      <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                      {t('generating')}
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-4 w-4 mr-2" />
+                      {t('generateAI')}
+                    </>
+                  )}
+                </Button>
+              )}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <Award className="h-4 w-4 text-blue-600" />
-                <span className="font-semibold">Padrão Dominante:</span>
+                <span className="font-semibold">{t('dominantPattern')}:</span>
                 <Badge variant="outline" className="font-medium">
                   {insights.dominantPattern}
                 </Badge>
@@ -84,7 +130,7 @@ export default function CompatibilityAnalysis({ giftScores, className }: Compati
               <div>
                 <h4 className="font-semibold mb-2 flex items-center gap-2">
                   <Target className="h-4 w-4 text-green-600" />
-                  Sugestões de Desenvolvimento
+                  {t('developmentSuggestions')}
                 </h4>
                 <div className="space-y-2">
                   {insights.developmentSuggestions.map((suggestion, index) => (
@@ -94,6 +140,18 @@ export default function CompatibilityAnalysis({ giftScores, className }: Compati
                     </div>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {!hasAIAnalysis && (
+              <div className="mt-4 p-3 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border border-purple-100">
+                <p className="text-sm text-purple-700 mb-2 font-medium">
+                  <Sparkles className="h-4 w-4 inline mr-1" />
+                  {t('basicAnalysis')}
+                </p>
+                <p className="text-xs text-purple-600">
+                  {t('aiDescription')}
+                </p>
               </div>
             )}
           </CardContent>
