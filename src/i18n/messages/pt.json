@@ -258,11 +258,23 @@
       "guidance": "Orientações detalhadas não disponíveis para análise completa.",
       "biblicalReferences": "Referências bíblicas específicas em desenvolvimento."
     },
+    "expandedDetails": {
+      "clickToSeeDetails": "(clique para ver detalhes)",
+      "topCharacteristics": "Principais Características",
+      "qualitiesToDevelop": "Qualidades a Desenvolver",
+      "biblicalReference": "Referência Bíblica",
+      "andMore": "E mais {count} {type}...",
+      "characteristics": "características",
+      "qualities": "qualidades",
+      "viewAllCharacteristics": "Ver Todas as Características",
+      "viewAllQualities": "Ver Todas as Qualidades"
+    },
     "actions": {
       "fullReport": "Relatório Completo (PDF)",
       "retakeTest": "Refazer Teste",
       "viewAllGifts": "Ver Todos os Dons",
-      "myHistory": "Meu Histórico"
+      "myHistory": "Meu Histórico",
+      "backToDashboard": "Voltar ao Dashboard"
     }
   },
   "report": {

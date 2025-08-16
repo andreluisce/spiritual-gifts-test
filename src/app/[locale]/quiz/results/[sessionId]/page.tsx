@@ -12,7 +12,8 @@ import {
   Gift, RotateCcw,
   BookOpen, AlertTriangle, Heart,
   Target, Lightbulb,
-  Award, Users, Church, ArrowLeft
+  Award, Users, Church, ArrowLeft,
+  ChevronDown, ChevronRight
 } from 'lucide-react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
@@ -22,7 +23,7 @@ import {
   useCategories,
   type SpiritualGiftData,
 } from '@/hooks/use-quiz-queries'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { formatScore, formatPercentage } from '@/data/quiz-data'
 import CompatibilityAnalysis from '@/components/CompatibilityAnalysis'
 
@@ -31,8 +32,11 @@ export default function ResultsPage() {
   const router = useRouter()
   const params = useParams()
   const locale = useLocale()
+  const t = useTranslations('results')
+  const tCommon = useTranslations('common')
   const sessionId = params.sessionId as string
   const [activeTab, setActiveTab] = useState('overview')
+  const [expandedGifts, setExpandedGifts] = useState<Set<string>>(new Set())
 
   const { data: result, isLoading: loadingResults, error: resultsError } = useResultBySessionId(sessionId)
   const { data: spiritualGiftsData, isLoading: loadingSpiritualGifts } = useSpiritualGifts(locale)
@@ -49,7 +53,7 @@ export default function ResultsPage() {
   //   return topGiftDetails?.[0] // Return the highest scoring gift
   // }
 
-  const getScorePercentage = (score: number, giftKey: string): number => {
+  const getScorePercentage = (score: number): number => {
     // Maximum weighted scores for each gift with 5 questions per gift (balanced quiz)
     // Based on generate_balanced_quiz function analysis
     const maxScore = 56.406 // All gifts have same max with balanced quiz
@@ -70,6 +74,16 @@ export default function ResultsPage() {
     return spiritualGiftsData.find(gift => gift.gift_key === topGiftKey) || null
   }
 
+  const toggleGiftExpansion = (giftKey: string) => {
+    const newExpanded = new Set(expandedGifts)
+    if (newExpanded.has(giftKey)) {
+      newExpanded.delete(giftKey)
+    } else {
+      newExpanded.add(giftKey)
+    }
+    setExpandedGifts(newExpanded)
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -82,9 +96,9 @@ export default function ResultsPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-xl text-red-600 mb-4">Erro ao carregar resultados: {resultsError.message}</p>
+          <p className="text-xl text-red-600 mb-4">{t('errorLoading', { error: resultsError.message })}</p>
           <Button onClick={() => router.push('/quiz')}>
-            Tentar Novamente
+            {tCommon('tryAgain')}
           </Button>
         </div>
       </div>
@@ -95,9 +109,9 @@ export default function ResultsPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-xl text-gray-600 mb-4">Nenhum resultado encontrado</p>
+          <p className="text-xl text-gray-600 mb-4">{t('noResults')}</p>
           <Button onClick={() => router.push('/quiz')}>
-            Fazer o Teste
+            {t('takeTest')}
           </Button>
         </div>
       </div>
@@ -136,10 +150,10 @@ export default function ResultsPage() {
             <Gift className="h-16 w-16 text-blue-600" />
           </div>
           <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            Seus Dons Espirituais
+            {t('title')}
           </h1>
           <p className="text-gray-600">
-            Resultado do teste realizado em {new Date(result.createdAt).toLocaleDateString('pt-BR')}
+            {t('resultDate', { date: new Date(result.createdAt).toLocaleDateString(locale === 'pt' ? 'pt-BR' : locale === 'es' ? 'es-ES' : 'en-US') })}
           </p>
         </div>
 
@@ -148,7 +162,7 @@ export default function ResultsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Award className="h-5 w-5" />
-              Seus Principais Dons Espirituais
+              {t('topGifts')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -163,7 +177,7 @@ export default function ResultsPage() {
                   </Badge>
                   <p className="font-semibold">{scoreData.giftName}</p>
                   <p className="text-xs text-gray-500 mt-1">
-                    {formatScore(scoreData.score, 1)} pontos
+                    {formatScore(scoreData.score, 1)} {tCommon('points')}
                   </p>
                 </div>
               ))}
@@ -173,11 +187,11 @@ export default function ResultsPage() {
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="flex flex-wrap gap-2 w-full mb-4">
-            <TabsTrigger value="overview">Visão Geral</TabsTrigger>
-            <TabsTrigger value="compatibility">Análise de Compatibilidade</TabsTrigger>
-            <TabsTrigger value="characteristics">Características</TabsTrigger>
-            <TabsTrigger value="qualities">Qualidades</TabsTrigger>
-            <TabsTrigger value="guidance">Orientações</TabsTrigger>
+            <TabsTrigger value="overview">{t('tabs.overview')}</TabsTrigger>
+            <TabsTrigger value="compatibility">{t('tabs.compatibility')}</TabsTrigger>
+            <TabsTrigger value="characteristics">{t('tabs.characteristics')}</TabsTrigger>
+            <TabsTrigger value="qualities">{t('tabs.qualities')}</TabsTrigger>
+            <TabsTrigger value="guidance">{t('tabs.guidance')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6 mt-[70px] md:mt-[40px]">
@@ -186,29 +200,136 @@ export default function ResultsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Target className="h-5 w-5" />
-                  Pontuação Detalhada
+                  {t('detailedScores')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 {sortedScores.map(({ giftKey, giftName, definition, score }, index) => {
-                  const percentage = getScorePercentage(score, giftKey)
+                  const percentage = getScorePercentage(score)
+                  const giftData = getGiftByKey(giftKey)
+                  const isExpanded = expandedGifts.has(giftKey)
 
                   return (
                     <div key={giftKey}>
-                      <div className="flex justify-between items-center mb-2">
-                        <div>
-                          <h3 className="font-semibold text-lg">{giftName}</h3>
-                          <p className="text-sm text-gray-600">{definition}</p>
+                      <div 
+                        className="flex justify-between items-center mb-2 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+                        onClick={() => toggleGiftExpansion(giftKey)}
+                      >
+                        <div className="flex items-start gap-3 flex-1">
+                          <div className="flex items-center mt-1">
+                            {isExpanded ? (
+                              <ChevronDown className="h-4 w-4 text-gray-500" />
+                            ) : (
+                              <ChevronRight className="h-4 w-4 text-gray-500" />
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-lg flex items-center gap-2">
+                              {giftName}
+                              <span className="text-xs text-gray-500 font-normal">{t('expandedDetails.clickToSeeDetails')}</span>
+                            </h3>
+                            <p className="text-sm text-gray-600">{definition}</p>
+                          </div>
                         </div>
                         <div className="text-right">
                           <div className="text-2xl font-bold text-blue-600">{formatScore(score, 0)}</div>
-                          <div className="text-sm text-gray-500">pontos</div>
+                          <div className="text-sm text-gray-500">{tCommon('points')}</div>
                         </div>
                       </div>
+                      
                       <Progress value={percentage} className="h-3 mb-2" />
                       <div className="text-sm text-gray-500 mb-4">
-                        {formatPercentage(percentage)} de afinidade
+                        {t('affinity', { percentage: formatPercentage(percentage) })}
                       </div>
+
+                      {/* Expanded Content */}
+                      {isExpanded && giftData && (
+                        <div className="bg-gray-50 p-4 rounded-lg mb-4 space-y-4">
+                          {/* Top Characteristics */}
+                          {giftData.characteristics && giftData.characteristics.length > 0 && (
+                            <div>
+                              <h4 className="font-semibold text-sm text-gray-700 mb-2 flex items-center gap-1">
+                                <Lightbulb className="h-4 w-4" />
+                                {t('expandedDetails.topCharacteristics')}
+                              </h4>
+                              <div className="space-y-2">
+                                {giftData.characteristics.slice(0, 3).map((char, charIndex) => (
+                                  <div key={charIndex} className="flex items-start gap-2">
+                                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                                    <p className="text-sm text-gray-600">{char.characteristic}</p>
+                                  </div>
+                                ))}
+                                {giftData.characteristics.length > 3 && (
+                                  <p className="text-xs text-gray-500 italic">
+                                    {t('expandedDetails.andMore', { count: giftData.characteristics.length - 3, type: t('expandedDetails.characteristics') })}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Top Qualities */}
+                          {giftData.qualities && giftData.qualities.length > 0 && (
+                            <div>
+                              <h4 className="font-semibold text-sm text-gray-700 mb-2 flex items-center gap-1">
+                                <Target className="h-4 w-4" />
+                                {t('expandedDetails.qualitiesToDevelop')}
+                              </h4>
+                              <div className="space-y-2">
+                                {giftData.qualities.slice(0, 3).map((quality, qualityIndex) => (
+                                  <div key={qualityIndex} className="flex items-start gap-2">
+                                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                                    <p className="text-sm text-gray-600">{quality.quality_name}</p>
+                                  </div>
+                                ))}
+                                {giftData.qualities.length > 3 && (
+                                  <p className="text-xs text-gray-500 italic">
+                                    {t('expandedDetails.andMore', { count: giftData.qualities.length - 3, type: t('expandedDetails.qualities') })}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Biblical References */}
+                          {giftData.biblical_references && (
+                            <div>
+                              <h4 className="font-semibold text-sm text-gray-700 mb-2 flex items-center gap-1">
+                                <BookOpen className="h-4 w-4" />
+                                {t('expandedDetails.biblicalReference')}
+                              </h4>
+                              <p className="text-sm text-gray-600 italic">{giftData.biblical_references}</p>
+                            </div>
+                          )}
+
+                          {/* Quick Actions */}
+                          <div className="flex gap-2 pt-2 border-t border-gray-200">
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              className="text-xs"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setActiveTab('characteristics');
+                              }}
+                            >
+                              {t('expandedDetails.viewAllCharacteristics')}
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              className="text-xs"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setActiveTab('qualities');
+                              }}
+                            >
+                              {t('expandedDetails.viewAllQualities')}
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+
                       {index < sortedScores.length - 1 && <Separator />}
                     </div>
                   )
@@ -376,18 +497,18 @@ export default function ResultsPage() {
           <Link href="/dashboard">
             <Button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700">
               <ArrowLeft size={16} />
-              Voltar ao Dashboard
+              {t('actions.backToDashboard')}
             </Button>
           </Link>
 
           <Button variant="outline" onClick={retakeQuiz} className="flex items-center gap-2">
             <RotateCcw size={16} />
-            Refazer Teste
+            {t('actions.retakeTest')}
           </Button>
 
           <Link href="/gifts">
             <Button variant="outline">
-              Ver Todos os Dons
+              {t('actions.viewAllGifts')}
             </Button>
           </Link>
         </div>

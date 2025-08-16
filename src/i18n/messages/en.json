@@ -428,6 +428,41 @@
       "button": "Take the Test Now"
     }
   },
+  "results": {
+    "title": "Your Spiritual Gifts",
+    "resultDate": "Test result from {date}",
+    "topGifts": "Your Top Spiritual Gifts",
+    "errorLoading": "Error loading results: {error}",
+    "noResults": "No results found",
+    "takeTest": "Take the Test",
+    "tabs": {
+      "overview": "Overview",
+      "compatibility": "Compatibility Analysis",
+      "characteristics": "Characteristics",
+      "qualities": "Qualities",
+      "guidance": "Guidance"
+    },
+    "detailedScores": "Detailed Scores",
+    "affinity": "{percentage}% affinity",
+    "expandedDetails": {
+      "clickToSeeDetails": "(click to see details)",
+      "topCharacteristics": "Top Characteristics",
+      "qualitiesToDevelop": "Qualities to Develop",
+      "biblicalReference": "Biblical Reference",
+      "andMore": "And {count} more {type}...",
+      "characteristics": "characteristics",
+      "qualities": "qualities",
+      "viewAllCharacteristics": "View All Characteristics",
+      "viewAllQualities": "View All Qualities"
+    },
+    "actions": {
+      "fullReport": "Full Report (PDF)",
+      "retakeTest": "Retake Test",
+      "viewAllGifts": "View All Gifts",
+      "myHistory": "My History",
+      "backToDashboard": "Back to Dashboard"
+    }
+  },
   "Index": {
     "title": "Spiritual Gifts Test"
   }

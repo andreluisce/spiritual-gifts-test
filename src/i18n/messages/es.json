@@ -413,6 +413,41 @@
       "button": "Hacer la Prueba Ahora"
     }
   },
+  "results": {
+    "title": "Tus Dones Espirituales",
+    "resultDate": "Resultado de la prueba del {date}",
+    "topGifts": "Tus Principales Dones Espirituales",
+    "errorLoading": "Error al cargar resultados: {error}",
+    "noResults": "No se encontraron resultados",
+    "takeTest": "Hacer la Prueba",
+    "tabs": {
+      "overview": "Resumen",
+      "compatibility": "Análisis de Compatibilidad",
+      "characteristics": "Características",
+      "qualities": "Cualidades",
+      "guidance": "Orientaciones"
+    },
+    "detailedScores": "Puntuación Detallada",
+    "affinity": "{percentage}% de afinidad",
+    "expandedDetails": {
+      "clickToSeeDetails": "(haz clic para ver detalles)",
+      "topCharacteristics": "Principales Características",
+      "qualitiesToDevelop": "Cualidades a Desarrollar",
+      "biblicalReference": "Referencia Bíblica",
+      "andMore": "Y {count} {type} más...",
+      "characteristics": "características",
+      "qualities": "cualidades",
+      "viewAllCharacteristics": "Ver Todas las Características",
+      "viewAllQualities": "Ver Todas las Cualidades"
+    },
+    "actions": {
+      "fullReport": "Informe Completo (PDF)",
+      "retakeTest": "Repetir Prueba",
+      "viewAllGifts": "Ver Todos los Dones",
+      "myHistory": "Mi Historial",
+      "backToDashboard": "Volver al Panel"
+    }
+  },
   "Index": {
     "title": "Prueba de Dones Espirituales"
   }
