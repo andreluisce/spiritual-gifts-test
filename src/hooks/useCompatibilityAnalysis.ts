@@ -73,14 +73,14 @@ export function useCompatibilityAnalysis(
               topGifts[j] as Database['public']['Enums']['gift_key']
             )
             
-            if (compatibility) {
+            if (compatibility && compatibility.compatibilityScore !== undefined) {
               compatibilities.push({
                 primaryGift: topGifts[i],
                 secondaryGifts: [topGifts[j]],
                 compatibilityScore: compatibility.compatibilityScore,
-                strengthAreas: compatibility.strengths.map(s => s.strength),
-                potentialChallenges: compatibility.challenges.map(c => c.challenge),
-                synergyDescription: compatibility.description
+                strengthAreas: (compatibility.strengths || []).map(s => typeof s === 'string' ? s : s.strength),
+                potentialChallenges: (compatibility.challenges || []).map(c => typeof c === 'string' ? c : c.challenge),
+                synergyDescription: compatibility.description || 'Análise de compatibilidade'
               })
             }
           }
