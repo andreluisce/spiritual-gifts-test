@@ -4,6 +4,14 @@ import { cookies } from 'next/headers'
 import type { Database } from '@/lib/database.types'
 import { emailService, QuizResultEmailData } from '@/lib/email'
 
+interface QuizAnswer {
+  score: number
+  pool_question_id: number | null
+  question_pool?: {
+    gift?: string
+  } | null
+}
+
 export async function POST(request: NextRequest) {
   console.log('📧 Email API: Send results request received')
   try {
@@ -70,7 +78,7 @@ export async function POST(request: NextRequest) {
     // Calculate primary gift (highest scoring gift)
     const giftScores: { [key: string]: number[] } = {}
     
-    session.answers?.forEach((answer: any) => {
+    session.answers?.forEach((answer: QuizAnswer) => {
       const gift = answer.question_pool?.gift
       if (gift) {
         if (!giftScores[gift]) {

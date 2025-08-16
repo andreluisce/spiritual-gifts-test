@@ -3,7 +3,6 @@
 import { useAuth } from '@/context/AuthContext'
 import { useRouter } from '@/i18n/navigation'
 import { useEffect, useState } from 'react'
-import { useTranslations } from 'next-intl'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -14,8 +13,6 @@ import {
   ArrowLeft,
   Mail,
   Send,
-  CheckCircle,
-  XCircle,
   Settings,
   TestTube,
   AlertCircle,
@@ -29,7 +26,6 @@ import { useEmailTest } from '@/hooks/useEmail'
 export default function AdminEmailSettingsPage() {
   const { user, isAdmin, loading } = useAuth()
   const router = useRouter()
-  const t = useTranslations('admin.settings.email')
   const [showApiKey, setShowApiKey] = useState(false)
   const { testEmailService, testing, testResult, clearTestResult } = useEmailTest()
 
@@ -335,7 +331,7 @@ export default function AdminEmailSettingsPage() {
                 <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-semibold">5</span>
                 <div>
                   <p className="font-medium">Testar configuração</p>
-                  <p className="text-gray-600">Use o botão "Testar Serviço de Email" para verificar se tudo está funcionando</p>
+                  <p className="text-gray-600">Use o botão &quot;Testar Serviço de Email&quot; para verificar se tudo está funcionando</p>
                 </div>
               </div>
             </div>

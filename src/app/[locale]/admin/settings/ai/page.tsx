@@ -10,7 +10,6 @@ import { Separator } from '@/components/ui/separator'
 import { useSystemSettings } from '@/hooks/useSystemSettings'
 import { useTranslations } from 'next-intl'
 import { Sparkles, Brain, Zap, Database, Settings2, AlertCircle } from 'lucide-react'
-import { useState } from 'react'
 import { useAIOverviewStats, useAIServiceTest } from '@/hooks/useAIAnalytics'
 
 export default function AISettingsPage() {

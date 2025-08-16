@@ -3,6 +3,32 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase-client'
 
+interface GiftGroup {
+  gift_key: string
+  name_pt?: string
+  name_en?: string
+  name_es?: string
+  definition_pt?: string
+  definition_en?: string
+  definition_es?: string
+}
+
+interface QuestionGroup {
+  id: number
+  gift: string
+  text_pt?: string
+  text_en?: string
+  text_es?: string
+}
+
+interface CharacteristicGroup {
+  id: number
+  gift_key: string
+  characteristic_pt?: string
+  characteristic_en?: string
+  characteristic_es?: string
+}
+
 // Types
 export type Translation = {
   id: string
@@ -51,7 +77,7 @@ export function useTranslations() {
           })
 
           // Create translation objects for names and definitions
-          Object.values(giftGroups).forEach((group: any) => {
+          Object.values(giftGroups).forEach((group: GiftGroup) => {
             // Name translation
             allTranslations.push({
               id: `gift_name_${group.gift_key}`,
@@ -108,7 +134,7 @@ export function useTranslations() {
               }
             })
 
-            Object.values(questionGroups).forEach((question: any) => {
+            Object.values(questionGroups).forEach((question: QuestionGroup) => {
               allTranslations.push({
                 id: `question_${question.id}`,
                 key: `question_${question.id}`,
@@ -149,7 +175,7 @@ export function useTranslations() {
               charGroups[key][char.locale] = char[tableInfo.field]
             })
 
-            Object.values(charGroups).forEach((char: any) => {
+            Object.values(charGroups).forEach((char: CharacteristicGroup) => {
               allTranslations.push({
                 id: `${tableInfo.prefix}_${char.id}`,
                 key: `${tableInfo.prefix}_${char.id}`,

@@ -10,7 +10,7 @@ export type AuditLog = {
   user_email: string
   action: string
   resource: string
-  details?: any
+  details?: Record<string, unknown>
   ip_address?: string
   user_agent?: string
   status: 'success' | 'failed' | 'warning'
@@ -55,7 +55,7 @@ export function useAuditLogs(
         if (logsError) throw logsError
 
         if (logsData) {
-          const mappedLogs: AuditLog[] = logsData.map((log: any) => ({
+          const mappedLogs: AuditLog[] = logsData.map((log: AuditLog) => ({
             id: log.id.toString(),
             user_id: log.user_id,
             user_email: log.user_email || 'Unknown',
@@ -133,7 +133,7 @@ export function useAuditLogger() {
   const logEvent = async (
     action: string,
     resource: string,
-    details?: any,
+    details?: Record<string, unknown>,
     status: 'success' | 'failed' | 'warning' = 'success'
   ) => {
     try {

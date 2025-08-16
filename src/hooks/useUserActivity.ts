@@ -4,6 +4,21 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase-client'
 
 // Types for user activities
+interface RawUserActivity {
+  id: string
+  user_id: string
+  activity_type: string
+  activity_description: string
+  ip_address?: string
+  user_agent?: string
+  metadata?: Record<string, unknown>
+  created_at: string
+  users?: {
+    email: string
+    full_name: string
+  }
+}
+
 export type UserActivity = {
   id: string
   user_id: string
@@ -13,7 +28,7 @@ export type UserActivity = {
   activity_description: string
   ip_address?: string
   user_agent?: string
-  metadata?: any
+  metadata?: Record<string, unknown>
   created_at: string
 }
 
@@ -45,7 +60,7 @@ export function useUserActivities(limit: number = 50, userId?: string) {
         if (rpcError) throw rpcError
 
         if (data) {
-          const mappedActivities: UserActivity[] = data.map((activity: any) => ({
+          const mappedActivities: UserActivity[] = data.map((activity: RawUserActivity) => ({
             id: activity.id,
             user_id: activity.user_id,
             user_email: activity.user_email,

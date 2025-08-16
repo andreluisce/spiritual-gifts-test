@@ -393,7 +393,7 @@ export function useCompatibilityAnalysis(
     }
 
     analyzeCompatibility()
-  }, [giftScores, topGiftsCount])
+  }, [giftScores, topGiftsCount, locale, spiritualGiftsData, user])
 
   return analysis
 }

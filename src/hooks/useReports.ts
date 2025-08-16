@@ -8,7 +8,7 @@ export interface AnalyticsReport {
   report_type: 'overview' | 'spiritual_gifts' | 'demographics' | 'ai_analytics' | 'comprehensive'
   format: 'pdf' | 'csv' | 'json'
   date_range: '7d' | '30d' | '90d' | '1y' | 'all'
-  data: any
+  data: Record<string, unknown>
   file_path: string | null
   file_size: number | null
   generated_by: string

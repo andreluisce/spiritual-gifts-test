@@ -109,7 +109,7 @@ export function useEmail() {
     type: 'new_user' | 'quiz_completed' | 'report_generated' | 'system_alert',
     userName: string,
     userEmail: string,
-    details?: any
+    details?: Record<string, unknown>
   ): Promise<EmailResult> => {
     setSending(true)
     setError(null)

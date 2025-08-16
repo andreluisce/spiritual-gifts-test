@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
       profile: UserGiftProfile
       sessionId?: string
       useCache?: boolean
-      clientAnalysis?: any
+      clientAnalysis?: AICompatibilityAnalysis
     }
 
     // Validate required fields

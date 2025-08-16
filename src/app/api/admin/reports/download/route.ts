@@ -3,6 +3,30 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import type { Database } from '@/lib/database.types'
 
+interface ReportData {
+  overview?: Record<string, string | number>
+  spiritualGifts?: Array<{
+    giftKey: string
+    giftName: string
+    count: number
+    percentage: number
+  }>
+  aiAnalytics?: Record<string, string | number>
+  userStatistics?: Record<string, string | number>
+  metadata?: Record<string, string | number>
+}
+
+interface ReportRecord {
+  id: string
+  title: string
+  description: string | null
+  report_type: string
+  date_range: string
+  created_at: string
+  download_count: number
+  data: ReportData
+}
+
 export async function GET(request: NextRequest) {
   console.log('📥 Reports Download API: GET request received')
   try {
@@ -117,7 +141,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-function formatAsCSV(data: any): string {
+function formatAsCSV(data: ReportData): string {
   const lines: string[] = []
   
   // Add header
@@ -139,7 +163,7 @@ function formatAsCSV(data: any): string {
   if (data.spiritualGifts && Array.isArray(data.spiritualGifts)) {
     lines.push('=== SPIRITUAL GIFTS DISTRIBUTION ===')
     lines.push('Gift Key,Gift Name,Count,Percentage')
-    data.spiritualGifts.forEach((gift: any) => {
+    data.spiritualGifts.forEach((gift) => {
       lines.push(`${gift.giftKey},${gift.giftName},${gift.count},${gift.percentage}`)
     })
     lines.push('')
@@ -167,7 +191,7 @@ function formatAsCSV(data: any): string {
   return lines.join('\n')
 }
 
-function formatAsText(data: any, report: any): string {
+function formatAsText(data: ReportData, report: ReportRecord): string {
   const lines: string[] = []
   
   // Header
@@ -197,7 +221,7 @@ function formatAsText(data: any, report: any): string {
   if (data.spiritualGifts && Array.isArray(data.spiritualGifts)) {
     lines.push('SPIRITUAL GIFTS DISTRIBUTION')
     lines.push('-' .repeat(35))
-    data.spiritualGifts.forEach((gift: any, index: number) => {
+    data.spiritualGifts.forEach((gift, index: number) => {
       lines.push(`${index + 1}. ${gift.giftName}`)
       lines.push(`   Count: ${gift.count}`)
       lines.push(`   Percentage: ${gift.percentage}%`)

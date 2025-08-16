@@ -27,6 +27,39 @@ export type Question = {
   lastUpdated: string
 }
 
+interface RawGiftData {
+  id: number
+  name: string
+  definition: string | null
+  gift_key: string
+}
+
+interface RawQuestionData {
+  id: number
+  gift: string
+  question_pool: {
+    gift: string
+  }
+}
+
+interface RawCharacteristicData {
+  id: number
+  gift_key: string
+  characteristic: string
+}
+
+interface RawDangerData {
+  id: number
+  gift_key: string
+  danger: string
+}
+
+interface RawMisunderstandingData {
+  id: number
+  gift_key: string
+  misunderstanding: string
+}
+
 export type Characteristic = {
   id: string
   giftId: number
@@ -72,7 +105,7 @@ export function useSpiritualGifts() {
             })
           }
 
-          const mappedGifts: Gift[] = giftsData.map((gift: any) => ({
+          const mappedGifts: Gift[] = giftsData.map((gift: RawGiftData) => ({
             id: gift.id,
             name: gift.name,
             nameEn: gift.name, // TODO: Add English version
@@ -152,7 +185,7 @@ export function useQuestions() {
         }
 
         if (questionsData) {
-          const mappedQuestions: Question[] = questionsData.map((question: any) => ({
+          const mappedQuestions: Question[] = questionsData.map((question: RawQuestionData) => ({
             id: question.id.toString(),
             giftId: question.id,
             giftName: giftNames[question.gift] || question.gift,
@@ -214,7 +247,7 @@ export function useCharacteristics() {
           .eq('locale', 'pt')
 
         if (!charError && charData) {
-          charData.forEach((char: any) => {
+          charData.forEach((char: RawCharacteristicData) => {
             allCharacteristics.push({
               id: `char-${idCounter++}`,
               giftId: char.id,
@@ -235,7 +268,7 @@ export function useCharacteristics() {
           .eq('locale', 'pt')
 
         if (!dangerError && dangerData) {
-          dangerData.forEach((danger: any) => {
+          dangerData.forEach((danger: RawDangerData) => {
             allCharacteristics.push({
               id: `danger-${idCounter++}`,
               giftId: danger.id,
@@ -256,7 +289,7 @@ export function useCharacteristics() {
           .eq('locale', 'pt')
 
         if (!misundError && misundData) {
-          misundData.forEach((misund: any) => {
+          misundData.forEach((misund: RawMisunderstandingData) => {
             allCharacteristics.push({
               id: `misund-${idCounter++}`,
               giftId: misund.id,
@@ -426,7 +459,11 @@ export function useUpdateQuestion() {
       setError(null)
 
       // Update the question text and gift assignment
-      const updateData: any = {
+      const updateData: {
+        text: string
+        is_active: boolean
+        gift?: string
+      } = {
         text: updates.questionPt,
         is_active: updates.isActive
       }
@@ -519,7 +556,7 @@ export function useUpdateCharacteristic() {
       const numericId = characteristicId.split('-')[1]
 
       // Update the content and gift assignment
-      const updateData: any = {
+      const updateData: Record<string, string> = {
         [fieldName]: updates.contentPt
       }
       

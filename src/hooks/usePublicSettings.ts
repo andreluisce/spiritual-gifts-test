@@ -3,9 +3,20 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase-client'
 
+interface SystemSettings {
+  general?: {
+    enableRegistration?: boolean
+    enableGuestQuiz?: boolean
+    defaultLanguage?: string
+  }
+  quiz?: {
+    debugMode?: boolean
+  }
+}
+
 // Hook público para acessar configurações do sistema (somente leitura)
 export function usePublicSettings() {
-  const [settings, setSettings] = useState<any>(null)
+  const [settings, setSettings] = useState<SystemSettings | null>(null)
   const [loading, setLoading] = useState(true)
   const [supabase] = useState(() => createClient())
 

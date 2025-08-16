@@ -45,12 +45,14 @@ interface GeographicDistribution {
   percentage: number
 }
 
+type DateRange = '7d' | '30d' | '90d' | '1y'
+
 export default function AdminAnalyticsPage() {
   const { user, isAdmin, loading } = useAuth()
   const router = useRouter()
   const t = useTranslations('admin.analytics')
   const [activeTab, setActiveTab] = useState('overview')
-  const [dateRange, setDateRange] = useState('30d')
+  const [dateRange, setDateRange] = useState<DateRange>('30d')
   
   // Fetch real data
   const { analytics: realAnalytics, loading: analyticsLoading } = useAnalyticsData(dateRange)
@@ -378,9 +380,9 @@ export default function AdminAnalyticsPage() {
                     {geoDistribution.map((location: GeographicDistribution, index: number) => (
                       <div key={index} className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">{location.country}</span>
+                          <span className="text-sm font-medium">{location.location}</span>
                           <span className="text-sm text-gray-500">
-                            {location.count} ({formatPercentage(location.percentage)})
+                            {location.user_count} ({formatPercentage(location.percentage)})
                           </span>
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-2">
@@ -389,14 +391,6 @@ export default function AdminAnalyticsPage() {
                             style={{ width: `${location.percentage}%` }}
                           />
                         </div>
-                        {location.cities && location.cities.length > 0 && (
-                          <div className="pl-4">
-                            <p className="text-xs text-gray-500">
-                              Cidades: {location.cities.slice(0, 3).join(', ')}
-                              {location.cities.length > 3 && ` +${location.cities.length - 3} mais`}
-                            </p>
-                          </div>
-                        )}
                       </div>
                     ))}
                   </div>
@@ -425,7 +419,7 @@ export default function AdminAnalyticsPage() {
                 <div className="flex gap-2">
                   <Button 
                     variant="outline"
-                    onClick={() => generateQuickReport('comprehensive', dateRange as any)}
+                    onClick={() => generateQuickReport('comprehensive', dateRange)}
                     disabled={generating}
                   >
                     {generating ? (
@@ -449,7 +443,7 @@ export default function AdminAnalyticsPage() {
                   <h3 className="text-lg font-semibold mb-2">{t('reports.noReports')}</h3>
                   <p className="text-gray-600 mb-4">{t('reports.firstReport')}</p>
                   <Button 
-                    onClick={() => generateQuickReport('comprehensive', dateRange as any)}
+                    onClick={() => generateQuickReport('comprehensive', dateRange)}
                     disabled={generating}
                   >
                     {generating ? (
