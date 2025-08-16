@@ -1,8 +1,8 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase-client'
-import type { User } from '@supabase/supabase-js'
+import type { User, AuthChangeEvent, Session } from '@supabase/supabase-js'
 
 type AuthContextType = {
   user: User | null
@@ -23,7 +23,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [supabase] = useState(() => createClient())
 
   // Function to check admin status using the database
-  const checkAdminStatus = async (currentUser: User | null) => {
+  const checkAdminStatus = useCallback(async (currentUser: User | null) => {
     if (!currentUser) {
       setIsAdmin(false)
       return
@@ -45,7 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setAdminLoading(false)
     }
-  }
+  }, [supabase])
 
   useEffect(() => {
     // Get initial user
@@ -61,7 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     getUser()
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: Session | null) => {
       const newUser = session?.user ?? null
       setUser(newUser)
       setLoading(false)
@@ -71,7 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })
 
     return () => subscription.unsubscribe()
-  }, [supabase])
+  }, [supabase, checkAdminStatus])
 
   const signInWithGoogle = async () => {
     // Check if registration is enabled before proceeding
