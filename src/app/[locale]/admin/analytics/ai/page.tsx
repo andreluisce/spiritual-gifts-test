@@ -3,13 +3,32 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { useTranslations } from 'next-intl'
 import { useAIAnalytics, useAIRecentActivity } from '@/hooks/useAIAnalytics'
-import { Sparkles, TrendingUp, Users, Activity, BarChart3, Clock, CheckCircle, XCircle, RefreshCw } from 'lucide-react'
+import { Sparkles, TrendingUp, Users, Activity, BarChart3, Clock, CheckCircle, RefreshCw } from 'lucide-react'
 import { useState } from 'react'
 
+// Type definitions for AI analytics data
+interface AIGiftData {
+  gift_key: string
+  analysis_count: number
+  avg_confidence: number
+}
+
+interface AITimelineData {
+  date: string
+  analyses_count: number
+  unique_users: number
+}
+
+interface AIActivityData {
+  id: string
+  user_email: string
+  gift_combination: string
+  confidence_score: number
+  created_at: string
+}
+
 export default function AIAnalyticsPage() {
-  const t = useTranslations('admin.analytics')
   const [refreshing, setRefreshing] = useState(false)
   const { data: allData, loading, error, refetch } = useAIAnalytics('all')
   const { activities, loading: activitiesLoading, refetch: refetchActivities } = useAIRecentActivity(20)
@@ -172,7 +191,7 @@ export default function AIAnalyticsPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {byGift.slice(0, 7).map((gift: any) => (
+              {byGift.slice(0, 7).map((gift: AIGiftData) => (
                 <div key={gift.gift_key} className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
@@ -209,7 +228,7 @@ export default function AIAnalyticsPage() {
             <p className="text-gray-500 text-center py-6">Nenhuma atividade recente encontrada</p>
           ) : (
             <div className="space-y-3">
-              {activities.slice(0, 10).map((activity: any) => (
+              {activities.slice(0, 10).map((activity: AIActivityData) => (
                 <div key={activity.id} className="flex items-center justify-between p-3 border rounded-lg">
                   <div className="flex items-center gap-3">
                     {activity.is_cached ? (
@@ -251,10 +270,10 @@ export default function AIAnalyticsPage() {
           <CardContent>
             <div className="space-y-2">
               <div className="text-sm text-gray-600 mb-4">
-                Total nos últimos 30 dias: {timeline.reduce((sum: number, day: any) => sum + day.daily_analyses, 0)} análises
+                Total nos últimos 30 dias: {timeline.reduce((sum: number, day: AITimelineData) => sum + day.analyses_count, 0)} análises
               </div>
               <div className="grid grid-cols-7 gap-1 text-xs">
-                {timeline.slice(-7).map((day: any, index: number) => (
+                {timeline.slice(-7).map((day: AITimelineData, index: number) => (
                   <div key={index} className="text-center">
                     <div className="text-gray-500">
                       {new Date(day.analysis_date).toLocaleDateString('pt-BR', { weekday: 'short' })}

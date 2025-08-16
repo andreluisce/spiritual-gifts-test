@@ -1,29 +1,20 @@
 'use client'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { useTranslations } from 'next-intl'
 import {
   Users,
   FileText,
-  BarChart3,
   Settings,
   Activity,
   Database,
   TrendingUp,
-  UserCheck,
-  Clock,
-  CheckCircle,
-  Eye,
-  Shield,
-  Globe
+  UserCheck
 } from 'lucide-react'
-import Link from 'next/link'
 import { formatScore } from '@/data/quiz-data'
 import { useAdminStats, useRecentActivity, useGiftDistribution, useSystemStatus } from '@/hooks/useAdminData'
 
 export default function AdminDashboard() {
-  const t = useTranslations('admin.dashboard')
   const tStats = useTranslations('admin.dashboard.stats')
   const tActivity = useTranslations('admin.dashboard.recentActivity')
   const tGifts = useTranslations('admin.dashboard.topGifts')
@@ -32,7 +23,7 @@ export default function AdminDashboard() {
   const { stats, loading: statsLoading } = useAdminStats()
   const { activities, loading: activityLoading } = useRecentActivity(5)
   const { distribution: topGifts, loading: giftsLoading } = useGiftDistribution()
-  const { systemStatus, loading: systemLoading } = useSystemStatus()
+  const { loading: systemLoading } = useSystemStatus()
 
   if (statsLoading || systemLoading) {
     return (

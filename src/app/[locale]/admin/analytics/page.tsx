@@ -14,15 +14,12 @@ import {
   FileText,
   Calendar,
   Download,
-  ArrowLeft,
   Globe,
   Brain,
   Plus,
-  ExternalLink,
   Trash2,
   RefreshCw
 } from 'lucide-react'
-import Link from 'next/link'
 import { formatScore, formatPercentage } from '@/data/quiz-data'
 import { 
   useAnalyticsData, 
@@ -34,6 +31,19 @@ import {
 import { useReports, useQuickReport } from '@/hooks/useReports'
 
 // All data comes from the database - no mock data
+
+// Type definitions for analytics data
+interface AgeDemographic {
+  age_range: string
+  count: number
+  percentage: number
+}
+
+interface GeographicDistribution {
+  location: string
+  user_count: number
+  percentage: number
+}
 
 export default function AdminAnalyticsPage() {
   const { user, isAdmin, loading } = useAuth()
@@ -48,7 +58,7 @@ export default function AdminAnalyticsPage() {
   const { stats: realStats, loading: statsLoading } = useAdminStats()
   const { demographics: ageDemographics, loading: ageLoading } = useAgeDemographics()
   const { distribution: geoDistribution, loading: geoLoading } = useGeographicDistribution()
-  const { reports, loading: reportsLoading, generateReport, deleteReport, downloadReport } = useReports()
+  const { reports, loading: reportsLoading, deleteReport, downloadReport } = useReports()
   const { generateQuickReport, generating } = useQuickReport()
 
   useEffect(() => {
@@ -321,7 +331,7 @@ export default function AdminAnalyticsPage() {
                   </div>
                 ) : ageDemographics && ageDemographics.length > 0 ? (
                   <div className="space-y-4">
-                    {ageDemographics.map((group: any, index: number) => (
+                    {ageDemographics.map((group: AgeDemographic, index: number) => (
                       <div key={index} className="space-y-2">
                         <div className="flex items-center justify-between">
                           <span className="text-sm font-medium">{group.age_range}</span>
@@ -365,7 +375,7 @@ export default function AdminAnalyticsPage() {
                   </div>
                 ) : geoDistribution && geoDistribution.length > 0 ? (
                   <div className="space-y-4">
-                    {geoDistribution.map((location: any, index: number) => (
+                    {geoDistribution.map((location: GeographicDistribution, index: number) => (
                       <div key={index} className="space-y-2">
                         <div className="flex items-center justify-between">
                           <span className="text-sm font-medium">{location.country}</span>
