@@ -13,7 +13,10 @@ interface WelcomeCardProps {
 export function WelcomeCard({ user }: WelcomeCardProps) {
   const t = useTranslations('welcome')
   
-  // Debug: log user data to see what Google provides
+  // Extract user information from Supabase user object
+  const displayName = user.user_metadata?.name || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'
+  const avatarUrl = user.user_metadata?.avatar_url || user.user_metadata?.picture
+  
   // Extract first name from full name or use email prefix
   const getFirstName = (name: string) => {
     return name.split(' ')[0]
