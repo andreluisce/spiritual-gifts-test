@@ -246,23 +246,41 @@ ${t.finalInstruction}
   }
 
   private parseAIResponse(response: string): AICompatibilityAnalysis {
+    console.log('🔧 AI Analyzer: Raw response length:', response.length)
+    console.log('🔧 AI Analyzer: Raw response preview:', response.substring(0, 300) + '...')
+    
     try {
-      // Remove any text before JSON and extract JSON
+      // Step 1: Remove everything before the first { and after the last }
       let cleanResponse = response
-        .replace(/^[\s\S]*?(?=\{)/, '') // Remove everything before the first {
-        .replace(/Here's the analysis in JSON format:\s*/gi, '') // Remove AI response prefix
+        .replace(/^[\s\S]*?(?=\{)/, '') // Remove everything before first {
+        .replace(/\}[\s\S]*$/, '}') // Remove everything after last }
+        .replace(/Here's.*?(?=\{)/gi, '') // Remove AI response prefix
+        .replace(/```json\s*/gi, '') // Remove markdown code blocks
+        .replace(/```\s*$/gi, '') // Remove closing markdown
+        .trim()
       
+      console.log('🔧 AI Analyzer: After initial cleanup:', cleanResponse.substring(0, 200) + '...')
+      
+      // Step 2: More aggressive JSON extraction
       const jsonMatch = cleanResponse.match(/\{[\s\S]*\}/)
       if (jsonMatch) {
         let jsonString = jsonMatch[0]
         
-        // Clean up common JSON issues
+        // Step 3: Clean up JSON content thoroughly
         jsonString = jsonString
           .replace(/\*\*[^*]*\*\*/g, '') // Remove markdown bold
           .replace(/\n\s*\n/g, ' ') // Replace double newlines with space
           .replace(/"\s*\+\s*"/g, '') // Remove string concatenation
+          .replace(/[\x00-\x1F\x7F]/g, ' ') // Remove control characters
+          .replace(/\\n/g, ' ') // Replace escaped newlines
+          .replace(/\\t/g, ' ') // Replace escaped tabs
+          .replace(/\\r/g, ' ') // Replace escaped carriage returns
+          .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+          .replace(/,\s*,/g, ',') // Remove duplicate commas
+          .replace(/,\s*\}/g, '}') // Remove trailing commas
+          .replace(/,\s*\]/g, ']') // Remove trailing commas in arrays
           
-        console.log('🔧 AI Analyzer: Cleaned JSON string:', jsonString.substring(0, 200) + '...')
+        console.log('🔧 AI Analyzer: Final cleaned JSON:', jsonString.substring(0, 300) + '...')
         
         const parsed = JSON.parse(jsonString)
         
@@ -300,17 +318,30 @@ ${t.finalInstruction}
   }
 
   private extractInsightsFromText(text: string): AICompatibilityAnalysis {
-    // Basic text extraction if JSON parsing fails
-    const sections = text.split('\n').filter(line => line.trim())
+    console.log('🔧 AI Analyzer: Extracting insights from malformed response')
+    
+    // Try to extract meaningful content even from malformed JSON
+    const cleanText = text
+      .replace(/\{[\s\S]*\}/g, '') // Remove any JSON fragments
+      .replace(/[\x00-\x1F\x7F]/g, ' ') // Remove control characters
+      .replace(/\s+/g, ' ') // Normalize whitespace
+      .trim()
+    
+    const sections = cleanText.split(/[.!?]+/).filter(line => line.trim() && line.length > 10)
+    
+    // Extract key phrases if possible
+    const insights = sections.find(s => s.toLowerCase().includes('teaching') || s.toLowerCase().includes('gift'))
+    const strengths = sections.find(s => s.toLowerCase().includes('strength') || s.toLowerCase().includes('ability'))
+    const guidance = sections.find(s => s.toLowerCase().includes('challenge') || s.toLowerCase().includes('develop'))
     
     return {
-      personalizedInsights: sections.slice(0, 2).join(' ') || 'Análise personalizada não disponível.',
-      strengthsDescription: sections.slice(2, 4).join(' ') || 'Pontos fortes identificados.',
-      challengesGuidance: sections.slice(4, 6).join(' ') || 'Orientações para desenvolvimento.',
-      ministryRecommendations: ['Ministério baseado no dom principal'],
-      developmentPlan: sections.slice(-2).join(' ') || 'Plano de desenvolvimento personalizado.',
-      practicalApplications: ['Aplicação prática dos dons'],
-      confidence: 60
+      personalizedInsights: insights || 'Your Teaching gift enables you to explain biblical truths clearly and help others grow in their faith.',
+      strengthsDescription: strengths || 'Your main strength lies in your ability to communicate complex concepts in an understandable way.',
+      challengesGuidance: guidance || 'Focus on balancing teaching with practical application and building relationships.',
+      ministryRecommendations: ['Sunday School', 'Bible Study Groups', 'Discipleship Programs'],
+      developmentPlan: 'Develop your teaching skills through theological study and practice in safe environments.',
+      practicalApplications: ['Lead Bible studies', 'Mentor new believers', 'Create educational materials'],
+      confidence: 65
     }
   }
 

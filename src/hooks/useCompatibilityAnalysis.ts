@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { 
   dynamicCompatibilityAnalyzer,
-  getMinistryRecommendations as getDynamicMinistryRecommendations,
   type DynamicGiftCompatibility,
   type DynamicMinistryRecommendation
 } from '@/lib/dynamic-gift-compatibility'
 import { aiCompatibilityAnalyzer, type UserGiftProfile } from '@/lib/ai-compatibility-analyzer'
+import { useAuth } from '@/context/AuthContext'
+import { useSpiritualGifts } from '@/hooks/use-quiz-queries'
+import { useLocale } from 'next-intl'
 import type { Database } from '@/lib/database.types'
 
 interface CompatibilityAnalysisResult {
@@ -25,6 +27,9 @@ export function useCompatibilityAnalysis(
   giftScores: Record<string, number> | null | undefined,
   topGiftsCount: number = 3
 ): CompatibilityAnalysisResult {
+  const { user } = useAuth()
+  const locale = useLocale()
+  const { data: spiritualGiftsData } = useSpiritualGifts(locale)
   
   const [analysis, setAnalysis] = useState<CompatibilityAnalysisResult>({
     compatibilities: [],
@@ -41,7 +46,10 @@ export function useCompatibilityAnalysis(
 
   useEffect(() => {
     const analyzeCompatibility = async () => {
+      console.log('🔍 useCompatibilityAnalysis: Starting analysis', { giftScores, user: !!user })
+      
       if (!giftScores || Object.keys(giftScores).length === 0) {
+        console.log('❌ useCompatibilityAnalysis: No gift scores provided')
         setAnalysis({
           compatibilities: [],
           ministryRecommendations: [],
@@ -50,7 +58,9 @@ export function useCompatibilityAnalysis(
             balanceAnalysis: '',
             developmentSuggestions: []
           },
-          isLoading: false
+          isLoading: false,
+          hasAIAnalysis: false,
+          regenerateAnalysis: async () => {}
         })
         return
       }
@@ -64,6 +74,26 @@ export function useCompatibilityAnalysis(
           .slice(0, topGiftsCount)
           .map(([giftKey]) => giftKey)
         
+        // Function to get gift name in correct language
+        const getGiftName = (giftKey: string): string => {
+          if (!spiritualGiftsData) {
+            // Fallback mapping for Portuguese
+            const fallbackNames: Record<string, string> = {
+              'A_PROPHECY': 'Profecia',
+              'B_SERVICE': 'Serviço',
+              'C_TEACHING': 'Ensino',
+              'D_EXHORTATION': 'Exortação',
+              'E_GIVING': 'Doação',
+              'F_LEADERSHIP': 'Liderança',
+              'G_MERCY': 'Misericórdia'
+            }
+            return fallbackNames[giftKey] || giftKey.replace(/^[A-Z]_/, '')
+          }
+          
+          const gift = spiritualGiftsData.find(g => g.gift_key === giftKey)
+          return gift?.name || giftKey.replace(/^[A-Z]_/, '')
+        }
+
         const compatibilities: DynamicGiftCompatibility[] = []
         const ministryRecommendations = await dynamicCompatibilityAnalyzer.getMinistryRecommendations(
           topGifts as Database['public']['Enums']['gift_key'][]
@@ -89,25 +119,141 @@ export function useCompatibilityAnalysis(
             }
           }
         }
-        
+
+        // If no compatibilities were found, create meaningful fallback compatibilities
+        if (compatibilities.length === 0 && topGifts.length >= 2) {
+          console.log('🔄 useCompatibilityAnalysis: Creating fallback compatibilities')
+          
+          // Create compatibility between top 2 gifts
+          const primaryGiftName = getGiftName(topGifts[0])
+          const secondaryGiftName = getGiftName(topGifts[1])
+          
+          // Create meaningful compatibility based on gift combinations
+          const giftCompatibilities = {
+            [`${topGifts[0]}_${topGifts[1]}`]: {
+              score: 85,
+              strengths: [
+                `Sua combinação de ${primaryGiftName} e ${secondaryGiftName} cria uma força única`,
+                `${primaryGiftName} aprimora sua capacidade de ${secondaryGiftName.toLowerCase()}`,
+                `Essa combinação é ideal para ministérios que requerem tanto ${primaryGiftName.toLowerCase()} quanto ${secondaryGiftName.toLowerCase()}`
+              ],
+              challenges: [
+                `Balance o tempo entre exercer ${primaryGiftName} e ${secondaryGiftName}`,
+                `Evite se sobrecarregar tentando usar todos os dons simultaneamente`
+              ],
+              description: `A união entre ${primaryGiftName} e ${secondaryGiftName} forma uma base sólida para o serviço cristão efetivo`
+            }
+          }
+          
+          const compatKey = `${topGifts[0]}_${topGifts[1]}`
+          const compatData = giftCompatibilities[compatKey] || giftCompatibilities[`${topGifts[1]}_${topGifts[0]}`] || {
+            score: 80,
+            strengths: [`${primaryGiftName} e ${secondaryGiftName} se complementam naturalmente`],
+            challenges: [`Continue desenvolvendo ambos os dons em equilíbrio`],
+            description: `Seus dons principais trabalham em harmonia`
+          }
+          
+          compatibilities.push({
+            primaryGift: topGifts[0],
+            secondaryGifts: [topGifts[1]],
+            compatibilityScore: compatData.score,
+            strengthAreas: compatData.strengths,
+            potentialChallenges: compatData.challenges,
+            synergyDescription: compatData.description
+          })
+        }
+
         // Get AI-enhanced analysis
+        console.log('🤖 useCompatibilityAnalysis: Starting AI analysis')
         let aiAnalysis = null
         try {
+
           const userProfile: UserGiftProfile = {
             primaryGift: {
               key: topGifts[0] as Database['public']['Enums']['gift_key'],
-              name: topGifts[0]?.replace(/^[A-Z]_/, '') || 'Unknown',
+              name: getGiftName(topGifts[0]),
               score: giftScores[topGifts[0]] || 0
             },
             secondaryGifts: topGifts.slice(1, 3).map(giftKey => ({
               key: giftKey as Database['public']['Enums']['gift_key'],
-              name: giftKey.replace(/^[A-Z]_/, ''),
+              name: getGiftName(giftKey),
               score: giftScores[giftKey] || 0
             })),
-            locale: 'pt'
+            locale: locale
           }
           
-          aiAnalysis = await aiCompatibilityAnalyzer.analyzeCompatibility(userProfile)
+          // Choose analysis method based on authentication status
+          if (user) {
+            // User is logged in - use secure server-side API
+            console.log('🔐 useCompatibilityAnalysis: User logged in, using server-side API')
+            try {
+              console.log('📡 useCompatibilityAnalysis: Making fetch request to /api/ai-analysis')
+              const response = await fetch('/api/ai-analysis', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                credentials: 'include', // Include cookies for authentication
+                body: JSON.stringify({
+                  profile: userProfile,
+                  sessionId: window.location.pathname.split('/').slice(-2, -1)[0], // Get sessionId from URL (second to last segment)
+                  useCache: true
+                })
+              })
+              
+              console.log('📡 useCompatibilityAnalysis: Fetch completed, response status:', response.status)
+              
+              if (response.ok) {
+                const { analysis } = await response.json()
+                aiAnalysis = analysis
+                console.log('✅ useCompatibilityAnalysis: Server-side AI analysis successful')
+              } else if (response.status === 401) {
+                console.warn('🔒 useCompatibilityAnalysis: Authentication failed, falling back to client-side')
+                throw new Error('Authentication failed - using fallback')
+              } else {
+                console.error('❌ useCompatibilityAnalysis: Server-side API failed:', response.status)
+                throw new Error(`API response: ${response.status}`)
+              }
+            } catch (serverError) {
+              console.warn('Server-side AI analysis failed, trying client-side fallback:', serverError)
+              // Even for logged-in users, try client-side as fallback
+              try {
+                aiAnalysis = await aiCompatibilityAnalyzer.analyzeCompatibility(userProfile)
+                console.log('✅ useCompatibilityAnalysis: Client-side fallback successful')
+                
+                // Try to save client-side analysis to cache if user is logged in
+                if (user && aiAnalysis) {
+                  try {
+                    const sessionId = window.location.pathname.split('/').pop()
+                    await fetch('/api/ai-analysis', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                      credentials: 'include',
+                      body: JSON.stringify({
+                        profile: userProfile,
+                        sessionId: sessionId,
+                        useCache: false,
+                        clientAnalysis: aiAnalysis // Include pre-computed analysis
+                      })
+                    })
+                    console.log('💾 useCompatibilityAnalysis: Client-side analysis saved to cache')
+                  } catch (cacheError) {
+                    console.warn('⚠️ useCompatibilityAnalysis: Failed to save client analysis to cache:', cacheError)
+                  }
+                }
+              } catch (clientError) {
+                console.error('❌ useCompatibilityAnalysis: Both server-side and client-side failed:', clientError)
+                aiAnalysis = null
+              }
+            }
+          } else {
+            // User not logged in - use client-side analysis with potential API key exposure risk
+            console.log('🔓 useCompatibilityAnalysis: User not logged in, using client-side analysis')
+            aiAnalysis = await aiCompatibilityAnalyzer.analyzeCompatibility(userProfile)
+            console.log('✅ useCompatibilityAnalysis: Client-side AI analysis completed')
+          }
           
           // Enhance compatibilities with AI insights
           if (aiAnalysis && compatibilities.length > 0) {
@@ -120,19 +266,29 @@ export function useCompatibilityAnalysis(
         // Generate insights from AI analysis or fallback to compatibility analysis
         const topGiftName = topGifts[0] || 'Unknown'
         const insights = {
-          dominantPattern: aiAnalysis?.personalizedInsights?.split('.')[0] || `Profile ${topGiftName.replace(/^[A-Z]_/, '')}`,
+          dominantPattern: aiAnalysis?.personalizedInsights 
+            ? aiAnalysis.personalizedInsights.split('.')[0] + '.'
+            : `Perfil ${topGiftName.replace(/^[A-Z]_/, '')}`,
           balanceAnalysis: aiAnalysis?.strengthsDescription || (compatibilities.length > 0 
-            ? `Your main gifts show ${compatibilities[0].synergyDescription}` 
-            : 'Analysis in progress...'),
+            ? `Seus principais dons mostram ${compatibilities[0].synergyDescription}` 
+            : 'Análise em progresso...'),
           developmentSuggestions: aiAnalysis?.practicalApplications || compatibilities.flatMap(c => c.strengthAreas).slice(0, 3)
         }
 
+        const hasAIAnalysisResult = !!(aiAnalysis && aiAnalysis.personalizedInsights && aiAnalysis.strengthsDescription)
+        console.log('📊 useCompatibilityAnalysis: Analysis complete', { 
+          hasAI: hasAIAnalysisResult, 
+          aiAnalysis: !!aiAnalysis,
+          insights: aiAnalysis?.personalizedInsights ? 'present' : 'missing',
+          strengths: aiAnalysis?.strengthsDescription ? 'present' : 'missing'
+        })
+        
         setAnalysis({
           compatibilities,
           ministryRecommendations,
           insights,
           isLoading: false,
-          hasAIAnalysis: !!(aiAnalysis && aiAnalysis.personalizedInsights && aiAnalysis.strengthsDescription),
+          hasAIAnalysis: hasAIAnalysisResult,
           regenerateAnalysis: async () => {
             if (!giftScores) return
             
@@ -142,18 +298,60 @@ export function useCompatibilityAnalysis(
               const userProfile: UserGiftProfile = {
                 primaryGift: {
                   key: topGifts[0] as Database['public']['Enums']['gift_key'],
-                  name: topGifts[0]?.replace(/^[A-Z]_/, '') || 'Unknown',
+                  name: getGiftName(topGifts[0]),
                   score: giftScores[topGifts[0]] || 0
                 },
                 secondaryGifts: topGifts.slice(1, 3).map(giftKey => ({
                   key: giftKey as Database['public']['Enums']['gift_key'],
-                  name: giftKey.replace(/^[A-Z]_/, ''),
+                  name: getGiftName(giftKey),
                   score: giftScores[giftKey] || 0
                 })),
-                locale: 'pt'
+                locale: locale
               }
               
-              const newAiAnalysis = await aiCompatibilityAnalyzer.analyzeCompatibility(userProfile)
+              // Choose analysis method based on authentication status
+              let newAiAnalysis = null
+              if (user) {
+                // User is logged in - use secure server-side API with fallback
+                try {
+                  const response = await fetch('/api/ai-analysis', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    credentials: 'include', // Include cookies for authentication
+                    body: JSON.stringify({
+                      profile: userProfile,
+                      sessionId: window.location.pathname.split('/').pop(), // Get sessionId from URL
+                      useCache: false
+                    })
+                  })
+                  
+                  if (response.ok) {
+                    const { analysis } = await response.json()
+                    newAiAnalysis = analysis
+                  } else if (response.status === 401) {
+                    console.warn('🔒 Regenerate: Authentication failed, falling back to client-side')
+                    throw new Error('Authentication failed - using fallback')
+                  } else {
+                    console.error('❌ Regenerate: Server-side API failed:', response.status)
+                    throw new Error(`API error: ${response.status}`)
+                  }
+                } catch (serverError) {
+                  console.warn('Regenerate: Server-side failed, trying client-side fallback:', serverError)
+                  try {
+                    newAiAnalysis = await aiCompatibilityAnalyzer.analyzeCompatibility(userProfile)
+                    console.log('✅ Regenerate: Client-side fallback successful')
+                  } catch (clientError) {
+                    console.error('❌ Regenerate: Both server-side and client-side failed:', clientError)
+                    newAiAnalysis = null
+                  }
+                }
+              } else {
+                // User not logged in - use client-side analysis
+                console.log('🔓 Regenerate: User not logged in, using client-side analysis')
+                newAiAnalysis = await aiCompatibilityAnalyzer.analyzeCompatibility(userProfile)
+              }
               
               if (newAiAnalysis) {
                 const newInsights = {

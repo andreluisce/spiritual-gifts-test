@@ -506,7 +506,20 @@
     "diverse": "Diversa",
     "dataNotAvailable": "Datos no disponibles",
     "clickToHide": "Haz clic para ocultar",
-    "clickToExpand": "Haz clic para expandir"
+    "clickToExpand": "Haz clic para expandir",
+    "personalizedAnalysisAI": "Análisis Personalizado con IA",
+    "compatibilityAndAI": "Análisis de Compatibilidad e IA",
+    "compatibilityDescription": "Esta sección muestra cómo tus dones espirituales trabajan juntos y ofrece análisis personalizados con inteligencia artificial para conocimientos más profundos.",
+    "compatibilityDataNotAvailable": "Datos de compatibilidad no disponibles",
+    "personalizedAnalysis": "Tu Análisis Personalizado",
+    "mainStrengths": "Tus Principales Fortalezas",
+    "growthGuidance": "Orientación para Tu Crecimiento",
+    "recommendedMinistriesForYou": "Ministerios Recomendados para Ti",
+    "spiritualDevelopmentPlan": "Tu Plan de Desarrollo Espiritual",
+    "practicalApplications": "Cómo Aplicar Tus Dones en la Práctica",
+    "regenerateAIAnalysis": "Regenerar Análisis IA",
+    "generatingPersonalizedAnalysis": "Generando tu análisis personalizado...",
+    "aiProcessingResults": "Nuestra IA está procesando tus resultados para crear conocimientos únicos"
   },
   "Index": {
     "title": "Prueba de Dones Espirituales"

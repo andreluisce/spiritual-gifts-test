@@ -521,7 +521,20 @@
     "diverse": "Diverse",
     "dataNotAvailable": "Data not available",
     "clickToHide": "Click to hide",
-    "clickToExpand": "Click to expand"
+    "clickToExpand": "Click to expand",
+    "personalizedAnalysisAI": "Personalized AI Analysis",
+    "compatibilityAndAI": "Compatibility and AI Analysis",
+    "compatibilityDescription": "This section shows how your spiritual gifts work together and offers personalized AI analyses for deeper insights.",
+    "compatibilityDataNotAvailable": "Compatibility data not available",
+    "personalizedAnalysis": "Your Personalized Analysis",
+    "mainStrengths": "Your Main Strengths",
+    "growthGuidance": "Guidance for Your Growth",
+    "recommendedMinistriesForYou": "Recommended Ministries for You",
+    "spiritualDevelopmentPlan": "Your Spiritual Development Plan",
+    "practicalApplications": "How to Apply Your Gifts in Practice",
+    "regenerateAIAnalysis": "Regenerate AI Analysis",
+    "generatingPersonalizedAnalysis": "Generating your personalized analysis...",
+    "aiProcessingResults": "Our AI is processing your results to create unique insights"
   },
   "Index": {
     "title": "Spiritual Gifts Test"
