@@ -436,7 +436,7 @@ export default function DashboardPage() {
                       </div>
                     </div>
                     <div className="flex gap-2 pt-4">
-                      <Link href="/quiz/results">
+                      <Link href={`/quiz/results/${latestResult?.sessionId}`}>
                         <Button variant="outline" size="sm" className="flex items-center gap-2">
                           <Eye className="h-4 w-4" />
                           {t('sections.viewDetails')}
