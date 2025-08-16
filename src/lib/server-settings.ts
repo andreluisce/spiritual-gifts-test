@@ -1,5 +1,5 @@
 // src/lib/server-settings.ts
-import { createServerClient } from '@supabase/ssr'
+import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
 import { getCache, setCache, isCacheValid } from './cache-invalidation'
@@ -19,8 +19,9 @@ export async function getServerSettingsStatic() {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
-          getAll() { return [] },
-          setAll() { /* no-op */ },
+          get() { return undefined },
+          set() { /* no-op */ },
+          remove() { /* no-op */ },
         },
       }
     )
@@ -58,11 +59,14 @@ export async function getServerSettings() {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
-          getAll() {
-            return cookieStore.getAll()
+          get(name: string) {
+            return cookieStore.get(name)?.value
           },
-          setAll() {
-            // We can't set cookies in this context, but that's ok for read operations
+          set(name: string, value: string, options: CookieOptions) {
+            cookieStore.set({ name, value, ...options })
+          },
+          remove(name: string, options: CookieOptions) {
+            cookieStore.set({ name, value: '', ...options })
           },
         },
       }

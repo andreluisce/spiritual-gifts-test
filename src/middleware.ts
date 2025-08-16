@@ -1,5 +1,5 @@
 import createMiddleware from 'next-intl/middleware';
-import { createServerClient } from '@supabase/ssr';
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
 import { staticRouting, getDynamicRouting, isValidLocale } from './i18n/dynamic-routing';
 import { getDefaultLanguage } from './lib/server-settings';
@@ -25,13 +25,14 @@ export async function middleware(request: NextRequest) {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
-          getAll() {
-            return request.cookies.getAll()
+          get(name: string) {
+            return request.cookies.get(name)?.value
           },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              response.cookies.set(name, value, options)
-            })
+          set(name: string, value: string, options: CookieOptions) {
+            response.cookies.set(name, value, options)
+          },
+          remove(name: string, options: CookieOptions) {
+            response.cookies.set(name, '', { ...options, maxAge: 0 })
           },
         },
       }
@@ -82,3 +83,6 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: ['/((?!api|_next|_static|favicon.ico|.*\\.).*)']
 };
+
+// Force Node.js runtime to avoid Edge Runtime compatibility issues with Supabase
+export const runtime = 'nodejs';

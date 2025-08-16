@@ -4,6 +4,9 @@ import { cookies } from 'next/headers'
 import { aiCompatibilityAnalyzer, type UserGiftProfile, type AICompatibilityAnalysis } from '@/lib/ai-compatibility-analyzer'
 import type { Database } from '@/lib/database.types'
 
+// Force Node.js runtime for Supabase compatibility
+export const runtime = 'nodejs'
+
 export async function POST(request: NextRequest) {
   console.log('🚀 AI Analysis API: POST request received')
   try {

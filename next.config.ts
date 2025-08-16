@@ -20,6 +20,10 @@ export default withNextIntl({
         config.resolve.fallback = {
             ...config.resolve.fallback,
             ws: false,
+            fs: false,
+            net: false,
+            tls: false,
+            crypto: false,
         };
 
         // Ignore WebSocket dynamic require warnings in Supabase Realtime
@@ -29,7 +33,31 @@ export default withNextIntl({
                 module: /node_modules\/@supabase\/realtime-js/,
                 message: /Critical dependency/,
             },
+            {
+                module: /node_modules\/@supabase\/realtime-js/,
+                message: /the request of a dependency is an expression/,
+            },
+            {
+                module: /node_modules\/@supabase\/realtime-js/,
+                message: /A Node\.js API is used/,
+            },
         ];
+
+        // Optimize serialization for large strings
+        config.optimization = {
+            ...config.optimization,
+            usedExports: true,
+            sideEffects: false,
+        };
+
+        // Add externals for Node.js specific modules when building for client
+        if (!isServer) {
+            config.externals = config.externals || [];
+            config.externals.push({
+                'utf-8-validate': 'commonjs utf-8-validate',
+                'bufferutil': 'commonjs bufferutil',
+            });
+        }
 
         return config;
     },

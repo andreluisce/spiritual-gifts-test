@@ -4,6 +4,9 @@ import { cookies } from 'next/headers'
 import type { Database } from '@/lib/database.types'
 import { emailService, AdminNotificationData } from '@/lib/email'
 
+// Force Node.js runtime for Supabase compatibility
+export const runtime = 'nodejs'
+
 export async function POST(request: NextRequest) {
   console.log('📧 Admin Notification API: Request received')
   try {

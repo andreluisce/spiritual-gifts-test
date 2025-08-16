@@ -3,6 +3,9 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import type { Database } from '@/lib/database.types'
 
+// Force Node.js runtime for Supabase compatibility
+export const runtime = 'nodejs'
+
 // GET endpoint to retrieve AI analytics data (admin only)
 export async function GET(request: NextRequest) {
   console.log('📊 AI Analytics API: GET request received')

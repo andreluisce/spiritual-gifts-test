@@ -27,6 +27,9 @@ interface ReportRecord {
   data: ReportData
 }
 
+// Force Node.js runtime for Supabase compatibility
+export const runtime = 'nodejs'
+
 export async function GET(request: NextRequest) {
   console.log('📥 Reports Download API: GET request received')
   try {

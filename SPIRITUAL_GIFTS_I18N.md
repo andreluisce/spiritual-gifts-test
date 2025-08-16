@@ -3,6 +3,9 @@
 ## Overview
 The spiritual gifts are now fully internationalized across Portuguese (pt), English (en), and Spanish (es) languages.
 
+
+
+
 ## Gift Names Available
 
 | Gift Key | Portuguese | English | Spanish |
@@ -24,10 +27,10 @@ import { useGiftTranslations } from '@/lib/gift-translation-utils'
 
 export function MyComponent() {
   const { getGiftName } = useGiftTranslations()
-  
+
   // Get localized gift name
   const giftName = getGiftName('A_PROPHECY') // Returns "Profecia" in pt, "Prophecy" in en, etc.
-  
+
   return <div>{giftName}</div>
 }
 ```
@@ -50,9 +53,9 @@ import { useTranslations } from 'next-intl'
 
 export function MyComponent() {
   const t = useTranslations('gifts.names')
-  
+
   const giftName = t('A_PROPHECY') // Automatically uses current locale
-  
+
   return <div>{giftName}</div>
 }
 ```

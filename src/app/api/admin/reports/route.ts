@@ -3,6 +3,9 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import type { Database } from '@/lib/database.types'
 
+// Force Node.js runtime for Supabase compatibility
+export const runtime = 'nodejs'
+
 // GET endpoint to retrieve generated reports list
 export async function GET() {
   console.log('📊 Reports API: GET request received')

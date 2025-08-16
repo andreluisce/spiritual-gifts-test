@@ -4,6 +4,9 @@ import { cookies } from 'next/headers'
 import type { Database } from '@/lib/database.types'
 import { emailService } from '@/lib/email'
 
+// Force Node.js runtime for Supabase compatibility
+export const runtime = 'nodejs'
+
 export async function POST(request: NextRequest) {
   console.log('📧 Welcome Email API: Request received')
   try {
