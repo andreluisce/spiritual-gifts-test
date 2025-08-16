@@ -168,6 +168,8 @@ export function useQuizQuestions(locale: string = 'pt') {
           gift_key: string;
           weight_class: string;
           question_order: number;
+          reverse_scored: boolean;
+          default_weight: number;
         }) => ({
           id: item.question_id,
           question: item.question_text,
@@ -175,7 +177,9 @@ export function useQuizQuestions(locale: string = 'pt') {
           // Additional metadata from backend
           weight_class: item.weight_class,
           question_order: item.question_order,
-          quiz_id: item.quiz_id
+          quiz_id: item.quiz_id,
+          reverse_scored: item.reverse_scored,
+          default_weight: item.default_weight
         }))
         
         const expectedTotal = questionsPerGift * 7; // 7 spiritual gifts

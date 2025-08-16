@@ -13,6 +13,7 @@ import { useQuiz } from '@/hooks/use-quiz'
 import { useTranslations, useLocale } from 'next-intl'
 import { useAuth } from '@/context/AuthContext'
 import { usePublicSettings } from '@/hooks/usePublicSettings'
+import { calculateOptionScores, responseOptions } from '@/data/quiz-data'
 import { motion, AnimatePresence } from 'framer-motion'
 import { formatPercentage } from '@/data/quiz-data'
 import Image from 'next/image'
@@ -440,7 +441,24 @@ export default function QuizPage() {
                     <span><strong>Dom:</strong> {currentQuestion.gift_key}</span>
                     <span><strong>Classe:</strong> {currentQuestion.weight_class || 'P1'}</span>
                     <span><strong>ID:</strong> {currentQuestion.id}</span>
+                    <span><strong>Reverse:</strong> {currentQuestion.reverse_scored ? 'SIM' : 'NÃO'}</span>
+                    <span><strong>Peso:</strong> {currentQuestion.default_weight || 1}</span>
                     {currentQuestion.quiz_id && <span><strong>Quiz ID:</strong> {currentQuestion.quiz_id}</span>}
+                  </div>
+                  
+                  {/* Score breakdown for current question */}
+                  <div className="mt-2 pt-2 border-t border-orange-200">
+                    <div className="text-xs font-semibold text-orange-700 mb-1">Pontuação por Opção:</div>
+                    <div className="grid grid-cols-2 gap-1 text-xs">
+                      {(() => {
+                        const optionScores = calculateOptionScores(currentQuestion.reverse_scored)
+                        return Object.entries(optionScores).map(([option, score]) => (
+                          <span key={option} className="text-orange-700">
+                            <strong>{option}:</strong> {score} pts
+                          </span>
+                        ))
+                      })()}
+                    </div>
                   </div>
                   
                   {/* Current Scores */}

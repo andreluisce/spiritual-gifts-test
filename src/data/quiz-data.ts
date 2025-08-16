@@ -8,6 +8,8 @@ export interface QuizQuestion {
   weight_class?: string;
   question_order?: number;
   quiz_id?: string;
+  reverse_scored?: boolean;
+  default_weight?: number;
 }
 
 export interface SpiritualGift {
@@ -186,6 +188,33 @@ export const formatScore = (score: number, decimals: number = 0): string => {
 export const formatPercentage = (value: number, decimals: number = 0): string => {
   return `${value.toFixed(decimals)}%`;
 };
+
+// Calculate score for each response option based on reverse_scored
+export function calculateOptionScores(reverse_scored: boolean = false) {
+  if (reverse_scored) {
+    return {
+      "Não me identifico": 3,
+      "Identifico-me pouco": 2,
+      "Identifico-me bem": 1,
+      "Identifico-me muito": 0
+    }
+  } else {
+    return {
+      "Não me identifico": 0,
+      "Identifico-me pouco": 1,
+      "Identifico-me bem": 2,
+      "Identifico-me muito": 3
+    }
+  }
+}
+
+// Get all option labels
+export const responseOptions = [
+  "Não me identifico",
+  "Identifico-me pouco", 
+  "Identifico-me bem",
+  "Identifico-me muito"
+]
 
 // Question weights based on their position and importance
 const QUESTION_WEIGHTS: Record<number, number> = {
