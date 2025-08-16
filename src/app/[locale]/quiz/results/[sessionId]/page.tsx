@@ -40,9 +40,9 @@ export default function ResultsPage() {
 
   const loading = loadingResults || loadingSpiritualGifts || loadingCategories
 
-  // const getGiftByKey = (key: string): SpiritualGiftData | undefined => {
-  //   return spiritualGiftsData?.find(gift => gift.gift_key === key)
-  // }
+  const getGiftByKey = (key: string): SpiritualGiftData | undefined => {
+    return spiritualGiftsData?.find(gift => gift.gift_key === key)
+  }
 
   // Get the top gift data from the database function
   // const getTopGiftData = (): TopGiftDetail | undefined => {
@@ -64,12 +64,11 @@ export default function ResultsPage() {
   }
 
   // Get the complete top gift data
-  // const getTopGiftWithCompleteData = (): SpiritualGiftData | null => {
-  //   const topGiftData = getTopGiftData()
-  //   if (!topGiftData || !spiritualGiftsData) return null
-  //   
-  //   return spiritualGiftsData.find(gift => gift.gift_key === topGiftData.gift_key) || null
-  // }
+  const getTopGiftWithCompleteData = (): SpiritualGiftData | null => {
+    if (!sortedScores.length || !spiritualGiftsData) return null
+    const topGiftKey = sortedScores[0].giftKey
+    return spiritualGiftsData.find(gift => gift.gift_key === topGiftKey) || null
+  }
 
   if (loading) {
     return (
@@ -116,8 +115,7 @@ export default function ResultsPage() {
 
   const sortedScores = allScores.sort((a, b) => b.score - a.score);
 
-  // const topGiftWithCompleteData = getTopGiftWithCompleteData()
-  // const topGiftDetail = getTopGiftData()
+  const topGiftWithCompleteData = getTopGiftWithCompleteData()
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
@@ -259,33 +257,117 @@ export default function ResultsPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <Alert>
-                  <AlertTriangle className="h-4 w-4" />
-                  <AlertDescription>
-                    Dados completos do dom principal não disponíveis. Mostrando informações básicas.
-                  </AlertDescription>
-                </Alert>
+                {topGiftWithCompleteData?.characteristics && topGiftWithCompleteData.characteristics.length > 0 ? (
+                  <div className="space-y-3">
+                    {topGiftWithCompleteData.characteristics.map((char, index) => (
+                      <div key={index} className="flex items-start gap-3">
+                        <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
+                        <p className="text-gray-700">{char.characteristic}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <Alert>
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertDescription>
+                      Nenhuma característica disponível para este dom.
+                    </AlertDescription>
+                  </Alert>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
 
           <TabsContent value="qualities" className="space-y-6 mt-[70px] md:mt-[40px]">
-            <Alert>
-              <AlertTriangle className="h-4 w-4" />
-              <AlertDescription>
-                Dados de qualidades não disponíveis para análise completa.
-              </AlertDescription>
-            </Alert>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="h-5 w-5" />
+                  Qualidades a Desenvolver
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {topGiftWithCompleteData?.qualities && topGiftWithCompleteData.qualities.length > 0 ? (
+                  <div className="space-y-4">
+                    {topGiftWithCompleteData.qualities.map((quality, index) => (
+                      <div key={index} className="border-l-4 border-blue-500 pl-4">
+                        <h4 className="font-semibold text-gray-800">{quality.quality_name}</h4>
+                        {quality.description && (
+                          <p className="text-sm text-gray-600 mt-1">{quality.description}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <Alert>
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertDescription>
+                      Nenhuma qualidade disponível para este dom.
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </CardContent>
+            </Card>
           </TabsContent>
 
 
           <TabsContent value="guidance" className="space-y-6 mt-[70px] md:mt-[40px]">
-            <Alert>
-              <AlertTriangle className="h-4 w-4" />
-              <AlertDescription>
-                Orientações detalhadas não disponíveis para análise completa.
-              </AlertDescription>
-            </Alert>
+            <div className="space-y-6">
+              {/* Dangers/Precautions */}
+              {topGiftWithCompleteData?.dangers && topGiftWithCompleteData.dangers.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-amber-700">
+                      <AlertTriangle className="h-5 w-5" />
+                      Cuidados e Precauções
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {topGiftWithCompleteData.dangers.map((danger, index) => (
+                        <div key={index} className="flex items-start gap-3">
+                          <div className="w-2 h-2 bg-amber-600 rounded-full mt-2 flex-shrink-0"></div>
+                          <p className="text-gray-700">{danger.danger}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Misunderstandings */}
+              {topGiftWithCompleteData?.misunderstandings && topGiftWithCompleteData.misunderstandings.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-red-700">
+                      <BookOpen className="h-5 w-5" />
+                      Mal-Entendidos Comuns
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {topGiftWithCompleteData.misunderstandings.map((misunderstanding, index) => (
+                        <div key={index} className="flex items-start gap-3">
+                          <div className="w-2 h-2 bg-red-600 rounded-full mt-2 flex-shrink-0"></div>
+                          <p className="text-gray-700">{misunderstanding.misunderstanding}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* If no data available */}
+              {(!topGiftWithCompleteData?.dangers || topGiftWithCompleteData.dangers.length === 0) &&
+               (!topGiftWithCompleteData?.misunderstandings || topGiftWithCompleteData.misunderstandings.length === 0) && (
+                <Alert>
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertDescription>
+                    Orientações detalhadas não disponíveis para este dom.
+                  </AlertDescription>
+                </Alert>
+              )}
+            </div>
           </TabsContent>
         </Tabs>
 
