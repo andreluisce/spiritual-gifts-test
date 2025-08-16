@@ -68,7 +68,7 @@ export default function CompatibilityAnalysis({ giftScores, className }: Compati
         <CardContent className="text-center py-12">
           <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <p className="text-gray-500">
-            Complete o teste para ver sua análise de compatibilidade
+            {t('completeTest')}
           </p>
         </CardContent>
       </Card>

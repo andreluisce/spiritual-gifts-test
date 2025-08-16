@@ -188,6 +188,11 @@ ${t.finalInstruction}
   }
 
   private async callAIService(prompt: string): Promise<string> {
+    // Check if API key is available
+    if (!this.apiKey || this.apiKey.trim() === '') {
+      throw new Error('AI service not configured - no API key available')
+    }
+
     const config = AI_SERVICES[this.service]
     
     const requestBody = {
