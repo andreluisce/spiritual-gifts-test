@@ -35,7 +35,7 @@ export const spiritualGifts: SpiritualGift[] = [
   },
   {
     key: 'B_SERVICE',
-    name: 'Ministério (Serviço)',
+    name: 'Serviço',
     description: 'A capacidade de identificar necessidades não atendidas envolvidas numa tarefa relacionada com a obra de Deus e usar os recursos disponíveis para satisfazer essas necessidades.',
     biblicalReferences: ['Romanos 12:7'],
     characteristics: [

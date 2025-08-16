@@ -66,7 +66,7 @@ export default function QuizPage() {
   const currentQuestion = availableQuestions && availableQuestions.length > 0 ? availableQuestions[currentQuestionIndex] : null
   const answeredCount = Object.keys(currentAnswers).length
   const currentPosition = currentQuestionIndex + 1
-  const progress = availableQuestions && availableQuestions.length > 0 ? (currentQuestionIndex / availableQuestions.length) * 100 : 0
+  const progress = availableQuestions && availableQuestions.length > 0 ? ((currentQuestionIndex + 1) / availableQuestions.length) * 100 : 0
   const isLastQuestion = availableQuestions ? currentQuestionIndex === availableQuestions.length - 1 : false
   const canProceed = currentQuestion ? currentAnswers[currentQuestion.id] !== undefined : false
 
@@ -421,7 +421,7 @@ export default function QuizPage() {
             </div>
             <div className="flex justify-between text-[10px] md:text-xs text-slate-500 mt-1 md:mt-2">
               <span>{tCommon('start')}</span>
-              <span>{t('answeredOf', { answered: currentPosition, total: availableQuestions.length })}</span>
+              <span>{t('answeredOf', { answered: answeredCount, total: availableQuestions.length })}</span>
               <span>{tCommon('completed')}</span>
             </div>
           </motion.div>
@@ -585,7 +585,7 @@ export default function QuizPage() {
 
           <div className="text-center">
             <div className="text-xs md:text-sm text-slate-600 font-medium">
-              {t('status.questionsProgress', { answered: currentPosition, total: availableQuestions.length })}
+              {t('status.questionsProgress', { answered: answeredCount, total: availableQuestions.length })}
               {isPreviewMode && (
                 <div className="text-[10px] md:text-xs text-amber-600 mt-1">
                   {t('status.loginForFull')}
