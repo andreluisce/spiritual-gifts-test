@@ -14,7 +14,11 @@ import {
   BookOpen,
   Lightbulb,
   Target,
-  AlertTriangle
+  AlertTriangle,
+  Mail,
+  Send,
+  CheckCircle,
+  X
 } from 'lucide-react'
 import {
   useResultBySessionId,
@@ -23,6 +27,8 @@ import {
 } from '@/hooks/use-quiz-queries'
 import { useLocale } from 'next-intl'
 import { formatScore } from '@/data/quiz-data'
+import { useEmail } from '@/hooks/useEmail'
+import { useState } from 'react'
 
 interface ResultsLayoutProps {
   children: React.ReactNode
@@ -35,6 +41,9 @@ export default function ResultsLayout({ children }: ResultsLayoutProps) {
   const locale = useLocale()
   const t = useTranslations('results')
   const sessionId = params.sessionId as string
+  const { sendQuizResultsEmail, sending, error: emailError, clearError } = useEmail()
+  const [emailSent, setEmailSent] = useState(false)
+  const [showEmailDialog, setShowEmailDialog] = useState(false)
 
   const { data: result, isLoading: loadingResults, error: resultsError } = useResultBySessionId(sessionId)
   const { data: spiritualGiftsData, isLoading: loadingSpiritualGifts } = useSpiritualGifts(locale)
@@ -108,36 +117,49 @@ export default function ResultsLayout({ children }: ResultsLayoutProps) {
 
   const compatibilityLevel = getCompatibilityLevel()
 
+  // Handle email sending
+  const handleSendEmail = async () => {
+    clearError()
+    const result = await sendQuizResultsEmail(sessionId)
+    
+    if (result.success) {
+      setEmailSent(true)
+      setShowEmailDialog(false)
+      // Auto-hide success message after 5 seconds
+      setTimeout(() => setEmailSent(false), 5000)
+    }
+  }
+
   const navItems = [
     {
       href: `/quiz/results/${sessionId}/overview`,
       label: t('tabs.overview'),
       icon: <Eye className="h-4 w-4" />,
-      description: 'Visão geral dos seus resultados'
+      description: t('tabDescriptions.overview')
     },
     {
       href: `/quiz/results/${sessionId}/compatibility`,
       label: t('tabs.compatibility'),
       icon: <Heart className="h-4 w-4" />,
-      description: 'Análise de compatibilidade'
+      description: t('tabDescriptions.compatibility')
     },
     {
       href: `/quiz/results/${sessionId}/characteristics`,
       label: t('tabs.characteristics'),
       icon: <BookOpen className="h-4 w-4" />,
-      description: 'Características detalhadas'
+      description: t('tabDescriptions.characteristics')
     },
     {
       href: `/quiz/results/${sessionId}/qualities`,
       label: t('tabs.qualities'),
       icon: <Lightbulb className="h-4 w-4" />,
-      description: 'Qualidades dos seus dons'
+      description: t('tabDescriptions.qualities')
     },
     {
       href: `/quiz/results/${sessionId}/guidance`,
       label: t('tabs.guidance'),
       icon: <Target className="h-4 w-4" />,
-      description: 'Orientações práticas'
+      description: t('tabDescriptions.guidance')
     }
   ]
 
@@ -146,30 +168,87 @@ export default function ResultsLayout({ children }: ResultsLayoutProps) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
       <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => router.push('/dashboard')}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              {t('backToDashboard')}
-            </Button>
+        {/* Results Header */}
+        <div className="mb-6">
+          {/* Action bar - Email and Session ID */}
+          <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">{t('title')}</h1>
               <p className="text-sm text-gray-600">
                 {topGiftData ? `${t('yourTopGift')}: ${topGiftData.name}` : t('yourResults')}
               </p>
             </div>
+            <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => router.push('/dashboard')}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                <span className="hidden sm:inline">{t('backToDashboard')}</span>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowEmailDialog(true)}
+                className="flex items-center gap-2"
+                disabled={sending}
+              >
+                {sending ? (
+                  <>
+                    <Send className="h-4 w-4 animate-pulse" />
+                    <span className="hidden sm:inline">Enviando...</span>
+                  </>
+                ) : (
+                  <>
+                    <Mail className="h-4 w-4" />
+                    <span className="hidden sm:inline">Enviar por Email</span>
+                  </>
+                )}
+              </Button>
+              <Badge variant="outline" className="text-xs sm:text-sm">
+                {t('sessionId')}: {sessionId.slice(-8)}
+              </Badge>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-sm">
-              {t('sessionId')}: {sessionId.slice(-8)}
-            </Badge>
-          </div>
+
+          {/* Email Success/Error Messages */}
+          {emailSent && (
+            <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+              <div className="flex-1">
+                <p className="text-sm font-medium text-green-800">Email enviado com sucesso!</p>
+                <p className="text-xs text-green-600">Verifique sua caixa de entrada para ver seus resultados detalhados.</p>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setEmailSent(false)}
+                className="text-green-600 hover:text-green-700"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+
+          {emailError && (
+            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0" />
+              <div className="flex-1">
+                <p className="text-sm font-medium text-red-800">Erro ao enviar email</p>
+                <p className="text-xs text-red-600">{emailError}</p>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearError}
+                className="text-red-600 hover:text-red-700"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Results Summary Card */}
@@ -181,7 +260,7 @@ export default function ResultsLayout({ children }: ResultsLayoutProps) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
               <div className="text-center">
                 <p className="text-2xl font-bold text-blue-600">
                   {topGiftData?.name || topGift?.giftKey}
@@ -220,7 +299,7 @@ export default function ResultsLayout({ children }: ResultsLayoutProps) {
           {/* Navigation Sidebar */}
           <div className="lg:col-span-1">
             <Card>
-              <CardHeader>
+              <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium text-gray-600">
                   {t('sections')}
                 </CardTitle>
@@ -234,24 +313,24 @@ export default function ResultsLayout({ children }: ResultsLayoutProps) {
                         key={item.href}
                         href={item.href}
                         className={cn(
-                          "flex items-start gap-3 px-4 py-3 transition-colors hover:bg-gray-50",
+                          "flex items-start gap-3 px-3 sm:px-4 py-3 transition-colors hover:bg-gray-50",
                           isActive && "bg-blue-50 border-l-2 border-blue-600"
                         )}
                       >
                         <div className={cn(
-                          "mt-0.5",
+                          "mt-0.5 flex-shrink-0",
                           isActive ? "text-blue-600" : "text-gray-400"
                         )}>
                           {item.icon}
                         </div>
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
                           <div className={cn(
-                            "font-medium text-sm",
+                            "font-medium text-sm truncate",
                             isActive ? "text-blue-900" : "text-gray-900"
                           )}>
                             {item.label}
                           </div>
-                          <div className="text-xs text-gray-500 mt-0.5">
+                          <div className="text-xs text-gray-500 mt-0.5 hidden sm:block">
                             {item.description}
                           </div>
                         </div>
@@ -268,6 +347,66 @@ export default function ResultsLayout({ children }: ResultsLayoutProps) {
             {children}
           </div>
         </div>
+
+        {/* Email Confirmation Dialog */}
+        {showEmailDialog && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg shadow-lg max-w-md w-full">
+              <div className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 bg-blue-100 rounded-full">
+                    <Mail className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">Enviar Resultados por Email</h3>
+                    <p className="text-sm text-gray-600">Receba seus resultados detalhados na sua caixa de entrada</p>
+                  </div>
+                </div>
+
+                <div className="mb-6">
+                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <h4 className="font-medium text-blue-900 mb-2">O que você receberá:</h4>
+                    <ul className="text-sm text-blue-800 space-y-1">
+                      <li>• Seu dom espiritual principal identificado</li>
+                      <li>• Descrição detalhada do seu dom</li>
+                      <li>• Sugestões para desenvolvimento</li>
+                      <li>• Data de conclusão do teste</li>
+                      <li>• Link para acessar novamente seus resultados</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="flex gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowEmailDialog(false)}
+                    className="flex-1"
+                    disabled={sending}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    onClick={handleSendEmail}
+                    disabled={sending}
+                    className="flex-1"
+                  >
+                    {sending ? (
+                      <>
+                        <Send className="h-4 w-4 mr-2 animate-pulse" />
+                        Enviando...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="h-4 w-4 mr-2" />
+                        Enviar Email
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

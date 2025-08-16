@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
@@ -16,7 +15,6 @@ import { usePublicSettings } from '@/hooks/usePublicSettings'
 import { calculateOptionScores, responseOptions } from '@/data/quiz-data'
 import { motion, AnimatePresence } from 'framer-motion'
 import { formatPercentage } from '@/data/quiz-data'
-import Image from 'next/image'
 import { LanguageToggleCompact } from '@/components/LanguageToggle'
 
 export default function QuizPage() {
@@ -292,62 +290,6 @@ export default function QuizPage() {
 
       <div className="max-w-4xl mx-auto py-4 md:py-8">
 
-        {/* User Header — visível apenas em md+ */}
-        {user && (
-          <motion.div
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            className="hidden md:flex items-center justify-between mb-6"
-          >
-            <Popover>
-              <PopoverTrigger asChild>
-                <div className="flex items-center gap-3 cursor-pointer">
-                  <div className="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center overflow-hidden">
-                    {user.user_metadata?.avatar_url ? (
-                      <Image
-                        src={user.user_metadata.avatar_url}
-                        alt="Avatar"
-                        width={40}
-                        height={40}
-                        className="w-10 h-10 rounded-full"
-                      />
-                    ) : (
-                      <User className="h-5 w-5 text-slate-600" />
-                    )}
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-slate-800">
-                      {user.user_metadata?.full_name || user.email}
-                    </p>
-                    <p className="text-xs text-slate-500">{t('fullTest')}</p>
-                  </div>
-                </div>
-              </PopoverTrigger>
-              <PopoverContent className="w-56 p-2">
-                <div className="flex flex-col space-y-2">
-                  <p className="text-sm font-medium leading-none">
-                    {user.user_metadata?.full_name || user.email}
-                  </p>
-                  <p className="text-xs leading-none text-muted-foreground">
-                    {user.email}
-                  </p>
-                  <Button variant="ghost" className="w-full justify-start" onClick={signOut}>
-                    {tCommon('signOut')}
-                  </Button>
-                </div>
-              </PopoverContent>
-            </Popover>
-            <div className="flex items-center gap-3">
-              <LanguageToggleCompact />
-              <Link href="/dashboard">
-                <Button variant="outline" size="sm" className="text-slate-600 border-slate-300">
-                  {tCommon('dashboard')}
-                </Button>
-              </Link>
-            </div>
-          </motion.div>
-        )}
 
         {/* Language toggle for non-logged users (mobile) */}
         {!user && (
