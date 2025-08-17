@@ -825,6 +825,73 @@
       }
     }
   },
+  "profile": {
+    "title": "Meu Perfil",
+    "subtitle": "Gerencie suas informações pessoais e preferências",
+    "backToDashboard": "Voltar ao Dashboard",
+    "editProfile": "Editar Perfil",
+    "saveChanges": "Salvar Alterações",
+    "saving": "Salvando...",
+    "cancel": "Cancelar",
+    "personalInfo": "Informações Pessoais",
+    "recentActivities": "Atividades Recentes",
+    "memberSince": "Membro desde",
+    "notProvided": "Não informado",
+    "fields": {
+      "fullName": "Nome Completo",
+      "fullNamePlaceholder": "Seu nome completo",
+      "phone": "Telefone",
+      "phonePlaceholder": "(11) 99999-9999",
+      "location": "Localização",
+      "locationPlaceholder": "Cidade, Estado",
+      "birthDate": "Data de Nascimento",
+      "ageRange": "Faixa Etária",
+      "ageRangePlaceholder": "Selecione sua faixa etária",
+      "ageRanges": {
+        "18-24": "18-24 anos",
+        "25-34": "25-34 anos",
+        "35-44": "35-44 anos",
+        "45-54": "45-54 anos",
+        "55-64": "55-64 anos",
+        "65+": "65+ anos"
+      },
+      "country": "País",
+      "countryPlaceholder": "Brasil",
+      "state": "Estado",
+      "statePlaceholder": "São Paulo",
+      "city": "Cidade",
+      "cityPlaceholder": "São Paulo",
+      "bio": "Biografia",
+      "bioPlaceholder": "Conte um pouco sobre você..."
+    },
+    "validation": {
+      "nameRequired": "Nome é obrigatório",
+      "nameMaxLength": "Nome deve ter menos de 100 caracteres",
+      "bioMaxLength": "Bio deve ter menos de 500 caracteres",
+      "locationMaxLength": "Localização deve ter menos de 100 caracteres"
+    },
+    "alerts": {
+      "updateSuccess": "Perfil atualizado com sucesso!",
+      "avatarError": "Erro ao atualizar avatar:",
+      "profileError": "Erro ao atualizar perfil:",
+      "success": "Sucesso!"
+    },
+    "activities": {
+      "noActivities": "Nenhuma atividade encontrada",
+      "timeAgo": {
+        "seconds": "{count}s atrás",
+        "minutes": "{count}m atrás",
+        "hours": "{count}h atrás",
+        "days": "{count}d atrás"
+      },
+      "types": {
+        "login": "Login realizado",
+        "quiz_start": "Quiz iniciado",
+        "quiz_complete": "Quiz completado",
+        "profile_update": "Perfil atualizado"
+      }
+    }
+  },
   "Index": {
     "title": "Teste de Dons Espirituais"
   }

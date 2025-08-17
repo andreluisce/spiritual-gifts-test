@@ -48,25 +48,25 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useUserActivities } from '@/hooks/useUserActivity'
+import { useTranslations } from 'next-intl'
 
 // Validation schema for profile editing
-const profileEditSchema = z.object({
-  name: z.string().min(1, 'Nome é obrigatório').max(100, 'Nome deve ter menos de 100 caracteres'),
-  phone: z.string().optional(),
-  bio: z.string().max(500, 'Bio deve ter menos de 500 caracteres').optional(),
-  location: z.string().max(100, 'Localização deve ter menos de 100 caracteres').optional(),
-  birth_date: z.string().optional(),
-  age_range: z.string().optional(),
-  country: z.string().optional(),
-  city: z.string().optional(),
-  state_province: z.string().optional()
-})
-
-type ProfileEditForm = z.infer<typeof profileEditSchema>
+type ProfileEditForm = {
+  name: string
+  phone?: string
+  bio?: string
+  location?: string
+  birth_date?: string
+  age_range?: string
+  country?: string
+  city?: string
+  state_province?: string
+}
 
 export default function ProfilePage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
+  const t = useTranslations('profile')
   const [isEditing, setIsEditing] = useState(false)
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
@@ -78,6 +78,19 @@ export default function ProfilePage() {
   const { updateAvatar, uploading } = useUpdateAvatar()
   const { activities, loading: activitiesLoading } = useUserActivities(10, user?.id)
 
+  // Create schema with translations
+  const createProfileSchema = () => z.object({
+    name: z.string().min(1, t('validation.nameRequired')).max(100, t('validation.nameMaxLength')),
+    phone: z.string().optional(),
+    bio: z.string().max(500, t('validation.bioMaxLength')).optional(),
+    location: z.string().max(100, t('validation.locationMaxLength')).optional(),
+    birth_date: z.string().optional(),
+    age_range: z.string().optional(),
+    country: z.string().optional(),
+    city: z.string().optional(),
+    state_province: z.string().optional()
+  })
+
   // React Hook Form setup
   const {
     register,
@@ -85,7 +98,7 @@ export default function ProfilePage() {
     reset,
     formState: { errors, isSubmitting }
   } = useForm<ProfileEditForm>({
-    resolver: zodResolver(profileEditSchema),
+    resolver: zodResolver(createProfileSchema()),
     defaultValues: {
       name: '',
       phone: '',
@@ -139,7 +152,7 @@ export default function ProfilePage() {
       if (avatarFile) {
         const avatarResult = await updateAvatar(avatarFile)
         if (!avatarResult.success) {
-          alert('Erro ao atualizar avatar: ' + avatarResult.error)
+          alert(t('alerts.avatarError') + ' ' + avatarResult.error)
           return
         }
       }
@@ -153,11 +166,11 @@ export default function ProfilePage() {
         setAvatarPreview(null)
         setShowSuccessDialog(true)
       } else {
-        alert('Erro ao atualizar perfil: ' + result.error)
+        alert(t('alerts.profileError') + ' ' + result.error)
       }
     } catch (error) {
       console.error('Error updating profile:', error)
-      alert('Erro ao atualizar perfil: ' + error)
+      alert(t('alerts.profileError') + ' ' + error)
     }
   }
 
@@ -204,21 +217,23 @@ export default function ProfilePage() {
     const now = new Date()
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
     
-    if (diffInSeconds < 60) return `${diffInSeconds}s atrás`
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m atrás`
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h atrás`
-    return `${Math.floor(diffInSeconds / 86400)}d atrás`
+    if (diffInSeconds < 60) return t('activities.timeAgo.seconds', { count: diffInSeconds })
+    if (diffInSeconds < 3600) return t('activities.timeAgo.minutes', { count: Math.floor(diffInSeconds / 60) })
+    if (diffInSeconds < 86400) return t('activities.timeAgo.hours', { count: Math.floor(diffInSeconds / 3600) })
+    return t('activities.timeAgo.days', { count: Math.floor(diffInSeconds / 86400) })
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
+        <div className="p-2 sm:p-4 m-1 sm:m-4">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <Link href="/dashboard">
             <Button variant="outline" size="sm">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Voltar ao Dashboard
+              {t('backToDashboard')}
             </Button>
           </Link>
           <LanguageToggleCompact />
@@ -226,16 +241,16 @@ export default function ProfilePage() {
         
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Meu Perfil</h1>
+            <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
             <p className="text-gray-600 mt-1">
-              Gerencie suas informações pessoais e preferências
+              {t('subtitle')}
             </p>
           </div>
           <div className="flex items-center gap-4">
             {!isEditing ? (
               <Button onClick={() => setIsEditing(true)}>
                 <Edit3 className="h-4 w-4 mr-2" />
-                Editar Perfil
+                {t('editProfile')}
               </Button>
             ) : (
               <div className="flex gap-2">
@@ -245,7 +260,7 @@ export default function ProfilePage() {
                   setAvatarPreview(null)
                   reset()
                 }}>
-                  Cancelar
+                  {t('cancel')}
                 </Button>
               </div>
             )}
@@ -259,7 +274,7 @@ export default function ProfilePage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <User className="h-5 w-5" />
-              Informações Pessoais
+              {t('personalInfo')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -302,7 +317,7 @@ export default function ProfilePage() {
                   </p>
                   <p className="text-gray-500 flex items-center gap-2 mt-1">
                     <Calendar className="h-4 w-4" />
-                    Membro desde {formatDate(profile.created_at)}
+                    {t('memberSince')} {formatDate(profile.created_at)}
                   </p>
                 </div>
               </div>
@@ -313,12 +328,12 @@ export default function ProfilePage() {
                 <div className="space-y-2">
                   <label className="text-sm font-medium flex items-center gap-2">
                     <User className="h-4 w-4" />
-                    Nome Completo
+                    {t('fields.fullName')}
                   </label>
                   <Input
                     {...register('name')}
                     disabled={!isEditing}
-                    placeholder="Seu nome completo"
+                    placeholder={isEditing ? t('fields.fullNamePlaceholder') : ""}
                     className={`${errors.name ? 'border-red-500' : ''} ${!isEditing ? 'bg-gray-50' : ''}`}
                   />
                   {errors.name && (
@@ -330,12 +345,13 @@ export default function ProfilePage() {
                 <div className="space-y-2">
                   <label className="text-sm font-medium flex items-center gap-2">
                     <Phone className="h-4 w-4" />
-                    Telefone
+                    {t('fields.phone')}
                   </label>
                   <Input
                     {...register('phone')}
                     disabled={!isEditing}
-                    placeholder="(11) 99999-9999"
+                    placeholder={isEditing ? t('fields.phonePlaceholder') : ""}
+                    value={!isEditing ? (profile?.phone || t('notProvided')) : undefined}
                     className={`${!isEditing ? 'bg-gray-50' : ''}`}
                   />
                 </div>
@@ -344,12 +360,13 @@ export default function ProfilePage() {
                 <div className="space-y-2">
                   <label className="text-sm font-medium flex items-center gap-2">
                     <MapPin className="h-4 w-4" />
-                    Localização
+                    {t('fields.location')}
                   </label>
                   <Input
                     {...register('location')}
                     disabled={!isEditing}
-                    placeholder="Cidade, Estado"
+                    placeholder={isEditing ? t('fields.locationPlaceholder') : ""}
+                    value={!isEditing ? (profile?.location || t('notProvided')) : undefined}
                     className={`${!isEditing ? 'bg-gray-50' : ''}`}
                   />
                 </div>
@@ -358,7 +375,7 @@ export default function ProfilePage() {
                 <div className="space-y-2">
                   <label className="text-sm font-medium flex items-center gap-2">
                     <Calendar className="h-4 w-4" />
-                    Data de Nascimento
+                    {t('fields.birthDate')}
                   </label>
                   <Input
                     {...register('birth_date')}
@@ -372,7 +389,7 @@ export default function ProfilePage() {
                 <div className="space-y-2">
                   <label className="text-sm font-medium flex items-center gap-2">
                     <User className="h-4 w-4" />
-                    Faixa Etária
+                    {t('fields.ageRange')}
                   </label>
                   <Select
                     value={(profile as { age_range?: string })?.age_range || ''}
@@ -382,15 +399,15 @@ export default function ProfilePage() {
                     disabled={!isEditing}
                   >
                     <SelectTrigger className={`${!isEditing ? 'bg-gray-50' : ''}`}>
-                      <SelectValue placeholder="Selecione sua faixa etária" />
+                      <SelectValue placeholder={isEditing ? t('fields.ageRangePlaceholder') : ((profile as { age_range?: string })?.age_range ? t(`fields.ageRanges.${(profile as { age_range?: string }).age_range}`) : t('notProvided'))} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="18-24">18-24 anos</SelectItem>
-                      <SelectItem value="25-34">25-34 anos</SelectItem>
-                      <SelectItem value="35-44">35-44 anos</SelectItem>
-                      <SelectItem value="45-54">45-54 anos</SelectItem>
-                      <SelectItem value="55-64">55-64 anos</SelectItem>
-                      <SelectItem value="65+">65+ anos</SelectItem>
+                      <SelectItem value="18-24">{t('fields.ageRanges.18-24')}</SelectItem>
+                      <SelectItem value="25-34">{t('fields.ageRanges.25-34')}</SelectItem>
+                      <SelectItem value="35-44">{t('fields.ageRanges.35-44')}</SelectItem>
+                      <SelectItem value="45-54">{t('fields.ageRanges.45-54')}</SelectItem>
+                      <SelectItem value="55-64">{t('fields.ageRanges.55-64')}</SelectItem>
+                      <SelectItem value="65+">{t('fields.ageRanges.65+')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -399,12 +416,13 @@ export default function ProfilePage() {
                 <div className="space-y-2">
                   <label className="text-sm font-medium flex items-center gap-2">
                     <Globe className="h-4 w-4" />
-                    País
+                    {t('fields.country')}
                   </label>
                   <Input
                     {...register('country')}
                     disabled={!isEditing}
-                    placeholder="Brasil"
+                    placeholder={isEditing ? t('fields.countryPlaceholder') : ""}
+                    value={!isEditing ? ((profile as { country?: string })?.country || t('notProvided')) : undefined}
                     className={`${!isEditing ? 'bg-gray-50' : ''}`}
                   />
                 </div>
@@ -413,12 +431,13 @@ export default function ProfilePage() {
                 <div className="space-y-2">
                   <label className="text-sm font-medium flex items-center gap-2">
                     <Building className="h-4 w-4" />
-                    Estado
+                    {t('fields.state')}
                   </label>
                   <Input
                     {...register('state_province')}
                     disabled={!isEditing}
-                    placeholder="São Paulo"
+                    placeholder={isEditing ? t('fields.statePlaceholder') : ""}
+                    value={!isEditing ? ((profile as { state_province?: string })?.state_province || t('notProvided')) : undefined}
                     className={`${!isEditing ? 'bg-gray-50' : ''}`}
                   />
                 </div>
@@ -427,12 +446,13 @@ export default function ProfilePage() {
                 <div className="space-y-2">
                   <label className="text-sm font-medium flex items-center gap-2">
                     <MapPin className="h-4 w-4" />
-                    Cidade
+                    {t('fields.city')}
                   </label>
                   <Input
                     {...register('city')}
                     disabled={!isEditing}
-                    placeholder="São Paulo"
+                    placeholder={isEditing ? t('fields.cityPlaceholder') : ""}
+                    value={!isEditing ? ((profile as { city?: string })?.city || t('notProvided')) : undefined}
                     className={`${!isEditing ? 'bg-gray-50' : ''}`}
                   />
                 </div>
@@ -442,12 +462,13 @@ export default function ProfilePage() {
               <div className="space-y-2">
                 <label className="text-sm font-medium flex items-center gap-2">
                   <FileText className="h-4 w-4" />
-                  Biografia
+                  {t('fields.bio')}
                 </label>
                 <Textarea
                   {...register('bio')}
                   disabled={!isEditing}
-                  placeholder="Conte um pouco sobre você..."
+                  placeholder={isEditing ? t('fields.bioPlaceholder') : ""}
+                  value={!isEditing ? (profile?.bio || t('notProvided')) : undefined}
                   rows={4}
                   className={`${errors.bio ? 'border-red-500' : ''} ${!isEditing ? 'bg-gray-50' : ''}`}
                 />
@@ -465,7 +486,7 @@ export default function ProfilePage() {
                     className="bg-blue-600 hover:bg-blue-700"
                   >
                     <Save className="h-4 w-4 mr-2" />
-                    {isSubmitting || updating || uploading ? 'Salvando...' : 'Salvar Alterações'}
+                    {isSubmitting || updating || uploading ? t('saving') : t('saveChanges')}
                   </Button>
                 </div>
               )}
@@ -478,7 +499,7 @@ export default function ProfilePage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Activity className="h-5 w-5" />
-              Atividades Recentes
+              {t('recentActivities')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -508,7 +529,7 @@ export default function ProfilePage() {
             ) : (
               <div className="text-center py-8">
                 <Activity className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500">Nenhuma atividade encontrada</p>
+                <p className="text-gray-500">{t('activities.noActivities')}</p>
               </div>
             )}
           </CardContent>
@@ -521,10 +542,10 @@ export default function ProfilePage() {
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2 text-green-600">
               <CheckCircle className="h-5 w-5" />
-              Sucesso!
+              {t('alerts.success')}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Perfil atualizado com sucesso!
+              {t('alerts.updateSuccess')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -540,6 +561,8 @@ export default function ProfilePage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+        </div>
+      </div>
     </div>
   )
 }
