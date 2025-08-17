@@ -175,7 +175,7 @@ export function AppHeader() {
                 <Link href="/gifts">
                   <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900">
                     <Heart className="h-4 w-4 mr-1.5" />
-                    Dons
+                    {t('gifts')}
                   </Button>
                 </Link>
                 {isAdmin && (
