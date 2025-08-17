@@ -734,37 +734,93 @@
         "generatedTitle": "Relatórios Gerados",
         "noReports": "Nenhum relatório disponível",
         "firstReport": "Gere seu primeiro relatório analítico usando o botão acima.",
-        "generateReport": "Gerar Relatório"
+        "generateReport": "Gerar Relatório",
+        "generateNew": "Gerar Novo Relatório"
       },
       "ai": {
         "model": {
-          "gpt4": "",
-          "gpt4turbo": "",
-          "label": ""
+          "gpt4": "GPT-4 (Maior Qualidade, Mais Caro)",
+          "gpt4turbo": "GPT-4 Turbo (Melhor Equilíbrio)",
+          "label": "Modelo de IA",
+          "gpt35": "GPT-3.5 Turbo (Rápido, Econômico)"
         },
         "serviceSettings": {
-          "description": "",
-          "title": ""
+          "description": "Configure parâmetros e comportamento do serviço de IA",
+          "title": "Configurações do Serviço de IA"
+        },
+        "aiAnalysisConfig": {
+          "description": "Configure quando e como a análise de IA está disponível para os usuários",
+          "title": "Configuração da Análise de IA"
+        },
+        "analysisLanguage": {
+          "auto": "Detectar automaticamente pela preferência do usuário",
+          "en": "Inglês",
+          "es": "Espanhol",
+          "label": "Idioma da Análise",
+          "pt": "Português"
+        },
+        "autoGenerate": {
+          "description": "Gerar automaticamente análise de IA para todos os questionários concluídos",
+          "label": "Gerar Análise Automaticamente"
+        },
+        "cacheStrategy": {
+          "description": "Escolha como as análises de IA são armazenadas em cache e reutilizadas para otimizar desempenho e custos",
+          "giftScores": "Por Pontuação de Dons - Reutilizar análise para usuários com pontuações idênticas",
+          "label": "Estratégia de Cache",
+          "session": "Por Sessão - Análise única para cada sessão do questionário",
+          "user": "Por Usuário - Uma análise por usuário (resultados mais recentes)"
+        },
+        "contentSettings": {
+          "description": "Configure que informações são incluídas nas análises de IA",
+          "title": "Configurações de Conteúdo da Análise"
+        },
+        "includeBiblicalReferences": {
+          "description": "A IA incluirá versículos e passagens bíblicas relevantes",
+          "label": "Incluir Referências Bíblicas"
+        },
+        "includeMinistryOpportunities": {
+          "description": "A IA sugerirá maneiras específicas de usar os dons em contextos ministeriais",
+          "label": "Incluir Oportunidades de Ministério"
+        },
+        "includePersonalDevelopment": {
+          "description": "A IA fornecerá sugestões específicas para desenvolver dons espirituais",
+          "label": "Incluir Sugestões de Desenvolvimento Pessoal"
+        },
+        "maxTokens": {
+          "description": "Comprimento máximo da análise gerada pela IA (100-4000 tokens)",
+          "label": "Máximo de Tokens de Resposta"
+        },
+        "showAIButton": {
+          "description": "Quando habilitado, os usuários verão o botão \"Gerar Análise IA\" na página de resultados",
+          "label": "Mostrar Botão de Análise IA"
+        },
+        "subtitle": "Configure quando e como a análise de IA está disponível para os usuários",
+        "temperature": {
+          "balanced": "Equilibrado (0.5)",
+          "conservative": "Conservador (0.3)",
+          "creative": "Criativo (0.7)",
+          "description": "Valores mais altos tornam as respostas mais criativas, mas menos previsíveis",
+          "label": "Criatividade da Resposta (Temperatura)",
+          "veryConservative": "Muito Conservador (0.1)",
+          "veryCreative": "Muito Criativo (0.9)"
+        },
+        "testAI": {
+          "button": "Testar Análise IA",
+          "description": "Teste a configuração do serviço de IA com dados de exemplo",
+          "label": "Testar Serviço de IA",
+          "testing": "Testando Serviço de IA..."
+        },
+        "title": "Configurações de IA",
+        "usageOverview": {
+          "aiButtonStatus": "Status do Botão IA",
+          "apiCalls": "Chamadas de API",
+          "cacheHits": "Acertos de Cache",
+          "description": "Estatísticas atuais de uso da análise de IA e cache",
+          "note": "Nota: Estatísticas detalhadas de uso estarão disponíveis assim que o sistema de análise for implementado. As configurações atuais estão sendo salvas automaticamente.",
+          "title": "Visão Geral do Uso",
+          "totalAnalyses": "Total de Análises"
         }
       }
-    }
-  },
-  "report": {
-    "title": "Relatório de Dons Espirituais",
-    "subtitle": "Análise detalhada das {count} perguntas agrupadas por dons espirituais",
-    "resultDate": "Resultado de: {date}",
-    "chartTitle": "Distribuição de Pontuação por Dom Espiritual",
-    "chartTitleEnd": "Gráfico de Distribuição dos Dons",
-    "questions": "Perguntas ({count}):",
-    "stats": {
-      "totalQuestions": "Total de Perguntas:",
-      "totalScore": "Pontuação Total:",
-      "averagePerQuestion": "Média por Pergunta:",
-      "percentOfTotal": "% do Total:"
-    },
-    "footer": {
-      "title": "Total de Perguntas",
-      "description": "Perguntas organizadas para avaliar os 7 dons espirituais principais"
     }
   },
   "Index": {

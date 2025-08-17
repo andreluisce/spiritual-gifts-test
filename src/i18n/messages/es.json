@@ -337,7 +337,9 @@
         "analysisLanguage": {
           "es": "Español",
           "label": "Lenguaje de análisis",
-          "pt": "portugués"
+          "pt": "portugués",
+          "auto": "Detectar automáticamente de la preferencia del usuario",
+          "en": "Inglés"
         },
         "autoGenerate": {
           "description": "Genere automáticamente el análisis de IA para todas las pruebas completadas",
@@ -409,6 +411,10 @@
           "note": "Nota: Estadísticas de uso detalladas estarán disponibles una vez que se implementa el sistema de análisis. \nLa configuración actual se guardan automáticamente.",
           "title": "Descripción general del uso",
           "totalAnalyses": "Análisis totales"
+        },
+        "aiAnalysisConfig": {
+          "description": "Configure cuándo y cómo está disponible el análisis de IA para los usuarios",
+          "title": "Configuración del Análisis de IA"
         }
       }
     },
@@ -493,23 +499,29 @@
         "activeUsersCard": "Usuarios Activos",
         "haveCompleted": "han completado pruebas",
         "mostPopularGift": "Don Más Popular",
-        "topSpiritualGift": "don espiritual principal"
+        "topSpiritualGift": "don espiritual principal",
+        "subtitle": "Resumen de los principales indicadores y métricas del sistema",
+        "title": "Resumen"
       },
       "spiritualGifts": {
         "title": "Distribución de Dones Espirituales",
         "identifications": "identificaciones",
-        "noData": "No hay datos de dones espirituales disponibles"
+        "noData": "No hay datos de dones espirituales disponibles",
+        "distributionTitle": "Distribución de Dones Espirituales",
+        "subtitle": "Análisis detallado de la distribución de dones espirituales entre usuarios"
       },
       "demographics": {
         "ageDistribution": {
           "title": "Distribución por Edad",
           "description": "Los datos demográficos por edad estarán disponibles pronto",
-          "comingSoon": "Análisis de distribución de edad de usuarios próximamente"
+          "comingSoon": "Análisis de distribución de edad de usuarios próximamente",
+          "noData": "Aún no hay datos demográficos disponibles."
         },
         "geographicDistribution": {
           "title": "Distribución Geográfica",
           "description": "Los datos de distribución geográfica estarán disponibles pronto",
-          "comingSoon": "Análisis de ubicación de usuarios próximamente"
+          "comingSoon": "Análisis de ubicación de usuarios próximamente",
+          "noData": "Aún no hay datos geográficos disponibles."
         },
         "summary": {
           "title": "Resumen Demográfico",
@@ -519,14 +531,17 @@
           "countries": "países",
           "notAvailable": "N/A"
         },
-        "subtitle": "Datos demográficos de usuarios y distribución geográfica"
+        "subtitle": "Datos demográficos de usuarios y distribución geográfica",
+        "title": "Demografía"
       },
       "reports": {
         "title": "Reportes Generados",
         "generateNew": "Generar Nuevo Reporte",
         "noReports": "No se han generado reportes aún",
         "firstReport": "Comience generando su primer reporte de analíticas",
-        "generateReport": "Generar Reporte"
+        "generateReport": "Generar Reporte",
+        "generatedTitle": "Reportes Generados",
+        "subtitle": "Generación y gestión de reportes analíticos"
       },
       "ai": {
         "title": "Configuraciones de IA",
@@ -786,7 +801,9 @@
       "precautions": "Datos de precauciones no disponibles para análisis completo.",
       "guidance": "Orientación detallada no disponible para análisis completo.",
       "biblicalReferences": "Referencias bíblicas específicas en desarrollo."
-    }
+    },
+    "biblicalReferences": "Referencias Bíblicas",
+    "biblicalReferencesInDevelopment": "Referencias bíblicas específicas en desarrollo."
   },
   "report": {
     "title": "Informe de Dones Espirituales",

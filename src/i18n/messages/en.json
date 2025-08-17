@@ -70,13 +70,13 @@
           "description": "7 fundamental gifts that are the foundation of Christian personality"
         },
         {
-          "name": "Ministries", 
+          "name": "Ministries",
           "greek": "Diakonion",
           "description": "12 ministries to serve the Body of Christ"
         },
         {
           "name": "Manifestations",
-          "greek": "Energias Planerosis", 
+          "greek": "Energias Planerosis",
           "description": "9 manifestations of God's supernatural power"
         }
       ]
@@ -209,7 +209,7 @@
     },
     "stats": {
       "totalTests": "Total Tests",
-      "mainGift": "Main Gift", 
+      "mainGift": "Main Gift",
       "lastTest": "Last Test",
       "evolution": "Evolution",
       "growing": "Growing",
@@ -320,7 +320,7 @@
           }
         },
         "localization": {
-          "title": "Language & Localization", 
+          "title": "Language & Localization",
           "description": "Configure default language and localization settings.",
           "defaultLanguage": {
             "label": "Default Language",
@@ -456,13 +456,15 @@
         "activeUsersCard": "Active Users",
         "haveCompleted": "have completed quizzes",
         "mostPopularGift": "Most Popular Gift",
-        "topSpiritualGift": "top spiritual gift"
+        "topSpiritualGift": "top spiritual gift",
+        "title": "Overview"
       },
       "spiritualGifts": {
         "title": "Spiritual Gifts Distribution",
         "subtitle": "Detailed analysis of spiritual gifts distribution among users",
         "identifications": "identifications",
-        "noData": "No spiritual gifts data available"
+        "noData": "No spiritual gifts data available",
+        "distributionTitle": "Spiritual Gifts Distribution"
       },
       "demographics": {
         "subtitle": "User demographics and geographic distribution data",
@@ -485,15 +487,101 @@
           "geographicDiversity": "Geographic Diversity",
           "countries": "countries",
           "notAvailable": "N/A"
-        }
+        },
+        "title": "Demographics"
       },
       "reports": {
         "title": "Generated Reports",
-        "subtitle": "Generation and management of analytical reports",
+        "subtitle": "Report generation and management",
         "generateNew": "Generate New Report",
         "noReports": "No reports generated yet",
         "firstReport": "Start by generating your first analytics report",
-        "generateReport": "Generate Report"
+        "generateReport": "Generate Report",
+        "generatedTitle": "Generated Reports"
+      },
+      "ai": {
+        "aiAnalysisConfig": {
+          "description": "Configure when and how AI analysis is available to users",
+          "title": "AI Analysis Configuration"
+        },
+        "analysisLanguage": {
+          "auto": "Auto-detect from user preference",
+          "en": "English",
+          "es": "Spanish",
+          "label": "Analysis Language",
+          "pt": "Portuguese"
+        },
+        "autoGenerate": {
+          "description": "Automatically generate AI analysis for all completed quizzes",
+          "label": "Auto-Generate Analysis"
+        },
+        "cacheStrategy": {
+          "description": "Choose how AI analyses are cached and reused to optimize performance and costs",
+          "giftScores": "By Gift Scores - Reuse analysis for users with identical gift scores",
+          "label": "Cache Strategy",
+          "session": "By Session - Unique analysis for each quiz session",
+          "user": "By User - One analysis per user (latest results)"
+        },
+        "contentSettings": {
+          "description": "Configure what information is included in AI analyses",
+          "title": "Analysis Content Settings"
+        },
+        "includeBiblicalReferences": {
+          "description": "AI will include relevant Bible verses and passages",
+          "label": "Include Biblical References"
+        },
+        "includeMinistryOpportunities": {
+          "description": "AI will suggest specific ways to use gifts in ministry contexts",
+          "label": "Include Ministry Opportunities"
+        },
+        "includePersonalDevelopment": {
+          "description": "AI will provide specific suggestions for developing spiritual gifts",
+          "label": "Include Personal Development Suggestions"
+        },
+        "maxTokens": {
+          "description": "Maximum length of AI-generated analysis (100-4000 tokens)",
+          "label": "Max Response Tokens"
+        },
+        "model": {
+          "gpt35": "GPT-3.5 Turbo (Fast, Cost-effective)",
+          "gpt4": "GPT-4 (Higher Quality, More Expensive)",
+          "gpt4turbo": "GPT-4 Turbo (Best Balance)",
+          "label": "AI Model"
+        },
+        "serviceSettings": {
+          "description": "Configure AI service parameters and behavior",
+          "title": "AI Service Settings"
+        },
+        "showAIButton": {
+          "description": "When enabled, users will see the \"Generate AI Analysis\" button on their results page",
+          "label": "Show AI Analysis Button"
+        },
+        "subtitle": "Configure when and how AI analysis is available to users",
+        "temperature": {
+          "balanced": "Balanced (0.5)",
+          "conservative": "Conservative (0.3)",
+          "creative": "Creative (0.7)",
+          "description": "Higher values make responses more creative but less predictable",
+          "label": "Response Creativity (Temperature)",
+          "veryConservative": "Very Conservative (0.1)",
+          "veryCreative": "Very Creative (0.9)"
+        },
+        "testAI": {
+          "button": "Test AI Analysis",
+          "description": "Test the AI service configuration with sample data",
+          "label": "Test AI Service",
+          "testing": "Testing AI Service..."
+        },
+        "title": "AI Settings",
+        "usageOverview": {
+          "aiButtonStatus": "AI Button Status",
+          "apiCalls": "API Calls",
+          "cacheHits": "Cache Hits",
+          "description": "Current AI analysis usage and cache statistics",
+          "note": "Note: Detailed usage statistics will be available once the analytics system is implemented. Current settings are being saved automatically.",
+          "title": "Usage Overview",
+          "totalAnalyses": "Total Analyses"
+        }
       }
     },
     "content": {
@@ -558,7 +646,7 @@
     },
     "categories": {
       "motivations": "Motivations",
-      "ministries": "Ministries", 
+      "ministries": "Ministries",
       "manifestations": "Manifestations"
     },
     "giftTypes": {
@@ -713,9 +801,29 @@
       "precautions": "Precautions data not available for complete analysis.",
       "guidance": "Detailed guidance not available for complete analysis.",
       "biblicalReferences": "Specific biblical references in development."
-    }
+    },
+    "biblicalReferences": "Biblical References",
+    "biblicalReferencesInDevelopment": "Specific biblical references in development."
   },
   "Index": {
     "title": "Spiritual Gifts Test"
+  },
+  "report": {
+    "chartTitle": "Score Distribution by Spiritual Gift",
+    "chartTitleEnd": "Gift Distribution Chart",
+    "footer": {
+      "description": "Questions organized to evaluate the 7 main spiritual gifts",
+      "title": "Total Questions"
+    },
+    "questions": "Questions ({count}):",
+    "resultDate": "Result from: {date}",
+    "stats": {
+      "averagePerQuestion": "Average per Question:",
+      "percentOfTotal": "% of Total:",
+      "totalQuestions": "Total Questions:",
+      "totalScore": "Total Score:"
+    },
+    "subtitle": "Detailed analysis of {count} questions grouped by spiritual gifts",
+    "title": "Spiritual Gifts Report"
   }
 }
