@@ -1,5 +1,5 @@
 // Dynamic Gift Compatibility System with AI Enhancement
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase-client'
 import type { Database } from '@/lib/database.types'
 import { 
   aiCompatibilityAnalyzer, 
@@ -7,10 +7,7 @@ import {
   type AICompatibilityAnalysis 
 } from './ai-compatibility-analyzer'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+const supabase = createClient()
 
 export interface DynamicGiftCompatibility {
   primaryGift: string

@@ -45,16 +45,20 @@ export async function middleware(request: NextRequest) {
       !request.nextUrl.pathname.includes('/api/');
 
     // Public routes and auth callbacks don't need authentication
-    const publicRoutes = ['/login'];
+    const publicRoutes = ['/login', '/auth/callback'];
     const isPublicRoute = publicRoutes.some(route =>
       request.nextUrl.pathname.includes(route)
     );
 
+    // Allow access to dashboard when coming from auth callback
+    const isDashboardAfterAuth = request.nextUrl.pathname.includes('/dashboard') && 
+      (isAuthCallback || request.nextUrl.searchParams.has('access_token') || request.nextUrl.searchParams.has('refresh_token'));
+
     // Use static default language for Edge Runtime compatibility
     const defaultLanguage = staticRouting.defaultLocale;
 
-    // If accessing any route (except public, static files, or auth callback) without authentication, redirect to login
-    if (!isPublicRoute && !isAuthCallback && !isStaticFile && !user) {
+    // If accessing any route (except public, static files, auth callback, or dashboard after auth) without authentication, redirect to login
+    if (!isPublicRoute && !isAuthCallback && !isStaticFile && !isDashboardAfterAuth && !user) {
       const pathLocale = request.nextUrl.pathname.split('/')[1];
       const locale = isValidLocale(pathLocale) ? pathLocale : defaultLanguage;
       const loginUrl = new URL(`/${locale}/login`, request.url);

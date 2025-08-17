@@ -1439,6 +1439,26 @@ export type Database = {
         Args: { p_date_range?: string }
         Returns: Json
       }
+      get_demographics_analytics: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
+      upsert_user_demographics: {
+        Args: {
+          p_user_id: string
+          p_country?: string
+          p_region?: string
+          p_city?: string
+          p_timezone?: string
+          p_latitude?: number
+          p_longitude?: number
+          p_birth_date?: string
+          p_age?: number
+          p_ip_address?: string
+          p_data_source?: string
+        }
+        Returns: Json
+      }
       get_default_ai_settings: {
         Args: Record<PropertyKey, never>
         Returns: Json
@@ -1623,7 +1643,15 @@ export type Database = {
         Args: { "": unknown }
         Returns: unknown
       }
-      is_admin_user: {
+      is_user_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      is_user_admin_backup: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      is_user_admin_safe: {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
