@@ -22,12 +22,14 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { useEmailTest } from '@/hooks/useEmail'
+import { useToast } from '@/components/ui/toast'
 
 export default function AdminEmailSettingsPage() {
   const { user, isAdmin, loading } = useAuth()
   const router = useRouter()
   const [showApiKey, setShowApiKey] = useState(false)
   const { testEmailService, testing, testResult, clearTestResult } = useEmailTest()
+  const { addToast } = useToast()
 
   // Email configuration state
   const [emailConfig, setEmailConfig] = useState({
@@ -39,6 +41,12 @@ export default function AdminEmailSettingsPage() {
     enableAdminNotifications: true
   })
 
+  // Email service status
+  const [emailStatus, setEmailStatus] = useState({
+    isConfigured: false,
+    loading: true
+  })
+
   useEffect(() => {
     if (!loading && (!user || !isAdmin)) {
       router.push('/dashboard')
@@ -46,16 +54,41 @@ export default function AdminEmailSettingsPage() {
   }, [user, isAdmin, loading, router])
 
   useEffect(() => {
-    // Load current email configuration (placeholder - in real app would fetch from API)
-    setEmailConfig({
-      resendApiKey: process.env.RESEND_API_KEY || '',
-      fromEmail: process.env.RESEND_FROM_EMAIL || 'noreply@spiritualgifts.app',
-      adminEmails: 'andreluisce@gmail.com',
-      enableWelcomeEmail: true,
-      enableResultsEmail: true,
-      enableAdminNotifications: true
-    })
-  }, [])
+    // Load current email configuration from API
+    const loadEmailStatus = async () => {
+      try {
+        const response = await fetch('/api/email/config/status')
+        const result = await response.json()
+        
+        if (result.success) {
+          setEmailStatus({
+            isConfigured: result.config.isConfigured,
+            loading: false
+          })
+          setEmailConfig(prev => ({
+            ...prev,
+            fromEmail: result.config.fromEmail,
+            adminEmails: 'andreluisce@gmail.com'
+          }))
+        } else {
+          throw new Error(result.error)
+        }
+      } catch (error) {
+        console.error('Failed to load email status:', error)
+        setEmailStatus({
+          isConfigured: false,
+          loading: false
+        })
+        addToast({
+          type: 'error',
+          title: 'Erro ao carregar configurações',
+          description: 'Não foi possível verificar o status do serviço de email'
+        })
+      }
+    }
+
+    loadEmailStatus()
+  }, [addToast])
 
   if (loading) {
     return (
@@ -77,12 +110,28 @@ export default function AdminEmailSettingsPage() {
   const handleSaveConfig = async () => {
     // In a real implementation, this would save to database/environment
     console.log('📧 Saving email configuration...', emailConfig)
-    alert('Configuração salva! (Em uma implementação real, isso salvaria no banco de dados)')
+    addToast({
+      type: 'info',
+      title: 'Configuração salva!',
+      description: 'Em uma implementação real, isso salvaria no banco de dados'
+    })
   }
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text)
-    alert('Copiado para área de transferência!')
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      addToast({
+        type: 'success',
+        title: 'Copiado!',
+        description: 'Texto copiado para área de transferência'
+      })
+    } catch (error) {
+      addToast({
+        type: 'error',
+        title: 'Erro ao copiar',
+        description: 'Não foi possível copiar o texto'
+      })
+    }
   }
 
   return (
@@ -122,9 +171,13 @@ export default function AdminEmailSettingsPage() {
             
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Status da Configuração</span>
-              <Badge variant={emailConfig.resendApiKey ? "default" : "destructive"}>
-                {emailConfig.resendApiKey ? "Configurado" : "Não Configurado"}
-              </Badge>
+              {emailStatus.loading ? (
+                <Badge variant="secondary">Carregando...</Badge>
+              ) : (
+                <Badge variant={emailStatus.isConfigured ? "default" : "destructive"}>
+                  {emailStatus.isConfigured ? "Configurado" : "Não Configurado"}
+                </Badge>
+              )}
             </div>
 
             <div className="flex items-center justify-between">
@@ -135,7 +188,7 @@ export default function AdminEmailSettingsPage() {
             <div className="pt-4 border-t">
               <Button 
                 onClick={handleTestEmail} 
-                disabled={testing || !emailConfig.resendApiKey}
+                disabled={testing || !emailStatus.isConfigured || emailStatus.loading}
                 className="w-full"
               >
                 {testing ? (
