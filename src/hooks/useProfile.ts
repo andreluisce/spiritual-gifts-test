@@ -16,6 +16,10 @@ export type UserProfile = {
   bio?: string
   location?: string
   birth_date?: string
+  age_range?: string
+  country?: string
+  city?: string
+  state_province?: string
   metadata: {
     name?: string
     avatar_url?: string
@@ -34,6 +38,10 @@ export type ProfileUpdateData = {
   bio?: string
   location?: string
   birth_date?: string
+  age_range?: string
+  country?: string
+  city?: string
+  state_province?: string
 }
 
 // Hook for fetching user profile
@@ -63,7 +71,10 @@ export function useProfile() {
 
         const authUser = userData.user
 
-        // Map the user data to our profile type
+        // Get additional profile data from profiles table
+        const { data: profileData } = await supabase.rpc('get_user_profile')
+        
+        // Map the user data to our profile type, combining auth and profile data
         const userProfile: UserProfile = {
           id: authUser.id,
           email: authUser.email || '',
@@ -75,6 +86,11 @@ export function useProfile() {
           bio: authUser.user_metadata?.bio || undefined,
           location: authUser.user_metadata?.location || undefined,
           birth_date: authUser.user_metadata?.birth_date || undefined,
+          // Add extended profile fields
+          age_range: (profileData as any)?.age_range || undefined,
+          country: (profileData as any)?.country || undefined,
+          city: (profileData as any)?.city || undefined,
+          state_province: (profileData as any)?.state_province || undefined,
           metadata: authUser.user_metadata || {}
         }
 
@@ -125,6 +141,20 @@ export function useUpdateProfile() {
       })
 
       if (updateError) throw updateError
+
+      // Update extended profile data in profiles table
+      const { error: profileError } = await supabase.rpc('upsert_user_profile', {
+        p_birth_date: updates.birth_date || null,
+        p_age_range: updates.age_range || null,
+        p_country: updates.country || null,
+        p_city: updates.city || null,
+        p_state_province: updates.state_province || null
+      })
+
+      if (profileError) {
+        console.warn('Failed to update extended profile:', profileError)
+        // Don't throw error - basic profile update succeeded
+      }
 
       // Log the profile update activity
       await supabase.rpc('log_user_activity', {

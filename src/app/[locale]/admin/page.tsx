@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import { formatScore } from '@/data/quiz-data'
 import { useAdminStats, useRecentActivity, useGiftDistribution, useSystemStatus } from '@/hooks/useAdminData'
+import DemographicsDashboard from '@/components/DemographicsDashboard'
 
 export default function AdminDashboard() {
   const tStats = useTranslations('admin.dashboard.stats')
@@ -241,6 +242,11 @@ export default function AdminDashboard() {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Demographics Section */}
+      <div className="mt-8">
+        <DemographicsDashboard />
       </div>
 
     </div>

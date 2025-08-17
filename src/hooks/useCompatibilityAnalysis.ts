@@ -10,6 +10,27 @@ import { useSpiritualGifts } from '@/hooks/use-quiz-queries'
 import { useLocale } from 'next-intl'
 import type { Database } from '@/lib/database.types'
 
+// Helper function to extract sessionId from URL
+function getSessionIdFromUrl(): string | undefined {
+  if (typeof window === 'undefined') return undefined
+  
+  const pathSegments = window.location.pathname.split('/').filter(Boolean)
+  
+  // Check if we're in a quiz results page: /[locale]/quiz/results/[sessionId]/...
+  const quizResultsIndex = pathSegments.findIndex(segment => segment === 'results')
+  if (quizResultsIndex !== -1 && pathSegments[quizResultsIndex + 1]) {
+    const potentialSessionId = pathSegments[quizResultsIndex + 1]
+    // Validate it looks like a UUID
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    if (uuidRegex.test(potentialSessionId)) {
+      return potentialSessionId
+    }
+  }
+  
+  // For other pages (like dashboard), return undefined
+  return undefined
+}
+
 interface CompatibilityAnalysisResult {
   compatibilities: DynamicGiftCompatibility[]
   ministryRecommendations: DynamicMinistryRecommendation[]
@@ -190,7 +211,7 @@ export function useCompatibilityAnalysis(
                 credentials: 'include', // Include cookies for authentication
                 body: JSON.stringify({
                   profile: userProfile,
-                  sessionId: window.location.pathname.split('/').slice(-2, -1)[0], // Get sessionId from URL (second to last segment)
+                  sessionId: getSessionIdFromUrl(),
                   useCache: true,
                   locale: locale
                 })
@@ -225,7 +246,7 @@ export function useCompatibilityAnalysis(
                       credentials: 'include',
                       body: JSON.stringify({
                         profile: userProfile,
-                        sessionId: sessionId,
+                        sessionId: getSessionIdFromUrl(),
                         useCache: false,
                         clientAnalysis: aiAnalysis, // Include pre-computed analysis
                         locale: locale
@@ -306,7 +327,7 @@ export function useCompatibilityAnalysis(
                     credentials: 'include', // Include cookies for authentication
                     body: JSON.stringify({
                       profile: userProfile,
-                      sessionId: window.location.pathname.split('/').pop(), // Get sessionId from URL
+                      sessionId: getSessionIdFromUrl(),
                       useCache: false,
                       locale: locale
                     })

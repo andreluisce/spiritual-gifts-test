@@ -825,6 +825,32 @@
       }
     }
   },
+  "demographics": {
+    "totalUsers": "Total de Usuários",
+    "usersWithData": "Usuários com Dados",
+    "dataCompleteness": "Completude dos Dados",
+    "registeredUsers": "usuários registrados",
+    "completedProfiles": "perfis completos",
+    "profileCompletion": "completude do perfil",
+    "ageDistribution": "Distribuição por Idade",
+    "geographicDistribution": "Distribuição Geográfica",
+    "users": "usuários",
+    "noAgeData": "Nenhum dado de idade disponível",
+    "noGeographicData": "Nenhum dado geográfico disponível",
+    "insights": "Insights",
+    "dominantAgeGroup": "Faixa Etária Dominante",
+    "topLocation": "Localização Principal",
+    "ofUsers": "dos usuários",
+    "error": "Erro ao carregar dados demográficos: {error}",
+    "ageRanges": {
+      "18-24": "18-24 anos",
+      "25-34": "25-34 anos",
+      "35-44": "35-44 anos",
+      "45-54": "45-54 anos",
+      "55-64": "55-64 anos",
+      "65+": "65+ anos"
+    }
+  },
   "profile": {
     "title": "Meu Perfil",
     "subtitle": "Gerencie suas informações pessoais e preferências",

@@ -122,10 +122,10 @@ export default function ProfilePage() {
         phone: profile.phone || '',
         bio: profile.bio || '',
         birth_date: profile.birth_date || '',
-        age_range: (profile as { age_range?: string }).age_range || '',
-        country: (profile as { country?: string }).country || '',
-        city: (profile as { city?: string }).city || '',
-        state_province: (profile as { state_province?: string }).state_province || ''
+        age_range: profile.age_range || '',
+        country: profile.country || '',
+        city: profile.city || '',
+        state_province: profile.state_province || ''
       })
     }
   }, [profile, reset])
@@ -346,7 +346,7 @@ export default function ProfilePage() {
                     {...register('phone')}
                     disabled={!isEditing}
                     placeholder={isEditing ? t('fields.phonePlaceholder') : ""}
-                    value={!isEditing ? (profile?.phone || t('notProvided')) : undefined}
+                    value={!isEditing ? (profile?.phone || t('notProvided')) : ''}
                     className={`${!isEditing ? 'bg-gray-50' : ''}`}
                   />
                 </div>
@@ -361,6 +361,7 @@ export default function ProfilePage() {
                     {...register('birth_date')}
                     type="date"
                     disabled={!isEditing}
+                    value={!isEditing ? (profile?.birth_date || '') : ''}
                     className={`${!isEditing ? 'bg-gray-50' : ''}`}
                   />
                 </div>
@@ -371,25 +372,32 @@ export default function ProfilePage() {
                     <User className="h-4 w-4" />
                     {t('fields.ageRange')}
                   </label>
-                  <Select
-                    value={(profile as { age_range?: string })?.age_range || ''}
-                    onValueChange={(value) => {
-                      register('age_range').onChange({ target: { value } })
-                    }}
-                    disabled={!isEditing}
-                  >
-                    <SelectTrigger className={`${!isEditing ? 'bg-gray-50' : ''}`}>
-                      <SelectValue placeholder={isEditing ? t('fields.ageRangePlaceholder') : ((profile as { age_range?: string })?.age_range ? t(`fields.ageRanges.${(profile as { age_range?: string }).age_range}`) : t('notProvided'))} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="18-24">{t('fields.ageRanges.18-24')}</SelectItem>
-                      <SelectItem value="25-34">{t('fields.ageRanges.25-34')}</SelectItem>
-                      <SelectItem value="35-44">{t('fields.ageRanges.35-44')}</SelectItem>
-                      <SelectItem value="45-54">{t('fields.ageRanges.45-54')}</SelectItem>
-                      <SelectItem value="55-64">{t('fields.ageRanges.55-64')}</SelectItem>
-                      <SelectItem value="65+">{t('fields.ageRanges.65+')}</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  {!isEditing ? (
+                    <Input
+                      value={profile?.age_range ? t(`fields.ageRanges.${profile.age_range}`) : t('notProvided')}
+                      disabled
+                      className="bg-gray-50"
+                    />
+                  ) : (
+                    <Select
+                      value={profile?.age_range || ''}
+                      onValueChange={(value) => {
+                        register('age_range').onChange({ target: { value } })
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder={t('fields.ageRangePlaceholder')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="18-24">{t('fields.ageRanges.18-24')}</SelectItem>
+                        <SelectItem value="25-34">{t('fields.ageRanges.25-34')}</SelectItem>
+                        <SelectItem value="35-44">{t('fields.ageRanges.35-44')}</SelectItem>
+                        <SelectItem value="45-54">{t('fields.ageRanges.45-54')}</SelectItem>
+                        <SelectItem value="55-64">{t('fields.ageRanges.55-64')}</SelectItem>
+                        <SelectItem value="65+">{t('fields.ageRanges.65+')}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
                 </div>
 
                 {/* Country */}
@@ -402,7 +410,7 @@ export default function ProfilePage() {
                     {...register('country')}
                     disabled={!isEditing}
                     placeholder={isEditing ? t('fields.countryPlaceholder') : ""}
-                    value={!isEditing ? ((profile as { country?: string })?.country || t('notProvided')) : undefined}
+                    value={!isEditing ? (profile?.country || t('notProvided')) : ''}
                     className={`${!isEditing ? 'bg-gray-50' : ''}`}
                   />
                 </div>
@@ -417,7 +425,7 @@ export default function ProfilePage() {
                     {...register('state_province')}
                     disabled={!isEditing}
                     placeholder={isEditing ? t('fields.statePlaceholder') : ""}
-                    value={!isEditing ? ((profile as { state_province?: string })?.state_province || t('notProvided')) : undefined}
+                    value={!isEditing ? (profile?.state_province || t('notProvided')) : ''}
                     className={`${!isEditing ? 'bg-gray-50' : ''}`}
                   />
                 </div>
@@ -432,7 +440,7 @@ export default function ProfilePage() {
                     {...register('city')}
                     disabled={!isEditing}
                     placeholder={isEditing ? t('fields.cityPlaceholder') : ""}
-                    value={!isEditing ? ((profile as { city?: string })?.city || t('notProvided')) : undefined}
+                    value={!isEditing ? (profile?.city || t('notProvided')) : ''}
                     className={`${!isEditing ? 'bg-gray-50' : ''}`}
                   />
                 </div>
@@ -448,7 +456,7 @@ export default function ProfilePage() {
                   {...register('bio')}
                   disabled={!isEditing}
                   placeholder={isEditing ? t('fields.bioPlaceholder') : ""}
-                  value={!isEditing ? (profile?.bio || t('notProvided')) : undefined}
+                  value={!isEditing ? (profile?.bio || t('notProvided')) : ''}
                   rows={4}
                   className={`${errors.bio ? 'border-red-500' : ''} ${!isEditing ? 'bg-gray-50' : ''}`}
                 />

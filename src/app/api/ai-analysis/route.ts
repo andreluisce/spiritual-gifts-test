@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate sessionId format if provided
-    if (sessionId !== undefined && sessionId !== null) {
+    if (sessionId !== undefined && sessionId !== null && sessionId !== '') {
       const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
       if (typeof sessionId !== 'string' || !uuidRegex.test(sessionId)) {
         console.error('❌ AI Analysis API: Invalid sessionId format:', sessionId)
