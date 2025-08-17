@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase-client'
+import { getEnvironmentConfig } from '@/lib/env-config'
 import type { User, AuthChangeEvent, Session } from '@supabase/supabase-js'
 
 type AuthContextType = {
@@ -22,7 +23,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [adminLoading, setAdminLoading] = useState(false)
   const [supabase] = useState(() => createClient())
 
-  // Function to check admin status using the database
+  // Function to check admin status using secure RPC function
   const checkAdminStatus = useCallback(async (currentUser: User | null) => {
     if (!currentUser) {
       setIsAdmin(false)
@@ -31,13 +32,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     setAdminLoading(true)
     try {
-      const { data: isAdminData, error } = await supabase.rpc('is_admin_user')
+      // Use secure RPC function that checks auth.users metadata
+      const { data, error } = await supabase.rpc('is_user_admin_safe')
       
       if (error) {
         console.error('Error checking admin status:', error)
         setIsAdmin(false)
       } else {
-        setIsAdmin(!!isAdminData)
+        setIsAdmin(!!data) // Function returns boolean
       }
     } catch (error) {
       console.error('Error checking admin status:', error)
@@ -50,12 +52,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Get initial user
     const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      setUser(user)
-      setLoading(false)
-      
-      // Check admin status for the initial user
-      await checkAdminStatus(user)
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        setUser(user)
+        setLoading(false)
+        
+        // Check admin status for the initial user (non-blocking)
+        checkAdminStatus(user).catch(console.error)
+      } catch (error) {
+        console.error('Error getting user:', error)
+        setUser(null)
+        setLoading(false) // Always set loading to false even on error
+      }
     }
 
     getUser()
@@ -66,8 +74,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(newUser)
       setLoading(false)
       
-      // Check admin status when user changes
-      await checkAdminStatus(newUser)
+      // Check admin status when user changes (non-blocking)
+      checkAdminStatus(newUser).catch(console.error)
     })
 
     return () => subscription.unsubscribe()
@@ -89,11 +97,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Get current locale from URL
     const currentPath = window.location.pathname
     const locale = currentPath.split('/')[1] || 'pt'
+    const { authCallbackUrl } = getEnvironmentConfig()
     
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/${locale}/dashboard`
+        redirectTo: authCallbackUrl(locale)
       }
     })
   }

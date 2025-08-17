@@ -124,6 +124,20 @@ interface DemographicsData {
   percentage: number
 }
 
+interface DemographicsAnalyticsResponse {
+  totalUsers: number
+  ageDistribution: Array<{
+    ageRange: string
+    count: number
+    percentage: number
+  }>
+  geographicDistribution: Array<{
+    country: string
+    count: number
+    percentage: number
+  }>
+}
+
 // Interface for geographic distribution
 interface GeographicData {
   country: string
@@ -484,10 +498,22 @@ export function useAgeDemographics() {
       try {
         setLoading(true)
         const { data, error } = await supabase
-          .rpc('get_age_demographics')
+          .rpc('get_demographics_analytics')
 
         if (error) throw error
-        setDemographics(data || [])
+        
+        // Extract age distribution from the comprehensive analytics
+        const analyticsData = data as DemographicsAnalyticsResponse
+        const ageDistribution = analyticsData?.ageDistribution || []
+        
+        // Convert to expected format
+        const mappedData: DemographicsData[] = ageDistribution.map((item) => ({
+          ageRange: item.ageRange,
+          count: item.count,
+          percentage: item.percentage
+        }))
+        
+        setDemographics(mappedData)
       } catch (err) {
         console.error('Error fetching age demographics:', err)
         setError(err instanceof Error ? err.message : 'Unknown error')
@@ -514,10 +540,22 @@ export function useGeographicDistribution() {
       try {
         setLoading(true)
         const { data, error } = await supabase
-          .rpc('get_geographic_distribution')
+          .rpc('get_demographics_analytics')
 
         if (error) throw error
-        setDistribution(data || [])
+        
+        // Extract geographic distribution from the comprehensive analytics
+        const analyticsData = data as DemographicsAnalyticsResponse
+        const geoDistribution = analyticsData?.geographicDistribution || []
+        
+        // Convert to expected format
+        const mappedData: GeographicData[] = geoDistribution.map((item) => ({
+          country: item.country,
+          count: item.count,
+          percentage: item.percentage
+        }))
+        
+        setDistribution(mappedData)
       } catch (err) {
         console.error('Error fetching geographic distribution:', err)
         setError(err instanceof Error ? err.message : 'Unknown error')
