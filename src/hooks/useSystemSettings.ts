@@ -55,7 +55,6 @@ export function useSystemSettings() {
       }
 
       const data = await response.json()
-      console.log('✅ useSystemSettings: Settings fetched successfully')
       setSettings(data)
     } catch (err) {
       console.error('❌ useSystemSettings: Error fetching settings:', err)
@@ -84,7 +83,6 @@ export function useSystemSettings() {
       }
 
       const data = await response.json()
-      console.log('✅ useSystemSettings: Settings updated successfully')
       setSettings(data)
       return data
     } catch (err) {
