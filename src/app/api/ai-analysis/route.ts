@@ -50,12 +50,33 @@ export async function POST(request: NextRequest) {
       locale?: string
     }
 
+    // Debug logging to identify the UUID issue
+    console.log('🔍 AI Analysis API Debug:', {
+      hasProfile: !!profile,
+      sessionId: sessionId,
+      sessionIdType: typeof sessionId,
+      locale: locale,
+      localeType: typeof locale,
+      profileLocale: profile?.locale
+    })
+
     // Validate required fields
     if (!profile?.primaryGift?.key) {
       console.error('❌ AI Analysis API: Missing profile data')
       return NextResponse.json({
         error: 'Missing required profile data'
       }, { status: 400 })
+    }
+
+    // Validate sessionId format if provided
+    if (sessionId !== undefined && sessionId !== null) {
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+      if (typeof sessionId !== 'string' || !uuidRegex.test(sessionId)) {
+        console.error('❌ AI Analysis API: Invalid sessionId format:', sessionId)
+        return NextResponse.json({
+          error: 'Invalid sessionId format - must be a valid UUID'
+        }, { status: 400 })
+      }
     }
 
     // Prepare gift scores for cache lookup
@@ -138,24 +159,36 @@ export async function POST(request: NextRequest) {
         ...profile.secondaryGifts.map(g => g.key)
       ]
 
+      // Log insert data for debugging
+      const insertData = {
+        user_id: user.id,
+        session_id: sessionId,
+        gift_scores: giftScores,
+        primary_gifts: primaryGifts,
+        locale: profile.locale || locale || 'pt',
+        personalized_insights: analysis.personalizedInsights,
+        strengths_description: analysis.strengthsDescription,
+        challenges_guidance: analysis.challengesGuidance,
+        ministry_recommendations: analysis.ministryRecommendations,
+        development_plan: analysis.developmentPlan,
+        practical_applications: analysis.practicalApplications,
+        confidence_score: analysis.confidence,
+        ai_service_used: clientAnalysis ? 'client-ai' : 'server-ai',
+        analysis_version: '2.0'
+      }
+
+      console.log('🔍 AI Analysis API: Attempting insert with data:', {
+        user_id: insertData.user_id,
+        session_id: insertData.session_id,
+        session_id_type: typeof insertData.session_id,
+        locale: insertData.locale,
+        locale_type: typeof insertData.locale,
+        primaryGiftsCount: insertData.primary_gifts.length
+      })
+
       const { error: insertError } = await supabase
         .from('ai_analysis_cache')
-        .insert({
-          user_id: user.id,
-          session_id: sessionId,
-          gift_scores: giftScores,
-          primary_gifts: primaryGifts,
-          locale: profile.locale || 'pt',
-          personalized_insights: analysis.personalizedInsights,
-          strengths_description: analysis.strengthsDescription,
-          challenges_guidance: analysis.challengesGuidance,
-          ministry_recommendations: analysis.ministryRecommendations,
-          development_plan: analysis.developmentPlan,
-          practical_applications: analysis.practicalApplications,
-          confidence_score: analysis.confidence,
-          ai_service_used: clientAnalysis ? 'client-ai' : 'server-ai',
-          analysis_version: '2.0'
-        })
+        .insert(insertData)
         .select()
 
       if (insertError) {
