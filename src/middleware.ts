@@ -1,11 +1,10 @@
 import createMiddleware from 'next-intl/middleware';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
-import { staticRouting, getDynamicRouting, isValidLocale } from './i18n/dynamic-routing';
-import { getDefaultLanguage } from './lib/server-settings';
+import { staticRouting, isValidLocale } from './i18n/dynamic-routing';
 
-// Create static middleware as fallback
-const staticIntlMiddleware = createMiddleware(staticRouting);
+// Create static middleware - use static routing for better Edge Runtime compatibility
+const intlMiddleware = createMiddleware(staticRouting);
 
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next({
@@ -15,9 +14,6 @@ export async function middleware(request: NextRequest) {
   });
 
   try {
-    // Get dynamic routing configuration
-    const dynamicRouting = await getDynamicRouting();
-    const intlMiddleware = createMiddleware(dynamicRouting);
 
     // Create Supabase client
     const supabase = createServerClient(
@@ -54,8 +50,8 @@ export async function middleware(request: NextRequest) {
       request.nextUrl.pathname.includes(route)
     );
 
-    // Get default language from database for redirects
-    const defaultLanguage = await getDefaultLanguage();
+    // Use static default language for Edge Runtime compatibility
+    const defaultLanguage = staticRouting.defaultLocale;
 
     // If accessing any route (except public, static files, or auth callback) without authentication, redirect to login
     if (!isPublicRoute && !isAuthCallback && !isStaticFile && !user) {
@@ -76,13 +72,10 @@ export async function middleware(request: NextRequest) {
   } catch (error) {
     console.error('Error in middleware:', error);
     // Fallback to static middleware if there's an error
-    return staticIntlMiddleware(request);
+    return intlMiddleware(request);
   }
 }
 
 export const config = {
   matcher: ['/((?!api|_next|_static|favicon.ico|.*\\.).*)']
 };
-
-// Force Node.js runtime to avoid Edge Runtime compatibility issues with Supabase
-export const runtime = 'nodejs';
