@@ -177,7 +177,7 @@
   },
   "login": {
     "title": "Teste de Dons Espirituais",
-    "subtitle": "",
+    "subtitle": "Pronto para descobrir seus dons espirituais? Vamos começar!",
     "createAccount": "Faça seu login",
     "continueWithEmail": "Continuar com Email",
     "continueWithGoogle": "Continuar com Google",
@@ -612,6 +612,50 @@
         }
       }
     },
+    "content": {
+      "title": "Gerenciamento de Conteúdo",
+      "subtitle": "Gerencie dons espirituais, perguntas, características e todo o conteúdo do sistema",
+      "common": {
+        "active": "Ativo",
+        "inactive": "Inativo",
+        "updated": "Atualizado",
+        "questions": "perguntas",
+        "search": "Pesquisar",
+        "addNew": "Adicionar Novo",
+        "edit": "Editar",
+        "delete": "Excluir",
+        "cancel": "Cancelar",
+        "save": "Salvar Alterações",
+        "create": "Criar",
+        "saving": "Salvando...",
+        "creating": "Criando...",
+        "deleting": "Excluindo..."
+      },
+      "gifts": {
+        "title": "Dons Espirituais",
+        "searchPlaceholder": "Pesquisar dons espirituais...",
+        "addNew": "Adicionar Novo Dom",
+        "count": "Dons Espirituais ({count})",
+        "deleteConfirm": "Tem certeza de que deseja excluir o dom \"{name}\"? Isso também excluirá todas as perguntas e conteúdo relacionados. Esta ação não pode ser desfeita."
+      },
+      "questions": {
+        "title": "Perguntas do Quiz",
+        "searchPlaceholder": "Pesquisar perguntas...",
+        "addNew": "Adicionar Pergunta",
+        "count": "Perguntas do Quiz ({count})",
+        "allGifts": "Todos os Dons",
+        "noResults": "Nenhuma pergunta encontrada que corresponda aos seus critérios",
+        "deleteConfirm": "Tem certeza de que deseja excluir esta pergunta? Esta ação não pode ser desfeita."
+      },
+      "characteristics": {
+        "title": "Conteúdo dos Dons",
+        "searchPlaceholder": "Pesquisar características, perigos, mal-entendidos...",
+        "addNew": "Adicionar Conteúdo",
+        "count": "Conteúdo dos Dons ({count})",
+        "noResults": "Nenhum conteúdo encontrado que corresponda aos seus critérios",
+        "deleteConfirm": "Tem certeza de que deseja excluir este {type}? Esta ação não pode ser desfeita."
+      }
+    },
     "analytics": {
       "title": "Analytics & Insights",
       "subtitle": "Comprehensive analytics and data insights for the spiritual gifts system",
@@ -705,16 +749,25 @@
       }
     }
   },
+  "report": {
+    "title": "Relatório de Dons Espirituais",
+    "subtitle": "Análise detalhada das {count} perguntas agrupadas por dons espirituais",
+    "resultDate": "Resultado de: {date}",
+    "chartTitle": "Distribuição de Pontuação por Dom Espiritual",
+    "chartTitleEnd": "Gráfico de Distribuição dos Dons",
+    "questions": "Perguntas ({count}):",
+    "stats": {
+      "totalQuestions": "Total de Perguntas:",
+      "totalScore": "Pontuação Total:",
+      "averagePerQuestion": "Média por Pergunta:",
+      "percentOfTotal": "% do Total:"
+    },
+    "footer": {
+      "title": "Total de Perguntas",
+      "description": "Perguntas organizadas para avaliar os 7 dons espirituais principais"
+    }
+  },
   "Index": {
     "title": "Teste de Dons Espirituais"
-  }
-}
-ais"
-  }
-}
-"Teste de Dons Espirituais"
-  }
-}
-te de Dons Espirituais"
   }
 }

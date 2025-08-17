@@ -161,10 +161,14 @@
     "questionsOfTotal": "{Respondido} de {Total} Preguntas",
     "seeFullTest": "Ver prueba completa",
     "unlockFull": {
+      "title": "Desbloquea el Potencial Completo",
       "features": {
-        "analysis": "• Análisis detallado de sus regalos",
-        "fullTest": "• Complete la prueba con todas las preguntas"
-      }
+        "fullTest": "• Prueba completa con todas las preguntas",
+        "analysis": "• Análisis detallado de tus dones",
+        "history": "• Historial de resultados",
+        "recommendations": "• Recomendaciones personalizadas"
+      },
+      "loginButton": "Iniciar Sesión y Continuar"
     }
   },
   "welcome": {
@@ -408,6 +412,50 @@
         }
       }
     },
+    "content": {
+      "title": "Gestión de Contenido",
+      "subtitle": "Gestione dones espirituales, preguntas, características y todo el contenido del sistema",
+      "common": {
+        "active": "Activo",
+        "inactive": "Inactivo",
+        "updated": "Actualizado",
+        "questions": "preguntas",
+        "search": "Buscar",
+        "addNew": "Agregar Nuevo",
+        "edit": "Editar",
+        "delete": "Eliminar",
+        "cancel": "Cancelar",
+        "save": "Guardar Cambios",
+        "create": "Crear",
+        "saving": "Guardando...",
+        "creating": "Creando...",
+        "deleting": "Eliminando..."
+      },
+      "gifts": {
+        "title": "Dones Espirituales",
+        "searchPlaceholder": "Buscar dones espirituales...",
+        "addNew": "Agregar Nuevo Don",
+        "count": "Dones Espirituales ({count})",
+        "deleteConfirm": "¿Estás seguro de que quieres eliminar el don \"{name}\"? Esto también eliminará todas las preguntas y contenido relacionado. Esta acción no se puede deshacer."
+      },
+      "questions": {
+        "title": "Preguntas del Quiz",
+        "searchPlaceholder": "Buscar preguntas...",
+        "addNew": "Agregar Pregunta",
+        "count": "Preguntas del Quiz ({count})",
+        "allGifts": "Todos los Dones",
+        "noResults": "No se encontraron preguntas que coincidan con tus criterios",
+        "deleteConfirm": "¿Estás seguro de que quieres eliminar esta pregunta? Esta acción no se puede deshacer."
+      },
+      "characteristics": {
+        "title": "Contenido de los Dones",
+        "searchPlaceholder": "Buscar características, peligros, malentendidos...",
+        "addNew": "Agregar Contenido",
+        "count": "Contenido de los Dones ({count})",
+        "noResults": "No se encontró contenido que coincida con tus criterios",
+        "deleteConfirm": "¿Estás seguro de que quieres eliminar este {type}? Esta acción no se puede deshacer."
+      }
+    },
     "analytics": {
       "title": "Analíticas e Informes",
       "subtitle": "Analíticas y datos integrales del sistema de dones espirituales",
@@ -464,12 +512,14 @@
           "comingSoon": "Análisis de ubicación de usuarios próximamente"
         },
         "summary": {
-          "geographicDiversity": "",
-          "mainCountry": "",
-          "notAvailable": "",
-          "title": ""
+          "title": "Resumen Demográfico",
+          "dominantAgeGroup": "Grupo de Edad Dominante",
+          "mainCountry": "País Principal",
+          "geographicDiversity": "Diversidad Geográfica",
+          "countries": "países",
+          "notAvailable": "N/A"
         },
-        "title": ""
+        "subtitle": "Datos demográficos de usuarios y distribución geográfica"
       },
       "reports": {
         "title": "Reportes Generados",
@@ -738,22 +788,25 @@
       "biblicalReferences": "Referencias bíblicas específicas en desarrollo."
     }
   },
+  "report": {
+    "title": "Informe de Dones Espirituales",
+    "subtitle": "Análisis detallado de las {count} preguntas agrupadas por dones espirituales",
+    "resultDate": "Resultado de: {date}",
+    "chartTitle": "Distribución de Puntuación por Don Espiritual",
+    "chartTitleEnd": "Gráfico de Distribución de los Dones",
+    "questions": "Preguntas ({count}):",
+    "stats": {
+      "totalQuestions": "Total de Preguntas:",
+      "totalScore": "Puntuación Total:",
+      "averagePerQuestion": "Promedio por Pregunta:",
+      "percentOfTotal": "% del Total:"
+    },
+    "footer": {
+      "title": "Total de Preguntas",
+      "description": "Preguntas organizadas para evaluar los 7 dones espirituales principales"
+    }
+  },
   "Index": {
     "title": "Prueba de Dones Espirituales"
-  },
-  "report": {
-    "stats": {
-      "averagePerQuestion": "",
-      "percentOfTotal": "",
-      "totalQuestions": "",
-      "totalScore": ""
-    },
-    "subtitle": ""
-  }
-}
-itle": "Prueba de Dones Espirituales"
-  },
-  "report": {
-    "chartTitle": ""
   }
 }
