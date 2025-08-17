@@ -43,12 +43,13 @@ export default function GiftsPage() {
   }, [user, router, locale])
   const [activeSection, setActiveSection] = useState('motivations')
 
-  const { data: spiritualGiftsData, isLoading: loadingSpiritualGifts } = useSpiritualGifts(locale)
-  const { data: categories, isLoading: loadingCategories } = useCategories(locale)
-  const { data: ministries } = useMinistries(locale)
-  const { data: manifestations } = useManifestations(locale)
+  const { data: spiritualGiftsData, isLoading: loadingSpiritualGifts, error: spiritualGiftsError } = useSpiritualGifts(locale)
+  const { data: categories, isLoading: loadingCategories, error: categoriesError } = useCategories(locale)
+  const { data: ministries, error: ministriesError } = useMinistries(locale)
+  const { data: manifestations, error: manifestationsError } = useManifestations(locale)
 
   const loading = loadingSpiritualGifts || loadingCategories
+  const hasError = spiritualGiftsError || categoriesError || ministriesError || manifestationsError
 
   // Filter motivational gifts only (for the motivations tab)
   const motivationalGifts = spiritualGiftsData?.filter(gift => 
@@ -74,7 +75,35 @@ export default function GiftsPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Carregando dons espirituais...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (hasError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-6">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+            <h2 className="text-xl font-semibold text-red-800 mb-2">
+              Erro ao carregar dados
+            </h2>
+            <p className="text-red-600 mb-4">
+              Não foi possível carregar as informações dos dons espirituais. 
+              Tente recarregar a página.
+            </p>
+            <Button 
+              onClick={() => window.location.reload()} 
+              variant="outline" 
+              className="border-red-300 text-red-700 hover:bg-red-50"
+            >
+              Recarregar Página
+            </Button>
+          </div>
+        </div>
       </div>
     )
   }

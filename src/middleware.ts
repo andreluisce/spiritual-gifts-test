@@ -14,35 +14,57 @@ export async function middleware(request: NextRequest) {
   });
 
   try {
+    // Skip processing for specific routes to avoid infinite loops
+    const pathname = request.nextUrl.pathname;
+    const isApiRoute = pathname.startsWith('/api/');
+    const isStaticFile = pathname.includes('.') && !isApiRoute;
+    const isSpecialRoute = pathname.includes('/_next/') || 
+                          pathname.includes('/favicon.ico') ||
+                          pathname.includes('/robots.txt') ||
+                          pathname.includes('/sitemap.xml');
 
-    // Create Supabase client
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          get(name: string) {
-            return request.cookies.get(name)?.value
-          },
-          set(name: string, value: string, options: CookieOptions) {
-            response.cookies.set(name, value, options)
-          },
-          remove(name: string, options: CookieOptions) {
-            response.cookies.set(name, '', { ...options, maxAge: 0 })
-          },
-        },
-      }
-    );
+    if (isStaticFile || isSpecialRoute) {
+      return response;
+    }
 
-    // Refresh session and get user
-    const { data: { user } } = await supabase.auth.getUser();
+    // Create Supabase client with better error handling
+    let user = null;
+    try {
+      const supabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+          cookies: {
+            get(name: string) {
+              return request.cookies.get(name)?.value
+            },
+            set(name: string, value: string, options: CookieOptions) {
+              response.cookies.set(name, value, options)
+            },
+            remove(name: string, options: CookieOptions) {
+              response.cookies.set(name, '', { ...options, maxAge: 0 })
+            },
+          },
+        }
+      );
+
+      // Get user with timeout to prevent hanging
+      const { data: { user: authUser } } = await Promise.race([
+        supabase.auth.getUser(),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Auth timeout')), 3000)
+        )
+      ]) as { data: { user: unknown } };
+      
+      user = authUser;
+    } catch (authError) {
+      console.error('Auth check failed in middleware:', authError);
+      // Continue without user to allow public routes
+    }
 
     // Check if this is an auth callback (just need code parameter)
     const isAuthCallback = request.nextUrl.searchParams.has('code');
 
-    // Skip static files and assets
-    const isStaticFile = request.nextUrl.pathname.includes('.') &&
-      !request.nextUrl.pathname.includes('/api/');
 
     // Public routes and auth callbacks don't need authentication
     const publicRoutes = ['/login', '/auth/callback'];
