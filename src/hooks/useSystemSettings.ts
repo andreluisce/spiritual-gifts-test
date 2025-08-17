@@ -42,7 +42,6 @@ export function useSystemSettings() {
 
   const fetchSettings = async () => {
     try {
-      console.log('🔧 useSystemSettings: Fetching settings...')
       setLoading(true)
       setError(null)
 
@@ -66,7 +65,6 @@ export function useSystemSettings() {
 
   const updateSettings = async (newSettings: SystemSettings) => {
     try {
-      console.log('🔧 useSystemSettings: Updating settings...')
       setError(null)
 
       const response = await fetch('/api/settings', {
@@ -115,7 +113,6 @@ export function useAIAnalysisSettings() {
   useEffect(() => {
     const fetchAISettings = async () => {
       try {
-        console.log('🤖 useAIAnalysisSettings: Fetching AI settings...')
         const response = await fetch('/api/settings', {
           credentials: 'include'
         })
@@ -123,10 +120,8 @@ export function useAIAnalysisSettings() {
         if (response.ok) {
           const data = await response.json()
           const aiSettings = data.ai || { showAIButton: false }
-          console.log('✅ useAIAnalysisSettings: AI settings fetched:', aiSettings)
           setShowAIButton(aiSettings.showAIButton || false)
         } else {
-          console.log('❌ useAIAnalysisSettings: Failed to fetch settings, defaulting to false')
           setShowAIButton(false)
         }
       } catch (error) {

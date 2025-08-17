@@ -29,7 +29,6 @@ export default function AuthCallbackPage() {
 
           if (data.session) {
             // Successfully authenticated, collect demographics and redirect
-            console.log('Auth callback successful, collecting demographics and redirecting to dashboard')
             
             // Collect demographics in the background (don't await to avoid delaying redirect)
             fetch('/api/demographics/collect', {
@@ -39,8 +38,8 @@ export default function AuthCallbackPage() {
               }
             })
             .then(response => response.json())
-            .then(result => {
-              console.log('Demographics collection result:', result)
+            .then(() => {
+              // Demographics collected successfully
             })
             .catch(error => {
               console.warn('Demographics collection failed (non-critical):', error)
@@ -48,7 +47,6 @@ export default function AuthCallbackPage() {
             
             router.push('/dashboard')
           } else {
-            console.log('No session created, redirecting to login')
             router.push('/login?error=no_session')
           }
         } else {

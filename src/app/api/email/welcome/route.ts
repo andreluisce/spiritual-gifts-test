@@ -8,7 +8,6 @@ import { emailService } from '@/lib/email'
 export const runtime = 'nodejs'
 
 export async function POST(request: NextRequest) {
-  console.log('📧 Welcome Email API: Request received')
   try {
     const cookieStore = await cookies()
     const supabase = createServerClient<Database>(
@@ -55,13 +54,11 @@ export async function POST(request: NextRequest) {
       userEmail = user.email!
     }
 
-    console.log('📧 Welcome Email API: Sending welcome email to:', userEmail)
 
     // Send welcome email
     const result = await emailService.sendWelcomeEmail(userName, userEmail)
 
     if (result.success) {
-      console.log('✅ Welcome Email API: Welcome email sent successfully')
       
       // Log email in database (optional)
       if (user) {

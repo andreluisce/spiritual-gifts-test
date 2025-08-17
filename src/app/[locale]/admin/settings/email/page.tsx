@@ -109,7 +109,6 @@ export default function AdminEmailSettingsPage() {
 
   const handleSaveConfig = async () => {
     // In a real implementation, this would save to database/environment
-    console.log('📧 Saving email configuration...', emailConfig)
     addToast({
       type: 'info',
       title: 'Configuração salva!',
@@ -125,7 +124,7 @@ export default function AdminEmailSettingsPage() {
         title: 'Copiado!',
         description: 'Texto copiado para área de transferência'
       })
-    } catch (error) {
+    } catch {
       addToast({
         type: 'error',
         title: 'Erro ao copiar',

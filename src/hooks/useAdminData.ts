@@ -406,7 +406,6 @@ export function useUpdateUser() {
     }
   ) => {
     try {
-      console.log('updateUser hook called with:', { userId, updates })
       setUpdating(true)
       setError(null)
 
@@ -418,12 +417,10 @@ export function useUpdateUser() {
         user_status: updates.status || null
       }
       
-      console.log('Calling RPC admin_update_user with params:', rpcParams)
 
       const { data, error: updateError } = await supabase
         .rpc('admin_update_user', rpcParams)
 
-      console.log('RPC response:', { data, updateError })
 
       if (updateError) throw updateError
 

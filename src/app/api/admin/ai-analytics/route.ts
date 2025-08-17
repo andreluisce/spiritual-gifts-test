@@ -8,7 +8,6 @@ export const runtime = 'nodejs'
 
 // GET endpoint to retrieve AI analytics data (admin only)
 export async function GET(request: NextRequest) {
-  console.log('📊 AI Analytics API: GET request received')
   try {
     const cookieStore = await cookies()
     const supabase = createServerClient<Database>(
@@ -30,11 +29,9 @@ export async function GET(request: NextRequest) {
     )
 
     // Check authentication and admin role
-    console.log('🔐 AI Analytics API: Checking admin authentication...')
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     
     if (authError || !user) {
-      console.log('❌ AI Analytics API: Unauthorized access attempt')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -43,11 +40,9 @@ export async function GET(request: NextRequest) {
       .rpc('is_user_admin_safe')
     
     if (adminError || !isAdminData) {
-      console.log('❌ AI Analytics API: Non-admin user attempted to access analytics:', adminError)
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
     }
 
-    console.log('✅ AI Analytics API: Admin authenticated:', user.id)
 
     // Get query parameters
     const { searchParams } = new URL(request.url)
@@ -57,7 +52,6 @@ export async function GET(request: NextRequest) {
 
     switch (type) {
       case 'overview':
-        console.log('📊 AI Analytics API: Fetching overview stats...')
         const { data: overviewStats, error: overviewError } = await supabase
           .rpc('get_ai_usage_stats')
 
@@ -83,7 +77,6 @@ export async function GET(request: NextRequest) {
         break
 
       case 'timeline':
-        console.log('📊 AI Analytics API: Fetching timeline data...')
         const { data: timelineData, error: timelineError } = await supabase
           .rpc('get_ai_usage_timeline')
 
@@ -96,7 +89,6 @@ export async function GET(request: NextRequest) {
         break
 
       case 'by-gift':
-        console.log('📊 AI Analytics API: Fetching gift breakdown...')
         const { data: giftData, error: giftError } = await supabase
           .rpc('get_ai_analysis_by_gift')
 
@@ -109,7 +101,6 @@ export async function GET(request: NextRequest) {
         break
 
       case 'recent-activity':
-        console.log('📊 AI Analytics API: Fetching recent activity...')
         const limit = parseInt(searchParams.get('limit') || '10')
         const { data: activityData, error: activityError } = await supabase
           .rpc('get_recent_ai_activity', { limit_count: limit })
@@ -123,7 +114,6 @@ export async function GET(request: NextRequest) {
         break
 
       case 'system-status':
-        console.log('📊 AI Analytics API: Fetching system status...')
         const { data: statusData, error: statusError } = await supabase
           .rpc('get_ai_system_status')
 
@@ -136,7 +126,6 @@ export async function GET(request: NextRequest) {
         break
 
       case 'all':
-        console.log('📊 AI Analytics API: Fetching all analytics data...')
         // Fetch all data types
         const [overviewResult, timelineResult, giftResult, activityResult, statusResult] = await Promise.allSettled([
           supabase.rpc('get_ai_usage_stats'),
@@ -159,7 +148,6 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'Invalid analytics type' }, { status: 400 })
     }
 
-    console.log('✅ AI Analytics API: Data retrieved successfully')
     return NextResponse.json({
       success: true,
       data,

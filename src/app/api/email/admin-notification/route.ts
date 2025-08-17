@@ -8,7 +8,6 @@ import { emailService, AdminNotificationData } from '@/lib/email'
 export const runtime = 'nodejs'
 
 export async function POST(request: NextRequest) {
-  console.log('📧 Admin Notification API: Request received')
   try {
     const cookieStore = await cookies()
     const supabase = createServerClient<Database>(
@@ -54,7 +53,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid notification type' }, { status: 400 })
     }
 
-    console.log('📧 Admin Notification API: Sending notification...', { type, userName })
 
     // Prepare notification data
     const notificationData: AdminNotificationData = {
@@ -77,7 +75,6 @@ export async function POST(request: NextRequest) {
     const result = await emailService.sendAdminNotification(notificationData)
 
     if (result.success) {
-      console.log('✅ Admin Notification API: Notification sent successfully')
       
       // Log notification in database (optional)
       if (user) {

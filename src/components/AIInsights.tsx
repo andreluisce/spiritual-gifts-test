@@ -67,12 +67,9 @@ export default function AIInsights({ giftScores, topGifts, sessionId, locale = '
         throw new Error(`API Error: ${response.status}`)
       }
 
-      const { analysis, cached } = await response.json()
+      const { analysis } = await response.json()
       setAiAnalysis(analysis)
       setHasAnalyzed(true)
-      
-      // Log if we're using cached vs fresh analysis
-      console.log(cached ? '💾 Using cached AI analysis' : '🤖 Generated fresh AI analysis')
     } catch (err) {
       console.error('AI Analysis Error:', err)
       setError('Não foi possível gerar a análise personalizada no momento. Tente novamente em alguns instantes.')

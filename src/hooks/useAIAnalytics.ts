@@ -67,7 +67,6 @@ export function useAIAnalytics(type: 'overview' | 'timeline' | 'by-gift' | 'rece
     }
 
     try {
-      console.log('📊 useAIAnalytics: Fetching AI analytics data...')
       setLoading(true)
       setError(null)
 
@@ -82,7 +81,6 @@ export function useAIAnalytics(type: 'overview' | 'timeline' | 'by-gift' | 'rece
       const result = await response.json()
       
       if (result.success) {
-        console.log('✅ useAIAnalytics: Analytics data fetched successfully')
         setData(result.data)
       } else {
         throw new Error(result.error || 'Failed to fetch analytics')

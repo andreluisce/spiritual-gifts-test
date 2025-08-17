@@ -41,7 +41,6 @@ export class EmailService {
   // Send basic email
   async sendEmail(data: EmailData) {
     try {
-      console.log('📧 EmailService: Sending email to:', data.to)
       
       const emailPayload: {
         from: string
@@ -84,7 +83,6 @@ export class EmailService {
       // Type assertion needed because Resend has complex union types for email options
       const result = await resend.emails.send(emailPayload as Parameters<typeof resend.emails.send>[0])
 
-      console.log('✅ EmailService: Email sent successfully:', result.data?.id)
       return { success: true, id: result.data?.id }
     } catch (error) {
       console.error('❌ EmailService: Error sending email:', error)
@@ -109,7 +107,6 @@ export class EmailService {
   async sendAdminNotification(data: AdminNotificationData) {
     const adminEmails = await this.getAdminEmails()
     if (adminEmails.length === 0) {
-      console.log('⚠️ EmailService: No admin emails configured')
       return { success: false, error: 'No admin emails configured' }
     }
 

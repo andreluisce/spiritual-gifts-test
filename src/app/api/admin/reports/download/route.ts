@@ -31,7 +31,6 @@ interface ReportRecord {
 export const runtime = 'nodejs'
 
 export async function GET(request: NextRequest) {
-  console.log('📥 Reports Download API: GET request received')
   try {
     const cookieStore = await cookies()
     const supabase = createServerClient<Database>(
@@ -64,7 +63,6 @@ export async function GET(request: NextRequest) {
       .rpc('is_user_admin_safe')
     
     if (adminError || !isAdminData) {
-      console.log('❌ Admin check failed:', adminError)
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
     }
 
@@ -124,7 +122,6 @@ export async function GET(request: NextRequest) {
         fileName = `${baseFileName}.json`
     }
 
-    console.log('✅ Reports Download API: Report downloaded successfully')
 
     return new NextResponse(content, {
       status: 200,

@@ -8,7 +8,6 @@ import { emailService, QuizResultEmailData } from '@/lib/email'
 export const runtime = 'nodejs'
 
 export async function POST(request: NextRequest) {
-  console.log('📧 Email API: Send results request received')
   try {
     const cookieStore = await cookies()
     const supabase = createServerClient<Database>(
@@ -44,7 +43,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Session ID is required' }, { status: 400 })
     }
 
-    console.log('📧 Email API: Fetching quiz session data for email...')
 
     // Get quiz session with user data
     const { data: session, error: sessionError } = await supabase
@@ -55,8 +53,7 @@ export async function POST(request: NextRequest) {
           score,
           pool_question_id,
           question_pool (
-            gift,
-            question_text
+            gift
           )
         )
       `)
@@ -134,13 +131,11 @@ export async function POST(request: NextRequest) {
       detailsUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard/results/${sessionId}`
     }
 
-    console.log('📧 Email API: Sending quiz results email...', { to: user.email, gift: primaryGift })
 
     // Send email
     const result = await emailService.sendQuizResultsEmail(emailData)
 
     if (result.success) {
-      console.log('✅ Email API: Quiz results email sent successfully')
       
       // Log email in database (optional)
       await supabase

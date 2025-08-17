@@ -8,7 +8,6 @@ export const runtime = 'nodejs'
 
 // GET endpoint to retrieve generated reports list
 export async function GET() {
-  console.log('📊 Reports API: GET request received')
   try {
     const cookieStore = await cookies()
     const supabase = createServerClient<Database>(
@@ -41,7 +40,6 @@ export async function GET() {
       .rpc('is_user_admin_safe')
     
     if (adminError || !isAdminData) {
-      console.log('❌ Admin check failed:', adminError)
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
     }
 
@@ -59,7 +57,6 @@ export async function GET() {
       return NextResponse.json({ error: 'Failed to fetch reports' }, { status: 500 })
     }
 
-    console.log('✅ Reports API: Reports retrieved successfully')
     return NextResponse.json({
       success: true,
       reports: reports || []
@@ -76,7 +73,6 @@ export async function GET() {
 
 // POST endpoint to generate a new report
 export async function POST(request: NextRequest) {
-  console.log('📊 Reports API: POST request received')
   try {
     const cookieStore = await cookies()
     const supabase = createServerClient<Database>(
@@ -109,7 +105,6 @@ export async function POST(request: NextRequest) {
       .rpc('is_user_admin_safe')
     
     if (adminError || !isAdminData) {
-      console.log('❌ Admin check failed:', adminError)
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
     }
 
@@ -127,7 +122,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Title is required' }, { status: 400 })
     }
 
-    console.log('📊 Reports API: Generating report with params:', { title, reportType, format, dateRange })
 
     // Get comprehensive analytics data
     const { data: analyticsData, error: dataError } = await supabase
@@ -163,7 +157,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to create report' }, { status: 500 })
     }
 
-    console.log('✅ Reports API: Report generated successfully:', newReport.id)
     return NextResponse.json({
       success: true,
       report: newReport
@@ -180,7 +173,6 @@ export async function POST(request: NextRequest) {
 
 // DELETE endpoint to remove a report
 export async function DELETE(request: NextRequest) {
-  console.log('📊 Reports API: DELETE request received')
   try {
     const cookieStore = await cookies()
     const supabase = createServerClient<Database>(
@@ -213,7 +205,6 @@ export async function DELETE(request: NextRequest) {
       .rpc('is_user_admin_safe')
     
     if (adminError || !isAdminData) {
-      console.log('❌ Admin check failed:', adminError)
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
     }
 
@@ -234,7 +225,6 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to delete report' }, { status: 500 })
     }
 
-    console.log('✅ Reports API: Report deleted successfully')
     return NextResponse.json({ success: true })
 
   } catch (error) {

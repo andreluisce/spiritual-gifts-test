@@ -195,8 +195,6 @@ export default function AdminUsersPage() {
   }
 
   const handleSaveUser = async (data: UserEditForm) => {
-    console.log('handleSaveUser called with:', data)
-    console.log('editingUser:', editingUser)
     
     if (!editingUser) {
       console.error('No editing user found')
@@ -204,11 +202,6 @@ export default function AdminUsersPage() {
     }
 
     try {
-      console.log('Calling updateUser with:', editingUser.id, {
-        displayName: data.displayName,
-        role: data.role,
-        status: data.status
-      })
 
       const result = await updateUser(editingUser.id, {
         displayName: data.displayName,
@@ -216,10 +209,8 @@ export default function AdminUsersPage() {
         status: data.status
       })
 
-      console.log('Update result:', result)
 
       if (result.success) {
-        console.log('User update successful, refreshing...')
         setEditingUser(null)
         reset()
         // Refresh the users list by reloading the page data

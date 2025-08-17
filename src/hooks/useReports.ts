@@ -42,7 +42,6 @@ export function useReports() {
     }
 
     try {
-      console.log('📊 useReports: Fetching reports...')
       setLoading(true)
       setError(null)
 
@@ -57,7 +56,6 @@ export function useReports() {
       const result = await response.json()
       
       if (result.success) {
-        console.log('✅ useReports: Reports fetched successfully')
         setReports(result.reports)
       } else {
         throw new Error(result.error || 'Failed to fetch reports')
@@ -72,7 +70,6 @@ export function useReports() {
 
   const generateReport = useCallback(async (reportRequest: CreateReportRequest) => {
     try {
-      console.log('📊 useReports: Generating report...', reportRequest)
       setError(null)
 
       const response = await fetch('/api/admin/reports', {
@@ -91,7 +88,6 @@ export function useReports() {
       const result = await response.json()
       
       if (result.success) {
-        console.log('✅ useReports: Report generated successfully')
         // Refresh reports list
         await fetchReports()
         return result.report
@@ -107,7 +103,6 @@ export function useReports() {
 
   const deleteReport = useCallback(async (reportId: string) => {
     try {
-      console.log('🗑️ useReports: Deleting report...', reportId)
       setError(null)
 
       const response = await fetch(`/api/admin/reports?id=${reportId}`, {
@@ -122,7 +117,6 @@ export function useReports() {
       const result = await response.json()
       
       if (result.success) {
-        console.log('✅ useReports: Report deleted successfully')
         // Remove from local state
         setReports(prev => prev.filter(report => report.id !== reportId))
         return true
@@ -138,7 +132,6 @@ export function useReports() {
 
   const downloadReport = useCallback(async (reportId: string, format: string = 'json') => {
     try {
-      console.log('📥 useReports: Downloading report...', reportId, format)
       
       const response = await fetch(`/api/admin/reports/download?id=${reportId}&format=${format}`, {
         credentials: 'include'
@@ -164,7 +157,6 @@ export function useReports() {
       document.body.removeChild(link)
       window.URL.revokeObjectURL(url)
 
-      console.log('✅ useReports: Report downloaded successfully')
       
       // Refresh reports to update download count
       await fetchReports()

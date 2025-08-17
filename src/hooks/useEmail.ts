@@ -24,7 +24,6 @@ export function useEmail() {
     setError(null)
 
     try {
-      console.log('📧 useEmail: Sending quiz results email...')
       
       const response = await fetch('/api/email/send-results', {
         method: 'POST',
@@ -38,7 +37,6 @@ export function useEmail() {
       const result = await response.json()
 
       if (response.ok && result.success) {
-        console.log('✅ useEmail: Quiz results email sent successfully')
         return {
           success: true,
           message: 'Email enviado com sucesso!',
@@ -70,7 +68,6 @@ export function useEmail() {
     setError(null)
 
     try {
-      console.log('📧 useEmail: Sending welcome email...')
       
       const response = await fetch('/api/email/welcome', {
         method: 'POST',
@@ -84,7 +81,6 @@ export function useEmail() {
       const result = await response.json()
 
       if (response.ok && result.success) {
-        console.log('✅ useEmail: Welcome email sent successfully')
         return {
           success: true,
           message: 'Email de boas-vindas enviado com sucesso!',
@@ -115,7 +111,6 @@ export function useEmail() {
     setError(null)
 
     try {
-      console.log('📧 useEmail: Sending admin notification...', { type, userName })
       
       const response = await fetch('/api/email/admin-notification', {
         method: 'POST',
@@ -129,7 +124,6 @@ export function useEmail() {
       const result = await response.json()
 
       if (response.ok && result.success) {
-        console.log('✅ useEmail: Admin notification sent successfully')
         return {
           success: true,
           message: 'Notificação enviada aos administradores',
@@ -179,7 +173,6 @@ export function useEmailTest() {
     setTestResult(null)
 
     try {
-      console.log('🧪 useEmailTest: Testing email service...')
       
       // Send a test welcome email to the admin
       const response = await fetch('/api/email/welcome', {

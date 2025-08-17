@@ -211,8 +211,6 @@ export function useQuizQuestions(locale: string = 'pt') {
           default_weight: item.default_weight
         }))
 
-        const expectedTotal = questionsPerGift * 7; // 7 spiritual gifts
-        console.log(`Generated balanced quiz with ${questions.length} questions (${questionsPerGift} per gift, expected: ${expectedTotal})`)
         return questions
       } catch {
         console.warn('Questions RPC not available, trying direct table query')
@@ -253,7 +251,6 @@ export function useQuizQuestions(locale: string = 'pt') {
             }
           }
 
-          console.log(`Table fallback generated ${allQuestions.length} questions`)
           return allQuestions
 
         } catch {
@@ -431,7 +428,6 @@ export function useSpiritualGifts(locale: string = 'pt') {
         }
 
         if (!directError && directData && directData.length > 0) {
-          console.log('✅ Direct query successful, found gifts:', directData.length)
 
           return directData.map((gift: RawGiftData) => ({
             gift_key: gift.gift_key,
@@ -462,7 +458,6 @@ export function useSpiritualGifts(locale: string = 'pt') {
         }
 
         // Fallback to RPC function if direct query fails
-        console.log('⚠️ Direct query failed or returned no data, trying RPC function')
         const { data, error } = await supabase.rpc('get_all_gifts_with_data', {
           p_locale: locale
         })
@@ -477,10 +472,7 @@ export function useSpiritualGifts(locale: string = 'pt') {
           throw new Error('No spiritual gifts data available')
         }
 
-        console.log('RPC function returned data:', data?.length, 'gifts')
         if (data && data.length > 0) {
-          console.log('First gift from RPC:', data[0])
-          console.log('Category from first RPC gift:', data[0]?.category)
         }
 
         // If not Portuguese and some data is empty, get Portuguese fallback
@@ -521,10 +513,6 @@ export function useSpiritualGifts(locale: string = 'pt') {
 
         // data is a JSON array
         const gifts = Array.isArray(data) ? data : (data ? [data] : [])
-        console.log('🔍 DEBUG - Raw spiritual gifts data from database:', gifts)
-        console.log('🔍 DEBUG - First gift characteristics:', gifts[0]?.characteristics)
-        console.log('🔍 DEBUG - First gift dangers:', gifts[0]?.dangers)
-        console.log('🔍 DEBUG - First gift misunderstandings:', gifts[0]?.misunderstandings)
 
         return gifts.map((gift: DatabaseGiftData) => {
           // Find corresponding Portuguese gift for fallback
@@ -731,10 +719,9 @@ export function useDeleteResult() {
 
   return useMutation({
     mutationFn: async ({ sessionId, userId }: { sessionId: string; userId: string }) => {
-      console.log('🗑️ Attempting to delete session:', { sessionId, userId })
 
       // First, delete all answers for this session
-      const { error: answersError, count: answersCount } = await supabase
+      const { error: answersError } = await supabase
         .from('answers')
         .delete()
         .eq('session_id', sessionId)
@@ -743,10 +730,9 @@ export function useDeleteResult() {
         console.error('❌ Error deleting answers:', answersError)
         throw new Error(`Failed to delete answers: ${answersError.message}`)
       }
-      console.log('✅ Deleted answers count:', answersCount)
 
       // Then, delete the session
-      const { error: sessionError, count: sessionCount } = await supabase
+      const { error: sessionError } = await supabase
         .from('quiz_sessions')
         .delete()
         .eq('id', sessionId)
@@ -756,7 +742,6 @@ export function useDeleteResult() {
         console.error('❌ Error deleting session:', sessionError)
         throw new Error(`Failed to delete session: ${sessionError.message}`)
       }
-      console.log('✅ Deleted session count:', sessionCount)
 
       return { sessionId, userId }
     },

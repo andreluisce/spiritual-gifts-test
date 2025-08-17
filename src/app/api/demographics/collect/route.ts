@@ -7,7 +7,6 @@ import { collectUserDemographics, getUserIP } from '@/lib/demographics'
 export const runtime = 'nodejs'
 
 export async function POST(request: NextRequest) {
-  console.log('📍 Demographics Collection API: POST request received')
   
   try {
     const cookieStore = await cookies()
@@ -38,19 +37,12 @@ export async function POST(request: NextRequest) {
 
     // Get user's IP address
     const ipAddress = getUserIP(request)
-    console.log('📍 Detected IP address:', ipAddress)
 
     // Get user metadata from auth
     const rawUserMetaData = user.user_metadata || {}
-    console.log('📍 User metadata keys:', Object.keys(rawUserMetaData))
 
     // Collect demographics data
     const demographicsData = await collectUserDemographics(ipAddress, rawUserMetaData)
-    console.log('📍 Collected demographics:', {
-      country: demographicsData.country,
-      age: demographicsData.age,
-      hasIP: !!demographicsData.ipAddress
-    })
 
     // Store in database using our RPC function
     const { data: result, error: dbError } = await supabase.rpc('upsert_user_demographics', {
@@ -70,7 +62,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to store demographics data' }, { status: 500 })
     }
 
-    console.log('✅ Demographics data stored successfully')
     
     return NextResponse.json({
       success: true,
