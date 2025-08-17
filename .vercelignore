@@ -1,0 +1,32 @@
+# Development files
+*.md
+TODO.md
+README.md
+IMPLEMENTATION_PLAN.md
+
+# Database files (not needed for build)
+database/
+*.sql
+apply_rls_policies.sh
+run_all_scripts.sh
+
+# Source files
+src/sources/
+docs/
+
+# Development config
+.env.local
+.env.development
+
+# Build artifacts
+.next/
+node_modules/
+*.tsbuildinfo
+
+# IDE files
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*

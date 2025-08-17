@@ -4,60 +4,57 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 export default withNextIntl({
+    // Vercel optimization
+    poweredByHeader: false,
+    compress: true,
+    productionBrowserSourceMaps: false,
+    
+    // Enhanced image optimization for Vercel
     images: {
-        domains: ['lh3.googleusercontent.com'], // libera esse domínio
-        // ou, para permitir qualquer subdomínio lhX.googleusercontent.com:
-        // remotePatterns: [
-        //   {
-        //     protocol: 'https',
-        //     hostname: '**.googleusercontent.com',
-        //     pathname: '/**',
-        //   },
-        // ],
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: '**.googleusercontent.com',
+                pathname: '/**',
+            },
+        ],
+        formats: ['image/webp', 'image/avif'],
+        deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+        imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     },
+    
+    // Improved experimental features for Vercel
+    experimental: {
+        optimizePackageImports: ['@radix-ui/react-icons', 'lucide-react'],
+        webVitalsAttribution: ['CLS', 'LCP'],
+        nodeMiddleware: true,
+    },
+
     webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
-        // Fix for Supabase Realtime WebSocket factory critical dependency warning
+        // Vercel-optimized webpack config
+        if (!dev && !isServer) {
+            config.resolve.alias = {
+                ...config.resolve.alias,
+                '@/components/ui': require('path').resolve(__dirname, 'src/components/ui'),
+            };
+        }
+
+        // Essential fallbacks only for Edge Runtime compatibility
         config.resolve.fallback = {
             ...config.resolve.fallback,
-            ws: false,
             fs: false,
             net: false,
             tls: false,
-            crypto: false,
         };
 
-        // Ignore WebSocket dynamic require warnings in Supabase Realtime
+        // Minimal warning suppressions for Vercel
         config.ignoreWarnings = [
             ...(config.ignoreWarnings || []),
             {
                 module: /node_modules\/@supabase\/realtime-js/,
                 message: /Critical dependency/,
             },
-            {
-                module: /node_modules\/@supabase\/realtime-js/,
-                message: /the request of a dependency is an expression/,
-            },
-            {
-                module: /node_modules\/@supabase\/realtime-js/,
-                message: /A Node\.js API is used/,
-            },
         ];
-
-        // Optimize serialization for large strings
-        config.optimization = {
-            ...config.optimization,
-            usedExports: true,
-            sideEffects: false,
-        };
-
-        // Add externals for Node.js specific modules when building for client
-        if (!isServer) {
-            config.externals = config.externals || [];
-            config.externals.push({
-                'utf-8-validate': 'commonjs utf-8-validate',
-                'bufferutil': 'commonjs bufferutil',
-            });
-        }
 
         return config;
     },

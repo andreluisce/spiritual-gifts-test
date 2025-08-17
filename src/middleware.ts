@@ -3,6 +3,9 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
 import { staticRouting, isValidLocale } from './i18n/dynamic-routing';
 
+// Use Node.js runtime for better Supabase compatibility
+export const runtime = 'nodejs';
+
 // Create static middleware - use static routing for better Edge Runtime compatibility
 const intlMiddleware = createMiddleware(staticRouting);
 
