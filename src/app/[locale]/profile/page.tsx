@@ -55,7 +55,6 @@ type ProfileEditForm = {
   name: string
   phone?: string
   bio?: string
-  location?: string
   birth_date?: string
   age_range?: string
   country?: string
@@ -83,7 +82,6 @@ export default function ProfilePage() {
     name: z.string().min(1, t('validation.nameRequired')).max(100, t('validation.nameMaxLength')),
     phone: z.string().optional(),
     bio: z.string().max(500, t('validation.bioMaxLength')).optional(),
-    location: z.string().max(100, t('validation.locationMaxLength')).optional(),
     birth_date: z.string().optional(),
     age_range: z.string().optional(),
     country: z.string().optional(),
@@ -103,7 +101,6 @@ export default function ProfilePage() {
       name: '',
       phone: '',
       bio: '',
-      location: '',
       birth_date: '',
       age_range: '',
       country: '',
@@ -124,7 +121,6 @@ export default function ProfilePage() {
         name: profile.name || '',
         phone: profile.phone || '',
         bio: profile.bio || '',
-        location: profile.location || '',
         birth_date: profile.birth_date || '',
         age_range: (profile as { age_range?: string }).age_range || '',
         country: (profile as { country?: string }).country || '',
@@ -280,7 +276,7 @@ export default function ProfilePage() {
           <CardContent>
             <form onSubmit={handleSubmit(handleSaveProfile)} className="space-y-6">
               {/* Avatar Section */}
-              <div className="flex items-center gap-6">
+              <div className="flex items-start gap-6">
                 <div className="relative">
                   <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center overflow-hidden">
                     {avatarPreview || profile.avatar_url ? (
@@ -309,9 +305,25 @@ export default function ProfilePage() {
                     </label>
                   )}
                 </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-900">{profile.name}</h3>
-                  <p className="text-gray-500 flex items-center gap-2">
+                <div className="flex-1">
+                  {isEditing ? (
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-600">
+                        {t('fields.fullName')}
+                      </label>
+                      <Input
+                        {...register('name')}
+                        className={`text-xl font-semibold ${errors.name ? 'border-red-500' : ''}`}
+                        placeholder={t('fields.fullNamePlaceholder')}
+                      />
+                      {errors.name && (
+                        <p className="text-xs text-red-500">{errors.name.message}</p>
+                      )}
+                    </div>
+                  ) : (
+                    <h3 className="text-xl font-semibold text-gray-900">{profile.name}</h3>
+                  )}
+                  <p className="text-gray-500 flex items-center gap-2 mt-2">
                     <Mail className="h-4 w-4" />
                     {profile.email}
                   </p>
@@ -324,23 +336,6 @@ export default function ProfilePage() {
 
               {/* Form Fields */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Name */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium flex items-center gap-2">
-                    <User className="h-4 w-4" />
-                    {t('fields.fullName')}
-                  </label>
-                  <Input
-                    {...register('name')}
-                    disabled={!isEditing}
-                    placeholder={isEditing ? t('fields.fullNamePlaceholder') : ""}
-                    className={`${errors.name ? 'border-red-500' : ''} ${!isEditing ? 'bg-gray-50' : ''}`}
-                  />
-                  {errors.name && (
-                    <p className="text-xs text-red-500">{errors.name.message}</p>
-                  )}
-                </div>
-
                 {/* Phone */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium flex items-center gap-2">
@@ -352,21 +347,6 @@ export default function ProfilePage() {
                     disabled={!isEditing}
                     placeholder={isEditing ? t('fields.phonePlaceholder') : ""}
                     value={!isEditing ? (profile?.phone || t('notProvided')) : undefined}
-                    className={`${!isEditing ? 'bg-gray-50' : ''}`}
-                  />
-                </div>
-
-                {/* Location */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium flex items-center gap-2">
-                    <MapPin className="h-4 w-4" />
-                    {t('fields.location')}
-                  </label>
-                  <Input
-                    {...register('location')}
-                    disabled={!isEditing}
-                    placeholder={isEditing ? t('fields.locationPlaceholder') : ""}
-                    value={!isEditing ? (profile?.location || t('notProvided')) : undefined}
                     className={`${!isEditing ? 'bg-gray-50' : ''}`}
                   />
                 </div>
