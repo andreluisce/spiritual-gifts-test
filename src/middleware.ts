@@ -69,8 +69,14 @@ export async function middleware(request: NextRequest) {
 
 
     // Public routes and auth callbacks don't need authentication
-    const publicRoutes = ['/login', '/auth/callback'];
+    const publicRoutes = ['/login', '/auth/callback', '/gifts'];
     const isPublicRoute = publicRoutes.some(route =>
+      request.nextUrl.pathname.includes(route)
+    );
+    
+    // Protected routes that absolutely require authentication
+    const protectedRoutes = ['/dashboard', '/profile', '/quiz', '/admin'];
+    const isProtectedRoute = protectedRoutes.some(route =>
       request.nextUrl.pathname.includes(route)
     );
 
@@ -92,7 +98,15 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(dashboardUrl);
     }
 
-    // If accessing any route (except public, static files, auth callback, or dashboard after auth) without authentication, redirect to login
+    // Force redirect to login for protected routes without authentication
+    if (isProtectedRoute && !user && !isAuthCallback) {
+      const pathLocale = request.nextUrl.pathname.split('/')[1];
+      const locale = isValidLocale(pathLocale) ? pathLocale : defaultLanguage;
+      const loginUrl = new URL(`/${locale}/login`, request.url);
+      return NextResponse.redirect(loginUrl);
+    }
+    
+    // If accessing any other route (except public, static files, auth callback, or dashboard after auth) without authentication, redirect to login
     if (!isPublicRoute && !isAuthCallback && !isStaticFile && !isDashboardAfterAuth && !user) {
       const pathLocale = request.nextUrl.pathname.split('/')[1];
       const locale = isValidLocale(pathLocale) ? pathLocale : defaultLanguage;

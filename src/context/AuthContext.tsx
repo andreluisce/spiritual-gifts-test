@@ -122,8 +122,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signOut = async () => {
-    await supabase.auth.signOut()
-    setIsAdmin(false) // Reset admin status on signout
+    try {
+      await supabase.auth.signOut()
+      setIsAdmin(false) // Reset admin status on signout
+      
+      // Get current locale for redirect
+      const currentPath = window.location.pathname
+      const locale = currentPath.split('/')[1] || 'pt'
+      
+      // Redirect to login page
+      window.location.href = `/${locale}/login`
+    } catch (error) {
+      console.error('Error signing out:', error)
+      // Even if logout fails, redirect to login
+      const currentPath = window.location.pathname
+      const locale = currentPath.split('/')[1] || 'pt'
+      window.location.href = `/${locale}/login`
+    }
   }
 
   return (
