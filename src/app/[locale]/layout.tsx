@@ -4,6 +4,7 @@ import { AuthProvider } from '@/context/AuthContext';
 import { QueryProvider } from '@/providers/QueryProvider';
 import { ToastProvider } from '@/components/ui/toast';
 import { AppHeader } from '@/components/AppHeader';
+import { LangSetter } from '@/components/LangSetter';
 import { routing } from '@/i18n/routing';
 import '../globals.css';
 
@@ -27,21 +28,18 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale}>
-      <body>
-        <NextIntlClientProvider messages={messages}>
-          <AuthProvider>
-            <QueryProvider>
-              <ToastProvider>
-                <AppHeader />
-                <main className="min-h-screen">
-                  {children}
-                </main>
-              </ToastProvider>
-            </QueryProvider>
-          </AuthProvider>
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    <NextIntlClientProvider messages={messages}>
+      <LangSetter locale={locale} />
+      <AuthProvider>
+        <QueryProvider>
+          <ToastProvider>
+            <AppHeader />
+            <main className="min-h-screen">
+              {children}
+            </main>
+          </ToastProvider>
+        </QueryProvider>
+      </AuthProvider>
+    </NextIntlClientProvider>
   );
 }

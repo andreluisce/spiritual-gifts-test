@@ -130,8 +130,12 @@ class DynamicCompatibilityAnalyzer {
         compatibilityScore: ministry.compatibility_score,
         matchedGifts: ministry.matched_gifts,
         totalRequired: ministry.total_required,
-        responsibilities: ministry.responsibilities?.map((r: ResponsibilityData) => r.responsibility) || [],
-        growthAreas: ministry.growth_areas?.map((g: GrowthAreaData) => g.area) || []
+        responsibilities: ministry.responsibilities
+          ?.filter((r: ResponsibilityData) => r.responsibility !== null && r.responsibility !== undefined)
+          ?.map((r: ResponsibilityData) => r.responsibility) || [],
+        growthAreas: ministry.growth_areas
+          ?.filter((g: GrowthAreaData) => g.area !== null && g.area !== undefined)
+          ?.map((g: GrowthAreaData) => g.area) || []
       }))
     } catch (error) {
       console.error('Error in getMinistryRecommendations:', error)
@@ -183,6 +187,7 @@ class DynamicCompatibilityAnalyzer {
         
         aiEnhancedAnalysis = await aiCompatibilityAnalyzer.analyzeCompatibility(
           userProfile,
+          'pt', // Default locale
           structuredData
         )
       } catch (error) {

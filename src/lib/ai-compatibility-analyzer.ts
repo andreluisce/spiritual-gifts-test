@@ -104,30 +104,28 @@ class AICompatibilityAnalyzer {
 
   async analyzeCompatibility(
     userProfile: UserGiftProfile,
+    locale: string = 'pt',
     structuredData?: StructuredAnalysisData
   ): Promise<AICompatibilityAnalysis> {
-    console.log('🤖 AI Analyzer: Starting analysis for', userProfile.primaryGift.name)
     try {
-      const prompt = this.buildAnalysisPrompt(userProfile, structuredData)
-      console.log('🤖 AI Analyzer: Calling AI service')
+      const prompt = this.buildAnalysisPrompt(userProfile, locale, structuredData)
       const response = await this.callAIService(prompt)
       
       const result = this.parseAIResponse(response)
-      console.log('✅ AI Analyzer: Analysis successful', { hasInsights: !!result.personalizedInsights })
       return result
     } catch (error) {
       console.warn('❌ AI analysis failed, using fallback:', error)
-      const fallback = this.getFallbackAnalysis(userProfile)
-      console.log('🔄 AI Analyzer: Using fallback analysis', { hasInsights: !!fallback.personalizedInsights })
+      const fallback = this.getFallbackAnalysis(userProfile, locale)
       return fallback
     }
   }
 
   private buildAnalysisPrompt(
     profile: UserGiftProfile,
+    locale: string = 'pt',
     structuredData?: StructuredAnalysisData
   ): string {
-    const { primaryGift, secondaryGifts, locale = 'pt' } = profile
+    const { primaryGift, secondaryGifts } = profile
     
     // Language-specific prompts
     const prompts = {
@@ -139,13 +137,13 @@ class AICompatibilityAnalyzer {
         points: 'pontos',
         structuredData: 'DADOS ESTRUTURADOS:',
         requestFormat: 'IMPORTANTE: Responda APENAS com JSON válido em português brasileiro, sem texto adicional antes ou depois. Use este formato exato:',
-        personalizedInsights: 'Você possui uma combinação única de dons que revela muito sobre como Deus quer usar você no Seu reino. Fale sobre essa combinação de forma abraçadora.',
-        strengthsDescription: 'Suas principais forças incluem essas características especiais que Deus plantou em você',
-        challengesGuidance: 'Alguns pontos de atenção para você crescer ainda mais nesses dons',
-        ministryRecommendations: ['ministérios onde você pode brilhar', 'áreas de serviço ideais para você'],
-        developmentPlan: 'Um plano personalizado para você desenvolver esses dons que Deus lhe deu',
-        practicalApplications: ['maneiras práticas de usar seus dons', 'aplicações do dia a dia'],
-        finalInstruction: 'Use sempre "você" e seja encorajador, abraçador e específico sobre como essa pessoa pode usar seus dons na igreja local brasileira. RESPONDA APENAS COM JSON VÁLIDO, SEM TEXTO EXTRA.'
+        personalizedInsights: 'Sua combinação de dons espirituais indica potenciais áreas de serviço. Analise essa combinação de forma realista e prática.',
+        strengthsDescription: 'As principais características que esta combinação de dons pode proporcionar',
+        challengesGuidance: 'Desafios comuns desta combinação de dons e como lidar com eles',
+        ministryRecommendations: ['ministérios compatíveis com estes dons', 'áreas de serviço que se alinham com este perfil'],
+        developmentPlan: 'Sugestões práticas para crescimento nestes dons',
+        practicalApplications: ['aplicações concretas destes dons', 'ações específicas na igreja local'],
+        finalInstruction: 'Use sempre "você" e seja realista, equilibrado e prático. Mencione tanto potenciais quanto desafios. Evite linguagem excessivamente elogiosa. RESPONDA APENAS COM JSON VÁLIDO, SEM TEXTO EXTRA.'
       },
       en: {
         systemRole: 'You are a consultant specialized in Christian spiritual gifts. Analyze the following profile and provide personalized insights:',
@@ -155,13 +153,13 @@ class AICompatibilityAnalyzer {
         points: 'points',
         structuredData: 'STRUCTURED DATA:',
         requestFormat: 'Please provide an analysis in English in the following JSON format:',
-        personalizedInsights: 'Personalized analysis of this user\'s unique gift combination',
-        strengthsDescription: 'Description of the main strengths of this combination',
-        challengesGuidance: 'Guidance on possible challenges and how to overcome them',
-        ministryRecommendations: ['list', 'of', 'recommended', 'ministries'],
-        developmentPlan: 'Personalized spiritual development plan',
-        practicalApplications: ['practical', 'specific', 'applications'],
-        finalInstruction: 'Be specific, practical and focused on applying gifts in the local church context.'
+        personalizedInsights: 'Realistic analysis of this gift combination and its potential for ministry',
+        strengthsDescription: 'Key characteristics and abilities this combination may provide',
+        challengesGuidance: 'Common challenges of this gift combination and practical ways to address them',
+        ministryRecommendations: ['ministries that align with these gifts', 'service areas that match this profile'],
+        developmentPlan: 'Practical suggestions for growing in these gifts',
+        practicalApplications: ['concrete applications of these gifts', 'specific actions in local church'],
+        finalInstruction: 'Be realistic, balanced and practical. Include both strengths and challenges. Avoid overly flattering language. Focus on actionable ministry applications.'
       },
       es: {
         systemRole: 'Eres un consultor especializado en dones espirituales cristianos. Analiza el siguiente perfil y proporciona ideas personalizadas:',
@@ -171,13 +169,13 @@ class AICompatibilityAnalyzer {
         points: 'puntos',
         structuredData: 'DATOS ESTRUCTURADOS:',
         requestFormat: 'Por favor, proporciona un análisis en español en el siguiente formato JSON:',
-        personalizedInsights: 'Análisis personalizado de la combinación única de dones de este usuario',
-        strengthsDescription: 'Descripción de las principales fortalezas de esta combinación',
-        challengesGuidance: 'Orientación sobre posibles desafíos y cómo superarlos',
-        ministryRecommendations: ['lista', 'de', 'ministerios', 'recomendados'],
-        developmentPlan: 'Plan de desarrollo espiritual personalizado',
-        practicalApplications: ['aplicaciones', 'prácticas', 'específicas'],
-        finalInstruction: 'Sé específico, práctico y enfócate en la aplicación de los dones en el contexto de la iglesia local.'
+        personalizedInsights: 'Análisis realista de esta combinación de dones y su potencial ministerial',
+        strengthsDescription: 'Características y habilidades clave que esta combinación puede proporcionar',
+        challengesGuidance: 'Desafíos comunes de esta combinación de dones y formas prácticas de abordarlos',
+        ministryRecommendations: ['ministerios que se alinean con estos dones', 'áreas de servicio que coinciden con este perfil'],
+        developmentPlan: 'Sugerencias prácticas para crecer en estos dones',
+        practicalApplications: ['aplicaciones concretas de estos dones', 'acciones específicas en la iglesia local'],
+        finalInstruction: 'Sé realista, equilibrado y práctico. Incluye tanto fortalezas como desafíos. Evita lenguaje excesivamente halagador. Enfócate en aplicaciones ministeriales prácticas.'
       }
     }
     
@@ -260,8 +258,6 @@ ${t.finalInstruction}
   }
 
   private parseAIResponse(response: string): AICompatibilityAnalysis {
-    console.log('🔧 AI Analyzer: Raw response length:', response.length)
-    console.log('🔧 AI Analyzer: Raw response preview:', response.substring(0, 300) + '...')
     
     try {
       // Step 1: Remove everything before the first { and after the last }
@@ -273,7 +269,6 @@ ${t.finalInstruction}
         .replace(/```\s*$/gi, '') // Remove closing markdown
         .trim()
       
-      console.log('🔧 AI Analyzer: After initial cleanup:', cleanResponse.substring(0, 200) + '...')
       
       // Step 2: More aggressive JSON extraction
       const jsonMatch = cleanResponse.match(/\{[\s\S]*\}/)
@@ -294,7 +289,6 @@ ${t.finalInstruction}
           .replace(/,\s*\}/g, '}') // Remove trailing commas
           .replace(/,\s*\]/g, ']') // Remove trailing commas in arrays
           
-        console.log('🔧 AI Analyzer: Final cleaned JSON:', jsonString.substring(0, 300) + '...')
         
         const parsed = JSON.parse(jsonString)
         
@@ -332,7 +326,6 @@ ${t.finalInstruction}
   }
 
   private extractInsightsFromText(text: string): AICompatibilityAnalysis {
-    console.log('🔧 AI Analyzer: Extracting insights from malformed response')
     
     // Try to extract meaningful content even from malformed JSON
     const cleanText = text
@@ -359,30 +352,68 @@ ${t.finalInstruction}
     }
   }
 
-  private getFallbackAnalysis(profile: UserGiftProfile): AICompatibilityAnalysis {
+  private getFallbackAnalysis(profile: UserGiftProfile, locale: string = 'pt'): AICompatibilityAnalysis {
     const { primaryGift } = profile
     
     const fallbackTemplates = {
-      'A_PROPHECY': {
-        insights: 'Seu dom de profecia o capacita a discernir a vontade de Deus e comunicar verdades espirituais com clareza.',
-        strengths: 'Visão espiritual aguçada e capacidade de revelar verdades bíblicas profundas.',
-        challenges: 'Desenvolva tato e amor ao comunicar verdades difíceis.',
-        ministries: ['Ensino', 'Pregação', 'Aconselhamento'],
-        development: 'Estude hermenêutica bíblica e pratique comunicação amorosa.',
-        applications: ['Estudos bíblicos', 'Mentoria espiritual', 'Intercessão']
+      pt: {
+        'A_PROPHECY': {
+          insights: 'Sua tendência ao dom de profecia sugere facilidade para discernir e comunicar verdades espirituais, embora isso requeira desenvolvimento e maturidade.',
+          strengths: 'Potencial para visão espiritual e comunicação de verdades bíblicas.',
+          challenges: 'Equilibre verdade com amor. Evite ser excessivamente direto ou crítico.',
+          ministries: ['Ensino', 'Pregação', 'Aconselhamento'],
+          development: 'Estude hermenêutica bíblica e desenvolva sensibilidade na comunicação.',
+          applications: ['Estudos bíblicos', 'Mentoria espiritual', 'Oração']
+        },
+        'C_TEACHING': {
+          insights: 'Sua inclinação ao ensino indica potencial para explicar conceitos bíblicos, mas requer estudo contínuo e paciência.',
+          strengths: 'Possível facilidade para organizar e transmitir conhecimento.',
+          challenges: 'Conecte teoria com aplicação prática. Evite ser apenas teórico.',
+          ministries: ['Escola Bíblica', 'Discipulado', 'Treinamento'],
+          development: 'Continue estudos bíblicos e desenvolva métodos práticos de ensino.',
+          applications: ['Aulas bíblicas', 'Materiais didáticos', 'Formação de líderes']
+        }
       },
-      'C_TEACHING': {
-        insights: 'Seu dom de ensino o capacita a explicar verdades bíblicas de forma clara e transformadora.',
-        strengths: 'Capacidade de simplificar conceitos complexos e formar discípulos.',
-        challenges: 'Balance conhecimento com aplicação prática.',
-        ministries: ['Escola Bíblica', 'Discipulado', 'Treinamento'],
-        development: 'Aprofunde estudos teológicos e desenvolva métodos pedagógicos.',
-        applications: ['Aulas bíblicas', 'Materiais didáticos', 'Formação de líderes']
+      en: {
+        'A_PROPHECY': {
+          insights: 'Your tendency towards the gift of prophecy suggests ability to discern and communicate spiritual truths, though this requires development and maturity.',
+          strengths: 'Potential for spiritual insight and communication of biblical truths.',
+          challenges: 'Balance truth with love. Avoid being overly direct or critical.',
+          ministries: ['Teaching', 'Preaching', 'Counseling'],
+          development: 'Study biblical hermeneutics and develop sensitivity in communication.',
+          applications: ['Bible studies', 'Spiritual mentoring', 'Prayer']
+        },
+        'C_TEACHING': {
+          insights: 'Your inclination toward teaching indicates potential to explain biblical concepts, but requires continuous study and patience.',
+          strengths: 'Possible facility for organizing and transmitting knowledge.',
+          challenges: 'Connect theory with practical application. Avoid being only theoretical.',
+          ministries: ['Bible School', 'Discipleship', 'Training'],
+          development: 'Continue biblical studies and develop practical teaching methods.',
+          applications: ['Bible classes', 'Educational materials', 'Leader formation']
+        }
+      },
+      es: {
+        'A_PROPHECY': {
+          insights: 'Su tendencia hacia el don de profecía sugiere facilidad para discernir y comunicar verdades espirituales, aunque esto requiere desarrollo y madurez.',
+          strengths: 'Potencial para visión espiritual y comunicación de verdades bíblicas.',
+          challenges: 'Equilibre verdad con amor. Evite ser excesivamente directo o crítico.',
+          ministries: ['Enseñanza', 'Predicación', 'Consejería'],
+          development: 'Estudie hermenéutica bíblica y desarrolle sensibilidad en la comunicación.',
+          applications: ['Estudios bíblicos', 'Mentoría espiritual', 'Oración']
+        },
+        'C_TEACHING': {
+          insights: 'Su inclinación hacia la enseñanza indica potencial para explicar conceptos bíblicos, pero requiere estudio continuo y paciencia.',
+          strengths: 'Posible facilidad para organizar y transmitir conocimiento.',
+          challenges: 'Conecte teoría con aplicación práctica. Evite ser solo teórico.',
+          ministries: ['Escuela Bíblica', 'Discipulado', 'Entrenamiento'],
+          development: 'Continue estudios bíblicos y desarrolle métodos prácticos de enseñanza.',
+          applications: ['Clases bíblicas', 'Materiales educativos', 'Formación de líderes']
+        }
       }
-      // Add more templates as needed
     }
     
-    const template = fallbackTemplates[primaryGift.key as keyof typeof fallbackTemplates] || fallbackTemplates['A_PROPHECY']
+    const localeTemplates = fallbackTemplates[locale as keyof typeof fallbackTemplates] || fallbackTemplates.pt
+    const template = localeTemplates[primaryGift.key as keyof typeof localeTemplates] || localeTemplates['A_PROPHECY']
     
     return {
       personalizedInsights: template.insights,
@@ -403,9 +434,10 @@ export const aiCompatibilityAnalyzer = new AICompatibilityAnalyzer()
 export function useAICompatibilityAnalysis() {
   const analyzeProfile = async (
     profile: UserGiftProfile,
+    locale: string = 'pt',
     structuredData?: StructuredAnalysisData
   ) => {
-    return await aiCompatibilityAnalyzer.analyzeCompatibility(profile, structuredData)
+    return await aiCompatibilityAnalyzer.analyzeCompatibility(profile, locale, structuredData)
   }
 
   return { analyzeProfile }
@@ -414,7 +446,8 @@ export function useAICompatibilityAnalysis() {
 // Server-side function for API routes
 export async function generateAICompatibilityAnalysis(
   profile: UserGiftProfile,
+  locale: string = 'pt',
   structuredData?: StructuredAnalysisData
 ): Promise<AICompatibilityAnalysis> {
-  return await aiCompatibilityAnalyzer.analyzeCompatibility(profile, structuredData)
+  return await aiCompatibilityAnalyzer.analyzeCompatibility(profile, locale, structuredData)
 }

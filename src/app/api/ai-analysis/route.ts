@@ -8,7 +8,6 @@ import type { Database } from '@/lib/database.types'
 export const runtime = 'nodejs'
 
 export async function POST(request: NextRequest) {
-  console.log('🚀 AI Analysis API: POST request received')
   try {
     const cookieStore = await cookies()
     const supabase = createServerClient<Database>(
@@ -30,7 +29,6 @@ export async function POST(request: NextRequest) {
     )
 
     // Check authentication
-    console.log('🔐 AI Analysis API: Checking authentication...')
     const { data: { user }, error: authError } = await supabase.auth.getUser()
 
     if (authError) {
@@ -39,31 +37,26 @@ export async function POST(request: NextRequest) {
     }
 
     if (!user) {
-      console.log('❌ AI Analysis API: No user found')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    console.log('✅ AI Analysis API: User authenticated:', user.id)
 
-    console.log('📥 AI Analysis API: Reading request body...')
     const body = await request.json()
-    console.log('📥 AI Analysis API: Body received:', { hasProfile: !!body.profile, sessionId: body.sessionId, hasClientAnalysis: !!body.clientAnalysis })
-    const { profile, sessionId, useCache = true, clientAnalysis } = body as {
+    const { profile, sessionId, useCache = true, clientAnalysis, locale = 'pt' } = body as {
       profile: UserGiftProfile
       sessionId?: string
       useCache?: boolean
       clientAnalysis?: AICompatibilityAnalysis
+      locale?: string
     }
 
     // Validate required fields
-    console.log('🔍 AI Analysis API: Validating profile data...')
     if (!profile?.primaryGift?.key) {
       console.error('❌ AI Analysis API: Missing profile data')
       return NextResponse.json({
         error: 'Missing required profile data'
       }, { status: 400 })
     }
-    console.log('✅ AI Analysis API: Profile validated, primary gift:', profile.primaryGift.key)
 
     // Prepare gift scores for cache lookup
     const giftScores = Object.fromEntries([
@@ -74,14 +67,12 @@ export async function POST(request: NextRequest) {
     // Check cache first - use gift_scores based cache for users with same results
     if (useCache) {
       try {
-        console.log('🔍 AI Analysis API: Checking cache for user and gift scores...')
         const { data: cachedByScores, error: cacheByScoresError } = await supabase.rpc('get_ai_analysis_by_user_and_scores', {
           p_user_id: user.id,
           p_gift_scores: giftScores
         })
 
         if (!cacheByScoresError && cachedByScores && cachedByScores.length > 0) {
-          console.log('✅ AI Analysis API: Found cached analysis based on gift scores')
           const cached = cachedByScores[0]
           const analysis: AICompatibilityAnalysis = {
             personalizedInsights: cached.personalized_insights,
@@ -103,13 +94,11 @@ export async function POST(request: NextRequest) {
 
         // Fallback to session-based cache if available
         if (sessionId) {
-          console.log('🔍 AI Analysis API: Checking session-based cache...')
           const { data: cachedBySession, error: cacheBySessionError } = await supabase.rpc('get_ai_analysis_by_session', {
             p_session_id: sessionId
           })
 
           if (!cacheBySessionError && cachedBySession && cachedBySession.length > 0) {
-            console.log('✅ AI Analysis API: Found cached analysis based on session')
             const cached = cachedBySession[0]
             const analysis: AICompatibilityAnalysis = {
               personalizedInsights: cached.personalized_insights,
@@ -137,17 +126,13 @@ export async function POST(request: NextRequest) {
     // Use client analysis if provided, otherwise generate new AI analysis
     let analysis
     if (clientAnalysis) {
-      console.log('📦 AI Analysis API: Using pre-computed client analysis')
       analysis = clientAnalysis
     } else {
-      console.log('🤖 AI Analysis API: Starting AI analysis generation...')
-      analysis = await aiCompatibilityAnalyzer.analyzeCompatibility(profile)
-      console.log('✅ AI Analysis API: AI analysis completed successfully')
+      analysis = await aiCompatibilityAnalyzer.analyzeCompatibility(profile, locale)
     }
 
     // Save to cache (always save, even without sessionId for future cache by gift_scores)
     try {
-      console.log('💾 AI Analysis API: Saving analysis to cache...')
       const primaryGifts = [
         profile.primaryGift.key,
         ...profile.secondaryGifts.map(g => g.key)
@@ -176,7 +161,6 @@ export async function POST(request: NextRequest) {
       if (insertError) {
         // If conflict on session_id, update existing record
         if (insertError.code === '23505' && sessionId) {
-          console.log('🔄 AI Analysis API: Updating existing session cache...')
           const { error: updateError } = await supabase
             .from('ai_analysis_cache')
             .update({
@@ -198,20 +182,17 @@ export async function POST(request: NextRequest) {
           if (updateError) {
             console.warn('⚠️ AI Analysis API: Update failed:', updateError)
           } else {
-            console.log('✅ AI Analysis API: Cache updated successfully')
           }
         } else {
           console.warn('⚠️ AI Analysis API: Insert failed:', insertError)
         }
       } else {
-        console.log('✅ AI Analysis API: Analysis saved to cache successfully')
       }
     } catch (saveError) {
       console.warn('❌ AI Analysis API: Failed to save analysis to cache:', saveError)
       // Don't fail the request if caching fails
     }
 
-    console.log('📤 AI Analysis API: Returning successful response')
     return NextResponse.json({
       analysis,
       cached: false,

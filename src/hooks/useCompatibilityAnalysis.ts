@@ -46,10 +46,8 @@ export function useCompatibilityAnalysis(
 
   useEffect(() => {
     const analyzeCompatibility = async () => {
-      console.log('🔍 useCompatibilityAnalysis: Starting analysis', { giftScores, user: !!user })
       
       if (!giftScores || Object.keys(giftScores).length === 0) {
-        console.log('❌ useCompatibilityAnalysis: No gift scores provided')
         setAnalysis({
           compatibilities: [],
           ministryRecommendations: [],
@@ -122,7 +120,6 @@ export function useCompatibilityAnalysis(
 
         // If no compatibilities were found, create meaningful fallback compatibilities
         if (compatibilities.length === 0 && topGifts.length >= 2) {
-          console.log('🔄 useCompatibilityAnalysis: Creating fallback compatibilities')
           
           // Create compatibility between top 2 gifts
           const primaryGiftName = getGiftName(topGifts[0])
@@ -164,7 +161,6 @@ export function useCompatibilityAnalysis(
         }
 
         // Get AI-enhanced analysis
-        console.log('🤖 useCompatibilityAnalysis: Starting AI analysis')
         let aiAnalysis = null
         try {
 
@@ -185,9 +181,7 @@ export function useCompatibilityAnalysis(
           // Choose analysis method based on authentication status
           if (user) {
             // User is logged in - use secure server-side API
-            console.log('🔐 useCompatibilityAnalysis: User logged in, using server-side API')
             try {
-              console.log('📡 useCompatibilityAnalysis: Making fetch request to /api/ai-analysis')
               const response = await fetch('/api/ai-analysis', {
                 method: 'POST',
                 headers: {
@@ -197,16 +191,15 @@ export function useCompatibilityAnalysis(
                 body: JSON.stringify({
                   profile: userProfile,
                   sessionId: window.location.pathname.split('/').slice(-2, -1)[0], // Get sessionId from URL (second to last segment)
-                  useCache: true
+                  useCache: true,
+                  locale: locale
                 })
               })
               
-              console.log('📡 useCompatibilityAnalysis: Fetch completed, response status:', response.status)
               
               if (response.ok) {
                 const { analysis } = await response.json()
                 aiAnalysis = analysis
-                console.log('✅ useCompatibilityAnalysis: Server-side AI analysis successful')
               } else if (response.status === 401) {
                 console.warn('🔒 useCompatibilityAnalysis: Authentication failed, falling back to client-side')
                 throw new Error('Authentication failed - using fallback')
@@ -218,8 +211,7 @@ export function useCompatibilityAnalysis(
               console.warn('Server-side AI analysis failed, trying client-side fallback:', serverError)
               // Even for logged-in users, try client-side as fallback
               try {
-                aiAnalysis = await aiCompatibilityAnalyzer.analyzeCompatibility(userProfile)
-                console.log('✅ useCompatibilityAnalysis: Client-side fallback successful')
+                aiAnalysis = await aiCompatibilityAnalyzer.analyzeCompatibility(userProfile, locale)
                 
                 // Try to save client-side analysis to cache if user is logged in
                 if (user && aiAnalysis) {
@@ -235,10 +227,10 @@ export function useCompatibilityAnalysis(
                         profile: userProfile,
                         sessionId: sessionId,
                         useCache: false,
-                        clientAnalysis: aiAnalysis // Include pre-computed analysis
+                        clientAnalysis: aiAnalysis, // Include pre-computed analysis
+                        locale: locale
                       })
                     })
-                    console.log('💾 useCompatibilityAnalysis: Client-side analysis saved to cache')
                   } catch (cacheError) {
                     console.warn('⚠️ useCompatibilityAnalysis: Failed to save client analysis to cache:', cacheError)
                   }
@@ -250,9 +242,7 @@ export function useCompatibilityAnalysis(
             }
           } else {
             // User not logged in - use client-side analysis with potential API key exposure risk
-            console.log('🔓 useCompatibilityAnalysis: User not logged in, using client-side analysis')
-            aiAnalysis = await aiCompatibilityAnalyzer.analyzeCompatibility(userProfile)
-            console.log('✅ useCompatibilityAnalysis: Client-side AI analysis completed')
+            aiAnalysis = await aiCompatibilityAnalyzer.analyzeCompatibility(userProfile, locale)
           }
           
           // Enhance compatibilities with AI insights
@@ -276,12 +266,6 @@ export function useCompatibilityAnalysis(
         }
 
         const hasAIAnalysisResult = !!(aiAnalysis && aiAnalysis.personalizedInsights && aiAnalysis.strengthsDescription)
-        console.log('📊 useCompatibilityAnalysis: Analysis complete', { 
-          hasAI: hasAIAnalysisResult, 
-          aiAnalysis: !!aiAnalysis,
-          insights: aiAnalysis?.personalizedInsights ? 'present' : 'missing',
-          strengths: aiAnalysis?.strengthsDescription ? 'present' : 'missing'
-        })
         
         setAnalysis({
           compatibilities,
@@ -323,7 +307,8 @@ export function useCompatibilityAnalysis(
                     body: JSON.stringify({
                       profile: userProfile,
                       sessionId: window.location.pathname.split('/').pop(), // Get sessionId from URL
-                      useCache: false
+                      useCache: false,
+                      locale: locale
                     })
                   })
                   
@@ -340,8 +325,7 @@ export function useCompatibilityAnalysis(
                 } catch (serverError) {
                   console.warn('Regenerate: Server-side failed, trying client-side fallback:', serverError)
                   try {
-                    newAiAnalysis = await aiCompatibilityAnalyzer.analyzeCompatibility(userProfile)
-                    console.log('✅ Regenerate: Client-side fallback successful')
+                    newAiAnalysis = await aiCompatibilityAnalyzer.analyzeCompatibility(userProfile, locale)
                   } catch (clientError) {
                     console.error('❌ Regenerate: Both server-side and client-side failed:', clientError)
                     newAiAnalysis = null
@@ -349,8 +333,7 @@ export function useCompatibilityAnalysis(
                 }
               } else {
                 // User not logged in - use client-side analysis
-                console.log('🔓 Regenerate: User not logged in, using client-side analysis')
-                newAiAnalysis = await aiCompatibilityAnalyzer.analyzeCompatibility(userProfile)
+                newAiAnalysis = await aiCompatibilityAnalyzer.analyzeCompatibility(userProfile, locale)
               }
               
               if (newAiAnalysis) {
