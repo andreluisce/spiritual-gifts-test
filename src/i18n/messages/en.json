@@ -435,6 +435,7 @@
         "reports": "Reports"
       },
       "overview": {
+        "subtitle": "Overview of main indicators and system metrics",
         "totalQuizzes": "Total Quizzes",
         "avgCompletionTime": "Avg Completion Time",
         "averageScore": "Average Score",
@@ -459,27 +460,84 @@
       },
       "spiritualGifts": {
         "title": "Spiritual Gifts Distribution",
+        "subtitle": "Detailed analysis of spiritual gifts distribution among users",
         "identifications": "identifications",
         "noData": "No spiritual gifts data available"
       },
       "demographics": {
+        "subtitle": "User demographics and geographic distribution data",
         "ageDistribution": {
           "title": "Age Distribution",
           "description": "Age demographics data will be available soon",
-          "comingSoon": "User age distribution analysis coming soon"
+          "comingSoon": "User age distribution analysis coming soon",
+          "noData": "No demographic data available yet."
         },
         "geographicDistribution": {
           "title": "Geographic Distribution",
           "description": "Geographic distribution data will be available soon",
-          "comingSoon": "User location analysis coming soon"
+          "comingSoon": "User location analysis coming soon",
+          "noData": "No geographic data available yet."
+        },
+        "summary": {
+          "title": "Demographic Summary",
+          "dominantAgeGroup": "Dominant Age Group",
+          "mainCountry": "Main Country",
+          "geographicDiversity": "Geographic Diversity",
+          "countries": "countries",
+          "notAvailable": "N/A"
         }
       },
       "reports": {
         "title": "Generated Reports",
+        "subtitle": "Generation and management of analytical reports",
         "generateNew": "Generate New Report",
         "noReports": "No reports generated yet",
         "firstReport": "Start by generating your first analytics report",
         "generateReport": "Generate Report"
+      }
+    },
+    "content": {
+      "title": "Content Management",
+      "subtitle": "Manage spiritual gifts, questions, characteristics, and all system content",
+      "common": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "updated": "Updated",
+        "questions": "questions",
+        "search": "Search",
+        "addNew": "Add New",
+        "edit": "Edit",
+        "delete": "Delete",
+        "cancel": "Cancel",
+        "save": "Save Changes",
+        "create": "Create",
+        "saving": "Saving...",
+        "creating": "Creating...",
+        "deleting": "Deleting..."
+      },
+      "gifts": {
+        "title": "Spiritual Gifts",
+        "searchPlaceholder": "Search spiritual gifts...",
+        "addNew": "Add New Gift",
+        "count": "Spiritual Gifts ({count})",
+        "deleteConfirm": "Are you sure you want to delete the gift \"{name}\"? This will also delete all related questions and content. This action cannot be undone."
+      },
+      "questions": {
+        "title": "Quiz Questions",
+        "searchPlaceholder": "Search questions...",
+        "addNew": "Add Question",
+        "count": "Quiz Questions ({count})",
+        "allGifts": "All Gifts",
+        "noResults": "No questions found matching your criteria",
+        "deleteConfirm": "Are you sure you want to delete this question? This action cannot be undone."
+      },
+      "characteristics": {
+        "title": "Gift Content",
+        "searchPlaceholder": "Search characteristics, dangers, misunderstandings...",
+        "addNew": "Add Content",
+        "count": "Gift Content ({count})",
+        "noResults": "No content found matching your criteria",
+        "deleteConfirm": "Are you sure you want to delete this {type}? This action cannot be undone."
       }
     }
   },
