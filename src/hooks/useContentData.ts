@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase-client'
+import { useLocale } from 'next-intl'
 
 // Types
 export type Gift = {
@@ -80,6 +81,7 @@ export function useSpiritualGifts() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [supabase] = useState(() => createClient())
+  const locale = useLocale()
 
   useEffect(() => {
     const fetchGifts = async () => {
@@ -90,7 +92,7 @@ export function useSpiritualGifts() {
         const { data: giftsData, error: giftsError } = await supabase
           .from('spiritual_gifts')
           .select('*')
-          .eq('locale', 'pt')
+          .eq('locale', locale)
           .order('name')
 
         if (giftsError) throw giftsError
@@ -131,7 +133,7 @@ export function useSpiritualGifts() {
     }
 
     fetchGifts()
-  }, [supabase])
+  }, [supabase, locale])
 
   return { gifts, loading, error }
 }
@@ -142,6 +144,7 @@ export function useQuestions() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [supabase] = useState(() => createClient())
+  const locale = useLocale()
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -162,7 +165,7 @@ export function useQuestions() {
         const { data: giftsData, error: giftsError } = await supabase
           .from('spiritual_gifts')
           .select('gift_key, name')
-          .eq('locale', 'pt')
+          .eq('locale', locale)
 
         const giftNames: Record<string, string> = {}
         if (!giftsError && giftsData) {
@@ -210,7 +213,7 @@ export function useQuestions() {
     }
 
     fetchQuestions()
-  }, [supabase])
+  }, [supabase, locale])
 
   return { questions, loading, error }
 }
@@ -221,6 +224,7 @@ export function useCharacteristics() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [supabase] = useState(() => createClient())
+  const locale = useLocale()
 
   useEffect(() => {
     const fetchCharacteristics = async () => {
@@ -231,7 +235,7 @@ export function useCharacteristics() {
         const { data: giftsData, error: giftsError } = await supabase
           .from('spiritual_gifts')
           .select('gift_key, name')
-          .eq('locale', 'pt')
+          .eq('locale', locale)
 
         const giftNames: Record<string, string> = {}
         if (!giftsError && giftsData) {
@@ -247,7 +251,7 @@ export function useCharacteristics() {
         const { data: charData, error: charError } = await supabase
           .from('characteristics')
           .select('*')
-          .eq('locale', 'pt')
+          .eq('locale', locale)
 
         if (!charError && charData) {
           charData.forEach((char: RawCharacteristicData) => {
@@ -268,7 +272,7 @@ export function useCharacteristics() {
         const { data: dangerData, error: dangerError } = await supabase
           .from('dangers')
           .select('*')
-          .eq('locale', 'pt')
+          .eq('locale', locale)
 
         if (!dangerError && dangerData) {
           dangerData.forEach((danger: RawDangerData) => {
@@ -289,7 +293,7 @@ export function useCharacteristics() {
         const { data: misundData, error: misundError } = await supabase
           .from('misunderstandings')
           .select('*')
-          .eq('locale', 'pt')
+          .eq('locale', locale)
 
         if (!misundError && misundData) {
           misundData.forEach((misund: RawMisunderstandingData) => {
@@ -316,7 +320,7 @@ export function useCharacteristics() {
     }
 
     fetchCharacteristics()
-  }, [supabase])
+  }, [supabase, locale])
 
   return { characteristics, loading, error }
 }
