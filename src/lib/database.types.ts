@@ -1165,6 +1165,63 @@ export type Database = {
         }
         Relationships: []
       }
+      user_demographics: {
+        Row: {
+          age: number | null
+          age_group: string | null
+          birth_date: string | null
+          city: string | null
+          country: string | null
+          created_at: string | null
+          data_source: string | null
+          detected_at: string | null
+          id: number
+          ip_address: unknown | null
+          latitude: number | null
+          longitude: number | null
+          region: string | null
+          timezone: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          age?: number | null
+          age_group?: string | null
+          birth_date?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string | null
+          data_source?: string | null
+          detected_at?: string | null
+          id?: number
+          ip_address?: unknown | null
+          latitude?: number | null
+          longitude?: number | null
+          region?: string | null
+          timezone?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          age?: number | null
+          age_group?: string | null
+          birth_date?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string | null
+          data_source?: string | null
+          detected_at?: string | null
+          id?: number
+          ip_address?: unknown | null
+          latitude?: number | null
+          longitude?: number | null
+          region?: string | null
+          timezone?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -1439,27 +1496,11 @@ export type Database = {
         Args: { p_date_range?: string }
         Returns: Json
       }
-      get_demographics_analytics: {
+      get_default_ai_settings: {
         Args: Record<PropertyKey, never>
         Returns: Json
       }
-      upsert_user_demographics: {
-        Args: {
-          p_user_id: string
-          p_country?: string
-          p_region?: string
-          p_city?: string
-          p_timezone?: string
-          p_latitude?: number
-          p_longitude?: number
-          p_birth_date?: string
-          p_age?: number
-          p_ip_address?: string
-          p_data_source?: string
-        }
-        Returns: Json
-      }
-      get_default_ai_settings: {
+      get_demographics_analytics: {
         Args: Record<PropertyKey, never>
         Returns: Json
       }
@@ -1743,6 +1784,22 @@ export type Database = {
       update_system_settings: {
         Args: { new_settings: Json }
         Returns: boolean
+      }
+      upsert_user_demographics: {
+        Args: {
+          p_age?: number
+          p_birth_date?: string
+          p_city?: string
+          p_country?: string
+          p_data_source?: string
+          p_ip_address?: unknown
+          p_latitude?: number
+          p_longitude?: number
+          p_region?: string
+          p_timezone?: string
+          p_user_id: string
+        }
+        Returns: Json
       }
       upsert_user_profile: {
         Args: {
