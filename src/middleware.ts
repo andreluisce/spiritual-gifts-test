@@ -50,12 +50,23 @@ export async function middleware(request: NextRequest) {
       request.nextUrl.pathname.includes(route)
     );
 
-    // Allow access to dashboard when coming from auth callback
+    // Allow access to dashboard when coming from auth callback or with fresh session
     const isDashboardAfterAuth = request.nextUrl.pathname.includes('/dashboard') && 
       (isAuthCallback || request.nextUrl.searchParams.has('access_token') || request.nextUrl.searchParams.has('refresh_token'));
+      
+    // Check if user is accessing login while already authenticated
+    const isLoginWhileAuthenticated = user && request.nextUrl.pathname.includes('/login');
 
     // Use static default language for Edge Runtime compatibility
     const defaultLanguage = staticRouting.defaultLocale;
+
+    // If user is authenticated but trying to access login, redirect to dashboard
+    if (isLoginWhileAuthenticated) {
+      const pathLocale = request.nextUrl.pathname.split('/')[1];
+      const locale = isValidLocale(pathLocale) ? pathLocale : defaultLanguage;
+      const dashboardUrl = new URL(`/${locale}/dashboard`, request.url);
+      return NextResponse.redirect(dashboardUrl);
+    }
 
     // If accessing any route (except public, static files, auth callback, or dashboard after auth) without authentication, redirect to login
     if (!isPublicRoute && !isAuthCallback && !isStaticFile && !isDashboardAfterAuth && !user) {

@@ -99,12 +99,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const locale = currentPath.split('/')[1] || 'pt'
     const { authCallbackUrl } = getEnvironmentConfig()
     
-    await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: authCallbackUrl(locale)
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: authCallbackUrl(locale),
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          }
+        }
+      })
+      
+      if (error) {
+        console.error('OAuth error:', error)
+        throw error
       }
-    })
+    } catch (error) {
+      console.error('Sign in error:', error)
+      throw error
+    }
   }
 
   const signOut = async () => {

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useRouter } from '@/i18n/navigation'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase-client'
 import { useTranslations } from 'next-intl'
 
@@ -23,7 +23,8 @@ export default function AuthCallbackPage() {
           
           if (error) {
             console.error('Auth callback error:', error)
-            router.push('/login?error=auth_failed')
+            const currentLocale = window.location.pathname.split('/')[1] || 'pt'
+            window.location.href = `/${currentLocale}/login?error=auth_failed`
             return
           }
 
@@ -45,23 +46,28 @@ export default function AuthCallbackPage() {
               console.warn('Demographics collection failed (non-critical):', error)
             })
             
-            router.push('/dashboard')
+            // Use window.location for more reliable redirect after auth
+            const currentLocale = window.location.pathname.split('/')[1] || 'pt'
+            window.location.href = `/${currentLocale}/dashboard`
           } else {
-            router.push('/login?error=no_session')
+            const currentLocale = window.location.pathname.split('/')[1] || 'pt'
+            window.location.href = `/${currentLocale}/login?error=no_session`
           }
         } else {
           // No code parameter, check if we already have a session
           const { data } = await supabase.auth.getSession()
+          const currentLocale = window.location.pathname.split('/')[1] || 'pt'
           
           if (data.session) {
-            router.push('/dashboard')
+            window.location.href = `/${currentLocale}/dashboard`
           } else {
-            router.push('/login?error=no_code')
+            window.location.href = `/${currentLocale}/login?error=no_code`
           }
         }
       } catch (error) {
         console.error('Error handling auth callback:', error)
-        router.push('/login?error=callback_error')
+        const currentLocale = window.location.pathname.split('/')[1] || 'pt'
+        window.location.href = `/${currentLocale}/login?error=callback_error`
       }
     }
 
