@@ -71,7 +71,7 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6">
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">{tStats('totalUsers')}</CardTitle>
@@ -150,7 +150,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Dashboard Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Recent Activity */}
         <Card>
           <CardHeader>
@@ -174,7 +174,7 @@ export default function AdminDashboard() {
               ) : activities && activities.length > 0 ? (
                 activities.slice(0, 5).map((activity) => (
                   <div key={activity.id} className="flex items-center space-x-3">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${getActivityColor(activity.type)}`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${getActivityColor(activity.type)} flex-shrink-0`}>
                       {getActivityIcon(activity.type)}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -182,7 +182,7 @@ export default function AdminDashboard() {
                         {activity.user_name || activity.user_email}
                       </p>
                       <p className="text-xs text-gray-500 truncate">
-                        {activity.action} • {formatTimeAgo(activity.created_at)}
+                        {activity.action} • <span className="whitespace-nowrap">{formatTimeAgo(activity.created_at)}</span>
                       </p>
                     </div>
                   </div>
@@ -219,9 +219,9 @@ export default function AdminDashboard() {
               ) : topGifts.length > 0 ? (
                 topGifts.slice(0, 7).map((gift, index) => (
                   <div key={gift.gift_name} className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="font-medium">#{index + 1} {gift.gift_name}</span>
-                      <span className="text-gray-500">{gift.count} {tGifts('users')}</span>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between text-sm gap-1">
+                      <span className="font-medium truncate">#{index + 1} {gift.gift_name}</span>
+                      <span className="text-gray-500 whitespace-nowrap">{gift.count} {tGifts('users')}</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div 

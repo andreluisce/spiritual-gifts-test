@@ -205,9 +205,6 @@ export default function ResultsLayout({ children }: ResultsLayoutProps) {
                   </>
                 )}
               </Button>
-              <Badge variant="outline" className="text-xs sm:text-sm">
-                {t('sessionId')}: {sessionId.slice(-8)}
-              </Badge>
             </div>
           </div>
 

@@ -51,18 +51,18 @@ export default function AnalyticsReportsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t('tabs.reports')}</h1>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('tabs.reports')}</h1>
           <p className="text-gray-600 mt-1">
             {t('reports.subtitle')}
           </p>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 w-full sm:w-auto">
           <select
             value={dateRange}
             onChange={(e) => setDateRange(e.target.value as DateRange)}
-            className="px-3 py-2 border rounded-md text-sm border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="px-3 py-2 border rounded-md text-sm border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 whitespace-nowrap"
           >
             <option value="7d">{t('dateRange.7d')}</option>
             <option value="30d">{t('dateRange.30d')}</option>
@@ -72,13 +72,15 @@ export default function AnalyticsReportsPage() {
           <Button 
             onClick={() => generateQuickReport('comprehensive', dateRange)}
             disabled={generating}
+            className="whitespace-nowrap"
           >
             {generating ? (
               <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
             ) : (
               <Plus className="h-4 w-4 mr-2" />
             )}
-            Gerar Relatório
+            <span className="hidden sm:inline">Gerar Relatório</span>
+            <span className="sm:hidden">Gerar</span>
           </Button>
         </div>
       </div>
@@ -98,13 +100,15 @@ export default function AnalyticsReportsPage() {
                 variant="outline"
                 onClick={() => generateQuickReport('comprehensive', dateRange)}
                 disabled={generating}
+                className="whitespace-nowrap"
               >
                 {generating ? (
                   <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
                 ) : (
                   <Plus className="h-4 w-4 mr-2" />
                 )}
-                Gerar Relatório Rápido
+                <span className="hidden sm:inline">Gerar Relatório Rápido</span>
+                <span className="sm:hidden">Gerar</span>
               </Button>
             </div>
           </div>
@@ -131,40 +135,41 @@ export default function AnalyticsReportsPage() {
             <div className="space-y-4">
               {reports.map((report) => (
                 <div key={report.id} className="border rounded-lg p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3">
-                        <FileText className="h-5 w-5 text-blue-600" />
-                        <div>
-                          <h4 className="font-medium">{report.title}</h4>
-                          <p className="text-sm text-gray-600">{report.description}</p>
+                  <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-3 mb-3">
+                        <FileText className="h-5 w-5 text-blue-600 flex-shrink-0" />
+                        <div className="min-w-0 flex-1">
+                          <h4 className="font-medium truncate">{report.title}</h4>
+                          <p className="text-sm text-gray-600 line-clamp-2">{report.description}</p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-4 mt-2">
-                        <Badge variant="outline">
+                      <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+                        <Badge variant="outline" className="whitespace-nowrap">
                           {report.report_type.replace('_', ' ')}
                         </Badge>
-                        <Badge variant="secondary">
+                        <Badge variant="secondary" className="whitespace-nowrap">
                           {report.format.toUpperCase()}
                         </Badge>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-gray-500 whitespace-nowrap">
                           {new Date(report.created_at).toLocaleDateString('pt-BR')}
                         </span>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-gray-500 whitespace-nowrap">
                           {report.download_count} downloads
                         </span>
                         {report.file_size && (
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-gray-500 whitespace-nowrap">
                             {(report.file_size / 1024).toFixed(1)} KB
                           </span>
                         )}
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => downloadReport(report.id, 'json')}
+                        className="whitespace-nowrap flex-1 sm:flex-initial"
                       >
                         <Download className="h-4 w-4 mr-1" />
                         JSON
@@ -173,6 +178,7 @@ export default function AnalyticsReportsPage() {
                         variant="outline"
                         size="sm"
                         onClick={() => downloadReport(report.id, 'csv')}
+                        className="whitespace-nowrap flex-1 sm:flex-initial"
                       >
                         <Download className="h-4 w-4 mr-1" />
                         CSV
@@ -181,6 +187,7 @@ export default function AnalyticsReportsPage() {
                         variant="outline"
                         size="sm"
                         onClick={() => downloadReport(report.id, 'txt')}
+                        className="whitespace-nowrap flex-1 sm:flex-initial"
                       >
                         <Download className="h-4 w-4 mr-1" />
                         TXT
@@ -193,6 +200,7 @@ export default function AnalyticsReportsPage() {
                             deleteReport(report.id)
                           }
                         }}
+                        className="whitespace-nowrap"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -206,7 +214,7 @@ export default function AnalyticsReportsPage() {
       </Card>
 
       {/* Report generation stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Total de Relatórios</CardTitle>

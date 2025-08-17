@@ -54,27 +54,28 @@ export default function AnalyticsOverviewPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t('tabs.overview')}</h1>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('tabs.overview')}</h1>
           <p className="text-gray-600 mt-1">
             {t('overview.subtitle')}
           </p>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 w-full sm:w-auto">
           <select
             value={dateRange}
             onChange={(e) => setDateRange(e.target.value as DateRange)}
-            className="px-3 py-2 border rounded-md text-sm border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="px-3 py-2 border rounded-md text-sm border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 whitespace-nowrap"
           >
             <option value="7d">{t('dateRange.7d')}</option>
             <option value="30d">{t('dateRange.30d')}</option>
             <option value="90d">{t('dateRange.90d')}</option>
             <option value="1y">{t('dateRange.1y')}</option>
           </select>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" className="whitespace-nowrap">
             <Download className="h-4 w-4 mr-2" />
-            {t('exportData')}
+            <span className="hidden sm:inline">{t('exportData')}</span>
+            <span className="sm:hidden">Export</span>
           </Button>
         </div>
       </div>
@@ -83,7 +84,7 @@ export default function AnalyticsOverviewPage() {
       <AnalyticsNavigation />
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">{t('overview.totalQuizzes')}</CardTitle>
@@ -182,7 +183,7 @@ export default function AnalyticsOverviewPage() {
       </Card>
 
       {/* Real Growth Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">{t('overview.totalUsersCard')}</CardTitle>

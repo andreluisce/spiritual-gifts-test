@@ -43,9 +43,9 @@ export default function AnalyticsDemographicsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t('tabs.demographics')}</h1>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('tabs.demographics')}</h1>
           <p className="text-gray-600 mt-1">
             {t('demographics.subtitle')}
           </p>
@@ -55,7 +55,7 @@ export default function AnalyticsDemographicsPage() {
       {/* Navigation */}
       <AnalyticsNavigation />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Age Groups */}
         <Card>
           <CardHeader>
@@ -69,9 +69,9 @@ export default function AnalyticsDemographicsPage() {
               <div className="space-y-4">
                 {ageDemographics.map((group, index) => (
                   <div key={index} className="space-y-2">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                       <span className="text-sm font-medium">{group.ageRange}</span>
-                      <span className="text-sm text-gray-500">
+                      <span className="text-sm text-gray-500 whitespace-nowrap">
                         {group.count} ({formatPercentage(group.percentage)})
                       </span>
                     </div>
@@ -109,9 +109,9 @@ export default function AnalyticsDemographicsPage() {
               <div className="space-y-4">
                 {geoDistribution.map((location, index) => (
                   <div key={index} className="space-y-2">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                       <span className="text-sm font-medium">{location.country}</span>
-                      <span className="text-sm text-gray-500">
+                      <span className="text-sm text-gray-500 whitespace-nowrap">
                         {location.count} ({formatPercentage(location.percentage)})
                       </span>
                     </div>
@@ -146,7 +146,7 @@ export default function AnalyticsDemographicsPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             <div className="text-center p-4 bg-blue-50 rounded-lg">
               <Users className="h-8 w-8 text-blue-600 mx-auto mb-2" />
               <h4 className="font-semibold text-blue-900 mb-1">{t('demographics.summary.dominantAgeGroup')}</h4>

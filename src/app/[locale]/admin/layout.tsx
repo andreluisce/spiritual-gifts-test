@@ -81,41 +81,47 @@ export default function AdminLayout({
         </div>
 
         {/* Navigation */}
-        <div className="mt-4 flex gap-2 overflow-x-auto">
+        <div className="mt-4 flex gap-2 overflow-x-auto scrollbar-hide pb-2">
           <Link href="/admin">
-            <Button variant="ghost" size="sm" className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" className="flex items-center gap-2 whitespace-nowrap flex-shrink-0">
               <Home className="h-4 w-4" />
-              {t('navigation.dashboard')}
+              <span className="hidden sm:inline">{t('navigation.dashboard')}</span>
+              <span className="sm:hidden">Home</span>
             </Button>
           </Link>
           <Link href="/admin/users">
-            <Button variant="ghost" size="sm" className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" className="flex items-center gap-2 whitespace-nowrap flex-shrink-0">
               <Users className="h-4 w-4" />
-              {t('navigation.users')}
+              <span className="hidden sm:inline">{t('navigation.users')}</span>
+              <span className="sm:hidden">Users</span>
             </Button>
           </Link>
           <Link href="/admin/analytics">
-            <Button variant="ghost" size="sm" className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" className="flex items-center gap-2 whitespace-nowrap flex-shrink-0">
               <BarChart3 className="h-4 w-4" />
-              {t('navigation.analytics')}
+              <span className="hidden sm:inline">{t('navigation.analytics')}</span>
+              <span className="sm:hidden">Analytics</span>
             </Button>
           </Link>
           <Link href="/admin/content">
-            <Button variant="ghost" size="sm" className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" className="flex items-center gap-2 whitespace-nowrap flex-shrink-0">
               <Database className="h-4 w-4" />
-              {t('navigation.content')}
+              <span className="hidden sm:inline">{t('navigation.content')}</span>
+              <span className="sm:hidden">Content</span>
             </Button>
           </Link>
           <Link href="/admin/settings">
-            <Button variant="ghost" size="sm" className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" className="flex items-center gap-2 whitespace-nowrap flex-shrink-0">
               <Settings className="h-4 w-4" />
-              {t('navigation.settings')}
+              <span className="hidden sm:inline">{t('navigation.settings')}</span>
+              <span className="sm:hidden">Settings</span>
             </Button>
           </Link>
           <Link href="/admin/audit">
-            <Button variant="ghost" size="sm" className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" className="flex items-center gap-2 whitespace-nowrap flex-shrink-0">
               <Shield className="h-4 w-4" />
-              {t('navigation.audit')}
+              <span className="hidden sm:inline">{t('navigation.audit')}</span>
+              <span className="sm:hidden">Audit</span>
             </Button>
           </Link>
         </div>

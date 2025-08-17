@@ -101,21 +101,23 @@ export default function AdminAuditPage() {
           </Link>
         </div>
         
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Audit & Activity Logs</h1>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex-1">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Audit & Activity Logs</h1>
             <p className="text-gray-600 mt-1">
               Monitor system activities, user actions, and security events
             </p>
           </div>
-          <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 w-full sm:w-auto">
+            <Button variant="outline" size="sm" className="whitespace-nowrap">
               <Download className="h-4 w-4 mr-2" />
-              Export Logs
+              <span className="hidden sm:inline">Export Logs</span>
+              <span className="sm:hidden">Export</span>
             </Button>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" className="whitespace-nowrap">
               <Filter className="h-4 w-4 mr-2" />
-              Advanced Filters
+              <span className="hidden sm:inline">Advanced Filters</span>
+              <span className="sm:hidden">Filters</span>
             </Button>
           </div>
         </div>
@@ -132,7 +134,7 @@ export default function AdminAuditPage() {
         <TabsContent value="logs" className="space-y-6">
           {/* Audit Statistics */}
           {auditStats && (
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
               <Card>
                 <CardContent className="pt-6">
                   <div className="flex items-center justify-between">
@@ -183,7 +185,7 @@ export default function AdminAuditPage() {
           {/* Filters */}
           <Card>
             <CardContent className="pt-6">
-              <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -196,11 +198,11 @@ export default function AdminAuditPage() {
                   </div>
                 </div>
                 
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <select
                     value={selectedAction}
                     onChange={(e) => setSelectedAction(e.target.value)}
-                    className="px-3 py-2 border rounded-md text-sm"
+                    className="px-3 py-2 border rounded-md text-sm whitespace-nowrap"
                   >
                     <option value="all">All Actions</option>
                     <option value="login">Login</option>
@@ -213,7 +215,7 @@ export default function AdminAuditPage() {
                   <select
                     value={selectedStatus}
                     onChange={(e) => setSelectedStatus(e.target.value)}
-                    className="px-3 py-2 border rounded-md text-sm"
+                    className="px-3 py-2 border rounded-md text-sm whitespace-nowrap"
                   >
                     <option value="all">All Status</option>
                     <option value="success">Success</option>
@@ -236,43 +238,43 @@ export default function AdminAuditPage() {
             <CardContent>
               <div className="space-y-4">
                 {auditLogs.map((log) => (
-                  <div key={log.id} className="flex items-start gap-4 p-4 border rounded-lg hover:bg-gray-50">
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${getStatusColor(log.status)}`}>
+                  <div key={log.id} className="flex flex-col sm:flex-row items-start gap-4 p-4 border rounded-lg hover:bg-gray-50">
+                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${getStatusColor(log.status)} flex-shrink-0`}>
                       {getStatusIcon(log.status)}
                     </div>
                     
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
+                    <div className="flex-1 min-w-0 w-full">
+                      <div className="flex flex-wrap items-center gap-2 mb-2">
                         <h3 className="font-medium text-gray-900">{log.action}</h3>
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-xs whitespace-nowrap">
                           {log.resource}
                         </Badge>
-                        <Badge className={getStatusColor(log.status)}>
+                        <Badge className={`${getStatusColor(log.status)} whitespace-nowrap`}>
                           {log.status}
                         </Badge>
                       </div>
                       
-                      <p className="text-sm text-gray-600 mb-2">
+                      <p className="text-sm text-gray-600 mb-3 line-clamp-2">
                         {log.details ? (typeof log.details === 'string' ? log.details : JSON.stringify(log.details)) : 'No additional details'}
                       </p>
                       
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs text-gray-500">
-                        <div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs text-gray-500">
+                        <div className="truncate">
                           <span className="font-medium">User:</span> {log.user_email}
                         </div>
-                        <div>
+                        <div className="whitespace-nowrap">
                           <span className="font-medium">Time:</span> {formatTime(log.created_at)}
                         </div>
-                        <div>
+                        <div className="truncate">
                           <span className="font-medium">IP:</span> {log.ip_address || 'N/A'}
                         </div>
-                        <div>
+                        <div className="truncate">
                           <span className="font-medium">Browser:</span> {log.user_agent ? log.user_agent.slice(0, 30) + '...' : 'N/A'}
                         </div>
                       </div>
                     </div>
                     
-                    <Button variant="ghost" size="sm">
+                    <Button variant="ghost" size="sm" className="self-start mt-2 sm:mt-0">
                       <Eye className="h-4 w-4" />
                     </Button>
                   </div>
@@ -308,19 +310,19 @@ export default function AdminAuditPage() {
                   </div>
                 ) : activities.length > 0 ? (
                   activities.map((activity) => (
-                    <div key={activity.id} className="flex items-center gap-4 p-3 rounded-lg bg-gray-50">
-                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                    <div key={activity.id} className="flex items-center gap-3 sm:gap-4 p-3 rounded-lg bg-gray-50">
+                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
                         <FileText className="h-5 w-5 text-blue-600" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900">
+                        <p className="text-sm font-medium text-gray-900 truncate">
                           {activity.user_name || activity.user_email}
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-500 truncate">
                           {activity.action}
                         </p>
                       </div>
-                      <div className="text-xs text-gray-400">
+                      <div className="text-xs text-gray-400 whitespace-nowrap hidden sm:block">
                         {formatTime(activity.created_at)}
                       </div>
                     </div>

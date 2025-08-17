@@ -472,21 +472,23 @@ export default function AdminContentPage() {
           </Link>
         </div>
 
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex-1">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('title')}</h1>
             <p className="text-gray-600 mt-1">
               {t('subtitle')}
             </p>
           </div>
-          <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 w-full sm:w-auto">
+            <Button variant="outline" size="sm" className="whitespace-nowrap">
               <Database className="h-4 w-4 mr-2" />
-              Import Content
+              <span className="hidden sm:inline">Import Content</span>
+              <span className="sm:hidden">Import</span>
             </Button>
-            <Button size="sm">
+            <Button size="sm" className="whitespace-nowrap">
               <Plus className="h-4 w-4 mr-2" />
-              Add New Content
+              <span className="hidden sm:inline">Add New Content</span>
+              <span className="sm:hidden">Add New</span>
             </Button>
           </div>
         </div>
@@ -504,7 +506,7 @@ export default function AdminContentPage() {
           {/* Search and Filters */}
           <Card>
             <CardContent className="pt-6">
-              <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -516,7 +518,7 @@ export default function AdminContentPage() {
                     />
                   </div>
                 </div>
-                <Button onClick={() => handleCreateNew('gift')}>
+                <Button onClick={() => handleCreateNew('gift')} className="whitespace-nowrap">
                   <Plus className="h-4 w-4 mr-2" />
                   {t('gifts.addNew')}
                 </Button>
@@ -534,23 +536,23 @@ export default function AdminContentPage() {
                 {filteredGifts.map((gift) => {
                   const { icon, bgColor, iconColor, borderColor } = getGiftIconAndColor(gift.name)
                   return (
-                    <div key={gift.id} className={`flex items-center gap-4 p-4 border-2 ${borderColor} rounded-lg hover:bg-gray-50 transition-all duration-200`}>
+                    <div key={gift.id} className={`flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 border-2 ${borderColor} rounded-lg hover:bg-gray-50 transition-all duration-200`}>
                       <div className={`w-12 h-12 ${bgColor} rounded-lg flex items-center justify-center`}>
                         <span className={iconColor}>{icon}</span>
                       </div>
 
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-medium text-gray-900">{gift.name}</h3>
-                          <Badge variant="outline" className="text-xs">
+                      <div className="flex-1 min-w-0 space-y-2">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                          <h3 className="font-medium text-gray-900 truncate">{gift.name}</h3>
+                          <Badge variant="outline" className="text-xs self-start whitespace-nowrap">
                             <Globe className="h-3 w-3 mr-1" />
                             {gift.nameEn}
                           </Badge>
                         </div>
-                        <p className="text-sm text-gray-500 mb-2">{gift.description}</p>
-                        <div className="flex items-center gap-4 text-xs text-gray-400">
-                          <span>{gift.questionsCount} {tCommon('questions')}</span>
-                          <span>{tCommon('updated')}: {new Date(gift.lastUpdated).toLocaleDateString()}</span>
+                        <p className="text-sm text-gray-500 line-clamp-2">{gift.description}</p>
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs text-gray-400">
+                          <span className="whitespace-nowrap">{gift.questionsCount} {tCommon('questions')}</span>
+                          <span className="whitespace-nowrap">{tCommon('updated')}: {new Date(gift.lastUpdated).toLocaleDateString()}</span>
                         </div>
                       </div>
 
@@ -560,7 +562,7 @@ export default function AdminContentPage() {
                         </Badge>
                       </div>
 
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1 mt-2 sm:mt-0">
                         <Button variant="ghost" size="sm" onClick={() => handleEditGift(gift)}>
                           <Edit className="h-4 w-4" />
                         </Button>
@@ -610,7 +612,7 @@ export default function AdminContentPage() {
           {/* Search and Filters */}
           <Card>
             <CardContent className="pt-6">
-              <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -623,21 +625,23 @@ export default function AdminContentPage() {
                   </div>
                 </div>
 
-                <select
-                  value={selectedGift}
-                  onChange={(e) => setSelectedGift(e.target.value)}
-                  className="px-3 py-2 border rounded-md text-sm"
-                >
-                  <option value="all">{t('questions.allGifts')}</option>
-                  {giftsData.map(gift => (
-                    <option key={gift.id} value={gift.name}>{gift.name}</option>
-                  ))}
-                </select>
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+                  <select
+                    value={selectedGift}
+                    onChange={(e) => setSelectedGift(e.target.value)}
+                    className="px-3 py-2 border rounded-md text-sm whitespace-nowrap"
+                  >
+                    <option value="all">{t('questions.allGifts')}</option>
+                    {giftsData.map(gift => (
+                      <option key={gift.id} value={gift.name}>{gift.name}</option>
+                    ))}
+                  </select>
 
-                <Button onClick={() => handleCreateNew('question')}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  {t('questions.addNew')}
-                </Button>
+                  <Button onClick={() => handleCreateNew('question')} className="whitespace-nowrap">
+                    <Plus className="h-4 w-4 mr-2" />
+                    {t('questions.addNew')}
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -652,38 +656,38 @@ export default function AdminContentPage() {
                 {filteredQuestions.map((question) => {
                   const { icon, bgColor, iconColor, borderColor } = getGiftIconAndColor(question.giftName)
                   return (
-                    <div key={question.id} className={`flex items-start gap-4 p-4 border-2 ${borderColor} rounded-lg hover:bg-gray-50 transition-all duration-200`}>
+                    <div key={question.id} className={`flex flex-col sm:flex-row items-start gap-4 p-4 border-2 ${borderColor} rounded-lg hover:bg-gray-50 transition-all duration-200`}>
                       <div className={`w-10 h-10 ${bgColor} rounded-lg flex items-center justify-center mt-1`}>
                         <span className={iconColor}>{icon}</span>
                       </div>
 
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Badge variant="outline" className="text-xs">
+                    <div className="flex-1 min-w-0 space-y-3">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Badge variant="outline" className="text-xs whitespace-nowrap">
                           {question.giftName}
                         </Badge>
-                        <Badge className={getStatusColor(question.isActive)}>
+                        <Badge className={`${getStatusColor(question.isActive)} whitespace-nowrap`}>
                           {question.isActive ? tCommon('active') : tCommon('inactive')}
                         </Badge>
                       </div>
 
-                      <div className="space-y-2">
+                      <div className="space-y-3">
                         <div>
-                          <span className="text-xs text-gray-500 font-medium">PT:</span>
-                          <p className="text-sm text-gray-900">{question.questionPt}</p>
+                          <span className="text-xs text-gray-500 font-medium block mb-1">PT:</span>
+                          <p className="text-sm text-gray-900 line-clamp-3">{question.questionPt}</p>
                         </div>
                         <div>
-                          <span className="text-xs text-gray-500 font-medium">EN:</span>
-                          <p className="text-sm text-gray-600">{question.questionEn}</p>
+                          <span className="text-xs text-gray-500 font-medium block mb-1">EN:</span>
+                          <p className="text-sm text-gray-600 line-clamp-3">{question.questionEn}</p>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-4 mt-3 text-xs text-gray-400">
-                        <span>{tCommon('updated')}: {new Date(question.lastUpdated).toLocaleDateString()}</span>
+                      <div className="flex items-center gap-4 text-xs text-gray-400">
+                        <span className="whitespace-nowrap">{tCommon('updated')}: {new Date(question.lastUpdated).toLocaleDateString()}</span>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 mt-2 sm:mt-0 self-end sm:self-start">
                       <Button variant="ghost" size="sm" onClick={() => handleEditQuestion(question)}>
                         <Edit className="h-4 w-4" />
                       </Button>
@@ -733,7 +737,7 @@ export default function AdminContentPage() {
           {/* Search and Filters */}
           <Card>
             <CardContent className="pt-6">
-              <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -746,21 +750,23 @@ export default function AdminContentPage() {
                   </div>
                 </div>
 
-                <select
-                  value={selectedGift}
-                  onChange={(e) => setSelectedGift(e.target.value)}
-                  className="px-3 py-2 border rounded-md text-sm"
-                >
-                  <option value="all">{t('questions.allGifts')}</option>
-                  {giftsData.map(gift => (
-                    <option key={gift.id} value={gift.name}>{gift.name}</option>
-                  ))}
-                </select>
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+                  <select
+                    value={selectedGift}
+                    onChange={(e) => setSelectedGift(e.target.value)}
+                    className="px-3 py-2 border rounded-md text-sm whitespace-nowrap"
+                  >
+                    <option value="all">{t('questions.allGifts')}</option>
+                    {giftsData.map(gift => (
+                      <option key={gift.id} value={gift.name}>{gift.name}</option>
+                    ))}
+                  </select>
 
-                <Button onClick={() => handleCreateNew('characteristic')}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  {t('characteristics.addNew')}
-                </Button>
+                  <Button onClick={() => handleCreateNew('characteristic')} className="whitespace-nowrap">
+                    <Plus className="h-4 w-4 mr-2" />
+                    {t('characteristics.addNew')}
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -775,38 +781,38 @@ export default function AdminContentPage() {
                 {filteredCharacteristics.map((item) => {
                   const { icon, bgColor, iconColor, borderColor } = getGiftIconAndColor(item.giftName)
                   return (
-                    <div key={item.id} className={`flex items-start gap-4 p-4 border-2 ${borderColor} rounded-lg hover:bg-gray-50 transition-all duration-200`}>
+                    <div key={item.id} className={`flex flex-col sm:flex-row items-start gap-4 p-4 border-2 ${borderColor} rounded-lg hover:bg-gray-50 transition-all duration-200`}>
                       <div className={`w-10 h-10 ${bgColor} rounded-lg flex items-center justify-center mt-1`}>
                         <span className={iconColor}>{icon}</span>
                       </div>
 
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Badge variant="outline" className="text-xs">
+                    <div className="flex-1 min-w-0 space-y-3">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Badge variant="outline" className="text-xs whitespace-nowrap">
                           {item.giftName}
                         </Badge>
-                        <Badge className={getCharacteristicColor(item.type)} variant="outline">
+                        <Badge className={`${getCharacteristicColor(item.type)} whitespace-nowrap`} variant="outline">
                           {getCharacteristicIcon(item.type)}
                           {item.type}
                         </Badge>
-                        <Badge className={getStatusColor(item.isActive)}>
+                        <Badge className={`${getStatusColor(item.isActive)} whitespace-nowrap`}>
                           {item.isActive ? tCommon('active') : tCommon('inactive')}
                         </Badge>
                       </div>
 
-                      <div className="space-y-2">
+                      <div className="space-y-3">
                         <div>
-                          <span className="text-xs text-gray-500 font-medium">PT:</span>
-                          <p className="text-sm text-gray-900">{item.contentPt}</p>
+                          <span className="text-xs text-gray-500 font-medium block mb-1">PT:</span>
+                          <p className="text-sm text-gray-900 line-clamp-3">{item.contentPt}</p>
                         </div>
                         <div>
-                          <span className="text-xs text-gray-500 font-medium">EN:</span>
-                          <p className="text-sm text-gray-600">{item.contentEn}</p>
+                          <span className="text-xs text-gray-500 font-medium block mb-1">EN:</span>
+                          <p className="text-sm text-gray-600 line-clamp-3">{item.contentEn}</p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 mt-2 sm:mt-0 self-end sm:self-start">
                       <Button variant="ghost" size="sm" onClick={() => handleEditCharacteristic(item)}>
                         <Edit className="h-4 w-4" />
                       </Button>
@@ -904,9 +910,9 @@ export default function AdminContentPage() {
 
       {/* Edit/Create Item Dialog */}
       <AlertDialog open={!!editingItem || isCreating} onOpenChange={() => (editingItem || isCreating) && handleCancelEdit()}>
-        <AlertDialogContent className="max-w-lg">
+        <AlertDialogContent className="max-w-lg w-[95vw] max-h-[90vh] overflow-y-auto">
           <AlertDialogHeader>
-            <AlertDialogTitle>
+            <AlertDialogTitle className="line-clamp-2">
               {isCreating ? 'Create New' : 'Edit'} {editingType === 'gift' ? 'Spiritual Gift' : 
                    editingType === 'question' ? 'Question' : 
                    'Characteristic'}

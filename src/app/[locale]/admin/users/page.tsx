@@ -243,21 +243,23 @@ export default function AdminUsersPage() {
           </Link>
         </div>
         
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex-1">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">User Management</h1>
             <p className="text-gray-600 mt-1">
               Manage system users, roles, and permissions
             </p>
           </div>
-          <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 w-full sm:w-auto">
+            <Button variant="outline" size="sm" className="whitespace-nowrap">
               <Download className="h-4 w-4 mr-2" />
-              Export Users
+              <span className="hidden sm:inline">Export Users</span>
+              <span className="sm:hidden">Export</span>
             </Button>
-            <Button size="sm">
+            <Button size="sm" className="whitespace-nowrap">
               <UserPlus className="h-4 w-4 mr-2" />
-              Add User
+              <span className="hidden sm:inline">Add User</span>
+              <span className="sm:hidden">Add</span>
             </Button>
           </div>
         </div>
@@ -273,7 +275,7 @@ export default function AdminUsersPage() {
 
         <TabsContent value="overview" className="space-y-6">
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Users</CardTitle>
@@ -348,26 +350,26 @@ export default function AdminUsersPage() {
             <CardContent>
               <div className="space-y-4">
                 {usersData.slice(0, 5).map((user) => (
-                  <div key={user.id} className="flex items-center gap-4 p-3 rounded-lg bg-gray-50">
-                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                  <div key={user.id} className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg bg-gray-50">
+                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
                       <span className="text-blue-600 font-semibold">
                         {(user.user_metadata?.name || (user.email ? user.email.split('@')[0] : '') || 'U').split(' ').map(n => n[0]).join('').toUpperCase()}
                       </span>
                     </div>
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0 space-y-1">
                       <p className="text-sm font-medium text-gray-900 truncate">
                         {user.user_metadata?.name || (user.email ? user.email.split('@')[0] : '') || 'Unknown'}
                       </p>
-                      <p className="text-sm text-gray-500 truncate">
+                      <p className="text-xs sm:text-sm text-gray-500 truncate">
                         {user.email}
                       </p>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="flex items-center gap-1">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
+                      <Badge variant="outline" className="flex items-center gap-1 whitespace-nowrap">
                         {getRoleIcon(user.user_metadata?.role || 'user')}
                         {user.user_metadata?.role || 'user'}
                       </Badge>
-                      <Badge className={getUserStatusColor(user.status)}>
+                      <Badge className={`${getUserStatusColor(user.status)} whitespace-nowrap`}>
                         {user.status}
                       </Badge>
                     </div>
@@ -382,7 +384,7 @@ export default function AdminUsersPage() {
           {/* Filters */}
           <Card>
             <CardContent className="pt-6">
-              <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -395,11 +397,11 @@ export default function AdminUsersPage() {
                   </div>
                 </div>
                 
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <select
                     value={selectedRole}
                     onChange={(e) => setSelectedRole(e.target.value)}
-                    className="px-3 py-2 border rounded-md text-sm"
+                    className="px-3 py-2 border rounded-md text-sm whitespace-nowrap"
                   >
                     <option value="all">All Roles</option>
                     <option value="admin">Admin</option>
@@ -409,7 +411,7 @@ export default function AdminUsersPage() {
                   <select
                     value={selectedStatus}
                     onChange={(e) => setSelectedStatus(e.target.value)}
-                    className="px-3 py-2 border rounded-md text-sm"
+                    className="px-3 py-2 border rounded-md text-sm whitespace-nowrap"
                   >
                     <option value="all">All Status</option>
                     <option value="active">Active</option>
@@ -429,7 +431,7 @@ export default function AdminUsersPage() {
             <CardContent>
               <div className="space-y-4">
                 {filteredUsers.map((user) => (
-                  <div key={user.id} className="flex items-center gap-4 p-4 border rounded-lg hover:bg-gray-50">
+                  <div key={user.id} className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 border rounded-lg hover:bg-gray-50">
                     <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                       <span className="text-blue-600 font-semibold text-lg">
                         {(user.user_metadata?.name || (user.email ? user.email.split('@')[0] : '') || 'U').split(' ').map(n => n[0]).join('').toUpperCase()}
@@ -446,25 +448,25 @@ export default function AdminUsersPage() {
                         )}
                       </div>
                       <p className="text-sm text-gray-500">{user.email}</p>
-                      <div className="flex items-center gap-4 mt-2 text-xs text-gray-400">
-                        <span>Joined: {new Date(user.created_at).toLocaleDateString('pt-BR')}</span>
-                        <span>Last login: {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString('pt-BR') : 'Never'}</span>
-                        <span>Quizzes: {user.quiz_count}</span>
-                        <span>Avg Score: {formatScore(user.avg_score, 1)}</span>
+                      <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2 text-xs text-gray-400">
+                        <span className="whitespace-nowrap">Joined: {new Date(user.created_at).toLocaleDateString('pt-BR')}</span>
+                        <span className="whitespace-nowrap">Last login: {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString('pt-BR') : 'Never'}</span>
+                        <span className="whitespace-nowrap">Quizzes: {user.quiz_count}</span>
+                        <span className="whitespace-nowrap">Avg Score: {formatScore(user.avg_score, 1)}</span>
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="flex items-center gap-1">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 mt-2 sm:mt-0">
+                      <Badge variant="outline" className="flex items-center gap-1 whitespace-nowrap">
                         {getRoleIcon(user.user_metadata?.role || 'user')}
                         {user.user_metadata?.role || 'user'}
                       </Badge>
-                      <Badge className={getUserStatusColor(user.status)}>
+                      <Badge className={`${getUserStatusColor(user.status)} whitespace-nowrap`}>
                         {user.status}
                       </Badge>
                     </div>
                     
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 mt-2 sm:mt-0">
                       <Button variant="ghost" size="sm" onClick={() => handleEditUser(user)}>
                         <Edit className="h-4 w-4" />
                       </Button>
@@ -541,7 +543,7 @@ export default function AdminUsersPage() {
 
         <TabsContent value="activity" className="space-y-6">
           {/* Activity Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Activities</CardTitle>
@@ -603,7 +605,7 @@ export default function AdminUsersPage() {
             </Card>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
             {/* Activity Log */}
             <Card className="lg:col-span-2">
               <CardHeader>
@@ -708,22 +710,26 @@ export default function AdminUsersPage() {
               <CardTitle>Activity Controls</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-wrap gap-4">
-                <Button variant="outline" size="sm">
+              <div className="flex flex-wrap gap-2 sm:gap-4">
+                <Button variant="outline" size="sm" className="whitespace-nowrap">
                   <Download className="h-4 w-4 mr-2" />
-                  Export Activity Log
+                  <span className="hidden sm:inline">Export Activity Log</span>
+                  <span className="sm:hidden">Export</span>
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="whitespace-nowrap">
                   <Filter className="h-4 w-4 mr-2" />
-                  Filter by User
+                  <span className="hidden sm:inline">Filter by User</span>
+                  <span className="sm:hidden">Filter</span>
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="whitespace-nowrap">
                   <Calendar className="h-4 w-4 mr-2" />
-                  Filter by Date
+                  <span className="hidden sm:inline">Filter by Date</span>
+                  <span className="sm:hidden">Date</span>
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="whitespace-nowrap">
                   <Shield className="h-4 w-4 mr-2" />
-                  Security Events Only
+                  <span className="hidden sm:inline">Security Events Only</span>
+                  <span className="sm:hidden">Security</span>
                 </Button>
               </div>
             </CardContent>
@@ -733,10 +739,10 @@ export default function AdminUsersPage() {
 
       {/* Edit User Dialog */}
       <AlertDialog open={!!editingUser} onOpenChange={() => editingUser && handleCancelEdit()}>
-        <AlertDialogContent className="max-w-md">
+        <AlertDialogContent className="max-w-md w-[95vw] max-h-[90vh] overflow-y-auto">
           <AlertDialogHeader>
             <AlertDialogTitle>Edit User</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogDescription className="line-clamp-2">
               Update user information and permissions for {editingUser?.email}
             </AlertDialogDescription>
           </AlertDialogHeader>

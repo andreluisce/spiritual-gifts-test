@@ -40,9 +40,9 @@ export default function AnalyticsSpiritualGiftsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t('tabs.spiritualGifts')}</h1>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('tabs.spiritualGifts')}</h1>
           <p className="text-gray-600 mt-1">
             {t('spiritualGifts.subtitle')}
           </p>
@@ -64,18 +64,18 @@ export default function AnalyticsSpiritualGiftsPage() {
             {realGifts && realGifts.length > 0 ? (
               realGifts.slice(0, 7).map((gift, index) => (
                 <div key={gift.gift_name} className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-semibold text-sm">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-semibold text-sm flex-shrink-0">
                         #{index + 1}
                       </div>
-                      <div>
-                        <h3 className="font-medium">{gift.gift_name}</h3>
+                      <div className="min-w-0 flex-1">
+                        <h3 className="font-medium truncate">{gift.gift_name}</h3>
                         <p className="text-sm text-gray-500">{gift.count} {t('spiritualGifts.identifications')}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <Badge variant="secondary">
+                    <div className="flex items-center gap-3 self-end sm:self-center">
+                      <Badge variant="secondary" className="whitespace-nowrap">
                         {formatPercentage(gift.percentage, 1)}
                       </Badge>
                     </div>
@@ -110,7 +110,7 @@ export default function AnalyticsSpiritualGiftsPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div className="p-4 bg-blue-50 rounded-lg">
               <h4 className="font-semibold text-blue-900 mb-2">Dom Mais Comum</h4>
               <p className="text-2xl font-bold text-blue-700">
