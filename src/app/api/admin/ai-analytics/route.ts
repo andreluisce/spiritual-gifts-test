@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
 
     // Check if user is admin using our database function
     const { data: isAdminData, error: adminError } = await supabase
-      .rpc('is_admin_user')
+      .rpc('is_user_admin_safe')
     
     if (adminError || !isAdminData) {
       console.log('❌ AI Analytics API: Non-admin user attempted to access analytics:', adminError)
