@@ -2,6 +2,7 @@
 
 import { useAuth } from '@/context/AuthContext'
 import { useRouter } from '@/i18n/navigation'
+import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -56,6 +57,8 @@ import {
 export default function AdminContentPage() {
   const { user, isAdmin, loading } = useAuth()
   const router = useRouter()
+  const t = useTranslations('admin.content')
+  const tCommon = useTranslations('admin.content.common')
   const [activeTab, setActiveTab] = useState('gifts')
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedGift, setSelectedGift] = useState('all')
@@ -471,9 +474,9 @@ export default function AdminContentPage() {
 
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Content Management</h1>
+            <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
             <p className="text-gray-600 mt-1">
-              Manage spiritual gifts, questions, characteristics, and all system content
+              {t('subtitle')}
             </p>
           </div>
           <div className="flex items-center gap-4">
@@ -491,9 +494,9 @@ export default function AdminContentPage() {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList>
-          <TabsTrigger value="gifts">Spiritual Gifts</TabsTrigger>
-          <TabsTrigger value="questions">Questions</TabsTrigger>
-          <TabsTrigger value="characteristics">Characteristics</TabsTrigger>
+          <TabsTrigger value="gifts">{t('gifts.title')}</TabsTrigger>
+          <TabsTrigger value="questions">{t('questions.title')}</TabsTrigger>
+          <TabsTrigger value="characteristics">{t('characteristics.title')}</TabsTrigger>
           <TabsTrigger value="content">Other Content</TabsTrigger>
         </TabsList>
 
@@ -506,7 +509,7 @@ export default function AdminContentPage() {
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                     <Input
-                      placeholder="Search spiritual gifts..."
+                      placeholder={t('gifts.searchPlaceholder')}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-10"
@@ -515,7 +518,7 @@ export default function AdminContentPage() {
                 </div>
                 <Button onClick={() => handleCreateNew('gift')}>
                   <Plus className="h-4 w-4 mr-2" />
-                  Add New Gift
+                  {t('gifts.addNew')}
                 </Button>
               </div>
             </CardContent>
@@ -524,7 +527,7 @@ export default function AdminContentPage() {
           {/* Gifts List */}
           <Card>
             <CardHeader>
-              <CardTitle>Spiritual Gifts ({filteredGifts.length})</CardTitle>
+              <CardTitle>{t('gifts.count', { count: filteredGifts.length })}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -546,14 +549,14 @@ export default function AdminContentPage() {
                         </div>
                         <p className="text-sm text-gray-500 mb-2">{gift.description}</p>
                         <div className="flex items-center gap-4 text-xs text-gray-400">
-                          <span>{gift.questionsCount} questions</span>
-                          <span>Updated: {new Date(gift.lastUpdated).toLocaleDateString('pt-BR')}</span>
+                          <span>{gift.questionsCount} {tCommon('questions')}</span>
+                          <span>{tCommon('updated')}: {new Date(gift.lastUpdated).toLocaleDateString()}</span>
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2">
                         <Badge className={getStatusColor(gift.isActive)}>
-                          {gift.isActive ? 'Active' : 'Inactive'}
+                          {gift.isActive ? tCommon('active') : tCommon('inactive')}
                         </Badge>
                       </div>
 
@@ -612,7 +615,7 @@ export default function AdminContentPage() {
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                     <Input
-                      placeholder="Search questions..."
+                      placeholder={t('questions.searchPlaceholder')}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-10"
@@ -625,7 +628,7 @@ export default function AdminContentPage() {
                   onChange={(e) => setSelectedGift(e.target.value)}
                   className="px-3 py-2 border rounded-md text-sm"
                 >
-                  <option value="all">All Gifts</option>
+                  <option value="all">{t('questions.allGifts')}</option>
                   {giftsData.map(gift => (
                     <option key={gift.id} value={gift.name}>{gift.name}</option>
                   ))}
@@ -633,7 +636,7 @@ export default function AdminContentPage() {
 
                 <Button onClick={() => handleCreateNew('question')}>
                   <Plus className="h-4 w-4 mr-2" />
-                  Add Question
+                  {t('questions.addNew')}
                 </Button>
               </div>
             </CardContent>
@@ -642,7 +645,7 @@ export default function AdminContentPage() {
           {/* Questions List */}
           <Card>
             <CardHeader>
-              <CardTitle>Quiz Questions ({filteredQuestions.length})</CardTitle>
+              <CardTitle>{t('questions.count', { count: filteredQuestions.length })}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -660,7 +663,7 @@ export default function AdminContentPage() {
                           {question.giftName}
                         </Badge>
                         <Badge className={getStatusColor(question.isActive)}>
-                          {question.isActive ? 'Active' : 'Inactive'}
+                          {question.isActive ? tCommon('active') : tCommon('inactive')}
                         </Badge>
                       </div>
 
@@ -676,7 +679,7 @@ export default function AdminContentPage() {
                       </div>
 
                       <div className="flex items-center gap-4 mt-3 text-xs text-gray-400">
-                        <span>Updated: {new Date(question.lastUpdated).toLocaleDateString('pt-BR')}</span>
+                        <span>{tCommon('updated')}: {new Date(question.lastUpdated).toLocaleDateString()}</span>
                       </div>
                     </div>
 
@@ -719,7 +722,7 @@ export default function AdminContentPage() {
               {filteredQuestions.length === 0 && (
                 <div className="text-center py-8">
                   <HelpCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500">No questions found matching your criteria</p>
+                  <p className="text-gray-500">{t('questions.noResults')}</p>
                 </div>
               )}
             </CardContent>
@@ -735,7 +738,7 @@ export default function AdminContentPage() {
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                     <Input
-                      placeholder="Search characteristics, dangers, misunderstandings..."
+                      placeholder={t('characteristics.searchPlaceholder')}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-10"
@@ -748,7 +751,7 @@ export default function AdminContentPage() {
                   onChange={(e) => setSelectedGift(e.target.value)}
                   className="px-3 py-2 border rounded-md text-sm"
                 >
-                  <option value="all">All Gifts</option>
+                  <option value="all">{t('questions.allGifts')}</option>
                   {giftsData.map(gift => (
                     <option key={gift.id} value={gift.name}>{gift.name}</option>
                   ))}
@@ -756,7 +759,7 @@ export default function AdminContentPage() {
 
                 <Button onClick={() => handleCreateNew('characteristic')}>
                   <Plus className="h-4 w-4 mr-2" />
-                  Add Content
+                  {t('characteristics.addNew')}
                 </Button>
               </div>
             </CardContent>
@@ -765,7 +768,7 @@ export default function AdminContentPage() {
           {/* Characteristics List */}
           <Card>
             <CardHeader>
-              <CardTitle>Gift Content ({filteredCharacteristics.length})</CardTitle>
+              <CardTitle>{t('characteristics.count', { count: filteredCharacteristics.length })}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -787,7 +790,7 @@ export default function AdminContentPage() {
                           {item.type}
                         </Badge>
                         <Badge className={getStatusColor(item.isActive)}>
-                          {item.isActive ? 'Active' : 'Inactive'}
+                          {item.isActive ? tCommon('active') : tCommon('inactive')}
                         </Badge>
                       </div>
 
@@ -842,7 +845,7 @@ export default function AdminContentPage() {
               {filteredCharacteristics.length === 0 && (
                 <div className="text-center py-8">
                   <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500">No content found matching your criteria</p>
+                  <p className="text-gray-500">{t('characteristics.noResults')}</p>
                 </div>
               )}
             </CardContent>
@@ -1108,14 +1111,14 @@ export default function AdminContentPage() {
                 onChange={(e) => setEditForm(prev => ({ ...prev, isActive: e.target.value === 'active' }))}
                 className="w-full px-3 py-2 border rounded-md text-sm"
               >
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
+                <option value="active">{tCommon('active')}</option>
+                <option value="inactive">{tCommon('inactive')}</option>
               </select>
             </div>
           </div>
 
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={handleCancelEdit}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel onClick={handleCancelEdit}>{tCommon('cancel')}</AlertDialogCancel>
             <Button 
               onClick={isCreating ? handleCreate : handleSaveEdit}
               disabled={
@@ -1127,11 +1130,11 @@ export default function AdminContentPage() {
             >
               {isCreating 
                 ? (creatingGift || creatingQuestion || creatingCharacteristic) 
-                  ? 'Creating...' 
-                  : 'Create'
+                  ? tCommon('creating') 
+                  : tCommon('create')
                 : (updating || updatingQuestion || updatingCharacteristic) 
-                  ? 'Saving...' 
-                  : 'Save Changes'
+                  ? tCommon('saving') 
+                  : tCommon('save')
               }
             </Button>
           </AlertDialogFooter>
