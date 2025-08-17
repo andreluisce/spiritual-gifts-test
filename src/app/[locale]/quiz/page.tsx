@@ -126,7 +126,7 @@ export default function QuizPage() {
         localStorage.setItem('quizResult', JSON.stringify(result))
         // Clear persisted state after successful submission
         clearAnswers()
-        router.push(`/${locale}/quiz/results`)
+        router.push(`/${locale}/quiz/results/${result.sessionId}/overview`)
       }
     } else {
       setCurrentQuestionIndex(currentQuestionIndex + 1)
