@@ -96,7 +96,35 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
 
   return (
     <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
+      {/* Mobile Header */}
+      <div className="block lg:hidden mb-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.push('/admin')}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Admin
+          </Button>
+        </div>
+        <div className="mb-4">
+          <h1 className="text-xl font-bold">{t('title')}</h1>
+          <p className="text-sm text-gray-600">{t('subtitle')}</p>
+        </div>
+        <Button 
+          onClick={handleSaveSettings}
+          className="w-full flex items-center justify-center gap-2"
+          size="lg"
+        >
+          <Save className="h-4 w-4" />
+          {t('saveChanges')}
+        </Button>
+      </div>
+
+      {/* Desktop Header */}
+      <div className="hidden lg:flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
