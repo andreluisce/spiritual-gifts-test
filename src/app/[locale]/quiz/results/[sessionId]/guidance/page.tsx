@@ -6,7 +6,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertTriangle, BookOpen } from 'lucide-react'
 import {
   useResultBySessionId,
-  useSpiritualGifts,
+  useSpiritualGifts
 } from '@/hooks/use-quiz-queries'
 import { useLocale, useTranslations } from 'next-intl'
 
@@ -99,6 +99,42 @@ export default function GuidancePage() {
               </CardContent>
             </Card>
           )}
+
+          {/* Biblical References */}
+          {topGiftData.detailed_biblical_references && topGiftData.detailed_biblical_references.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-blue-600">
+                  <BookOpen className="h-5 w-5" />
+                  {t('biblicalReferencesTitle')}
+                </CardTitle>
+                <p className="text-sm text-gray-600">
+                  {t('biblicalReferencesDescription')}
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {topGiftData.detailed_biblical_references.map((ref, index) => (
+                    <div key={`biblical-ref-${index}-${ref.reference}`} className="border border-blue-200 rounded-lg p-4 bg-blue-50">
+                      <div className="flex items-start gap-3">
+                        <div className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm font-medium border border-blue-300">
+                          {ref.reference}
+                        </div>
+                        <div className="flex-1">
+                          <blockquote className="text-blue-900 font-medium italic mb-2 border-l-4 border-blue-300 pl-3">
+                            &quot;{ref.verse_text}&quot;
+                          </blockquote>
+                          <p className="text-blue-800 text-sm">
+                            {ref.application}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </>
       )}
 
@@ -170,7 +206,8 @@ export default function GuidancePage() {
 
       {/* If no guidance data available */}
       {(!topGiftData?.dangers || topGiftData.dangers.length === 0) &&
-       (!topGiftData?.misunderstandings || topGiftData.misunderstandings.length === 0) && (
+       (!topGiftData?.misunderstandings || topGiftData.misunderstandings.length === 0) &&
+       (!topGiftData?.detailed_biblical_references || topGiftData.detailed_biblical_references.length === 0) && (
         <Alert>
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>

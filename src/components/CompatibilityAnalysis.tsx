@@ -145,7 +145,7 @@ export default function CompatibilityAnalysis({ giftScores, className }: Compati
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Análise Personalizada */}
+            {/* Personalized Analysis */}
             {hasAIAnalysis && compatibilities?.[0]?.aiEnhancedAnalysis && (
               <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6 rounded-xl border border-purple-100">
                 <div className="flex items-start gap-3 mb-4">
@@ -162,7 +162,7 @@ export default function CompatibilityAnalysis({ giftScores, className }: Compati
               </div>
             )}
 
-            {/* Suas Principais Forças */}
+            {/* Your Main Strengths */}
             {hasAIAnalysis && compatibilities?.[0]?.aiEnhancedAnalysis?.strengthsDescription && (
               <div className="bg-green-50 p-5 rounded-xl border border-green-200">
                 <h4 className="font-semibold text-green-800 mb-3 flex items-center gap-2">
@@ -175,7 +175,7 @@ export default function CompatibilityAnalysis({ giftScores, className }: Compati
               </div>
             )}
 
-            {/* Orientações para Crescimento */}
+            {/* Growth Guidance */}
             {hasAIAnalysis && compatibilities?.[0]?.aiEnhancedAnalysis?.challengesGuidance && (
               <div className="bg-amber-50 p-5 rounded-xl border border-amber-200">
                 <h4 className="font-semibold text-amber-800 mb-3 flex items-center gap-2">
@@ -188,7 +188,7 @@ export default function CompatibilityAnalysis({ giftScores, className }: Compati
               </div>
             )}
 
-            {/* Ministérios Recomendados para Você */}
+            {/* Recommended Ministries for You */}
             {hasAIAnalysis && compatibilities?.[0]?.aiEnhancedAnalysis?.ministryRecommendations && compatibilities[0].aiEnhancedAnalysis.ministryRecommendations.length > 0 && (
               <div className="bg-blue-50 p-5 rounded-xl border border-blue-200">
                 <h4 className="font-semibold text-blue-800 mb-3 flex items-center gap-2">
@@ -221,7 +221,7 @@ export default function CompatibilityAnalysis({ giftScores, className }: Compati
               </div>
             )}
 
-            {/* Aplicações Práticas */}
+            {/* Practical Applications */}
             {hasAIAnalysis && compatibilities?.[0]?.aiEnhancedAnalysis?.practicalApplications && compatibilities[0].aiEnhancedAnalysis.practicalApplications.length > 0 && (
               <div className="bg-emerald-50 p-5 rounded-xl border border-emerald-200">
                 <h4 className="font-semibold text-emerald-800 mb-3 flex items-center gap-2">
@@ -241,7 +241,7 @@ export default function CompatibilityAnalysis({ giftScores, className }: Compati
               </div>
             )}
 
-            {/* Fallback para análise básica */}
+            {/* Fallback for basic analysis */}
             {!hasAIAnalysis && (
               <div>
                 <div className="flex items-center gap-2 mb-4">
@@ -314,7 +314,7 @@ export default function CompatibilityAnalysis({ giftScores, className }: Compati
                   <div className={`flex items-center gap-2 px-3 py-1 rounded-full ${getCompatibilityColor(compatibility.compatibilityScore)}`}>
                     {getCompatibilityIcon(compatibility.compatibilityScore)}
                     <span className="font-semibold text-sm">
-                      {compatibility.compatibilityScore}%
+                      {Math.round(compatibility.compatibilityScore)}%
                     </span>
                   </div>
                 </div>
@@ -384,7 +384,7 @@ export default function CompatibilityAnalysis({ giftScores, className }: Compati
                   <div className={`flex items-center gap-2 px-3 py-1 rounded-full ${getCompatibilityColor(ministry.compatibilityScore)} ml-4`}>
                     <Star className="h-4 w-4" />
                     <span className="font-semibold text-sm">
-                      {ministry.compatibilityScore}%
+                      {Math.round(ministry.compatibilityScore)}%
                     </span>
                   </div>
                 </div>
@@ -392,14 +392,14 @@ export default function CompatibilityAnalysis({ giftScores, className }: Compati
                 <Progress value={ministry.compatibilityScore} className="mb-3" />
 
                 <div className="grid md:grid-cols-2 gap-4">
-                  {ministry.responsibilities.length > 0 && (
+                  {ministry.responsibilities.length > 0 && ministry.responsibilities.some(r => r) && (
                     <div>
                       <h5 className="font-medium text-blue-700 text-sm mb-2 flex items-center gap-1">
                         <CheckCircle className="h-3 w-3" />
                         {t('mainResponsibilities')}
                       </h5>
                       <div className="space-y-1">
-                        {ministry.responsibilities.slice(0, 3).map((responsibility, idx) => (
+                        {ministry.responsibilities.filter(r => r).slice(0, 3).map((responsibility, idx) => (
                           <p key={idx} className="text-xs text-gray-600 pl-4">
                             • {responsibility}
                           </p>
@@ -408,14 +408,14 @@ export default function CompatibilityAnalysis({ giftScores, className }: Compati
                     </div>
                   )}
 
-                  {ministry.growthAreas.length > 0 && (
+                  {ministry.growthAreas.length > 0 && ministry.growthAreas.some(a => a) && (
                     <div>
                       <h5 className="font-medium text-purple-700 text-sm mb-2 flex items-center gap-1">
                         <TrendingUp className="h-3 w-3" />
                         {t('growthAreas')}
                       </h5>
                       <div className="space-y-1">
-                        {ministry.growthAreas.slice(0, 3).map((area, idx) => (
+                        {ministry.growthAreas.filter(a => a).slice(0, 3).map((area, idx) => (
                           <p key={idx} className="text-xs text-gray-600 pl-4">
                             • {area}
                           </p>
@@ -430,12 +430,12 @@ export default function CompatibilityAnalysis({ giftScores, className }: Compati
                 <div className="flex items-center justify-between text-xs text-gray-500">
                   <div className="flex items-center gap-4">
                     <span>
-                      <strong>{t('giftMatch')}:</strong> {ministry.matchedGifts}/{ministry.totalRequired} dons compatíveis
+                      <strong>{t('giftMatch')}:</strong> {ministry.matchedGifts}/{ministry.totalRequired} {t('compatibleGifts')}
                     </span>
                   </div>
                   <Badge variant="outline" className="text-xs">
-                    {ministry.compatibilityScore >= 80 ? t('highlyRecommended') : 
-                     ministry.compatibilityScore >= 60 ? t('recommended') : t('consider')}
+                    {Math.round(ministry.compatibilityScore) >= 80 ? t('highlyRecommended') : 
+                     Math.round(ministry.compatibilityScore) >= 60 ? t('recommended') : t('consider')}
                   </Badge>
                 </div>
               </div>
