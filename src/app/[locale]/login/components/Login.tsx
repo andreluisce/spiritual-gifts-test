@@ -8,7 +8,7 @@ import { FcGoogle } from "react-icons/fc"
 import { motion } from "framer-motion"
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
-import { LanguageToggleInline } from '@/components/LanguageToggle'
+import { LanguageToggle } from '@/components/LanguageToggle'
 
 export function LoginForm() {
     const { signInWithGoogle } = useAuth()
@@ -40,7 +40,7 @@ export function LoginForm() {
         <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 flex items-center justify-center p-4">
             {/* Language Toggle - Top Right */}
             <div className="absolute top-4 right-4 z-20">
-                <LanguageToggleInline />
+                <LanguageToggle size="sm" />
             </div>
             
             {/* Decorative circles */}

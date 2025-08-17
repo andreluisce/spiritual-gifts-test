@@ -47,13 +47,13 @@ export default function DashboardPage() {
   const locale = useLocale()
   const { data: results, isLoading: loadingResults } = useUserResults(user?.id || null)
   const { data: latestResult, isLoading: loadingLatestResult } = useLatestResult(user?.id || null)
-  const { data: gifts, isLoading: loadingGifts } = useSpiritualGifts(locale)
+  const { data: gifts } = useSpiritualGifts(locale)
   const deleteResultMutation = useDeleteResult()
   const [quizInProgress, setQuizInProgress] = useState<QuizState | null>(null)
   const tCommon = useTranslations('common')
   const t = useTranslations('dashboard')
 
-  const loading = loadingResults || loadingLatestResult || loadingGifts || authLoading
+  const loading = loadingResults || loadingLatestResult || authLoading
 
   // Redirect unauthenticated users
   useEffect(() => {
@@ -130,7 +130,7 @@ export default function DashboardPage() {
 
       return {
         giftKey,
-        giftName: gift?.name || giftKey,
+        giftName: gift?.name || giftKey, // Fallback to giftKey if gift name not loaded
         latestScore,
         previousScore,
         change,
