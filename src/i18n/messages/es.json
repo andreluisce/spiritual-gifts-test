@@ -154,6 +154,17 @@
       "preview": "Vista Previa",
       "loginForFull": "Vista Previa • Inicia sesión para la prueba completa",
       "questionsProgress": "{answered} de {total} preguntas"
+    },
+    "fullTest": "Prueba completa",
+    "previewNotice": "Vista previa • Iniciar sesión para una prueba completa",
+    "previewTitle": "Vista previa - Regalos espirituales",
+    "questionsOfTotal": "{Respondido} de {Total} Preguntas",
+    "seeFullTest": "Ver prueba completa",
+    "unlockFull": {
+      "features": {
+        "analysis": "• Análisis detallado de sus regalos",
+        "fullTest": "• Complete la prueba con todas las preguntas"
+      }
     }
   },
   "welcome": {
@@ -317,6 +328,84 @@
             }
           }
         }
+      },
+      "ai": {
+        "analysisLanguage": {
+          "es": "Español",
+          "label": "Lenguaje de análisis",
+          "pt": "portugués"
+        },
+        "autoGenerate": {
+          "description": "Genere automáticamente el análisis de IA para todas las pruebas completadas",
+          "label": "Análisis de autogenerado"
+        },
+        "cacheStrategy": {
+          "description": "Elija cómo los análisis de IA se almacenan en caché y se reutilizan para optimizar el rendimiento y los costos",
+          "giftScores": "Por puntajes de regalos - Análisis de reutilización para usuarios con puntajes de regalos idénticos",
+          "label": "Estrategia de caché",
+          "session": "Por sesión - Análisis único para cada sesión de cuestionarios",
+          "user": "Por usuario: un análisis por usuario (últimos resultados)"
+        },
+        "contentSettings": {
+          "description": "Configurar qué información se incluye en los análisis de IA",
+          "title": "Configuración de contenido de análisis"
+        },
+        "includeBiblicalReferences": {
+          "description": "AI incluirá versos y pasajes bíblicos relevantes",
+          "label": "Incluir referencias bíblicas"
+        },
+        "includeMinistryOpportunities": {
+          "description": "AI sugerirá formas específicas de usar regalos en contextos del ministerio",
+          "label": "Incluir oportunidades de ministerio"
+        },
+        "includePersonalDevelopment": {
+          "description": "AI proporcionará sugerencias específicas para desarrollar dones espirituales",
+          "label": "Incluir sugerencias de desarrollo personal"
+        },
+        "maxTokens": {
+          "description": "Longitud máxima del análisis generado por IA (tokens 100-4000)",
+          "label": "Tokens de respuesta máxima"
+        },
+        "model": {
+          "gpt35": "GPT-3.5 Turbo (rápido, rentable)",
+          "gpt4": "GPT-4 (mayor calidad, más caro)",
+          "gpt4turbo": "GPT-4 Turbo (mejor equilibrio)",
+          "label": "Modelo de IA"
+        },
+        "serviceSettings": {
+          "description": "Configurar los parámetros y el comportamiento del servicio de IA",
+          "title": "Configuración del servicio de IA"
+        },
+        "showAIButton": {
+          "description": "Cuando está habilitado, los usuarios verán el botón 'Generar análisis de IA' en su página de resultados",
+          "label": "Mostrar botón de análisis de IA"
+        },
+        "subtitle": "Configurar cuándo y cómo el análisis de IA está disponible para los usuarios",
+        "temperature": {
+          "balanced": "Equilibrado (0.5)",
+          "conservative": "Conservador (0.3)",
+          "creative": "Creativo (0.7)",
+          "description": "Los valores más altos hacen que las respuestas sean más creativas pero menos predecibles",
+          "label": "Respuesta creatividad (temperatura)",
+          "veryConservative": "Muy conservador (0.1)",
+          "veryCreative": "Muy creativo (0.9)"
+        },
+        "testAI": {
+          "button": "Análisis de AI de prueba",
+          "description": "Pruebe la configuración del servicio de IA con datos de muestra",
+          "label": "Servicio de IA de prueba",
+          "testing": "Prueba del servicio de IA ..."
+        },
+        "title": "Configuración de AI",
+        "usageOverview": {
+          "aiButtonStatus": "Estado del botón AI",
+          "apiCalls": "Llamadas de API",
+          "cacheHits": "Cache golpes",
+          "description": "Uso actual de análisis de IA y estadísticas de caché",
+          "note": "Nota: Estadísticas de uso detalladas estarán disponibles una vez que se implementa el sistema de análisis. \nLa configuración actual se guardan automáticamente.",
+          "title": "Descripción general del uso",
+          "totalAnalyses": "Análisis totales"
+        }
       }
     },
     "analytics": {
@@ -373,7 +462,14 @@
           "title": "Distribución Geográfica",
           "description": "Los datos de distribución geográfica estarán disponibles pronto",
           "comingSoon": "Análisis de ubicación de usuarios próximamente"
-        }
+        },
+        "summary": {
+          "geographicDiversity": "",
+          "mainCountry": "",
+          "notAvailable": "",
+          "title": ""
+        },
+        "title": ""
       },
       "reports": {
         "title": "Reportes Generados",
@@ -644,5 +740,20 @@
   },
   "Index": {
     "title": "Prueba de Dones Espirituales"
+  },
+  "report": {
+    "stats": {
+      "averagePerQuestion": "",
+      "percentOfTotal": "",
+      "totalQuestions": "",
+      "totalScore": ""
+    },
+    "subtitle": ""
+  }
+}
+itle": "Prueba de Dones Espirituales"
+  },
+  "report": {
+    "chartTitle": ""
   }
 }

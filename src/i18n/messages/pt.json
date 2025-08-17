@@ -261,7 +261,6 @@
     "precautionsTitle": "Cuidados e Perigos",
     "precautionsDescription": "Aspectos importantes a observar para um exercício saudável do dom",
     "misunderstandingsTitle": "Possíveis Mal-entendidos",
-    "misunderstandingsDescription": "Conceitos errôneos frequentes sobre o dom: {giftName}",
     "misunderstandingsDescription": "Como seu dom pode ser interpretado pelos outros",
     "biblicalReferences": "Referências Bíblicas",
     "biblicalReferencesInDevelopment": "Referências bíblicas específicas em desenvolvimento.",
@@ -624,61 +623,98 @@
         "1y": "Last year"
       },
       "tabs": {
-        "overview": "Overview",
-        "spiritualGifts": "Spiritual Gifts",
-        "demographics": "Demographics",
-        "reports": "Reports"
+        "overview": "Visão Geral",
+        "spiritualGifts": "Dons Espirituais",
+        "demographics": "Demografia",
+        "reports": "Relatórios"
       },
       "overview": {
-        "totalQuizzes": "Total Quizzes",
-        "avgCompletionTime": "Avg Completion Time",
-        "averageScore": "Average Score",
-        "completionRate": "Completion Rate",
-        "returningUsers": "Returning Users",
-        "mobileUsers": "Mobile Users",
-        "totalCompleted": "Total completed quizzes",
-        "optimalEngagement": "Optimal engagement time",
-        "outOfPossible": "Out of 100 possible",
-        "usersComplete": "Users who complete quiz",
-        "retentionRate": "User retention rate",
-        "viaMobile": "Access via mobile devices",
-        "analyticsTitle": "Analytics Summary",
-        "analyticsDescription": "Real-time analytics data will be displayed here",
-        "chartsComingSoon": "Charts and detailed metrics coming soon",
-        "totalUsersCard": "Total Users",
-        "registeredUsers": "registered users",
-        "activeUsersCard": "Active Users",
-        "haveCompleted": "have completed quizzes",
-        "mostPopularGift": "Most Popular Gift",
-        "topSpiritualGift": "top spiritual gift"
+        "title": "Visão Geral",
+        "subtitle": "Visão geral dos principais indicadores e métricas do sistema",
+        "totalQuizzes": "Total de Testes",
+        "avgCompletionTime": "Tempo Médio de Conclusão",
+        "averageScore": "Pontuação Média",
+        "completionRate": "Taxa de Conclusão",
+        "returningUsers": "Usuários Recorrentes",
+        "mobileUsers": "Usuários Mobile",
+        "totalCompleted": "Total de testes concluídos",
+        "optimalEngagement": "Tempo ideal de engajamento",
+        "outOfPossible": "De 100 pontos possíveis",
+        "usersComplete": "Usuários que completam o teste",
+        "retentionRate": "Taxa de retenção de usuários",
+        "viaMobile": "Acesso via dispositivos móveis",
+        "analyticsTitle": "Resumo Analítico",
+        "analyticsDescription": "Dados analíticos em tempo real serão exibidos aqui",
+        "chartsComingSoon": "Gráficos e métricas detalhadas em breve",
+        "totalUsersCard": "Total de Usuários",
+        "registeredUsers": "usuários registrados",
+        "activeUsersCard": "Usuários Ativos",
+        "haveCompleted": "completaram testes",
+        "mostPopularGift": "Dom Mais Popular",
+        "topSpiritualGift": "principal dom espiritual"
       },
       "spiritualGifts": {
-        "title": "Spiritual Gifts Distribution",
+        "title": "Dons Espirituais",
+        "subtitle": "Análise detalhada da distribuição dos dons espirituais entre os usuários",
+        "distributionTitle": "Distribuição dos Dons Espirituais",
         "identifications": "identificações",
-        "noData": "No spiritual gifts data available"
+        "noData": "Nenhum dado de dons espirituais disponível"
       },
       "demographics": {
+        "title": "Demografia",
+        "subtitle": "Dados demográficos e distribuição geográfica dos usuários",
         "ageDistribution": {
-          "title": "Age Distribution",
-          "description": "Age demographics data will be available soon",
-          "comingSoon": "User age distribution analysis coming soon"
+          "title": "Distribuição por Idade",
+          "description": "Dados demográficos de idade estarão disponíveis em breve",
+          "comingSoon": "Análise de distribuição de idade dos usuários em breve",
+          "noData": "Nenhum dado demográfico disponível ainda."
         },
         "geographicDistribution": {
-          "title": "Geographic Distribution",
-          "description": "Geographic distribution data will be available soon",
-          "comingSoon": "User location analysis coming soon"
+          "title": "Distribuição Geográfica",
+          "description": "Dados de distribuição geográfica estarão disponíveis em breve",
+          "comingSoon": "Análise de localização dos usuários em breve",
+          "noData": "Nenhum dado geográfico disponível ainda."
+        },
+        "summary": {
+          "title": "Resumo Demográfico",
+          "dominantAgeGroup": "Faixa Etária Dominante",
+          "mainCountry": "País Principal",
+          "geographicDiversity": "Diversidade Geográfica",
+          "countries": "países",
+          "notAvailable": "N/A"
         }
       },
       "reports": {
-        "title": "Generated Reports",
-        "generateNew": "Generate New Report",
-        "noReports": "No reports generated yet",
-        "firstReport": "Start by generating your first analytics report",
-        "generateReport": "Generate Report"
+        "title": "Relatórios",
+        "subtitle": "Geração e gerenciamento de relatórios analíticos",
+        "generatedTitle": "Relatórios Gerados",
+        "noReports": "Nenhum relatório disponível",
+        "firstReport": "Gere seu primeiro relatório analítico usando o botão acima.",
+        "generateReport": "Gerar Relatório"
+      },
+      "ai": {
+        "model": {
+          "gpt4": "",
+          "gpt4turbo": "",
+          "label": ""
+        },
+        "serviceSettings": {
+          "description": "",
+          "title": ""
+        }
       }
     }
   },
   "Index": {
     "title": "Teste de Dons Espirituais"
+  }
+}
+ais"
+  }
+}
+"Teste de Dons Espirituais"
+  }
+}
+te de Dons Espirituais"
   }
 }
