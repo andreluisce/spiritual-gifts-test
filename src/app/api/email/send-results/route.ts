@@ -128,7 +128,7 @@ export async function POST(request: NextRequest) {
       primaryGift,
       giftDescription,
       completionDate,
-      detailsUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/pt/quiz/results/${sessionId}`
+      detailsUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/pt/quiz/results/${sessionId}/overview`
     }
 
 
