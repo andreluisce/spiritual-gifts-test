@@ -237,7 +237,6 @@ export function useCompatibilityAnalysis(
                 // Try to save client-side analysis to cache if user is logged in
                 if (user && aiAnalysis) {
                   try {
-                    const sessionId = window.location.pathname.split('/').pop()
                     await fetch('/api/ai-analysis', {
                       method: 'POST',
                       headers: {

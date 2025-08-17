@@ -4,6 +4,14 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase-client'
 import { useAuth } from '@/context/AuthContext'
 
+// Types for profile data from database
+type ProfileData = {
+  age_range?: string
+  country?: string
+  city?: string
+  state_province?: string
+}
+
 // Types for user profile
 export type UserProfile = {
   id: string
@@ -73,6 +81,7 @@ export function useProfile() {
 
         // Get additional profile data from profiles table
         const { data: profileData } = await supabase.rpc('get_user_profile')
+        const typedProfileData = profileData as ProfileData | null
         
         // Map the user data to our profile type, combining auth and profile data
         const userProfile: UserProfile = {
@@ -87,10 +96,10 @@ export function useProfile() {
           location: authUser.user_metadata?.location || undefined,
           birth_date: authUser.user_metadata?.birth_date || undefined,
           // Add extended profile fields
-          age_range: (profileData as any)?.age_range || undefined,
-          country: (profileData as any)?.country || undefined,
-          city: (profileData as any)?.city || undefined,
-          state_province: (profileData as any)?.state_province || undefined,
+          age_range: typedProfileData?.age_range || undefined,
+          country: typedProfileData?.country || undefined,
+          city: typedProfileData?.city || undefined,
+          state_province: typedProfileData?.state_province || undefined,
           metadata: authUser.user_metadata || {}
         }
 

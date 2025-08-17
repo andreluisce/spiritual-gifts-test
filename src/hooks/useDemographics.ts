@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase-client'
 
 export interface AgeDemographic {
@@ -30,7 +30,7 @@ export function useDemographics() {
   const [error, setError] = useState<string | null>(null)
   const [supabase] = useState(() => createClient())
 
-  const fetchDemographics = async () => {
+  const fetchDemographics = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
@@ -66,11 +66,11 @@ export function useDemographics() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [supabase])
 
   useEffect(() => {
     fetchDemographics()
-  }, [supabase])
+  }, [fetchDemographics])
 
   return { 
     data, 
