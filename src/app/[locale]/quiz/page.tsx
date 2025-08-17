@@ -15,7 +15,6 @@ import { usePublicSettings } from '@/hooks/usePublicSettings'
 import { calculateOptionScores } from '@/data/quiz-data'
 import { motion, AnimatePresence } from 'framer-motion'
 import { formatPercentage } from '@/data/quiz-data'
-import { LanguageToggleCompact } from '@/components/LanguageToggle'
 
 export default function QuizPage() {
   const [progressValue, setProgressValue] = useState(0)
@@ -294,7 +293,6 @@ export default function QuizPage() {
         {/* Language toggle for non-logged users (mobile) */}
         {!user && (
           <div className="flex justify-end mb-4 md:hidden">
-            <LanguageToggleCompact />
           </div>
         )}
 

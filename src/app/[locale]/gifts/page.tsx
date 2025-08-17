@@ -16,7 +16,6 @@ import {
   Users, Crown, ArrowLeft
 } from 'lucide-react'
 import Link from 'next/link'
-import { LanguageToggleCompact } from '@/components/LanguageToggle'
 import {
   useSpiritualGifts,
   useCategories,
@@ -122,7 +121,6 @@ export default function GiftsPage() {
             </Link>
           )}
           <div className="ml-auto">
-            <LanguageToggleCompact />
           </div>
         </div>
         
