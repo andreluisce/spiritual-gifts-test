@@ -27,7 +27,6 @@ export default withNextIntl({
     experimental: {
         optimizePackageImports: ['@radix-ui/react-icons', 'lucide-react'],
         webVitalsAttribution: ['CLS', 'LCP'],
-        nodeMiddleware: true,
     },
 
     webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
