@@ -151,7 +151,8 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
+        <div className="p-2 sm:p-4 m-1 sm:m-4">
 
         {/* Main Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 sm:mb-8">
@@ -500,6 +501,7 @@ export default function DashboardPage() {
             </Card>
           </div>
         )}
+        </div>
       </div>
     </div>
   )

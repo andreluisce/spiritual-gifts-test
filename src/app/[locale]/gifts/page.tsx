@@ -109,7 +109,8 @@ export default function GiftsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="max-w-7xl mx-auto p-4 py-8">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
+        <div className="p-2 sm:p-4 m-1 sm:m-4">
         {/* Navigation */}
         <div className="flex justify-between items-center mb-4">
           {user && (
@@ -434,6 +435,7 @@ export default function GiftsPage() {
             <Star className="h-5 w-5" />
             {t('cta.button')}
           </Button>
+        </div>
         </div>
       </div>
     </div>

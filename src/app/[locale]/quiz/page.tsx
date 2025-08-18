@@ -165,11 +165,11 @@ export default function QuizPage() {
   // Show guest quiz blocked message if not allowed
   if (!authLoading && !settingsLoading && !user && !allowGuestQuiz) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-gray-100 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-gray-100">
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="text-center max-w-md bg-white rounded-xl shadow-lg p-8"
+          className="text-center max-w-md bg-white rounded-xl shadow-lg p-8 mx-4"
         >
           <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <User className="h-8 w-8 text-blue-600" />
@@ -248,7 +248,7 @@ export default function QuizPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-stone-100 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-stone-100">
       {/* Continue Quiz Modal */}
       {showContinuePrompt && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -287,7 +287,7 @@ export default function QuizPage() {
         </div>
       )}
 
-      <div className="max-w-4xl mx-auto py-4 md:py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
 
 
         {/* Language toggle for non-logged users (mobile) */}
@@ -511,7 +511,7 @@ export default function QuizPage() {
           initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.5 }}
-          className="sticky bottom-0 left-0 right-0 bg-[rgba(250,250,250,0.85)] supports-[backdrop-filter]:backdrop-blur md:bg-transparent md:static flex justify-between items-center py-2 md:py-0"
+          className="sticky bottom-0 left-0 right-0 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 bg-[rgba(250,250,250,0.85)] supports-[backdrop-filter]:backdrop-blur md:bg-transparent md:static flex justify-between items-center py-3 md:py-0 border-t border-gray-200 md:border-0"
         >
           <Button
             variant="outline"

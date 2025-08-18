@@ -103,13 +103,19 @@ export default function ResultsLayout({ children }: ResultsLayoutProps) {
     
     const topScore = sortedScores[0].score
     const secondScore = sortedScores[1].score
-    const scoreDifference = topScore - secondScore
     
-    // Higher difference = more focused/compatible profile
-    if (scoreDifference > 15) return t('excellent')
-    if (scoreDifference > 10) return t('good') 
-    if (scoreDifference > 5) return t('balanced')
-    return t('diverse')
+    // Convert to percentage differences for more meaningful thresholds
+    const topPercentage = getScorePercentage(topScore)
+    const secondPercentage = getScorePercentage(secondScore)
+    const percentageDifference = topPercentage - secondPercentage
+    
+    // Calculate percentage difference for more meaningful thresholds
+    
+    // Higher difference = more focused/compatible profile (using percentage differences)
+    if (percentageDifference > 15) return t('excellent')    // >15% difference
+    if (percentageDifference > 10) return t('good')         // 10-15% difference
+    if (percentageDifference > 5) return t('balanced')      // 5-10% difference
+    return t('diverse')                                     // <5% difference
   }
 
   const compatibilityLevel = getCompatibilityLevel()
@@ -164,7 +170,8 @@ export default function ResultsLayout({ children }: ResultsLayoutProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
-      <div className="container mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
+        <div className="p-2 sm:p-4 m-1 sm:m-4">
         {/* Results Header */}
         <div className="mb-6">
           {/* Action bar - Email and Session ID */}
@@ -401,6 +408,7 @@ export default function ResultsLayout({ children }: ResultsLayoutProps) {
             </div>
           </div>
         )}
+        </div>
       </div>
     </div>
   )
