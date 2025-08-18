@@ -234,7 +234,7 @@ export function useCompatibilityAnalysis(
                 credentials: 'include', // Include cookies for authentication
                 body: JSON.stringify({
                   profile: userProfile,
-                  sessionId: getSessionIdFromUrl(),
+                  ...(getSessionIdFromUrl() && { sessionId: getSessionIdFromUrl() }),
                   useCache: true,
                   locale: locale
                 })
@@ -268,7 +268,7 @@ export function useCompatibilityAnalysis(
                       credentials: 'include',
                       body: JSON.stringify({
                         profile: userProfile,
-                        sessionId: getSessionIdFromUrl(),
+                        ...(getSessionIdFromUrl() && { sessionId: getSessionIdFromUrl() }),
                         useCache: false,
                         clientAnalysis: aiAnalysis, // Include pre-computed analysis
                         locale: locale
@@ -349,7 +349,7 @@ export function useCompatibilityAnalysis(
                     credentials: 'include', // Include cookies for authentication
                     body: JSON.stringify({
                       profile: userProfile,
-                      sessionId: getSessionIdFromUrl(),
+                      ...(getSessionIdFromUrl() && { sessionId: getSessionIdFromUrl() }),
                       useCache: false,
                       locale: locale
                     })

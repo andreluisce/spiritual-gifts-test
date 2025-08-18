@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
       // Log insert data for debugging
       const insertData = {
         user_id: user.id,
-        session_id: sessionId,
+        ...(sessionId && { session_id: sessionId }), // Only include session_id if it exists
         gift_scores: giftScores,
         primary_gifts: primaryGifts,
         locale: profile.locale || locale || 'pt',
@@ -179,7 +179,7 @@ export async function POST(request: NextRequest) {
 
       console.log('🔍 AI Analysis API: Attempting insert with data:', {
         user_id: insertData.user_id,
-        session_id: insertData.session_id,
+        session_id: insertData.session_id || 'not provided',
         session_id_type: typeof insertData.session_id,
         locale: insertData.locale,
         locale_type: typeof insertData.locale,
