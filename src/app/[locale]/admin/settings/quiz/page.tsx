@@ -1,22 +1,58 @@
 'use client'
 
+import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
-import { useSystemSettings } from '@/hooks/useSystemSettings'
+import { useSystemSettings, type SystemSettings } from '@/hooks/useSystemSettings'
 import { useTranslations } from 'next-intl'
 import { HelpCircle, Settings2, Shuffle, Eye, RefreshCw } from 'lucide-react'
+
+// Debounce hook for performance optimization
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value)
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value)
+    }, delay)
+
+    return () => {
+      clearTimeout(handler)
+    }
+  }, [value, delay])
+
+  return debouncedValue
+}
 
 export default function QuizSettingsPage() {
   const t = useTranslations('admin.settings.quiz')
   const { settings, updateSettings } = useSystemSettings()
+  const [localSettings, setLocalSettings] = useState<SystemSettings | null>(null)
+  
+  // Sync local settings with fetched settings
+  useEffect(() => {
+    if (settings) {
+      setLocalSettings(settings)
+    }
+  }, [settings])
 
-  const handleSettingChange = (key: string, value: string | boolean | number) => {
-    if (!settings) return
+  // Debounce local settings changes
+  const debouncedSettings = useDebounce(localSettings, 500)
 
-    const newSettings = { ...settings }
+  // Update server when debounced settings change
+  useEffect(() => {
+    if (debouncedSettings && settings && debouncedSettings !== settings) {
+      updateSettings(debouncedSettings)
+    }
+  }, [debouncedSettings, settings, updateSettings])
+
+  const handleSettingChange = useCallback((key: string, value: string | boolean | number) => {
+    if (!localSettings) return
+
+    const newSettings = { ...localSettings }
     
     if (key.includes('.')) {
       const keys = key.split('.')
@@ -37,10 +73,10 @@ export default function QuizSettingsPage() {
       }
     }
 
-    updateSettings(newSettings)
-  }
+    setLocalSettings(newSettings)
+  }, [localSettings])
 
-  if (!settings) {
+  if (!localSettings) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -48,7 +84,21 @@ export default function QuizSettingsPage() {
     )
   }
 
-  const totalQuestions = (settings?.quiz?.questionsPerGift || 0) * 7
+  // Helper function to get questions per gift value
+  const getQuestionsPerGift = () => {
+    const questionsPerGift = localSettings?.quiz?.questionsPerGift
+    if (typeof questionsPerGift === 'number') {
+      return questionsPerGift
+    }
+    if (typeof questionsPerGift === 'object' && questionsPerGift) {
+      // Return the first value from the object as default
+      return Object.values(questionsPerGift)[0] || 5
+    }
+    return 5
+  }
+
+  const questionsPerGiftValue = getQuestionsPerGift()
+  const totalQuestions = questionsPerGiftValue * 7
 
   return (
     <div className="space-y-6">
@@ -83,7 +133,7 @@ export default function QuizSettingsPage() {
                   type="number"
                   min="1"
                   max="10"
-                  value={settings.quiz.questionsPerGift || 5}
+                  value={questionsPerGiftValue}
                   onChange={(e) => handleSettingChange('questionsPerGift', parseInt(e.target.value))}
                   className="w-32"
                 />
@@ -119,7 +169,7 @@ export default function QuizSettingsPage() {
                 </div>
                 <Switch
                   id="shuffle-questions"
-                  checked={settings.quiz.shuffleQuestions || false}
+                  checked={localSettings.quiz.shuffleQuestions || false}
                   onCheckedChange={(checked) => handleSettingChange('shuffleQuestions', checked)}
                 />
               </div>
@@ -139,7 +189,7 @@ export default function QuizSettingsPage() {
                 </div>
                 <Switch
                   id="show-progress"
-                  checked={settings.quiz.showProgress || false}
+                  checked={localSettings.quiz.showProgress || false}
                   onCheckedChange={(checked) => handleSettingChange('showProgress', checked)}
                 />
               </div>
@@ -159,7 +209,7 @@ export default function QuizSettingsPage() {
                 </div>
                 <Switch
                   id="allow-retake"
-                  checked={settings.quiz.allowRetake || false}
+                  checked={localSettings.quiz.allowRetake || false}
                   onCheckedChange={(checked) => handleSettingChange('allowRetake', checked)}
                 />
               </div>
@@ -179,7 +229,7 @@ export default function QuizSettingsPage() {
                 </div>
                 <Switch
                   id="debug-mode"
-                  checked={settings.quiz.debugMode || false}
+                  checked={localSettings.quiz.debugMode || false}
                   onCheckedChange={(checked) => handleSettingChange('debugMode', checked)}
                 />
               </div>
@@ -194,13 +244,13 @@ export default function QuizSettingsPage() {
                 <span className="font-medium">Total Questions:</span> {totalQuestions}
               </div>
               <div className="text-blue-700">
-                <span className="font-medium">Questions per Gift:</span> {settings.quiz.questionsPerGift || 5}
+                <span className="font-medium">Questions per Gift:</span> {questionsPerGiftValue}
               </div>
               <div className="text-blue-700">
-                <span className="font-medium">Shuffle:</span> {settings.quiz.shuffleQuestions ? 'Yes' : 'No'}
+                <span className="font-medium">Shuffle:</span> {localSettings.quiz.shuffleQuestions ? 'Yes' : 'No'}
               </div>
               <div className="text-blue-700">
-                <span className="font-medium">Retakes:</span> {settings.quiz.allowRetake ? 'Allowed' : 'Not Allowed'}
+                <span className="font-medium">Retakes:</span> {localSettings.quiz.allowRetake ? 'Allowed' : 'Not Allowed'}
               </div>
             </div>
           </div>

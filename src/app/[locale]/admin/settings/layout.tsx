@@ -95,7 +95,8 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
   const currentPath = pathname.split('/').pop()
 
   return (
-    <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
+      <div className="p-2 sm:p-4 m-1 sm:m-4">
       {/* Mobile Header */}
       <div className="block lg:hidden mb-6">
         <div className="flex items-center gap-2 mb-4">
@@ -214,7 +215,16 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-600">Quiz Questions</span>
                 <Badge variant="outline">
-                  {settings?.quiz?.questionsPerGift || 0} per gift
+                  {(() => {
+                    const questionsPerGift = settings?.quiz?.questionsPerGift
+                    if (typeof questionsPerGift === 'number') {
+                      return questionsPerGift
+                    }
+                    if (typeof questionsPerGift === 'object' && questionsPerGift) {
+                      return Object.values(questionsPerGift)[0] || 5
+                    }
+                    return 0
+                  })()} per gift
                 </Badge>
               </div>
               <div className="flex items-center justify-between text-sm">
@@ -243,6 +253,7 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
         <div className="lg:col-span-3">
           {children}
         </div>
+      </div>
       </div>
     </div>
   )

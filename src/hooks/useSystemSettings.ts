@@ -6,7 +6,28 @@ export interface SystemSettings {
     debugMode: boolean
     allowRetake: boolean
     showProgress: boolean
-    questionsPerGift: number
+    questionsPerGift: number | {
+      prophecy: number
+      ministry: number
+      teaching: number
+      exhortation: number
+      giving: number
+      administration: number
+      mercy: number
+      apostle: number
+      prophet: number
+      evangelist: number
+      pastor: number
+      teacher: number
+      wisdom: number
+      knowledge: number
+      faith: number
+      healing: number
+      miracles: number
+      discernment: number
+      tongues: number
+      interpretation: number
+    }
     shuffleQuestions: boolean
   }
   general: {
