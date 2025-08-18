@@ -89,7 +89,7 @@ export default function OverviewPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {sortedScores.slice(0, 5).map((scoreData, index) => (
               <div key={scoreData.giftKey} className="text-center">
                 <Badge
@@ -125,7 +125,7 @@ export default function OverviewPage() {
             return (
               <div key={giftKey}>
                 <div 
-                  className="flex justify-between items-center mb-2 cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors border border-gray-200 hover:border-blue-300"
+                  className="flex justify-between items-center mb-3 cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors border border-gray-200 hover:border-blue-300"
                   onClick={() => toggleGiftExpansion(giftKey)}
                 >
                   <div className="flex items-start gap-3 flex-1">
@@ -152,14 +152,14 @@ export default function OverviewPage() {
                   </div>
                 </div>
                 
-                <Progress value={percentage} className="h-3 mb-2" />
-                <div className="text-sm text-gray-500 mb-4">
+                <Progress value={percentage} className="h-3 mb-3" />
+                <div className="text-sm text-gray-500 mb-3">
                   {t('affinity', { percentage: formatPercentage(percentage) })}
                 </div>
 
                 {/* Expanded Content */}
                 {isExpanded && giftData && (
-                  <div className="bg-gray-50 p-4 rounded-lg mb-4 space-y-4">
+                  <div className="bg-gray-50 p-4 rounded-lg mt-3 space-y-4">
                     {/* Top Characteristics */}
                     {giftData.characteristics && giftData.characteristics.length > 0 && (
                       <div>
@@ -254,7 +254,7 @@ export default function OverviewPage() {
 
       {/* Categories Overview */}
       {categories && (
-        <div className="grid md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {categories.map((category) => (
             <Card key={category.key}>
               <CardHeader>
