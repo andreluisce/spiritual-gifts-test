@@ -7,7 +7,7 @@ import {
 import { aiCompatibilityAnalyzer, type UserGiftProfile } from '@/lib/ai-compatibility-analyzer'
 import { useAuth } from '@/context/AuthContext'
 import { useSpiritualGifts } from '@/hooks/use-quiz-queries'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import type { Database } from '@/lib/database.types'
 
 // Helper function to extract sessionId from URL
@@ -50,6 +50,7 @@ export function useCompatibilityAnalysis(
 ): CompatibilityAnalysisResult {
   const { user } = useAuth()
   const locale = useLocale()
+  const t = useTranslations('results.compatibility')
   const { data: spiritualGiftsData } = useSpiritualGifts(locale)
   
   const [analysis, setAnalysis] = useState<CompatibilityAnalysisResult>({
@@ -96,17 +97,37 @@ export function useCompatibilityAnalysis(
         // Function to get gift name in correct language
         const getGiftName = (giftKey: string): string => {
           if (!spiritualGiftsData) {
-            // Fallback mapping for Portuguese
-            const fallbackNames: Record<string, string> = {
-              'A_PROPHECY': 'Profecia',
-              'B_SERVICE': 'Serviço',
-              'C_TEACHING': 'Ensino',
-              'D_EXHORTATION': 'Exortação',
-              'E_GIVING': 'Doação',
-              'F_LEADERSHIP': 'Liderança',
-              'G_MERCY': 'Misericórdia'
+            // Fallback mapping for different locales
+            const fallbackNames: Record<string, Record<string, string>> = {
+              'pt': {
+                'A_PROPHECY': 'Profecia',
+                'B_SERVICE': 'Serviço',
+                'C_TEACHING': 'Ensino',
+                'D_EXHORTATION': 'Exortação',
+                'E_GIVING': 'Doação',
+                'F_LEADERSHIP': 'Liderança',
+                'G_MERCY': 'Misericórdia'
+              },
+              'en': {
+                'A_PROPHECY': 'Prophecy',
+                'B_SERVICE': 'Service',
+                'C_TEACHING': 'Teaching',
+                'D_EXHORTATION': 'Exhortation',
+                'E_GIVING': 'Giving',
+                'F_LEADERSHIP': 'Leadership',
+                'G_MERCY': 'Mercy'
+              },
+              'es': {
+                'A_PROPHECY': 'Profecía',
+                'B_SERVICE': 'Servicio',
+                'C_TEACHING': 'Enseñanza',
+                'D_EXHORTATION': 'Exhortación',
+                'E_GIVING': 'Donación',
+                'F_LEADERSHIP': 'Liderazgo',
+                'G_MERCY': 'Misericordia'
+              }
             }
-            return fallbackNames[giftKey] || giftKey.replace(/^[A-Z]_/, '')
+            return fallbackNames[locale]?.[giftKey] || giftKey.replace(/^[A-Z]_/, '')
           }
           
           const gift = spiritualGiftsData.find(g => g.gift_key === giftKey)
@@ -115,7 +136,8 @@ export function useCompatibilityAnalysis(
 
         const compatibilities: DynamicGiftCompatibility[] = []
         const ministryRecommendations = await dynamicCompatibilityAnalyzer.getMinistryRecommendations(
-          topGifts as Database['public']['Enums']['gift_key'][]
+          topGifts as Database['public']['Enums']['gift_key'][],
+          locale
         )
         
         // Get compatibility data for each pair of top gifts
@@ -123,7 +145,8 @@ export function useCompatibilityAnalysis(
           for (let j = i + 1; j < topGifts.length; j++) {
             const compatibility = await dynamicCompatibilityAnalyzer.getGiftCompatibility(
               topGifts[i] as Database['public']['Enums']['gift_key'],
-              topGifts[j] as Database['public']['Enums']['gift_key']
+              topGifts[j] as Database['public']['Enums']['gift_key'],
+              locale
             )
             
             if (compatibility && compatibility.compatibilityScore !== undefined) {
@@ -151,24 +174,24 @@ export function useCompatibilityAnalysis(
             [`${topGifts[0]}_${topGifts[1]}`]: {
               score: 85,
               strengths: [
-                `Sua combinação de ${primaryGiftName} e ${secondaryGiftName} cria uma força única`,
-                `${primaryGiftName} aprimora sua capacidade de ${secondaryGiftName.toLowerCase()}`,
-                `Essa combinação é ideal para ministérios que requerem tanto ${primaryGiftName.toLowerCase()} quanto ${secondaryGiftName.toLowerCase()}`
+                t('fallbackSynergy.combinationStrength', { primary: primaryGiftName, secondary: secondaryGiftName }),
+                t('fallbackSynergy.enhancesCapability', { primary: primaryGiftName, secondary: secondaryGiftName.toLowerCase() }),
+                t('fallbackSynergy.idealCombination', { primary: primaryGiftName.toLowerCase(), secondary: secondaryGiftName.toLowerCase() })
               ],
               challenges: [
-                `Balance o tempo entre exercer ${primaryGiftName} e ${secondaryGiftName}`,
-                `Evite se sobrecarregar tentando usar todos os dons simultaneamente`
+                t('fallbackSynergy.balanceTime', { primary: primaryGiftName, secondary: secondaryGiftName }),
+                t('fallbackSynergy.avoidOverload')
               ],
-              description: `A união entre ${primaryGiftName} e ${secondaryGiftName} forma uma base sólida para o serviço cristão efetivo`
+              description: t('fallbackSynergy.unionDescription', { primary: primaryGiftName, secondary: secondaryGiftName })
             }
           }
           
           const compatKey = `${topGifts[0]}_${topGifts[1]}`
           const compatData = giftCompatibilities[compatKey] || giftCompatibilities[`${topGifts[1]}_${topGifts[0]}`] || {
             score: 80,
-            strengths: [`${primaryGiftName} e ${secondaryGiftName} se complementam naturalmente`],
-            challenges: [`Continue desenvolvendo ambos os dons em equilíbrio`],
-            description: `Seus dons principais trabalham em harmonia`
+            strengths: [t('fallbackSynergy.naturalComplement', { primary: primaryGiftName, secondary: secondaryGiftName })],
+            challenges: [t('fallbackSynergy.continueBalancing')],
+            description: t('fallbackSynergy.worksInHarmony')
           }
           
           compatibilities.push({

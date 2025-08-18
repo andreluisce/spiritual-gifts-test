@@ -54,16 +54,19 @@ interface RawMinistryData {
   compatibility_score: number
   matched_gifts: number
   total_required: number
-  responsibilities?: Array<{ responsibility: string }>
-  growth_areas?: Array<{ area: string }>
+  responsibilities?: Array<{ responsibility: string, order: number }>
+  growth_areas?: Array<{ area: string, order: number, resources: string }>
 }
 
 interface ResponsibilityData {
   responsibility: string
+  order: number
 }
 
 interface GrowthAreaData {
   area: string
+  order: number
+  resources: string
 }
 
 // Interface for compatibility history
@@ -132,9 +135,11 @@ class DynamicCompatibilityAnalyzer {
         totalRequired: ministry.total_required,
         responsibilities: ministry.responsibilities
           ?.filter((r: ResponsibilityData) => r.responsibility !== null && r.responsibility !== undefined)
+          ?.sort((a, b) => a.order - b.order)
           ?.map((r: ResponsibilityData) => r.responsibility) || [],
         growthAreas: ministry.growth_areas
           ?.filter((g: GrowthAreaData) => g.area !== null && g.area !== undefined)
+          ?.sort((a, b) => a.order - b.order)
           ?.map((g: GrowthAreaData) => g.area) || []
       }))
     } catch (error) {
@@ -187,7 +192,7 @@ class DynamicCompatibilityAnalyzer {
         
         aiEnhancedAnalysis = await aiCompatibilityAnalyzer.analyzeCompatibility(
           userProfile,
-          'pt', // Default locale
+          userProfile.locale,
           structuredData
         )
       } catch (error) {
@@ -219,7 +224,7 @@ class DynamicCompatibilityAnalyzer {
       ...userProfile.secondaryGifts.map(g => g.key)
     ]
     
-    const recommendations = await this.getMinistryRecommendations(userGiftKeys)
+    const recommendations = await this.getMinistryRecommendations(userGiftKeys, userProfile.locale)
     
     // Enhance with AI insights if requested
     if (includeAI && recommendations.length > 0) {
