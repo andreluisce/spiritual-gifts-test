@@ -320,7 +320,18 @@
       "practicalApplications": "Como Aplicar Seus Dons na Prática",
       "regenerateAIAnalysis": "Regenerar Análise IA",
       "generatingPersonalizedAnalysis": "Gerando sua análise personalizada...",
-      "aiProcessingResults": "Nossa IA está processando seus resultados para criar insights únicos"
+      "aiProcessingResults": "Nossa IA está processando seus resultados para criar insights únicos",
+      "fallbackSynergy": {
+        "combinationStrength": "Sua combinação de {primary} e {secondary} cria uma força única",
+        "enhancesCapability": "{primary} aprimora sua capacidade de {secondary}",
+        "idealCombination": "Essa combinação é ideal para ministérios que requerem tanto {primary} quanto {secondary}",
+        "balanceTime": "Balance o tempo entre exercer {primary} e {secondary}",
+        "avoidOverload": "Evite se sobrecarregar tentando usar todos os dons simultaneamente",
+        "unionDescription": "A união entre {primary} e {secondary} forma uma base sólida para o serviço cristão efetivo",
+        "naturalComplement": "{primary} e {secondary} se complementam naturalmente",
+        "continueBalancing": "Continue desenvolvendo ambos os dons em equilíbrio",
+        "worksInHarmony": "Seus dons principais trabalham em harmonia"
+      }
     },
     "actions": {
       "fullReport": "Relatório Completo (PDF)",
@@ -842,6 +853,32 @@
     "dominantAgeGroup": "Faixa Etária Dominante",
     "topLocation": "Localização Principal",
     "ofUsers": "dos usuários",
+    "error": "Erro ao carregar dados demográficos: {error}",
+    "ageRanges": {
+      "18-24": "18-24 anos",
+      "25-34": "25-34 anos",
+      "35-44": "35-44 anos",
+      "45-54": "45-54 anos",
+      "55-64": "55-64 anos",
+      "65+": "65+ anos"
+    }
+  },
+  "demographics": {
+    "totalUsers": "Total de Usuários",
+    "registeredUsers": "Usuários registrados no sistema",
+    "usersWithData": "Usuários com Dados",
+    "completedProfiles": "Perfis demográficos completos",
+    "dataCompleteness": "Completude dos Dados",
+    "profileCompletion": "Taxa de conclusão do perfil",
+    "ageDistribution": "Distribuição por Idade",
+    "geographicDistribution": "Distribuição Geográfica",
+    "insights": "Insights Principais",
+    "dominantAgeGroup": "Faixa Etária Dominante",
+    "topLocation": "Localização Principal",
+    "ofUsers": "dos usuários",
+    "users": "usuários",
+    "noAgeData": "Ainda não há dados de distribuição por idade disponíveis",
+    "noGeographicData": "Ainda não há dados geográficos disponíveis",
     "error": "Erro ao carregar dados demográficos: {error}",
     "ageRanges": {
       "18-24": "18-24 anos",

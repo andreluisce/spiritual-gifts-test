@@ -746,7 +746,18 @@
       "practicalApplications": "Cómo Aplicar Tus Dones en la Práctica",
       "regenerateAIAnalysis": "Regenerar Análisis IA",
       "generatingPersonalizedAnalysis": "Generando tu análisis personalizado...",
-      "aiProcessingResults": "Nuestra IA está procesando tus resultados para crear conocimientos únicos"
+      "aiProcessingResults": "Nuestra IA está procesando tus resultados para crear conocimientos únicos",
+      "fallbackSynergy": {
+        "combinationStrength": "Tu combinación de {primary} y {secondary} crea una fuerza única",
+        "enhancesCapability": "{primary} mejora tu capacidad de {secondary}",
+        "idealCombination": "Esta combinación es ideal para ministerios que requieren tanto {primary} como {secondary}",
+        "balanceTime": "Equilibra el tiempo entre ejercer {primary} y {secondary}",
+        "avoidOverload": "Evita sobrecargarte tratando de usar todos los dones simultáneamente",
+        "unionDescription": "La unión entre {primary} y {secondary} forma una base sólida para el servicio cristiano efectivo",
+        "naturalComplement": "{primary} y {secondary} se complementan naturalmente",
+        "continueBalancing": "Continúa desarrollando ambos dones en equilibrio",
+        "worksInHarmony": "Tus dones principales trabajan en armonía"
+      }
     },
     "actions": {
       "fullReport": "Informe Completo (PDF)",
@@ -824,6 +835,99 @@
     "footer": {
       "title": "Total de Preguntas",
       "description": "Preguntas organizadas para evaluar los 7 dones espirituales principales"
+    }
+  },
+  "demographics": {
+    "totalUsers": "Total de Usuarios",
+    "registeredUsers": "Usuarios registrados en el sistema",
+    "usersWithData": "Usuarios con Datos",
+    "completedProfiles": "Perfiles demográficos completados",
+    "dataCompleteness": "Completitud de Datos",
+    "profileCompletion": "Tasa de completación de perfil",
+    "ageDistribution": "Distribución por Edad",
+    "geographicDistribution": "Distribución Geográfica",
+    "insights": "Insights Clave",
+    "dominantAgeGroup": "Grupo de Edad Dominante",
+    "topLocation": "Ubicación Principal",
+    "ofUsers": "de usuarios",
+    "users": "usuarios",
+    "noAgeData": "No hay datos de distribución por edad disponibles aún",
+    "noGeographicData": "No hay datos geográficos disponibles aún",
+    "error": "Error al cargar demografía: {error}",
+    "ageRanges": {
+      "18-24": "18-24 años",
+      "25-34": "25-34 años",
+      "35-44": "35-44 años",
+      "45-54": "45-54 años",
+      "55-64": "55-64 años",
+      "65+": "65+ años"
+    }
+  },
+  "profile": {
+    "title": "Mi Perfil",
+    "subtitle": "Gestiona tu información personal y preferencias",
+    "backToDashboard": "Volver al Panel",
+    "editProfile": "Editar Perfil",
+    "saveChanges": "Guardar Cambios",
+    "saving": "Guardando...",
+    "cancel": "Cancelar",
+    "personalInfo": "Información Personal",
+    "recentActivities": "Actividades Recientes",
+    "memberSince": "Miembro desde",
+    "notProvided": "No proporcionado",
+    "fields": {
+      "fullName": "Nombre Completo",
+      "fullNamePlaceholder": "Tu nombre completo",
+      "phone": "Teléfono",
+      "phonePlaceholder": "(11) 99999-9999",
+      "location": "Ubicación",
+      "locationPlaceholder": "Ciudad, Estado",
+      "birthDate": "Fecha de Nacimiento",
+      "ageRange": "Rango de Edad",
+      "ageRangePlaceholder": "Selecciona tu rango de edad",
+      "ageRanges": {
+        "18-24": "18-24 años",
+        "25-34": "25-34 años",
+        "35-44": "35-44 años",
+        "45-54": "45-54 años",
+        "55-64": "55-64 años",
+        "65+": "65+ años"
+      },
+      "country": "País",
+      "countryPlaceholder": "Brasil",
+      "state": "Estado",
+      "statePlaceholder": "São Paulo",
+      "city": "Ciudad",
+      "cityPlaceholder": "São Paulo",
+      "bio": "Biografía",
+      "bioPlaceholder": "Cuéntanos un poco sobre ti..."
+    },
+    "validation": {
+      "nameRequired": "El nombre es obligatorio",
+      "nameMaxLength": "El nombre debe tener menos de 100 caracteres",
+      "bioMaxLength": "La biografía debe tener menos de 500 caracteres",
+      "locationMaxLength": "La ubicación debe tener menos de 100 caracteres"
+    },
+    "alerts": {
+      "updateSuccess": "¡Perfil actualizado exitosamente!",
+      "avatarError": "Error al actualizar avatar:",
+      "profileError": "Error al actualizar perfil:",
+      "success": "¡Éxito!"
+    },
+    "activities": {
+      "noActivities": "No se encontraron actividades",
+      "timeAgo": {
+        "seconds": "hace {count}s",
+        "minutes": "hace {count}m",
+        "hours": "hace {count}h",
+        "days": "hace {count}d"
+      },
+      "types": {
+        "login": "Inicio de sesión realizado",
+        "quiz_start": "Prueba iniciada",
+        "quiz_complete": "Prueba completada",
+        "profile_update": "Perfil actualizado"
+      }
     }
   },
   "Index": {

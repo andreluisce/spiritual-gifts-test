@@ -746,7 +746,18 @@
       "practicalApplications": "How to Apply Your Gifts in Practice",
       "regenerateAIAnalysis": "Regenerate AI Analysis",
       "generatingPersonalizedAnalysis": "Generating your personalized analysis...",
-      "aiProcessingResults": "Our AI is processing your results to create unique insights"
+      "aiProcessingResults": "Our AI is processing your results to create unique insights",
+      "fallbackSynergy": {
+        "combinationStrength": "Your combination of {primary} and {secondary} creates a unique strength",
+        "enhancesCapability": "{primary} enhances your {secondary} capability",
+        "idealCombination": "This combination is ideal for ministries that require both {primary} and {secondary}",
+        "balanceTime": "Balance your time between exercising {primary} and {secondary}",
+        "avoidOverload": "Avoid overloading yourself trying to use all gifts simultaneously",
+        "unionDescription": "The union between {primary} and {secondary} forms a solid foundation for effective Christian service",
+        "naturalComplement": "{primary} and {secondary} naturally complement each other",
+        "continueBalancing": "Continue developing both gifts in balance",
+        "worksInHarmony": "Your main gifts work in harmony"
+      }
     },
     "actions": {
       "fullReport": "Full Report (PDF)",
@@ -828,5 +839,98 @@
     },
     "subtitle": "Detailed analysis of {count} questions grouped by spiritual gifts",
     "title": "Spiritual Gifts Report"
+  },
+  "demographics": {
+    "totalUsers": "Total Users",
+    "registeredUsers": "Registered users in the system",
+    "usersWithData": "Users with Data",
+    "completedProfiles": "Completed demographic profiles",
+    "dataCompleteness": "Data Completeness",
+    "profileCompletion": "Profile completion rate",
+    "ageDistribution": "Age Distribution",
+    "geographicDistribution": "Geographic Distribution",
+    "insights": "Key Insights",
+    "dominantAgeGroup": "Dominant Age Group",
+    "topLocation": "Top Location",
+    "ofUsers": "of users",
+    "users": "users",
+    "noAgeData": "No age distribution data available yet",
+    "noGeographicData": "No geographic data available yet",
+    "error": "Error loading demographics: {error}",
+    "ageRanges": {
+      "18-24": "18-24 years",
+      "25-34": "25-34 years",
+      "35-44": "35-44 years",
+      "45-54": "45-54 years",
+      "55-64": "55-64 years",
+      "65+": "65+ years"
+    }
+  },
+  "profile": {
+    "title": "My Profile",
+    "subtitle": "Manage your personal information and preferences",
+    "backToDashboard": "Back to Dashboard",
+    "editProfile": "Edit Profile",
+    "saveChanges": "Save Changes",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "personalInfo": "Personal Information",
+    "recentActivities": "Recent Activities",
+    "memberSince": "Member since",
+    "notProvided": "Not provided",
+    "fields": {
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Your full name",
+      "phone": "Phone",
+      "phonePlaceholder": "(11) 99999-9999",
+      "location": "Location",
+      "locationPlaceholder": "City, State",
+      "birthDate": "Birth Date",
+      "ageRange": "Age Range",
+      "ageRangePlaceholder": "Select your age range",
+      "ageRanges": {
+        "18-24": "18-24 years",
+        "25-34": "25-34 years",
+        "35-44": "35-44 years",
+        "45-54": "45-54 years",
+        "55-64": "55-64 years",
+        "65+": "65+ years"
+      },
+      "country": "Country",
+      "countryPlaceholder": "Brazil",
+      "state": "State",
+      "statePlaceholder": "São Paulo",
+      "city": "City",
+      "cityPlaceholder": "São Paulo",
+      "bio": "Biography",
+      "bioPlaceholder": "Tell us a little about yourself..."
+    },
+    "validation": {
+      "nameRequired": "Name is required",
+      "nameMaxLength": "Name must be less than 100 characters",
+      "bioMaxLength": "Bio must be less than 500 characters",
+      "locationMaxLength": "Location must be less than 100 characters"
+    },
+    "alerts": {
+      "updateSuccess": "Profile updated successfully!",
+      "avatarError": "Error updating avatar:",
+      "profileError": "Error updating profile:",
+      "success": "Success!"
+    },
+    "activities": {
+      "noActivities": "No activities found",
+      "timeAgo": {
+        "seconds": "{count}s ago",
+        "minutes": "{count}m ago",
+        "hours": "{count}h ago",
+        "days": "{count}d ago"
+      },
+      "types": {
+        "login": "Login performed",
+        "quiz_start": "Quiz started",
+        "quiz_complete": "Quiz completed",
+        "profile_update": "Profile updated"
+      }
+    }
   }
 }
