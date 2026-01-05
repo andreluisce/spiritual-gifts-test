@@ -1,9 +1,11 @@
 'use client'
 
+import { useState } from 'react'
 import { useParams } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Lightbulb, AlertTriangle } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Lightbulb, AlertTriangle, ChevronDown, ChevronRight } from 'lucide-react'
 import {
   useResultBySessionId,
   useSpiritualGifts,
@@ -15,6 +17,7 @@ export default function CharacteristicsPage() {
   const locale = useLocale()
   const t = useTranslations('results')
   const sessionId = params.sessionId as string
+  const [showAllGifts, setShowAllGifts] = useState(false)
 
   const { data: result, isLoading: loadingResults } = useResultBySessionId(sessionId)
   const { data: spiritualGiftsData, isLoading: loadingSpiritualGifts } = useSpiritualGifts(locale)
@@ -44,6 +47,7 @@ export default function CharacteristicsPage() {
 
   const topGift = sortedScores[0]
   const topGiftData = spiritualGiftsData.find(gift => gift.gift_key === topGift?.giftKey)
+  const otherGifts = sortedScores.slice(1, 5) // Next 4 gifts
 
   return (
     <div className="space-y-6">
@@ -80,47 +84,72 @@ export default function CharacteristicsPage() {
         </CardContent>
       </Card>
 
-      {/* All Gifts Characteristics */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">
-            {t('allGiftsCharacteristicsTitle')}
-          </CardTitle>
-          <p className="text-sm text-gray-600">
-            {t('allGiftsCharacteristicsDescription')}
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {sortedScores.slice(0, 5).map(({ giftKey }) => {
-            const giftData = spiritualGiftsData.find(gift => gift.gift_key === giftKey)
-            if (!giftData) return null
+      {/* View Other Gifts Button */}
+      {otherGifts.length > 0 && (
+        <div className="space-y-4">
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={() => setShowAllGifts(!showAllGifts)}
+          >
+            {showAllGifts ? (
+              <>
+                <ChevronDown className="h-4 w-4 mr-2" />
+                Ocultar outros dons
+              </>
+            ) : (
+              <>
+                <ChevronRight className="h-4 w-4 mr-2" />
+                Ver características dos outros dons ({otherGifts.length})
+              </>
+            )}
+          </Button>
 
-            return (
-              <div key={giftKey} className="border-l-4 border-blue-500 pl-4">
-                <h3 className="font-semibold text-lg text-gray-800 mb-2">
-                  {giftData.name}
-                </h3>
-                <p className="text-sm text-gray-600 mb-3">{giftData.definition}</p>
+          {/* Other Gifts - Collapsible */}
+          {showAllGifts && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">
+                  Outros Dons Identificados
+                </CardTitle>
+                <p className="text-sm text-gray-600">
+                  Características dos demais dons espirituais do seu perfil
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {otherGifts.map(({ giftKey }) => {
+                  const giftData = spiritualGiftsData.find(gift => gift.gift_key === giftKey)
+                  if (!giftData) return null
 
-                {giftData.characteristics && giftData.characteristics.length > 0 ? (
-                  <div className="space-y-2">
-                    {giftData.characteristics.map((char, charIndex) => (
-                      <div key={charIndex} className="flex items-start gap-2">
-                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                        <p className="text-sm text-gray-700">{char.characteristic}</p>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-xs text-gray-500 italic">
-                    {t('characteristicsNotAvailable')}
-                  </p>
-                )}
-              </div>
-            )
-          })}
-        </CardContent>
-      </Card>
+                  return (
+                    <div key={giftKey} className="border-l-4 border-gray-300 pl-4">
+                      <h3 className="font-semibold text-lg text-gray-800 mb-2">
+                        {giftData.name}
+                      </h3>
+                      <p className="text-sm text-gray-600 mb-3">{giftData.definition}</p>
+
+                      {giftData.characteristics && giftData.characteristics.length > 0 ? (
+                        <div className="space-y-2">
+                          {giftData.characteristics.map((char, charIndex) => (
+                            <div key={charIndex} className="flex items-start gap-2">
+                              <div className="w-1.5 h-1.5 bg-gray-500 rounded-full mt-2 flex-shrink-0"></div>
+                              <p className="text-sm text-gray-700">{char.characteristic}</p>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-xs text-gray-500 italic">
+                          {t('characteristicsNotAvailable')}
+                        </p>
+                      )}
+                    </div>
+                  )
+                })}
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      )}
     </div>
   )
 }
