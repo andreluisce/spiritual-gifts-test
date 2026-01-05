@@ -9,6 +9,9 @@
     "lint": "next lint",
     "gen:types": "supabase gen types typescript --project-id vttkurdzstlkybojigry --schema public > src/lib/database.types.ts"
   },
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
     "@radix-ui/react-accordion": "^1.2.11",
