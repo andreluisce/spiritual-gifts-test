@@ -302,9 +302,12 @@ export default function ResultsLayout({ children }: ResultsLayoutProps) {
                   <p className="text-sm text-gray-500">{t('compatibilityLevel')}</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-lg font-bold text-indigo-600">
+                  <Link
+                    href={`/gifts?selected=${topGift?.giftKey}`}
+                    className="text-lg font-bold text-indigo-600 hover:text-indigo-800 underline decoration-2 underline-offset-4 transition-colors"
+                  >
                     {t('exploreGifts')}
-                  </p>
+                  </Link>
                   <p className="text-sm text-gray-500">{t('nextAction')}</p>
                 </div>
               </div>
