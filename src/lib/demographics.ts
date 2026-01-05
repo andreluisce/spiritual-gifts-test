@@ -16,6 +16,8 @@ interface UserDemographics {
   timezone?: string;
   age?: number;
   birthDate?: string;
+  birthYear?: number;
+  gender?: string;
   detectedAt: string;
   ipAddress?: string;
 }
@@ -29,19 +31,19 @@ export async function getGeolocationFromIP(ipAddress: string): Promise<Geolocati
         'User-Agent': 'spiritual-gifts-app/1.0'
       }
     });
-    
+
     if (!response.ok) {
       console.warn('Geolocation API request failed:', response.status);
       return null;
     }
-    
+
     const data = await response.json();
-    
+
     if (data.error) {
       console.warn('Geolocation API error:', data.reason);
       return null;
     }
-    
+
     return {
       country: data.country_name || 'Unknown',
       region: data.region || '',
@@ -60,24 +62,24 @@ export async function getGeolocationFromIP(ipAddress: string): Promise<Geolocati
 export function extractBirthDateFromGoogleData(rawUserMetaData: Record<string, unknown>): { birthDate?: string; age?: number } {
   try {
     // Google OAuth might provide birth_date or birthday in various formats
-    const birthDate = rawUserMetaData?.birth_date || 
-                     rawUserMetaData?.birthday || 
-                     rawUserMetaData?.birthdate;
-    
+    const birthDate = rawUserMetaData?.birth_date ||
+      rawUserMetaData?.birthday ||
+      rawUserMetaData?.birthdate;
+
     if (!birthDate) {
       return {};
     }
-    
+
     // Parse birth date and calculate age
     const birth = new Date(birthDate as string);
     const today = new Date();
     let age = today.getFullYear() - birth.getFullYear();
     const monthDiff = today.getMonth() - birth.getMonth();
-    
+
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
       age--;
     }
-    
+
     return {
       birthDate: birth.toISOString().split('T')[0], // YYYY-MM-DD format
       age: age >= 0 && age <= 150 ? age : undefined // Sanity check
@@ -106,12 +108,12 @@ export function getUserIP(request: Request): string {
   const xRealIp = request.headers.get('x-real-ip');
   const cfConnectingIp = request.headers.get('cf-connecting-ip'); // Cloudflare
   const xClientIp = request.headers.get('x-client-ip');
-  
+
   // x-forwarded-for can contain multiple IPs, use the first one
   if (xForwardedFor) {
     return xForwardedFor.split(',')[0].trim();
   }
-  
+
   return xRealIp || cfConnectingIp || xClientIp || 'unknown';
 }
 
@@ -122,7 +124,9 @@ export async function collectUserDemographics(
 ): Promise<UserDemographics> {
   const geolocation = await getGeolocationFromIP(ipAddress);
   const { birthDate, age } = extractBirthDateFromGoogleData(rawUserMetaData);
-  
+  const birthYear = birthDate ? new Date(birthDate).getFullYear() : undefined;
+  const gender = (rawUserMetaData?.gender as string) || undefined;
+
   return {
     country: geolocation?.country || 'Unknown',
     region: geolocation?.region,
@@ -130,6 +134,8 @@ export async function collectUserDemographics(
     timezone: geolocation?.timezone,
     age,
     birthDate,
+    birthYear,
+    gender,
     detectedAt: new Date().toISOString(),
     ipAddress: ipAddress !== 'unknown' ? ipAddress : undefined
   };

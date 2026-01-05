@@ -1186,6 +1186,10 @@ export type Database = {
           purpose: string
         }[]
       }
+      get_comprehensive_analytics_data: {
+        Args: { p_date_range: string }
+        Returns: Json
+      }
       get_demographics_analytics: { Args: never; Returns: Json }
       get_educational_content: {
         Args: { p_locale?: string; p_section_type?: string }
@@ -1375,6 +1379,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      record_report_download: {
+        Args: { p_report_id: string }
+        Returns: undefined
+      }
       submit_complete_quiz: {
         Args: { p_answers: Json; p_quiz_id?: string; p_user_id: string }
         Returns: {
@@ -1389,10 +1397,10 @@ export type Database = {
       upsert_user_demographics: {
         Args: {
           p_birth_year?: number
-          p_city: string
-          p_country: string
+          p_city?: string
+          p_country?: string
           p_gender?: string
-          p_region: string
+          p_region?: string
           p_user_id: string
         }
         Returns: Json

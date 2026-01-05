@@ -7,7 +7,7 @@ import { collectUserDemographics, getUserIP } from '@/lib/demographics'
 export const runtime = 'nodejs'
 
 export async function POST(request: NextRequest) {
-  
+
   try {
     const cookieStore = await cookies()
     const supabase = createServerClient<Database>(
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
 
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -50,11 +50,8 @@ export async function POST(request: NextRequest) {
       p_country: demographicsData.country,
       p_region: demographicsData.region,
       p_city: demographicsData.city,
-      p_timezone: demographicsData.timezone,
-      p_birth_date: demographicsData.birthDate,
-      p_age: demographicsData.age,
-      p_ip_address: demographicsData.ipAddress,
-      p_data_source: 'auto_collection'
+      p_birth_year: demographicsData.birthYear,
+      p_gender: demographicsData.gender
     })
 
     if (dbError) {
@@ -62,7 +59,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to store demographics data' }, { status: 500 })
     }
 
-    
+
     return NextResponse.json({
       success: true,
       demographics: result,

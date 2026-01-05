@@ -24,7 +24,7 @@ interface ReportRecord {
   date_range: string
   created_at: string
   download_count: number
-  data: ReportData
+  result: ReportData // Changed from data to result to match DB
 }
 
 // Force Node.js runtime for Supabase compatibility
@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
 
     // Check authentication and admin role
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
     // Check if user is admin using our database function
     const { data: isAdminData, error: adminError } = await supabase
       .rpc('is_user_admin_safe')
-    
+
     if (adminError || !isAdminData) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
     }
@@ -99,25 +99,25 @@ export async function GET(request: NextRequest) {
 
     switch (format.toLowerCase()) {
       case 'csv':
-        content = formatAsCSV(report.data as ReportData)
+        content = formatAsCSV(report.result as unknown as ReportData)
         contentType = 'text/csv'
         fileName = `${baseFileName}.csv`
         break
-      
+
       case 'json':
-        content = JSON.stringify(report.data, null, 2)
+        content = JSON.stringify(report.result, null, 2)
         contentType = 'application/json'
         fileName = `${baseFileName}.json`
         break
-      
+
       case 'txt':
-        content = formatAsText(report.data as ReportData, report as ReportRecord)
+        content = formatAsText(report.result as unknown as ReportData, report as unknown as ReportRecord)
         contentType = 'text/plain'
         fileName = `${baseFileName}.txt`
         break
-      
+
       default:
-        content = JSON.stringify(report.data, null, 2)
+        content = JSON.stringify(report.result, null, 2)
         contentType = 'application/json'
         fileName = `${baseFileName}.json`
     }
@@ -143,12 +143,12 @@ export async function GET(request: NextRequest) {
 
 function formatAsCSV(data: ReportData): string {
   const lines: string[] = []
-  
+
   // Add header
   lines.push('Analytics Report CSV Export')
   lines.push(`Generated at: ${new Date().toISOString()}`)
   lines.push('')
-  
+
   // Overview section
   if (data.overview) {
     lines.push('=== OVERVIEW ===')
@@ -158,7 +158,7 @@ function formatAsCSV(data: ReportData): string {
     })
     lines.push('')
   }
-  
+
   // Spiritual Gifts section
   if (data.spiritualGifts && Array.isArray(data.spiritualGifts)) {
     lines.push('=== SPIRITUAL GIFTS DISTRIBUTION ===')
@@ -168,7 +168,7 @@ function formatAsCSV(data: ReportData): string {
     })
     lines.push('')
   }
-  
+
   // AI Analytics section
   if (data.aiAnalytics) {
     lines.push('=== AI ANALYTICS ===')
@@ -178,7 +178,7 @@ function formatAsCSV(data: ReportData): string {
     })
     lines.push('')
   }
-  
+
   // User Statistics section
   if (data.userStatistics) {
     lines.push('=== USER STATISTICS ===')
@@ -187,16 +187,16 @@ function formatAsCSV(data: ReportData): string {
       lines.push(`${key},${value}`)
     })
   }
-  
+
   return lines.join('\n')
 }
 
 function formatAsText(data: ReportData, report: ReportRecord): string {
   const lines: string[] = []
-  
+
   // Header
   lines.push('SPIRITUAL GIFTS ANALYTICS REPORT')
-  lines.push('=' .repeat(50))
+  lines.push('='.repeat(50))
   lines.push('')
   lines.push(`Report Title: ${report.title}`)
   lines.push(`Description: ${report.description || 'N/A'}`)
@@ -205,22 +205,22 @@ function formatAsText(data: ReportData, report: ReportRecord): string {
   lines.push(`Generated: ${new Date(report.created_at).toLocaleString()}`)
   lines.push(`Downloads: ${report.download_count}`)
   lines.push('')
-  
+
   // Overview
   if (data.overview) {
     lines.push('OVERVIEW STATISTICS')
-    lines.push('-' .repeat(30))
+    lines.push('-'.repeat(30))
     Object.entries(data.overview).forEach(([key, value]) => {
       const formattedKey = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())
       lines.push(`${formattedKey}: ${value}`)
     })
     lines.push('')
   }
-  
+
   // Spiritual Gifts
   if (data.spiritualGifts && Array.isArray(data.spiritualGifts)) {
     lines.push('SPIRITUAL GIFTS DISTRIBUTION')
-    lines.push('-' .repeat(35))
+    lines.push('-'.repeat(35))
     data.spiritualGifts.forEach((gift, index: number) => {
       lines.push(`${index + 1}. ${gift.giftName}`)
       lines.push(`   Count: ${gift.count}`)
@@ -228,42 +228,42 @@ function formatAsText(data: ReportData, report: ReportRecord): string {
       lines.push('')
     })
   }
-  
+
   // AI Analytics
   if (data.aiAnalytics) {
     lines.push('AI ANALYTICS')
-    lines.push('-' .repeat(20))
+    lines.push('-'.repeat(20))
     Object.entries(data.aiAnalytics).forEach(([key, value]) => {
       const formattedKey = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())
       lines.push(`${formattedKey}: ${value}`)
     })
     lines.push('')
   }
-  
+
   // User Statistics
   if (data.userStatistics) {
     lines.push('USER STATISTICS')
-    lines.push('-' .repeat(20))
+    lines.push('-'.repeat(20))
     Object.entries(data.userStatistics).forEach(([key, value]) => {
       const formattedKey = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())
       lines.push(`${formattedKey}: ${value}`)
     })
     lines.push('')
   }
-  
+
   // Metadata
   if (data.metadata) {
     lines.push('REPORT METADATA')
-    lines.push('-' .repeat(20))
+    lines.push('-'.repeat(20))
     Object.entries(data.metadata).forEach(([key, value]) => {
       const formattedKey = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())
       lines.push(`${formattedKey}: ${value}`)
     })
   }
-  
+
   lines.push('')
-  lines.push('=' .repeat(50))
+  lines.push('='.repeat(50))
   lines.push('Report generated by Spiritual Gifts Test Admin System')
-  
+
   return lines.join('\n')
 }

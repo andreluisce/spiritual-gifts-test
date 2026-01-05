@@ -80,7 +80,7 @@ export function useMultipleGiftsBibleVerses(
 
             // Group by gift_key and limit per gift
             const grouped: Record<string, BibleVerse[]> = {}
-            data?.forEach((verse) => {
+            data?.forEach((verse: BibleVerse) => {
                 if (!grouped[verse.gift_key]) {
                     grouped[verse.gift_key] = []
                 }
