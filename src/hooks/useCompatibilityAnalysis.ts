@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { 
+import {
   dynamicCompatibilityAnalyzer,
   type DynamicGiftCompatibility,
   type DynamicMinistryRecommendation
@@ -13,9 +13,9 @@ import type { Database } from '@/lib/database.types'
 // Helper function to extract sessionId from URL
 function getSessionIdFromUrl(): string | undefined {
   if (typeof window === 'undefined') return undefined
-  
+
   const pathSegments = window.location.pathname.split('/').filter(Boolean)
-  
+
   // Check if we're in a quiz results page: /[locale]/quiz/results/[sessionId]/...
   const quizResultsIndex = pathSegments.findIndex(segment => segment === 'results')
   if (quizResultsIndex !== -1 && pathSegments[quizResultsIndex + 1]) {
@@ -26,7 +26,7 @@ function getSessionIdFromUrl(): string | undefined {
       return potentialSessionId
     }
   }
-  
+
   // For other pages (like dashboard), return undefined
   return undefined
 }
@@ -52,7 +52,7 @@ export function useCompatibilityAnalysis(
   const locale = useLocale()
   const t = useTranslations('results.compatibility')
   const { data: spiritualGiftsData } = useSpiritualGifts(locale)
-  
+
   const [analysis, setAnalysis] = useState<CompatibilityAnalysisResult>({
     compatibilities: [],
     ministryRecommendations: [],
@@ -63,12 +63,12 @@ export function useCompatibilityAnalysis(
     },
     isLoading: true,
     hasAIAnalysis: false,
-    regenerateAnalysis: async () => {}
+    regenerateAnalysis: async () => { }
   })
 
   useEffect(() => {
     const analyzeCompatibility = async () => {
-      
+
       if (!giftScores || Object.keys(giftScores).length === 0) {
         setAnalysis({
           compatibilities: [],
@@ -80,20 +80,20 @@ export function useCompatibilityAnalysis(
           },
           isLoading: false,
           hasAIAnalysis: false,
-          regenerateAnalysis: async () => {}
+          regenerateAnalysis: async () => { }
         })
         return
       }
 
       try {
         setAnalysis(prev => ({ ...prev, isLoading: true }))
-        
+
         // Use dynamic compatibility analyzer with AI
         const topGifts = Object.entries(giftScores)
-          .sort(([,a], [,b]) => b - a)
+          .sort(([, a], [, b]) => b - a)
           .slice(0, topGiftsCount)
           .map(([giftKey]) => giftKey)
-        
+
         // Function to get gift name in correct language
         const getGiftName = (giftKey: string): string => {
           if (!spiritualGiftsData) {
@@ -129,7 +129,7 @@ export function useCompatibilityAnalysis(
             }
             return fallbackNames[locale]?.[giftKey] || giftKey.replace(/^[A-Z]_/, '')
           }
-          
+
           const gift = spiritualGiftsData.find(g => g.gift_key === giftKey)
           return gift?.name || giftKey.replace(/^[A-Z]_/, '')
         }
@@ -139,7 +139,7 @@ export function useCompatibilityAnalysis(
           topGifts as Database['public']['Enums']['gift_key'][],
           locale
         )
-        
+
         // Get compatibility data for each pair of top gifts
         for (let i = 0; i < topGifts.length; i++) {
           for (let j = i + 1; j < topGifts.length; j++) {
@@ -148,7 +148,7 @@ export function useCompatibilityAnalysis(
               topGifts[j] as Database['public']['Enums']['gift_key'],
               locale
             )
-            
+
             if (compatibility && compatibility.compatibilityScore !== undefined) {
               compatibilities.push({
                 primaryGift: topGifts[i],
@@ -164,11 +164,11 @@ export function useCompatibilityAnalysis(
 
         // If no compatibilities were found, create meaningful fallback compatibilities
         if (compatibilities.length === 0 && topGifts.length >= 2) {
-          
+
           // Create compatibility between top 2 gifts
           const primaryGiftName = getGiftName(topGifts[0])
           const secondaryGiftName = getGiftName(topGifts[1])
-          
+
           // Create meaningful compatibility based on gift combinations
           const giftCompatibilities = {
             [`${topGifts[0]}_${topGifts[1]}`]: {
@@ -185,7 +185,7 @@ export function useCompatibilityAnalysis(
               description: t('fallbackSynergy.unionDescription', { primary: primaryGiftName, secondary: secondaryGiftName })
             }
           }
-          
+
           const compatKey = `${topGifts[0]}_${topGifts[1]}`
           const compatData = giftCompatibilities[compatKey] || giftCompatibilities[`${topGifts[1]}_${topGifts[0]}`] || {
             score: 80,
@@ -193,7 +193,7 @@ export function useCompatibilityAnalysis(
             challenges: [t('fallbackSynergy.continueBalancing')],
             description: t('fallbackSynergy.worksInHarmony')
           }
-          
+
           compatibilities.push({
             primaryGift: topGifts[0],
             secondaryGifts: [topGifts[1]],
@@ -221,7 +221,7 @@ export function useCompatibilityAnalysis(
             })),
             locale: locale
           }
-          
+
           // Choose analysis method based on authentication status
           if (user) {
             // User is logged in - use secure server-side API
@@ -239,8 +239,8 @@ export function useCompatibilityAnalysis(
                   locale: locale
                 })
               })
-              
-              
+
+
               if (response.ok) {
                 const { analysis } = await response.json()
                 aiAnalysis = analysis
@@ -256,7 +256,7 @@ export function useCompatibilityAnalysis(
               // Even for logged-in users, try client-side as fallback
               try {
                 aiAnalysis = await aiCompatibilityAnalyzer.analyzeCompatibility(userProfile, locale)
-                
+
                 // Try to save client-side analysis to cache if user is logged in
                 if (user && aiAnalysis) {
                   try {
@@ -287,7 +287,7 @@ export function useCompatibilityAnalysis(
             // User not logged in - use client-side analysis with potential API key exposure risk
             aiAnalysis = await aiCompatibilityAnalyzer.analyzeCompatibility(userProfile, locale)
           }
-          
+
           // Enhance compatibilities with AI insights
           if (aiAnalysis && compatibilities.length > 0) {
             compatibilities[0].aiEnhancedAnalysis = aiAnalysis
@@ -295,21 +295,21 @@ export function useCompatibilityAnalysis(
         } catch (error) {
           console.warn('AI analysis failed, using fallback insights:', error)
         }
-        
+
         // Generate insights from AI analysis or fallback to compatibility analysis
         const topGiftName = topGifts[0] || 'Unknown'
         const insights = {
-          dominantPattern: aiAnalysis?.personalizedInsights 
+          dominantPattern: aiAnalysis?.personalizedInsights
             ? aiAnalysis.personalizedInsights.split('.')[0] + '.'
             : `Perfil ${topGiftName.replace(/^[A-Z]_/, '')}`,
-          balanceAnalysis: aiAnalysis?.strengthsDescription || (compatibilities.length > 0 
-            ? `Seus principais dons mostram ${compatibilities[0].synergyDescription}` 
+          balanceAnalysis: aiAnalysis?.strengthsDescription || (compatibilities.length > 0
+            ? `Seus principais dons mostram ${compatibilities[0].synergyDescription}`
             : 'Análise em progresso...'),
           developmentSuggestions: aiAnalysis?.practicalApplications || compatibilities.flatMap(c => c.strengthAreas).slice(0, 3)
         }
 
         const hasAIAnalysisResult = !!(aiAnalysis && aiAnalysis.personalizedInsights && aiAnalysis.strengthsDescription)
-        
+
         setAnalysis({
           compatibilities,
           ministryRecommendations,
@@ -318,9 +318,9 @@ export function useCompatibilityAnalysis(
           hasAIAnalysis: hasAIAnalysisResult,
           regenerateAnalysis: async () => {
             if (!giftScores) return
-            
+
             setAnalysis(prev => ({ ...prev, isLoading: true }))
-            
+
             try {
               const userProfile: UserGiftProfile = {
                 primaryGift: {
@@ -335,7 +335,7 @@ export function useCompatibilityAnalysis(
                 })),
                 locale: locale
               }
-              
+
               // Choose analysis method based on authentication status
               let newAiAnalysis = null
               if (user) {
@@ -354,7 +354,7 @@ export function useCompatibilityAnalysis(
                       locale: locale
                     })
                   })
-                  
+
                   if (response.ok) {
                     const { analysis } = await response.json()
                     newAiAnalysis = analysis
@@ -378,14 +378,14 @@ export function useCompatibilityAnalysis(
                 // User not logged in - use client-side analysis
                 newAiAnalysis = await aiCompatibilityAnalyzer.analyzeCompatibility(userProfile, locale)
               }
-              
+
               if (newAiAnalysis) {
                 const newInsights = {
                   dominantPattern: newAiAnalysis.personalizedInsights?.split('.')[0] || insights.dominantPattern,
                   balanceAnalysis: newAiAnalysis.strengthsDescription || insights.balanceAnalysis,
                   developmentSuggestions: newAiAnalysis.practicalApplications || insights.developmentSuggestions
                 }
-                
+
                 setAnalysis(prev => ({
                   ...prev,
                   insights: newInsights,
@@ -413,13 +413,13 @@ export function useCompatibilityAnalysis(
           },
           isLoading: false,
           hasAIAnalysis: false,
-          regenerateAnalysis: async () => {}
+          regenerateAnalysis: async () => { }
         })
       }
     }
 
     analyzeCompatibility()
-  }, [giftScores, topGiftsCount, locale, spiritualGiftsData, user])
+  }, [giftScores, topGiftsCount, locale, spiritualGiftsData, user, t])
 
   return analysis
 }

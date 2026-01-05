@@ -14,8 +14,7 @@ import {
   useBiblicalContext,
   useMinistries,
   useManifestations,
-  useManifestationPrinciples,
-  type EducationalContent
+  useManifestationPrinciples
 } from '@/hooks/useEducationalContent'
 
 export default function LearnPage() {
@@ -30,8 +29,8 @@ export default function LearnPage() {
   const { data: principles, isLoading: loadingPrinciples } = useManifestationPrinciples()
 
   const loading = loadingIntro || loadingObstacles || loadingCategories ||
-                  loadingBiblical || loadingMinistries || loadingManifestations ||
-                  loadingPrinciples
+    loadingBiblical || loadingMinistries || loadingManifestations ||
+    loadingPrinciples
 
   if (loading) {
     return (

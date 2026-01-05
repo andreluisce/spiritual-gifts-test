@@ -63,24 +63,24 @@ export default function QuizSettingsPage() {
           setLocalSettings(settings)
         })
     }
-  }, [debouncedSettings])
+  }, [debouncedSettings, settings, updateSettings])
 
   const handleSettingChange = useCallback((key: string, value: string | boolean | number) => {
     if (!localSettings) return
 
     const newSettings = { ...localSettings }
-    
+
     if (key.includes('.')) {
       const keys = key.split('.')
       let current = newSettings.quiz as Record<string, unknown>
-      
+
       for (let i = 0; i < keys.length - 1; i++) {
         if (!current[keys[i]]) {
           current[keys[i]] = {}
         }
         current = current[keys[i]] as Record<string, unknown>
       }
-      
+
       current[keys[keys.length - 1]] = value
     } else {
       newSettings.quiz = {
@@ -146,7 +146,7 @@ export default function QuizSettingsPage() {
             <p className="text-sm text-gray-600">
               {t('questionsConfig.description')}
             </p>
-            
+
             <div className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="questions-per-gift">
@@ -176,7 +176,7 @@ export default function QuizSettingsPage() {
           {/* Quiz Options */}
           <div className="space-y-4">
             <h3 className="text-sm font-semibold">{t('options.title')}</h3>
-            
+
             <div className="space-y-4">
               {/* Shuffle Questions */}
               <div className="flex items-center justify-between">
