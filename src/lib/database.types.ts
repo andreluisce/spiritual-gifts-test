@@ -82,6 +82,45 @@ export type Database = {
           },
         ]
       }
+      analytics_reports: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          error_message: string | null
+          expires_at: string | null
+          id: string
+          parameters: Json | null
+          report_type: string
+          result: Json | null
+          status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          error_message?: string | null
+          expires_at?: string | null
+          id?: string
+          parameters?: Json | null
+          report_type: string
+          result?: Json | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          error_message?: string | null
+          expires_at?: string | null
+          id?: string
+          parameters?: Json | null
+          report_type?: string
+          result?: Json | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       answers: {
         Row: {
           created_at: string
@@ -397,6 +436,42 @@ export type Database = {
           },
         ]
       }
+      gift_bible_verses: {
+        Row: {
+          context_note: string | null
+          created_at: string
+          gift_key: Database["public"]["Enums"]["gift_key"]
+          id: string
+          locale: string
+          relevance_score: number | null
+          updated_at: string
+          verse_reference: string
+          verse_text: string
+        }
+        Insert: {
+          context_note?: string | null
+          created_at?: string
+          gift_key: Database["public"]["Enums"]["gift_key"]
+          id?: string
+          locale?: string
+          relevance_score?: number | null
+          updated_at?: string
+          verse_reference: string
+          verse_text: string
+        }
+        Update: {
+          context_note?: string | null
+          created_at?: string
+          gift_key?: Database["public"]["Enums"]["gift_key"]
+          id?: string
+          locale?: string
+          relevance_score?: number | null
+          updated_at?: string
+          verse_reference?: string
+          verse_text?: string
+        }
+        Relationships: []
+      }
       gift_compatibility_analysis: {
         Row: {
           analysis_data: Json | null
@@ -433,6 +508,42 @@ export type Database = {
           secondary_gift_key?: Database["public"]["Enums"]["gift_key"]
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      gift_content_cache: {
+        Row: {
+          ai_generated: boolean | null
+          ai_model: string | null
+          content_data: Json
+          content_type: string
+          created_at: string
+          gift_key: Database["public"]["Enums"]["gift_key"]
+          id: string
+          locale: string
+          updated_at: string
+        }
+        Insert: {
+          ai_generated?: boolean | null
+          ai_model?: string | null
+          content_data: Json
+          content_type: string
+          created_at?: string
+          gift_key: Database["public"]["Enums"]["gift_key"]
+          id?: string
+          locale?: string
+          updated_at?: string
+        }
+        Update: {
+          ai_generated?: boolean | null
+          ai_model?: string | null
+          content_data?: Json
+          content_type?: string
+          created_at?: string
+          gift_key?: Database["public"]["Enums"]["gift_key"]
+          id?: string
+          locale?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -800,6 +911,69 @@ export type Database = {
         }
         Relationships: []
       }
+      user_activities: {
+        Row: {
+          activity_type: string
+          created_at: string
+          details: Json | null
+          id: string
+          ip_address: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          activity_type: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          activity_type?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      user_demographics: {
+        Row: {
+          birth_year: number | null
+          city: string | null
+          country: string | null
+          created_at: string
+          gender: string | null
+          region: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          birth_year?: number | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          gender?: string | null
+          region?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          birth_year?: number | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          gender?: string | null
+          region?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       quiz_results_weighted: {
@@ -855,6 +1029,16 @@ export type Database = {
       }
     }
     Functions: {
+      admin_delete_user: { Args: { target_user_id: string }; Returns: Json }
+      admin_update_user: {
+        Args: {
+          display_name?: string
+          target_user_id: string
+          user_role?: string
+          user_status?: string
+        }
+        Returns: Json
+      }
       calculate_quiz_result: {
         Args: { p_session_id: string }
         Returns: {
@@ -865,6 +1049,7 @@ export type Database = {
           total_weighted: number
         }[]
       }
+      cleanup_expired_reports: { Args: never; Returns: undefined }
       generate_balanced_quiz: {
         Args: {
           questions_per_gift?: number
@@ -880,8 +1065,35 @@ export type Database = {
           weight_class: Database["public"]["Enums"]["weight_class"]
         }[]
       }
-      get_admin_stats: { Args: never; Returns: Json }
-      get_age_demographics: { Args: never; Returns: Json }
+      get_activity_stats: { Args: never; Returns: Json }
+      get_admin_stats: {
+        Args: never
+        Returns: {
+          activeusers: number
+          adminusers: number
+          averagescore: number
+          completedtoday: number
+          mostpopulargift: string
+          newusersthismonth: number
+          totalquizzes: number
+          totalusers: number
+        }[]
+      }
+      get_age_demographics: {
+        Args: never
+        Returns: {
+          age_range: string
+          percentage: number
+          user_count: number
+        }[]
+      }
+      get_ai_analysis_by_gift: {
+        Args: never
+        Returns: {
+          count: number
+          gift_key: string
+        }[]
+      }
       get_ai_analysis_by_session: {
         Args: { p_session_id: string }
         Returns: {
@@ -910,7 +1122,38 @@ export type Database = {
           strengths_description: string
         }[]
       }
+      get_ai_system_status: {
+        Args: never
+        Returns: {
+          error_rate: number
+          latency_ms: number
+          status: string
+        }[]
+      }
+      get_ai_usage_stats: {
+        Args: never
+        Returns: {
+          analyses_this_month: number
+          analyses_this_week: number
+          analyses_today: number
+          api_calls: number
+          avg_confidence_score: number
+          cache_hit_rate: number
+          cache_hits: number
+          most_analyzed_gift: string
+          total_analyses: number
+          unique_users: number
+        }[]
+      }
+      get_ai_usage_timeline: {
+        Args: never
+        Returns: {
+          count: number
+          date: string
+        }[]
+      }
       get_all_gifts_with_data: { Args: { p_locale?: string }; Returns: Json }
+      get_analytics_data: { Args: { date_range_param?: string }; Returns: Json }
       get_audit_logs: {
         Args: {
           filter_action?: string
@@ -943,11 +1186,21 @@ export type Database = {
           purpose: string
         }[]
       }
+      get_demographics_analytics: { Args: never; Returns: Json }
       get_educational_content: {
         Args: { p_locale?: string; p_section_type?: string }
         Returns: Json
       }
-      get_geographic_demographics: { Args: never; Returns: Json }
+      get_geographic_demographics: {
+        Args: never
+        Returns: {
+          city: string
+          country: string
+          percentage: number
+          state_province: string
+          user_count: number
+        }[]
+      }
       get_geographic_distribution: { Args: never; Returns: Json }
       get_gift_compatibility: {
         Args: {
@@ -964,7 +1217,15 @@ export type Database = {
         }
         Returns: Json
       }
-      get_gift_distribution: { Args: never; Returns: Json }
+      get_gift_distribution: {
+        Args: never
+        Returns: {
+          count: number
+          gift_id: number
+          gift_name: string
+          percentage: number
+        }[]
+      }
       get_latest_result_data: {
         Args: { p_user_id: string }
         Returns: {
@@ -1026,7 +1287,26 @@ export type Database = {
           user_id: string
         }[]
       }
-      get_recent_activity: { Args: { limit_count?: number }; Returns: Json }
+      get_recent_activity: {
+        Args: { limit_count?: number }
+        Returns: {
+          action: string
+          created_at: string
+          id: string
+          type: string
+          user_email: string
+          user_name: string
+        }[]
+      }
+      get_recent_ai_activity: {
+        Args: { limit_count?: number }
+        Returns: {
+          confidence_score: number
+          created_at: string
+          id: string
+          user_id: string
+        }[]
+      }
       get_system_settings: { Args: never; Returns: Json }
       get_system_status: { Args: never; Returns: Json }
       get_top_gift_details: {
@@ -1042,6 +1322,20 @@ export type Database = {
           total_weighted: number
         }[]
       }
+      get_user_activities: {
+        Args: { limit_count?: number }
+        Returns: {
+          activity_description: string
+          activity_type: string
+          created_at: string
+          id: string
+          ip_address: string
+          metadata: Json
+          user_agent: string
+          user_id: string
+          users: Json
+        }[]
+      }
       get_user_profile: { Args: never; Returns: Json }
       get_user_results_data: {
         Args: { p_user_id: string }
@@ -1053,6 +1347,20 @@ export type Database = {
           total_scores: Json
         }[]
       }
+      get_users_with_stats: {
+        Args: never
+        Returns: {
+          avg_score: number
+          created_at: string
+          email: string
+          id: string
+          last_sign_in_at: string
+          quiz_count: number
+          status: string
+          user_metadata: Json
+        }[]
+      }
+      is_admin: { Args: never; Returns: boolean }
       is_user_admin_safe: { Args: never; Returns: boolean }
       log_audit_event: {
         Args: {
@@ -1078,6 +1386,17 @@ export type Database = {
         }[]
       }
       update_system_settings: { Args: { new_settings: Json }; Returns: boolean }
+      upsert_user_demographics: {
+        Args: {
+          p_birth_year?: number
+          p_city: string
+          p_country: string
+          p_gender?: string
+          p_region: string
+          p_user_id: string
+        }
+        Returns: Json
+      }
       upsert_user_profile: {
         Args: {
           p_age_range?: string

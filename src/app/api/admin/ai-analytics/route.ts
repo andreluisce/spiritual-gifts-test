@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
 
     // Check authentication and admin role
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     // Check if user is admin using our database function
     const { data: isAdminData, error: adminError } = await supabase
       .rpc('is_user_admin_safe')
-    
+
     if (adminError || !isAdminData) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
     }
