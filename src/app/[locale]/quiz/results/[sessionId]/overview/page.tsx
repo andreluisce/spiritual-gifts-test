@@ -8,7 +8,7 @@ import { Progress } from '@/components/ui/progress'
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
 import {
-  Target, Lightbulb, BookOpen, Award, Heart, Users, Church,
+  Target, Lightbulb, Award, Heart, Users, Church,
   ChevronDown, ChevronRight
 } from 'lucide-react'
 import {
@@ -17,7 +17,6 @@ import {
   useCategories,
   type SpiritualGiftData,
 } from '@/hooks/use-quiz-queries'
-import { useGiftBibleVerses } from '@/hooks/useGiftBibleVerses'
 import { useLocale, useTranslations } from 'next-intl'
 import { formatScore, formatPercentage } from '@/data/quiz-data'
 import { BibleVersesSection } from '@/components/BibleVersesSection'
@@ -219,7 +218,6 @@ export default function OverviewPage() {
                       locale={locale}
                       expandedVerses={expandedVerses}
                       setExpandedVerses={setExpandedVerses}
-                      t={t}
                     />
 
                     {/* Quick Actions */}

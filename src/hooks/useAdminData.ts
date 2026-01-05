@@ -398,7 +398,7 @@ export function useUpdateUser() {
   const [supabase] = useState(() => createClient())
 
   const updateUser = async (
-    userId: string, 
+    userId: string,
     updates: {
       displayName?: string
       role?: 'user' | 'admin'
@@ -410,13 +410,13 @@ export function useUpdateUser() {
       setError(null)
 
       // Use RPC function to update user
-      const rpcParams = { 
-        target_user_id: userId, 
+      const rpcParams = {
+        target_user_id: userId,
         display_name: updates.displayName || null,
         user_role: updates.role || null,
         user_status: updates.status || null
       }
-      
+
 
       const { data, error: updateError } = await supabase
         .rpc('admin_update_user', rpcParams)
@@ -467,8 +467,8 @@ export function useSystemStatus() {
         if (statusError) {
           // Handle Supabase error object
           const errorMessage = statusError.message ||
-                              statusError.details ||
-                              'Failed to fetch system status'
+            statusError.details ||
+            'Failed to fetch system status'
           throw new Error(errorMessage)
         }
 
@@ -480,7 +480,7 @@ export function useSystemStatus() {
         const errorMessage = err instanceof Error
           ? err.message
           : typeof err === 'object' && err !== null && 'message' in err
-            ? String((err as any).message)
+            ? String((err as Record<string, unknown>).message)
             : 'Failed to fetch system status'
         setError(errorMessage)
       } finally {
@@ -509,18 +509,18 @@ export function useAgeDemographics() {
           .rpc('get_demographics_analytics')
 
         if (error) throw error
-        
+
         // Extract age distribution from the comprehensive analytics
         const analyticsData = data as DemographicsAnalyticsResponse
         const ageDistribution = analyticsData?.ageDistribution || []
-        
+
         // Convert to expected format
         const mappedData: DemographicsData[] = ageDistribution.map((item) => ({
           ageRange: item.ageRange,
           count: item.count,
           percentage: item.percentage
         }))
-        
+
         setDemographics(mappedData)
       } catch (err) {
         console.error('Error fetching age demographics:', err)
@@ -551,18 +551,18 @@ export function useGeographicDistribution() {
           .rpc('get_demographics_analytics')
 
         if (error) throw error
-        
+
         // Extract geographic distribution from the comprehensive analytics
         const analyticsData = data as DemographicsAnalyticsResponse
         const geoDistribution = analyticsData?.geographicDistribution || []
-        
+
         // Convert to expected format
         const mappedData: GeographicData[] = geoDistribution.map((item) => ({
           country: item.country,
           count: item.count,
           percentage: item.percentage
         }))
-        
+
         setDistribution(mappedData)
       } catch (err) {
         console.error('Error fetching geographic distribution:', err)

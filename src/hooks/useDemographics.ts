@@ -71,7 +71,7 @@ export function useDemographics() {
       const errorMessage = err instanceof Error
         ? err.message
         : typeof err === 'object' && err !== null && 'message' in err
-          ? String((err as any).message)
+          ? String((err as Record<string, unknown>).message)
           : 'Failed to fetch demographics'
       setError(errorMessage)
     } finally {
@@ -83,11 +83,11 @@ export function useDemographics() {
     fetchDemographics()
   }, [fetchDemographics])
 
-  return { 
-    data, 
-    loading, 
-    error, 
-    refetch: fetchDemographics 
+  return {
+    data,
+    loading,
+    error,
+    refetch: fetchDemographics
   }
 }
 
@@ -116,7 +116,7 @@ export function useAgeDemographics() {
         const errorMessage = err instanceof Error
           ? err.message
           : typeof err === 'object' && err !== null && 'message' in err
-            ? String((err as any).message)
+            ? String((err as Record<string, unknown>).message)
             : 'Failed to fetch age demographics'
         setError(errorMessage)
       } finally {
@@ -155,7 +155,7 @@ export function useGeographicDemographics() {
         const errorMessage = err instanceof Error
           ? err.message
           : typeof err === 'object' && err !== null && 'message' in err
-            ? String((err as any).message)
+            ? String((err as Record<string, unknown>).message)
             : 'Failed to fetch geographic demographics'
         setError(errorMessage)
       } finally {

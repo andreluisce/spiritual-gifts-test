@@ -8,14 +8,12 @@ export function BibleVersesSection({
     giftKey,
     locale,
     expandedVerses,
-    setExpandedVerses,
-    t
+    setExpandedVerses
 }: {
     giftKey: string
     locale: string
     expandedVerses: Set<string>
     setExpandedVerses: (set: Set<string>) => void
-    t: any
 }) {
     const { data: verses, isLoading } = useGiftBibleVerses(giftKey, locale, 20)
 
@@ -52,7 +50,7 @@ export function BibleVersesSection({
                 Referências Bíblicas ({verses.length})
             </h4>
             <div className="space-y-2">
-                {displayedVerses.map((verse: BibleVerse, index: number) => (
+                {displayedVerses.map((verse: BibleVerse) => (
                     <div key={verse.id} className="text-sm">
                         <p className="font-medium text-blue-600">{verse.verse_reference}</p>
                         <p className="text-gray-600 italic ml-2">{verse.verse_text}</p>

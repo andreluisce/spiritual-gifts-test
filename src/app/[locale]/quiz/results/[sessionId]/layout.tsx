@@ -89,24 +89,12 @@ export default function ResultsLayout({ children }: ResultsLayoutProps) {
     .map(([giftKey, score]) => ({ giftKey, score }))
     .sort((a, b) => b.score - a.score)
 
-  // Calculate maxScore based on actual quiz configuration
-  // The quiz can have different lengths (7, 35, 70 questions)
-  // Each question scores 0-5 points
-  // Total possible score = (number of questions answered) * 5
-  // Since questions are distributed across 7 gifts, theoretical max per gift = total / 7
-
-  // Get number of questions from result metadata or calculate from answers
-  const totalQuestionsAnswered = result.metadata?.totalQuestions ||
-    result.answersCount ||
-    70 // Default to full quiz if not specified
-
-  // Theoretical maximum score per gift
-  const theoreticalMaxScore = (totalQuestionsAnswered * 5) / 7
+  // Use relative strength: primary gift = 100%, others relative to it
+  // Backend already handles all quiz configuration complexity
+  const maxScore = Math.max(...sortedScores.map(s => s.score), 1)
 
   const getScorePercentage = (score: number): number => {
-    // Calculate percentage based on theoretical maximum
-    // This gives absolute strength (how much of the possible score was achieved)
-    return Math.min((score / theoreticalMaxScore) * 100, 100)
+    return (score / maxScore) * 100
   }
 
   const topGift = sortedScores[0]

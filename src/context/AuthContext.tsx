@@ -28,8 +28,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!currentUser) return false
     const { user_metadata: userMeta = {}, email = '' } = currentUser
     const appMeta = (currentUser as User & { app_metadata?: Record<string, unknown> }).app_metadata ?? {}
-    const userMetaData = userMeta as Record<string, any>
-    const appMetaData = appMeta as Record<string, any>
+    const userMetaData = userMeta as Record<string, unknown>
+    const appMetaData = appMeta as Record<string, unknown>
 
     const roles = Array.isArray(appMetaData.roles)
       ? (appMetaData.roles as unknown[]).map(String)
@@ -55,7 +55,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       // Use secure RPC function that checks auth.users metadata
       const { data, error } = await supabase.rpc('is_user_admin_safe')
-      
+
       if (error) {
         console.error('Error checking admin status, using metadata fallback:', error)
         setIsAdmin(deriveAdminFromMetadata(currentUser))
@@ -79,7 +79,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const { data: { user } } = await supabase.auth.getUser()
         setUser(user)
         setLoading(false)
-        
+
         // Check admin status for the initial user (non-blocking)
         checkAdminStatus(user).catch(console.error)
       } catch (error) {
@@ -96,7 +96,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const newUser = session?.user ?? null
       setUser(newUser)
       setLoading(false)
-      
+
       // Check admin status when user changes (non-blocking)
       checkAdminStatus(newUser).catch(console.error)
     })
@@ -108,7 +108,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Check if registration is enabled before proceeding
     try {
       const { data: settingsData } = await supabase.rpc('get_system_settings')
-      
+
       if (settingsData && settingsData.general && !settingsData.general.enableRegistration) {
         throw new Error('Registro de novos usuários está temporariamente desabilitado.')
       }
@@ -121,7 +121,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const currentPath = window.location.pathname
     const locale = currentPath.split('/')[1] || 'pt'
     const { authCallbackUrl } = getEnvironmentConfig()
-    
+
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -133,7 +133,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         }
       })
-      
+
       if (error) {
         console.error('OAuth error:', error)
         throw error
@@ -148,11 +148,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       await supabase.auth.signOut()
       setIsAdmin(false) // Reset admin status on signout
-      
+
       // Get current locale for redirect
       const currentPath = window.location.pathname
       const locale = currentPath.split('/')[1] || 'pt'
-      
+
       // Redirect to login page
       window.location.href = `/${locale}/login`
     } catch (error) {
