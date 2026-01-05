@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "gen:types": "supabase gen types typescript --project-id uedtwdxqplbwmgyoqunp --schema public > src/lib/database.types.ts"
+    "gen:types": "supabase gen types typescript --project-id vttkurdzstlkybojigry --schema public > src/lib/database.types.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
@@ -32,7 +32,7 @@
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.12",
     "lucide-react": "^0.539.0",
-    "next": "15.4.6",
+    "next": "15.4.10",
     "next-intl": "^4.3.4",
     "react": "19.1.0",
     "react-dom": "19.1.0",
@@ -54,5 +54,6 @@
     "tailwindcss": "^4",
     "tw-animate-css": "^1.3.6",
     "typescript": "^5"
-  }
+  },
+  "packageManager": "pnpm@9.4.0+sha512.f549b8a52c9d2b8536762f99c0722205efc5af913e77835dbccc3b0b0b2ca9e7dc8022b78062c17291c48e88749c70ce88eb5a74f1fa8c4bf5e18bb46c8bd83a"
 }

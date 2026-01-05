@@ -24,6 +24,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [supabase] = useState(() => createClient())
 
   // Function to check admin status using secure RPC function
+  const deriveAdminFromMetadata = useCallback((currentUser: User | null) => {
+    if (!currentUser) return false
+    const { user_metadata: userMeta = {}, email = '' } = currentUser
+    const appMeta = (currentUser as User & { app_metadata?: Record<string, unknown> }).app_metadata ?? {}
+    const userMetaData = userMeta as Record<string, any>
+    const appMetaData = appMeta as Record<string, any>
+
+    const roles = Array.isArray(appMetaData.roles)
+      ? (appMetaData.roles as unknown[]).map(String)
+      : []
+
+    return (
+      userMetaData.is_admin === true ||
+      userMetaData.role === 'admin' ||
+      appMetaData.is_admin === true ||
+      appMetaData.role === 'admin' ||
+      roles.includes('admin') ||
+      email.includes('@admin.')
+    )
+  }, [])
+
   const checkAdminStatus = useCallback(async (currentUser: User | null) => {
     if (!currentUser) {
       setIsAdmin(false)
@@ -36,18 +57,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data, error } = await supabase.rpc('is_user_admin_safe')
       
       if (error) {
-        console.error('Error checking admin status:', error)
-        setIsAdmin(false)
+        console.error('Error checking admin status, using metadata fallback:', error)
+        setIsAdmin(deriveAdminFromMetadata(currentUser))
       } else {
-        setIsAdmin(!!data) // Function returns boolean
+        const adminFromRpc = typeof data === 'boolean' ? data : false
+        const fallback = deriveAdminFromMetadata(currentUser)
+        setIsAdmin(adminFromRpc || fallback) // Function returns boolean
       }
     } catch (error) {
-      console.error('Error checking admin status:', error)
-      setIsAdmin(false)
+      console.error('Error checking admin status, using metadata fallback:', error)
+      setIsAdmin(deriveAdminFromMetadata(currentUser))
     } finally {
       setAdminLoading(false)
     }
-  }, [supabase])
+  }, [supabase, deriveAdminFromMetadata])
 
   useEffect(() => {
     // Get initial user

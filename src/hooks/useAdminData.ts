@@ -464,14 +464,25 @@ export function useSystemStatus() {
         const { data: statusData, error: statusError } = await supabase
           .rpc('get_system_status')
 
-        if (statusError) throw statusError
+        if (statusError) {
+          // Handle Supabase error object
+          const errorMessage = statusError.message ||
+                              statusError.details ||
+                              'Failed to fetch system status'
+          throw new Error(errorMessage)
+        }
 
         if (statusData) {
           setSystemStatus(statusData)
         }
       } catch (err) {
         console.error('Error fetching system status:', err)
-        setError(err instanceof Error ? err.message : 'Failed to fetch system status')
+        const errorMessage = err instanceof Error
+          ? err.message
+          : typeof err === 'object' && err !== null && 'message' in err
+            ? String((err as any).message)
+            : 'Failed to fetch system status'
+        setError(errorMessage)
       } finally {
         setLoading(false)
       }

@@ -37,11 +37,17 @@ export function useDemographics() {
 
       // Fetch age demographics
       const { data: ageData, error: ageError } = await supabase.rpc('get_age_demographics')
-      if (ageError) throw ageError
+      if (ageError) {
+        const errorMessage = ageError.message || ageError.details || 'Failed to fetch age demographics'
+        throw new Error(errorMessage)
+      }
 
       // Fetch geographic demographics
       const { data: geoData, error: geoError } = await supabase.rpc('get_geographic_demographics')
-      if (geoError) throw geoError
+      if (geoError) {
+        const errorMessage = geoError.message || geoError.details || 'Failed to fetch geographic demographics'
+        throw new Error(errorMessage)
+      }
 
       // Calculate totals
       const totalUsersWithAge = ageData?.reduce((sum: number, item: AgeDemographic) => sum + item.user_count, 0) || 0
@@ -62,7 +68,12 @@ export function useDemographics() {
       setData(demographicData)
     } catch (err) {
       console.error('Error fetching demographics:', err)
-      setError(err instanceof Error ? err.message : 'Failed to fetch demographics')
+      const errorMessage = err instanceof Error
+        ? err.message
+        : typeof err === 'object' && err !== null && 'message' in err
+          ? String((err as any).message)
+          : 'Failed to fetch demographics'
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -94,12 +105,20 @@ export function useAgeDemographics() {
         setError(null)
 
         const { data: ageData, error: ageError } = await supabase.rpc('get_age_demographics')
-        if (ageError) throw ageError
+        if (ageError) {
+          const errorMessage = ageError.message || ageError.details || 'Failed to fetch age demographics'
+          throw new Error(errorMessage)
+        }
 
         setData(ageData || [])
       } catch (err) {
         console.error('Error fetching age demographics:', err)
-        setError(err instanceof Error ? err.message : 'Failed to fetch age demographics')
+        const errorMessage = err instanceof Error
+          ? err.message
+          : typeof err === 'object' && err !== null && 'message' in err
+            ? String((err as any).message)
+            : 'Failed to fetch age demographics'
+        setError(errorMessage)
       } finally {
         setLoading(false)
       }
@@ -125,12 +144,20 @@ export function useGeographicDemographics() {
         setError(null)
 
         const { data: geoData, error: geoError } = await supabase.rpc('get_geographic_demographics')
-        if (geoError) throw geoError
+        if (geoError) {
+          const errorMessage = geoError.message || geoError.details || 'Failed to fetch geographic demographics'
+          throw new Error(errorMessage)
+        }
 
         setData(geoData || [])
       } catch (err) {
         console.error('Error fetching geographic demographics:', err)
-        setError(err instanceof Error ? err.message : 'Failed to fetch geographic demographics')
+        const errorMessage = err instanceof Error
+          ? err.message
+          : typeof err === 'object' && err !== null && 'message' in err
+            ? String((err as any).message)
+            : 'Failed to fetch geographic demographics'
+        setError(errorMessage)
       } finally {
         setLoading(false)
       }

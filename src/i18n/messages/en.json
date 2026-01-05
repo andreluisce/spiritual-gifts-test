@@ -863,7 +863,11 @@
       "35-44": "35-44 years",
       "45-54": "45-54 years",
       "55-64": "55-64 years",
-      "65+": "65+ years"
+      "65+": "65+ years",
+      "Unknown": "Unknown"
+    },
+    "countries": {
+      "Unknown": "Unknown"
     }
   },
   "profile": {

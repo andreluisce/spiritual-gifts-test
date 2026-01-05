@@ -87,14 +87,23 @@ export async function POST(request: NextRequest) {
 
     // Check cache first - use gift_scores based cache for users with same results
     if (useCache) {
+      console.log('🔍 AI Analysis API: Checking cache with useCache=true')
       try {
         const { data: cachedByScores, error: cacheByScoresError } = await supabase.rpc('get_ai_analysis_by_user_and_scores', {
           p_user_id: user.id,
           p_gift_scores: giftScores
         })
 
+        if (cacheByScoresError) {
+          console.warn('⚠️ AI Analysis API: Cache lookup by scores failed:', cacheByScoresError)
+        }
+
         if (!cacheByScoresError && cachedByScores && cachedByScores.length > 0) {
           const cached = cachedByScores[0]
+          console.log('✅ AI Analysis API: CACHE HIT by gift_scores!', {
+            cacheDate: cached.created_at,
+            userId: user.id
+          })
           const analysis: AICompatibilityAnalysis = {
             personalizedInsights: cached.personalized_insights,
             strengthsDescription: cached.strengths_description,
@@ -111,6 +120,8 @@ export async function POST(request: NextRequest) {
             cacheType: 'gift_scores',
             cacheDate: cached.created_at
           })
+        } else {
+          console.log('❌ AI Analysis API: CACHE MISS by gift_scores')
         }
 
         // Fallback to session-based cache if available
@@ -119,8 +130,16 @@ export async function POST(request: NextRequest) {
             p_session_id: sessionId
           })
 
+          if (cacheBySessionError) {
+            console.warn('⚠️ AI Analysis API: Cache lookup by session failed:', cacheBySessionError)
+          }
+
           if (!cacheBySessionError && cachedBySession && cachedBySession.length > 0) {
             const cached = cachedBySession[0]
+            console.log('✅ AI Analysis API: CACHE HIT by session_id!', {
+              cacheDate: cached.created_at,
+              sessionId: sessionId
+            })
             const analysis: AICompatibilityAnalysis = {
               personalizedInsights: cached.personalized_insights,
               strengthsDescription: cached.strengths_description,
@@ -137,20 +156,28 @@ export async function POST(request: NextRequest) {
               cacheType: 'session',
               cacheDate: cached.created_at
             })
+          } else {
+            console.log('❌ AI Analysis API: CACHE MISS by session_id')
           }
         }
       } catch (cacheError) {
         console.warn('❌ AI Analysis API: Cache lookup failed:', cacheError)
       }
+    } else {
+      console.log('⚠️ AI Analysis API: Cache disabled (useCache=false)')
     }
 
     // Use client analysis if provided, otherwise generate new AI analysis
+    console.log('🤖 AI Analysis API: Generating NEW AI analysis (cache miss or disabled)')
     let analysis
     if (clientAnalysis) {
+      console.log('📥 AI Analysis API: Using client-provided analysis')
       analysis = clientAnalysis
     } else {
+      console.log('🔮 AI Analysis API: Calling AI service to generate analysis')
       analysis = await aiCompatibilityAnalyzer.analyzeCompatibility(profile, locale)
     }
+
 
     // Save to cache (always save, even without sessionId for future cache by gift_scores)
     try {

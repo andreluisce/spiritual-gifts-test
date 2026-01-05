@@ -591,12 +591,18 @@ export function useUserResults(userId: string | null) {
 
       try {
         // Use the new RPC function that respects RLS
-        const { data: results, error } = await supabase.rpc('get_user_results_with_scores', {
+        const { data: results, error } = await supabase.rpc('get_user_results_data', {
           p_user_id: userId,
         })
 
         if (error) {
-          console.warn('Error fetching user results:', error);
+          console.error('❌ DETAILED ERROR fetching user results:', {
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+            code: error.code,
+            fullError: error
+          });
           return [];
         }
 
@@ -639,12 +645,18 @@ export function useLatestResult(userId: string | null) {
 
       try {
         // Use the new RPC function that respects RLS
-        const { data: results, error } = await supabase.rpc('get_latest_user_result', {
+        const { data: results, error } = await supabase.rpc('get_latest_result_data', {
           p_user_id: userId,
         })
 
         if (error) {
-          console.warn('Error fetching latest result:', error);
+          console.error('❌ DETAILED ERROR fetching latest result:', {
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+            code: error.code,
+            fullError: error
+          });
           return null;
         }
 
@@ -688,8 +700,9 @@ export function useSubmitQuiz() {
       })
 
       if (error) {
-        console.error('Quiz submission error:', error)
-        throw error
+        const errorMessage = error.message || error.details || JSON.stringify(error) || 'Failed to submit quiz'
+        console.error('Quiz submission error:', errorMessage, error)
+        throw new Error(errorMessage)
       }
 
       if (!data || data.length === 0) {
@@ -767,36 +780,34 @@ export function useResultBySessionId(sessionId: string) {
       if (!sessionId) return null
 
       try {
-        // First get session info
-        const { data: session, error: sessionError } = await supabase
-          .from('quiz_sessions')
-          .select('id, created_at')
-          .eq('id', sessionId)
-          .single()
-
-        if (sessionError) {
-          console.warn('Session not found:', sessionError)
-          return null
-        }
-
-        // Calculate result using RPC
-        const { data: rpcResult, error: rpcError } = await supabase.rpc('calculate_quiz_result', {
+        // Use SECURITY DEFINER function to bypass RLS
+        const { data: rpcResult, error: rpcError } = await supabase.rpc('get_quiz_result_by_id', {
           p_session_id: sessionId,
         })
 
         if (rpcError) {
-          console.warn('Error calculating result:', rpcError)
+          console.warn('Error fetching quiz result:', rpcError)
           return null
         }
 
+        if (!rpcResult || rpcResult.length === 0) {
+          console.warn('No result found for session:', sessionId)
+          return null
+        }
+
+        // Extract session info from first row
+        const firstRow = rpcResult[0]
+        const createdAt = firstRow.created_at
+
+        // Build totalScore from all rows
         const totalScore: Record<string, number> = {}
-        rpcResult.forEach((item: { gift?: string; total_weighted?: number }) => {
-          if (item.gift) {
-            totalScore[item.gift] = item.total_weighted || 0
+        rpcResult.forEach((item: { gift_key?: string; total_weighted?: number }) => {
+          if (item.gift_key) {
+            totalScore[item.gift_key] = item.total_weighted || 0
           }
         })
 
-        // Get gift names from the database instead of static data
+        // Get gift names from the database
         const spiritualGiftsData = await supabase.rpc('get_all_gifts_with_data', { p_locale: 'pt' })
         const gifts = spiritualGiftsData.data || []
         const topGifts = Object.entries(totalScore)
@@ -808,10 +819,10 @@ export function useResultBySessionId(sessionId: string) {
           })
 
         return {
-          sessionId: session.id,
+          sessionId,
           totalScore,
           topGifts,
-          createdAt: session.created_at
+          createdAt
         }
       } catch (error) {
         console.error('Error fetching result by session ID:', error)

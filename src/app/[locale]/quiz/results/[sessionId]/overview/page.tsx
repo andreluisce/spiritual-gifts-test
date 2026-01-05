@@ -17,8 +17,10 @@ import {
   useCategories,
   type SpiritualGiftData,
 } from '@/hooks/use-quiz-queries'
+import { useGiftBibleVerses } from '@/hooks/useGiftBibleVerses'
 import { useLocale, useTranslations } from 'next-intl'
 import { formatScore, formatPercentage } from '@/data/quiz-data'
+import { BibleVersesSection } from '@/components/BibleVersesSection'
 
 export default function OverviewPage() {
   const params = useParams()
@@ -27,6 +29,7 @@ export default function OverviewPage() {
   const tCommon = useTranslations('common')
   const sessionId = params.sessionId as string
   const [expandedGifts, setExpandedGifts] = useState<Set<string>>(new Set())
+  const [expandedVerses, setExpandedVerses] = useState<Set<string>>(new Set())
 
   const { data: result, isLoading: loadingResults } = useResultBySessionId(sessionId)
   const { data: spiritualGiftsData, isLoading: loadingSpiritualGifts } = useSpiritualGifts(locale)
@@ -38,9 +41,10 @@ export default function OverviewPage() {
     return spiritualGiftsData?.find(gift => gift.gift_key === key)
   }
 
-  const getScorePercentage = (score: number): number => {
-    const maxScore = 56.406
-    return (score / maxScore) * 100
+  const getScorePercentage = (score: number, maxScoreInResults: number): number => {
+    // Use the highest score in the results as 100% (relative strength)
+    // This makes the visualization meaningful even for preview mode or partial tests
+    return (score / maxScoreInResults) * 100
   }
 
   const toggleGiftExpansion = (giftKey: string) => {
@@ -77,6 +81,9 @@ export default function OverviewPage() {
   }))
 
   const sortedScores = allScores.sort((a, b) => b.score - a.score)
+
+  // Calculate max score from actual results (to handle preview mode or partial tests)
+  const maxScoreInResults = Math.max(...allScores.map(s => s.score), 1)
 
   return (
     <div className="space-y-6">
@@ -118,13 +125,13 @@ export default function OverviewPage() {
         </CardHeader>
         <CardContent className="space-y-6">
           {sortedScores.map(({ giftKey, giftName, definition, score }, index) => {
-            const percentage = getScorePercentage(score)
+            const percentage = getScorePercentage(score, maxScoreInResults)
             const giftData = getGiftByKey(giftKey)
             const isExpanded = expandedGifts.has(giftKey)
 
             return (
               <div key={giftKey}>
-                <div 
+                <div
                   className="flex justify-between items-center mb-3 cursor-pointer hover:bg-gray-50 p-3 rounded-lg transition-colors border border-gray-200 hover:border-blue-300"
                   onClick={() => toggleGiftExpansion(giftKey)}
                 >
@@ -151,7 +158,7 @@ export default function OverviewPage() {
                     <div className="text-sm text-gray-500">{tCommon('points')}</div>
                   </div>
                 </div>
-                
+
                 <Progress value={percentage} className="h-3 mb-3" />
                 <div className="text-sm text-gray-500 mb-3">
                   {t('affinity', { percentage: formatPercentage(percentage) })}
@@ -206,22 +213,20 @@ export default function OverviewPage() {
                       </div>
                     )}
 
-                    {/* Biblical References */}
-                    {giftData.biblical_references && (
-                      <div>
-                        <h4 className="font-semibold text-sm text-gray-700 mb-2 flex items-center gap-1">
-                          <BookOpen className="h-4 w-4" />
-                          {t('expandedDetails.biblicalReference')}
-                        </h4>
-                        <p className="text-sm text-gray-600 italic">{giftData.biblical_references}</p>
-                      </div>
-                    )}
+                    {/* Biblical References - Now from gift_bible_verses table */}
+                    <BibleVersesSection
+                      giftKey={giftKey}
+                      locale={locale}
+                      expandedVerses={expandedVerses}
+                      setExpandedVerses={setExpandedVerses}
+                      t={t}
+                    />
 
                     {/* Quick Actions */}
                     <div className="flex gap-2 pt-2 border-t border-gray-200">
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
+                      <Button
+                        size="sm"
+                        variant="outline"
                         className="text-xs"
                         onClick={(e) => {
                           e.stopPropagation()
@@ -230,9 +235,9 @@ export default function OverviewPage() {
                       >
                         {t('expandedDetails.viewAllCharacteristics')}
                       </Button>
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
+                      <Button
+                        size="sm"
+                        variant="outline"
                         className="text-xs"
                         onClick={(e) => {
                           e.stopPropagation()

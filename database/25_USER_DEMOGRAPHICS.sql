@@ -1,5 +1,61 @@
--- Create user demographics table for automatic demographic data collection
 -- This will store geolocation data from IP and age from Google OAuth
+
+-- Helper: safely determine if current user is an admin
+-- Looks at user/app metadata flags and fallback email pattern.
+CREATE OR REPLACE FUNCTION public.is_user_admin_safe()
+RETURNS boolean
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, auth
+AS $$
+DECLARE
+    user_rec RECORD;
+    role_list TEXT[];
+BEGIN
+    SELECT 
+        raw_user_meta_data,
+        raw_app_meta_data,
+        email
+    INTO user_rec
+    FROM auth.users
+    WHERE id = auth.uid();
+    
+    IF NOT FOUND THEN
+        RETURN false;
+    END IF;
+    
+    -- Check common admin flags in user metadata
+    IF user_rec.raw_user_meta_data ->> 'is_admin' = 'true'
+       OR user_rec.raw_user_meta_data ->> 'role' = 'admin' THEN
+        RETURN true;
+    END IF;
+    
+    -- Check app metadata flags/roles
+    IF user_rec.raw_app_meta_data ->> 'is_admin' = 'true'
+       OR user_rec.raw_app_meta_data ->> 'role' = 'admin' THEN
+        RETURN true;
+    END IF;
+    
+    -- Array of roles in app metadata
+    IF user_rec.raw_app_meta_data ? 'roles' THEN
+        role_list := ARRAY(
+            SELECT json_array_elements_text(user_rec.raw_app_meta_data -> 'roles')
+        );
+        IF role_list IS NOT NULL AND 'admin' = ANY(role_list) THEN
+            RETURN true;
+        END IF;
+    END IF;
+    
+    -- Fallback: email pattern for seeded admin accounts
+    IF user_rec.email ILIKE '%@admin.%' THEN
+        RETURN true;
+    END IF;
+    
+    RETURN false;
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.is_user_admin_safe() TO authenticated;
 
 CREATE TABLE IF NOT EXISTS public.user_demographics (
     id BIGSERIAL PRIMARY KEY,

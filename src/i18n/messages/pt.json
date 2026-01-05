@@ -255,7 +255,7 @@
       "guidance": "Orientações práticas"
     },
     "detailedScores": "Pontuação Detalhada",
-    "affinity": "{percentage}% de afinidade",
+    "affinity": "{percentage}% de força relativa",
     "qualitiesTitle": "Qualidades a Desenvolver",
     "qualitiesDescription": "Sete qualidades importantes para desenvolver no dom de {giftName}",
     "precautionsTitle": "Cuidados e Perigos",
@@ -860,7 +860,11 @@
       "35-44": "35-44 anos",
       "45-54": "45-54 anos",
       "55-64": "55-64 anos",
-      "65+": "65+ anos"
+      "65+": "65+ anos",
+      "Unknown": "Desconhecido"
+    },
+    "countries": {
+      "Unknown": "Desconhecido"
     }
   },
   "demographics": {
@@ -886,7 +890,11 @@
       "35-44": "35-44 anos",
       "45-54": "45-54 anos",
       "55-64": "55-64 anos",
-      "65+": "65+ anos"
+      "65+": "65+ anos",
+      "Unknown": "Desconhecido"
+    },
+    "countries": {
+      "Unknown": "Desconhecido"
     }
   },
   "profile": {

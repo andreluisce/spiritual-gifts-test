@@ -31,7 +31,8 @@ export default function QuizSettingsPage() {
   const t = useTranslations('admin.settings.quiz')
   const { settings, updateSettings } = useSystemSettings()
   const [localSettings, setLocalSettings] = useState<SystemSettings | null>(null)
-  
+  const [isSaving, setIsSaving] = useState(false)
+
   // Sync local settings with fetched settings
   useEffect(() => {
     if (settings) {
@@ -40,14 +41,29 @@ export default function QuizSettingsPage() {
   }, [settings])
 
   // Debounce local settings changes
-  const debouncedSettings = useDebounce(localSettings, 500)
+  const debouncedSettings = useDebounce(localSettings, 1000)
 
   // Update server when debounced settings change
   useEffect(() => {
-    if (debouncedSettings && settings && debouncedSettings !== settings) {
+    if (!debouncedSettings || !settings) return
+
+    // Only update if the settings actually changed (deep comparison)
+    const hasChanged = JSON.stringify(debouncedSettings) !== JSON.stringify(settings)
+
+    if (hasChanged) {
+      setIsSaving(true)
       updateSettings(debouncedSettings)
+        .then(() => {
+          setIsSaving(false)
+        })
+        .catch((error) => {
+          console.error('Failed to update settings:', error)
+          setIsSaving(false)
+          // Revert to previous settings on error
+          setLocalSettings(settings)
+        })
     }
-  }, [debouncedSettings, settings, updateSettings])
+  }, [debouncedSettings])
 
   const handleSettingChange = useCallback((key: string, value: string | boolean | number) => {
     if (!localSettings) return
@@ -102,6 +118,14 @@ export default function QuizSettingsPage() {
 
   return (
     <div className="space-y-6">
+      {/* Saving indicator */}
+      {isSaving && (
+        <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-2 rounded-lg flex items-center gap-2">
+          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+          <span className="text-sm">Saving changes...</span>
+        </div>
+      )}
+
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
