@@ -89,9 +89,15 @@ export default function ResultsLayout({ children }: ResultsLayoutProps) {
     .map(([giftKey, score]) => ({ giftKey, score }))
     .sort((a, b) => b.score - a.score)
 
+  // Calculate maxScore dynamically based on actual quiz length
+  // Each question can score 0-5 points, and there are 7 gifts
+  // So if user answered N questions, maxScore = N * 5 / 7 (distributed across gifts)
+  // But we want the ACTUAL max score from the results for relative percentage
+  const actualMaxScore = Math.max(...sortedScores.map(s => s.score), 1)
+
   const getScorePercentage = (score: number): number => {
-    const maxScore = 56.406
-    return (score / maxScore) * 100
+    // Use the highest score in results as 100% (relative strength)
+    return (score / actualMaxScore) * 100
   }
 
   const topGift = sortedScores[0]
@@ -100,17 +106,17 @@ export default function ResultsLayout({ children }: ResultsLayoutProps) {
   // Calculate compatibility level based on score distribution
   const getCompatibilityLevel = () => {
     if (sortedScores.length < 2) return t('excellent')
-    
+
     const topScore = sortedScores[0].score
     const secondScore = sortedScores[1].score
-    
+
     // Convert to percentage differences for more meaningful thresholds
     const topPercentage = getScorePercentage(topScore)
     const secondPercentage = getScorePercentage(secondScore)
     const percentageDifference = topPercentage - secondPercentage
-    
+
     // Calculate percentage difference for more meaningful thresholds
-    
+
     // Higher difference = more focused/compatible profile (using percentage differences)
     if (percentageDifference > 15) return t('excellent')    // >15% difference
     if (percentageDifference > 10) return t('good')         // 10-15% difference
@@ -124,7 +130,7 @@ export default function ResultsLayout({ children }: ResultsLayoutProps) {
   const handleSendEmail = async () => {
     clearError()
     const result = await sendQuizResultsEmail(sessionId)
-    
+
     if (result.success) {
       setEmailSent(true)
       setShowEmailDialog(false)
@@ -172,242 +178,242 @@ export default function ResultsLayout({ children }: ResultsLayoutProps) {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
       <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
         <div className="p-2 sm:p-4 m-1 sm:m-4">
-        {/* Results Header */}
-        <div className="mb-6">
-          {/* Action bar - Email and Session ID */}
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">{t('title')}</h1>
-              <p className="text-sm text-gray-600">
-                {topGiftData ? `${t('yourTopGift')}: ${topGiftData.name}` : t('yourResults')}
-              </p>
+          {/* Results Header */}
+          <div className="mb-6">
+            {/* Action bar - Email and Session ID */}
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">{t('title')}</h1>
+                <p className="text-sm text-gray-600">
+                  {topGiftData ? `${t('yourTopGift')}: ${topGiftData.name}` : t('yourResults')}
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => router.push('/dashboard')}
+                  className="flex items-center gap-2"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  <span className="hidden sm:inline">{t('backToDashboard')}</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowEmailDialog(true)}
+                  className="flex items-center gap-2"
+                  disabled={sending}
+                >
+                  {sending ? (
+                    <>
+                      <Send className="h-4 w-4 animate-pulse" />
+                      <span className="hidden sm:inline">Enviando...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Mail className="h-4 w-4" />
+                      <span className="hidden sm:inline">Enviar por Email</span>
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
-            <div className="flex items-center gap-3">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => router.push('/dashboard')}
-                className="flex items-center gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                <span className="hidden sm:inline">{t('backToDashboard')}</span>
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowEmailDialog(true)}
-                className="flex items-center gap-2"
-                disabled={sending}
-              >
-                {sending ? (
-                  <>
-                    <Send className="h-4 w-4 animate-pulse" />
-                    <span className="hidden sm:inline">Enviando...</span>
-                  </>
-                ) : (
-                  <>
-                    <Mail className="h-4 w-4" />
-                    <span className="hidden sm:inline">Enviar por Email</span>
-                  </>
-                )}
-              </Button>
-            </div>
+
+            {/* Email Success/Error Messages */}
+            {emailSent && (
+              <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2">
+                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-green-800">Email enviado com sucesso!</p>
+                  <p className="text-xs text-green-600">Verifique sua caixa de entrada para ver seus resultados detalhados.</p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setEmailSent(false)}
+                  className="text-green-600 hover:text-green-700"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+
+            {emailError && (
+              <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-red-800">Erro ao enviar email</p>
+                  <p className="text-xs text-red-600">{emailError}</p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearError}
+                  className="text-red-600 hover:text-red-700"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
           </div>
 
-          {/* Email Success/Error Messages */}
-          {emailSent && (
-            <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-              <div className="flex-1">
-                <p className="text-sm font-medium text-green-800">Email enviado com sucesso!</p>
-                <p className="text-xs text-green-600">Verifique sua caixa de entrada para ver seus resultados detalhados.</p>
+          {/* Results Summary Card */}
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Eye className="h-5 w-5 text-blue-600" />
+                {t('resultsSummary')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-blue-600">
+                    {topGiftData?.name || topGift?.giftKey}
+                  </p>
+                  <p className="text-sm text-gray-500">{t('primaryGift')}</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-green-600">
+                    {formatScore(getScorePercentage(topGift?.score || 0), 1)}%
+                  </p>
+                  <p className="text-sm text-gray-500">{t('strength')}</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-lg font-bold text-purple-600">
+                    {new Date(result.createdAt).toLocaleDateString(locale === 'pt' ? 'pt-BR' : locale === 'es' ? 'es-ES' : 'en-US')}
+                  </p>
+                  <p className="text-sm text-gray-500">{t('testDate')}</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-lg font-bold text-orange-600">
+                    {compatibilityLevel}
+                  </p>
+                  <p className="text-sm text-gray-500">{t('compatibilityLevel')}</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-lg font-bold text-indigo-600">
+                    {t('exploreGifts')}
+                  </p>
+                  <p className="text-sm text-gray-500">{t('nextAction')}</p>
+                </div>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setEmailSent(false)}
-                className="text-green-600 hover:text-green-700"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-          )}
+            </CardContent>
+          </Card>
 
-          {emailError && (
-            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0" />
-              <div className="flex-1">
-                <p className="text-sm font-medium text-red-800">Erro ao enviar email</p>
-                <p className="text-xs text-red-600">{emailError}</p>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={clearError}
-                className="text-red-600 hover:text-red-700"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-          )}
-        </div>
-
-        {/* Results Summary Card */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Eye className="h-5 w-5 text-blue-600" />
-              {t('resultsSummary')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-              <div className="text-center">
-                <p className="text-2xl font-bold text-blue-600">
-                  {topGiftData?.name || topGift?.giftKey}
-                </p>
-                <p className="text-sm text-gray-500">{t('primaryGift')}</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-green-600">
-                  {formatScore(getScorePercentage(topGift?.score || 0), 1)}%
-                </p>
-                <p className="text-sm text-gray-500">{t('strength')}</p>
-              </div>
-              <div className="text-center">
-                <p className="text-lg font-bold text-purple-600">
-                  {new Date(result.createdAt).toLocaleDateString(locale === 'pt' ? 'pt-BR' : locale === 'es' ? 'es-ES' : 'en-US')}
-                </p>
-                <p className="text-sm text-gray-500">{t('testDate')}</p>
-              </div>
-              <div className="text-center">
-                <p className="text-lg font-bold text-orange-600">
-                  {compatibilityLevel}
-                </p>
-                <p className="text-sm text-gray-500">{t('compatibilityLevel')}</p>
-              </div>
-              <div className="text-center">
-                <p className="text-lg font-bold text-indigo-600">
-                  {t('exploreGifts')}
-                </p>
-                <p className="text-sm text-gray-500">{t('nextAction')}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Navigation Sidebar */}
-          <div className="lg:col-span-1">
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-gray-600">
-                  {t('sections')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-0">
-                <nav className="space-y-1">
-                  {navItems.map((item) => {
-                    const isActive = currentPath === item.href.split('/').pop()
-                    return (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        className={cn(
-                          "flex items-start gap-3 px-3 sm:px-4 py-3 transition-colors hover:bg-gray-50",
-                          isActive && "bg-blue-50 border-l-2 border-blue-600"
-                        )}
-                      >
-                        <div className={cn(
-                          "mt-0.5 flex-shrink-0",
-                          isActive ? "text-blue-600" : "text-gray-400"
-                        )}>
-                          {item.icon}
-                        </div>
-                        <div className="flex-1 min-w-0">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* Navigation Sidebar */}
+            <div className="lg:col-span-1">
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm font-medium text-gray-600">
+                    {t('sections')}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <nav className="space-y-1">
+                    {navItems.map((item) => {
+                      const isActive = currentPath === item.href.split('/').pop()
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className={cn(
+                            "flex items-start gap-3 px-3 sm:px-4 py-3 transition-colors hover:bg-gray-50",
+                            isActive && "bg-blue-50 border-l-2 border-blue-600"
+                          )}
+                        >
                           <div className={cn(
-                            "font-medium text-sm truncate",
-                            isActive ? "text-blue-900" : "text-gray-900"
+                            "mt-0.5 flex-shrink-0",
+                            isActive ? "text-blue-600" : "text-gray-400"
                           )}>
-                            {item.label}
+                            {item.icon}
                           </div>
-                          <div className="text-xs text-gray-500 mt-0.5 hidden sm:block">
-                            {item.description}
+                          <div className="flex-1 min-w-0">
+                            <div className={cn(
+                              "font-medium text-sm truncate",
+                              isActive ? "text-blue-900" : "text-gray-900"
+                            )}>
+                              {item.label}
+                            </div>
+                            <div className="text-xs text-gray-500 mt-0.5 hidden sm:block">
+                              {item.description}
+                            </div>
                           </div>
-                        </div>
-                      </Link>
-                    )
-                  })}
-                </nav>
-              </CardContent>
-            </Card>
+                        </Link>
+                      )
+                    })}
+                  </nav>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Main Content Area */}
+            <div className="lg:col-span-3">
+              {children}
+            </div>
           </div>
 
-          {/* Main Content Area */}
-          <div className="lg:col-span-3">
-            {children}
-          </div>
-        </div>
-
-        {/* Email Confirmation Dialog */}
-        {showEmailDialog && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-lg max-w-md w-full">
-              <div className="p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 bg-blue-100 rounded-full">
-                    <Mail className="h-6 w-6 text-blue-600" />
+          {/* Email Confirmation Dialog */}
+          {showEmailDialog && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-lg shadow-lg max-w-md w-full">
+                <div className="p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-blue-100 rounded-full">
+                      <Mail className="h-6 w-6 text-blue-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">Enviar Resultados por Email</h3>
+                      <p className="text-sm text-gray-600">Receba seus resultados detalhados na sua caixa de entrada</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900">Enviar Resultados por Email</h3>
-                    <p className="text-sm text-gray-600">Receba seus resultados detalhados na sua caixa de entrada</p>
-                  </div>
-                </div>
 
-                <div className="mb-6">
-                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                    <h4 className="font-medium text-blue-900 mb-2">O que você receberá:</h4>
-                    <ul className="text-sm text-blue-800 space-y-1">
-                      <li>• Seu dom espiritual principal identificado</li>
-                      <li>• Descrição detalhada do seu dom</li>
-                      <li>• Sugestões para desenvolvimento</li>
-                      <li>• Data de conclusão do teste</li>
-                      <li>• Link para acessar novamente seus resultados</li>
-                    </ul>
+                  <div className="mb-6">
+                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                      <h4 className="font-medium text-blue-900 mb-2">O que você receberá:</h4>
+                      <ul className="text-sm text-blue-800 space-y-1">
+                        <li>• Seu dom espiritual principal identificado</li>
+                        <li>• Descrição detalhada do seu dom</li>
+                        <li>• Sugestões para desenvolvimento</li>
+                        <li>• Data de conclusão do teste</li>
+                        <li>• Link para acessar novamente seus resultados</li>
+                      </ul>
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowEmailDialog(false)}
-                    className="flex-1"
-                    disabled={sending}
-                  >
-                    Cancelar
-                  </Button>
-                  <Button
-                    onClick={handleSendEmail}
-                    disabled={sending}
-                    className="flex-1"
-                  >
-                    {sending ? (
-                      <>
-                        <Send className="h-4 w-4 mr-2 animate-pulse" />
-                        Enviando...
-                      </>
-                    ) : (
-                      <>
-                        <Send className="h-4 w-4 mr-2" />
-                        Enviar Email
-                      </>
-                    )}
-                  </Button>
+                  <div className="flex gap-3">
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowEmailDialog(false)}
+                      className="flex-1"
+                      disabled={sending}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      onClick={handleSendEmail}
+                      disabled={sending}
+                      className="flex-1"
+                    >
+                      {sending ? (
+                        <>
+                          <Send className="h-4 w-4 mr-2 animate-pulse" />
+                          Enviando...
+                        </>
+                      ) : (
+                        <>
+                          <Send className="h-4 w-4 mr-2" />
+                          Enviar Email
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
         </div>
       </div>
     </div>
