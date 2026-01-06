@@ -175,7 +175,7 @@ export default function OverviewPage() {
                         </h4>
                         <div className="space-y-2">
                           {giftData.characteristics.slice(0, 3).map((char, charIndex) => (
-                            <div key={charIndex} className="flex items-start gap-2">
+                            <div key={char.characteristic || `char-${giftKey}-${charIndex}`} className="flex items-start gap-2">
                               <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
                               <p className="text-sm text-gray-600">{char.characteristic}</p>
                             </div>
@@ -198,7 +198,7 @@ export default function OverviewPage() {
                         </h4>
                         <div className="space-y-2">
                           {giftData.qualities.slice(0, 3).map((quality, qualityIndex) => (
-                            <div key={qualityIndex} className="flex items-start gap-2">
+                            <div key={quality.quality_name || `quality-${giftKey}-${qualityIndex}`} className="flex items-start gap-2">
                               <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
                               <p className="text-sm text-gray-600">{quality.quality_name}</p>
                             </div>

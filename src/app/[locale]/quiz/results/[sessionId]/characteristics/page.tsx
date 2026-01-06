@@ -67,7 +67,7 @@ export default function CharacteristicsPage() {
           {topGiftData?.characteristics && topGiftData.characteristics.length > 0 ? (
             <div className="space-y-3">
               {topGiftData.characteristics.map((char, index) => (
-                <div key={index} className="flex items-start gap-3">
+                <div key={char.characteristic || `char-${index}`} className="flex items-start gap-3">
                   <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
                   <p className="text-gray-700">{char.characteristic}</p>
                 </div>
@@ -117,12 +117,11 @@ export default function CharacteristicsPage() {
                 </p>
               </CardHeader>
               <CardContent className="space-y-6">
-                {otherGifts.map(({ giftKey }) => {
-                  const giftData = spiritualGiftsData.find(gift => gift.gift_key === giftKey)
-                  if (!giftData) return null
-
-                  return (
-                    <div key={giftKey} className="border-l-4 border-gray-300 pl-4">
+                {otherGifts
+                  .map(({ giftKey }) => spiritualGiftsData.find(gift => gift.gift_key === giftKey))
+                  .filter((giftData): giftData is NonNullable<typeof giftData> => giftData !== null && giftData !== undefined)
+                  .map((giftData) => (
+                    <div key={giftData.gift_key} className="border-l-4 border-gray-300 pl-4">
                       <h3 className="font-semibold text-lg text-gray-800 mb-2">
                         {giftData.name}
                       </h3>
@@ -131,7 +130,7 @@ export default function CharacteristicsPage() {
                       {giftData.characteristics && giftData.characteristics.length > 0 ? (
                         <div className="space-y-2">
                           {giftData.characteristics.map((char, charIndex) => (
-                            <div key={charIndex} className="flex items-start gap-2">
+                            <div key={char.characteristic || `char-${giftKey}-${charIndex}`} className="flex items-start gap-2">
                               <div className="w-1.5 h-1.5 bg-gray-500 rounded-full mt-2 flex-shrink-0"></div>
                               <p className="text-sm text-gray-700">{char.characteristic}</p>
                             </div>
@@ -143,8 +142,7 @@ export default function CharacteristicsPage() {
                         </p>
                       )}
                     </div>
-                  )
-                })}
+                  ))}
               </CardContent>
             </Card>
           )}

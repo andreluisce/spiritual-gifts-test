@@ -63,7 +63,7 @@ export default function QualitiesPage() {
           {topGiftData?.qualities && topGiftData.qualities.length > 0 ? (
             <div className="space-y-4">
               {topGiftData.qualities.map((quality, index) => (
-                <div key={index} className="border-l-4 border-blue-500 pl-4">
+                <div key={quality.quality_name || `quality-${index}`} className="border-l-4 border-blue-500 pl-4">
                   <h4 className="font-semibold text-gray-800">{quality.quality_name}</h4>
                   {quality.description && (
                     <p className="text-sm text-gray-600 mt-1">{quality.description}</p>
@@ -93,12 +93,11 @@ export default function QualitiesPage() {
           </p>
         </CardHeader>
         <CardContent className="space-y-6">
-          {sortedScores.slice(0, 5).map(({ giftKey }) => {
-            const giftData = spiritualGiftsData.find(gift => gift.gift_key === giftKey)
-            if (!giftData) return null
-
-            return (
-              <div key={giftKey} className="border-l-4 border-green-500 pl-4">
+          {sortedScores.slice(0, 5)
+            .map(({ giftKey }) => spiritualGiftsData.find(gift => gift.gift_key === giftKey))
+            .filter((giftData): giftData is NonNullable<typeof giftData> => giftData !== null && giftData !== undefined)
+            .map((giftData) => (
+              <div key={giftData.gift_key} className="border-l-4 border-green-500 pl-4">
                 <h3 className="font-semibold text-lg text-gray-800 mb-2">
                   {giftData.name}
                 </h3>
@@ -107,7 +106,7 @@ export default function QualitiesPage() {
                 {giftData.qualities && giftData.qualities.length > 0 ? (
                   <div className="space-y-3">
                     {giftData.qualities.map((quality, qualityIndex) => (
-                      <div key={qualityIndex} className="bg-green-50 p-3 rounded-lg">
+                      <div key={quality.quality_name || `quality-${qualityIndex}`} className="bg-green-50 p-3 rounded-lg">
                         <h4 className="font-medium text-green-800">{quality.quality_name}</h4>
                         {quality.description && (
                           <p className="text-sm text-green-700 mt-1">{quality.description}</p>
@@ -121,8 +120,7 @@ export default function QualitiesPage() {
                   </p>
                 )}
               </div>
-            )
-          })}
+            ))}
         </CardContent>
       </Card>
     </div>

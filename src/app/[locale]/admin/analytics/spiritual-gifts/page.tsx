@@ -63,7 +63,7 @@ export default function AnalyticsSpiritualGiftsPage() {
           <div className="space-y-6">
             {realGifts && realGifts.length > 0 ? (
               realGifts.slice(0, 7).map((gift, index) => (
-                <div key={gift.gift_name} className="space-y-3">
+                <div key={gift.gift_name || `gift-${index}`} className="space-y-3">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-3 flex-1 min-w-0">
                       <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-semibold text-sm flex-shrink-0">

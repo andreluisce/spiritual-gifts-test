@@ -65,7 +65,7 @@ export default function GuidancePage() {
               <CardContent>
                 <div className="space-y-3">
                   {topGiftData.dangers.map((danger, index) => (
-                    <div key={index} className="flex items-start gap-3">
+                    <div key={danger.danger || `danger-${index}`} className="flex items-start gap-3">
                       <div className="w-2 h-2 bg-amber-600 rounded-full mt-2 flex-shrink-0"></div>
                       <p className="text-gray-700">{danger.danger}</p>
                     </div>
@@ -90,7 +90,7 @@ export default function GuidancePage() {
               <CardContent>
                 <div className="space-y-3">
                   {topGiftData.misunderstandings.map((misunderstanding, index) => (
-                    <div key={index} className="flex items-start gap-3">
+                    <div key={misunderstanding.misunderstanding || `misunderstanding-${index}`} className="flex items-start gap-3">
                       <div className="w-2 h-2 bg-red-600 rounded-full mt-2 flex-shrink-0"></div>
                       <p className="text-gray-700">{misunderstanding.misunderstanding}</p>
                     </div>
@@ -150,17 +150,20 @@ export default function GuidancePage() {
           </p>
         </CardHeader>
         <CardContent className="space-y-6">
-          {sortedScores.slice(0, 3).map(({ giftKey }) => {
-            const giftData = spiritualGiftsData.find(gift => gift.gift_key === giftKey)
-            if (!giftData) return null
+          {sortedScores.slice(0, 3)
+            .map(({ giftKey }) => spiritualGiftsData.find(gift => gift.gift_key === giftKey))
+            .filter((giftData): giftData is NonNullable<typeof giftData> => {
+              if (!giftData) return false
+              const hasDangers = giftData.dangers && giftData.dangers.length > 0
+              const hasMisunderstandings = giftData.misunderstandings && giftData.misunderstandings.length > 0
+              return hasDangers || hasMisunderstandings
+            })
+            .map((giftData) => {
+              const hasDangers = giftData.dangers && giftData.dangers.length > 0
+              const hasMisunderstandings = giftData.misunderstandings && giftData.misunderstandings.length > 0
 
-            const hasDangers = giftData.dangers && giftData.dangers.length > 0
-            const hasMisunderstandings = giftData.misunderstandings && giftData.misunderstandings.length > 0
-
-            if (!hasDangers && !hasMisunderstandings) return null
-
-            return (
-              <div key={giftKey} className="border rounded-lg p-4">
+              return (
+              <div key={giftData.gift_key} className="border rounded-lg p-4">
                 <h3 className="font-semibold text-lg text-gray-800 mb-3">
                   {giftData.name}
                 </h3>
@@ -173,7 +176,7 @@ export default function GuidancePage() {
                     </h4>
                     <div className="space-y-2">
                       {giftData.dangers?.map((danger, index) => (
-                        <div key={index} className="flex items-start gap-2">
+                        <div key={danger.danger || `danger-${giftKey}-${index}`} className="flex items-start gap-2">
                           <div className="w-1.5 h-1.5 bg-amber-500 rounded-full mt-2 flex-shrink-0"></div>
                           <p className="text-sm text-gray-700">{danger.danger}</p>
                         </div>
@@ -190,7 +193,7 @@ export default function GuidancePage() {
                     </h4>
                     <div className="space-y-2">
                       {giftData.misunderstandings?.map((misunderstanding, index) => (
-                        <div key={index} className="flex items-start gap-2">
+                        <div key={misunderstanding.misunderstanding || `misunderstanding-${giftKey}-${index}`} className="flex items-start gap-2">
                           <div className="w-1.5 h-1.5 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
                           <p className="text-sm text-gray-700">{misunderstanding.misunderstanding}</p>
                         </div>

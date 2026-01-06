@@ -320,7 +320,7 @@ export default function AIAnalyticsPage() {
               </div>
               <div className="grid grid-cols-7 gap-1 text-xs">
                 {timeline.slice(-7).map((day: AITimelineData, index) => (
-                  <div key={index} className="text-center">
+                  <div key={day.analysis_date || day.date || `day-${index}`} className="text-center">
                     <div className="text-gray-500">
                       {new Date(day.analysis_date).toLocaleDateString('pt-BR', { weekday: 'short' })}
                     </div>

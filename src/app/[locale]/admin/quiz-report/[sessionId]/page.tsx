@@ -128,9 +128,9 @@ export default function QuizReportPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {spiritual_gifts?.map((gift) => (
+            {spiritual_gifts?.map((gift, index) => (
               <div
-                key={gift.gift_key || `gift-${gift.rank}`}
+                key={gift.gift_key || `gift-${gift.rank || index}`}
                 className={`p-4 rounded-lg border-2 ${gift.strength === 'Primário'
                   ? 'bg-yellow-50 border-yellow-300'
                   : gift.strength === 'Secundário'
@@ -175,7 +175,7 @@ export default function QuizReportPage() {
             </CardHeader>
             <CardContent className="space-y-6">
               {ai_insights.map((insight, index) => (
-                <div key={insight.gift_name || `insight-${index}`} className="space-y-4 pb-6 border-b last:border-b-0">
+                <div key={`insight-${insight.gift_name || index}`} className="space-y-4 pb-6 border-b last:border-b-0">
                   <h3 className="text-xl font-semibold text-purple-900">{insight.gift_name}</h3>
 
                   {insight.description && (
@@ -221,8 +221,8 @@ export default function QuizReportPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {questions_and_answers.map((qa) => (
-                  <div key={qa.question_number} className="p-4 bg-gray-50 rounded-lg">
+                {questions_and_answers.map((qa, index) => (
+                  <div key={qa.question_number || `qa-${index}`} className="p-4 bg-gray-50 rounded-lg">
                     <div className="flex items-start gap-3">
                       <div className="flex-shrink-0 w-8 h-8 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center font-semibold text-sm">
                         {qa.question_number}

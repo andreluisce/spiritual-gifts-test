@@ -1200,6 +1200,14 @@ export type Database = {
           purpose: string
         }[]
       }
+      get_characteristics_i18n: {
+        Args: { p_gift_key: string; p_locale?: string }
+        Returns: {
+          characteristic_name: string
+          description: string
+          order_sequence: number
+        }[]
+      }
       get_comprehensive_analytics_data: {
         Args: { p_date_range: string }
         Returns: Json
@@ -1208,6 +1216,18 @@ export type Database = {
       get_educational_content: {
         Args: { p_locale?: string; p_section_type?: string }
         Returns: Json
+      }
+      get_educational_content_i18n: {
+        Args: { p_locale?: string }
+        Returns: {
+          biblical_reference: string
+          content: string
+          content_id: string
+          is_active: boolean
+          order_index: number
+          section_type: string
+          title: string
+        }[]
       }
       get_geographic_demographics: {
         Args: never
@@ -1220,6 +1240,15 @@ export type Database = {
         }[]
       }
       get_geographic_distribution: { Args: never; Returns: Json }
+      get_gift_bible_verses_i18n: {
+        Args: { p_gift_key: string; p_locale?: string }
+        Returns: {
+          context_note: string
+          relevance_score: number
+          verse_reference: string
+          verse_text: string
+        }[]
+      }
       get_gift_compatibility:
         | { Args: { gift1_key: string; gift2_key: string }; Returns: Json }
         | {
@@ -1235,6 +1264,10 @@ export type Database = {
           p_gift_key: Database["public"]["Enums"]["gift_key"]
           p_locale?: string
         }
+        Returns: Json
+      }
+      get_gift_complete_i18n: {
+        Args: { p_gift_key: string; p_locale?: string }
         Returns: Json
       }
       get_gift_distribution: {
@@ -1298,6 +1331,18 @@ export type Database = {
           text: string
         }[]
       }
+      get_questions_i18n: {
+        Args: { p_locale?: string }
+        Returns: {
+          default_weight: number
+          gift: string
+          is_active: boolean
+          pclass: string
+          question_id: number
+          reverse_scored: boolean
+          text: string
+        }[]
+      }
       get_quiz_report: { Args: { p_session_id: string }; Returns: Json }
       get_quiz_result_by_id: {
         Args: { p_session_id: string }
@@ -1332,6 +1377,16 @@ export type Database = {
           created_at: string
           id: string
           user_id: string
+        }[]
+      }
+      get_spiritual_gifts_i18n: {
+        Args: { p_locale?: string }
+        Returns: {
+          biblical_references: string
+          category_key: string
+          definition: string
+          gift_key: string
+          name: string
         }[]
       }
       get_system_settings: { Args: never; Returns: Json }
@@ -1484,6 +1539,7 @@ export type Database = {
         }
         Returns: Json
       }
+      validate_locale: { Args: { p_locale: string }; Returns: string }
     }
     Enums: {
       gift_key:

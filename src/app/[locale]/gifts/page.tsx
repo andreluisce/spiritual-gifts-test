@@ -283,7 +283,7 @@ export default function GiftsPage() {
                             </h3>
                             <div className="space-y-2 md:max-h-none md:overflow-visible max-h-40 overflow-y-auto">
                               {selectedGift.qualities?.map((quality, index) => (
-                                <div key={index} className="flex items-start gap-2">
+                                <div key={quality.quality_name || `quality-${index}`} className="flex items-start gap-2">
                                   <Badge variant="outline" className="text-xs mt-1">
                                     {index + 1}
                                   </Badge>
@@ -307,7 +307,7 @@ export default function GiftsPage() {
                             </h3>
                             <div className="space-y-2 md:max-h-none md:overflow-visible max-h-40 overflow-y-auto">
                               {selectedGift.characteristics?.map((char, index) => (
-                                <div key={index} className="flex items-start gap-2">
+                                <div key={char.characteristic || `char-${index}`} className="flex items-start gap-2">
                                   <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
                                   <span className="text-gray-700 text-sm">{char.characteristic}</span>
                                 </div>
@@ -324,7 +324,7 @@ export default function GiftsPage() {
                             </h3>
                             <div className="space-y-2 md:max-h-none md:overflow-visible max-h-40 overflow-y-auto">
                               {selectedGift.dangers?.map((danger, index) => (
-                                <div key={index} className="flex items-start gap-2">
+                                <div key={danger.danger || `danger-${index}`} className="flex items-start gap-2">
                                   <div className="w-2 h-2 bg-yellow-600 rounded-full mt-2 flex-shrink-0"></div>
                                   <span className="text-gray-700 text-sm">{danger.danger}</span>
                                 </div>
@@ -341,7 +341,7 @@ export default function GiftsPage() {
                             </h3>
                             <div className="space-y-2 md:max-h-none md:overflow-visible max-h-40 overflow-y-auto">
                               {selectedGift.misunderstandings?.map((misunderstanding, index) => (
-                                <div key={index} className="flex items-start gap-2">
+                                <div key={misunderstanding.misunderstanding || `misunderstanding-${index}`} className="flex items-start gap-2">
                                   <div className="w-2 h-2 bg-red-600 rounded-full mt-2 flex-shrink-0"></div>
                                   <span className="text-gray-700 text-sm">{misunderstanding.misunderstanding}</span>
                                 </div>

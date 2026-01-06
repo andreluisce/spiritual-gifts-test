@@ -156,7 +156,7 @@ export default function DemographicsDashboard({ className }: DemographicsDashboa
             {geoData.length > 0 ? (
               <div className="space-y-4">
                 {geoData.map((item, index) => (
-                  <div key={index} className="space-y-2">
+                  <div key={`${item.country}-${item.state_province}-${item.city}-${index}`} className="space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <MapPin className="h-4 w-4 text-muted-foreground" />

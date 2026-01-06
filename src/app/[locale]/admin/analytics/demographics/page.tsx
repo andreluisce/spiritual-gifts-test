@@ -68,7 +68,7 @@ export default function AnalyticsDemographicsPage() {
             {ageDemographics && ageDemographics.length > 0 ? (
               <div className="space-y-4">
                 {ageDemographics.map((group, index) => (
-                  <div key={index} className="space-y-2">
+                  <div key={group.ageRange || `age-${index}`} className="space-y-2">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                       <span className="text-sm font-medium">{group.ageRange}</span>
                       <span className="text-sm text-gray-500 whitespace-nowrap">
@@ -108,7 +108,7 @@ export default function AnalyticsDemographicsPage() {
             {geoDistribution && geoDistribution.length > 0 ? (
               <div className="space-y-4">
                 {geoDistribution.map((location, index) => (
-                  <div key={index} className="space-y-2">
+                  <div key={location.country || `country-${index}`} className="space-y-2">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                       <span className="text-sm font-medium">{location.country}</span>
                       <span className="text-sm text-gray-500 whitespace-nowrap">
