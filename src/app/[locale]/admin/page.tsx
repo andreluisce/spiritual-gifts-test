@@ -9,7 +9,9 @@ import {
   Activity,
   Database,
   TrendingUp,
-  UserCheck
+  UserCheck,
+  UserX,
+  Clock
 } from 'lucide-react'
 import { formatScore } from '@/data/quiz-data'
 import { useAdminStats, useRecentActivity, useGiftDistribution, useSystemStatus } from '@/hooks/useAdminData'
@@ -74,7 +76,7 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{tStats('totalUsers')}</CardTitle>
+            <CardTitle className="text-sm font-medium">Total de Usuários</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -86,14 +88,74 @@ export default function AdminDashboard() {
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              +{formatScore(stats?.newUsersThisMonth || 0, 0)} {tStats('newUsersThisMonth')}
+              +{formatScore(stats?.newUsersThisMonth || 0, 0)} este mês
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{tStats('totalQuizzes')}</CardTitle>
+            <CardTitle className="text-sm font-medium">Usuários Ativos</CardTitle>
+            <UserCheck className="h-4 w-4 text-green-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-600">
+              {statsLoading ? (
+                <div className="animate-pulse h-6 bg-gray-200 rounded w-16"></div>
+              ) : (
+                formatScore(stats?.activeUsers || 0, 0)
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Status: ativo (configuração)
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Login Recente</CardTitle>
+            <Activity className="h-4 w-4 text-blue-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-blue-600">
+              {statsLoading ? (
+                <div className="animate-pulse h-6 bg-gray-200 rounded w-16"></div>
+              ) : (
+                formatScore(stats?.recentlyActiveUsers || 0, 0)
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Últimos 30 dias
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Inativos (Sem Login)</CardTitle>
+            <Clock className="h-4 w-4 text-orange-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-orange-600">
+              {statsLoading ? (
+                <div className="animate-pulse h-6 bg-gray-200 rounded w-16"></div>
+              ) : (
+                formatScore(stats?.dormantUsers || 0, 0)
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Ativos, mas sem login há 30+ dias
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Secondary Stats Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total de Quizzes</CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -105,14 +167,14 @@ export default function AdminDashboard() {
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              +{formatScore(stats?.completedToday || 0, 0)} {tStats('completedToday')}
+              +{formatScore(stats?.completedToday || 0, 0)} completados hoje
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{tStats('averageScore')}</CardTitle>
+            <CardTitle className="text-sm font-medium">Score Médio</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -124,26 +186,26 @@ export default function AdminDashboard() {
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              {tStats('acrossAllAttempts')}
+              Em todas as tentativas
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{tStats('activeUsers')}</CardTitle>
-            <UserCheck className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Desativados</CardTitle>
+            <UserX className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-red-600">
               {statsLoading ? (
                 <div className="animate-pulse h-6 bg-gray-200 rounded w-16"></div>
               ) : (
-                formatScore(stats?.activeUsers || 0, 0)
+                formatScore(stats?.inactiveUsers || 0, 0)
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              {tStats('activeThisWeek')}
+              Status: inativo/suspenso
             </p>
           </CardContent>
         </Card>

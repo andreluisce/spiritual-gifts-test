@@ -72,7 +72,10 @@ interface RawGiftDistributionData {
 
 export type AdminStats = {
   totalUsers: number
-  activeUsers: number
+  activeUsers: number              // Users with status = 'active'
+  inactiveUsers: number            // Users with status = 'inactive' or 'suspended'
+  recentlyActiveUsers: number      // Users who logged in within last 30 days
+  dormantUsers: number             // Active status but no login in 30+ days
   adminUsers: number
   newUsersThisMonth: number
   totalQuizzes: number
@@ -180,6 +183,9 @@ export function useAdminStats() {
           setStats({
             totalUsers: row.totalusers || 0,
             activeUsers: row.activeusers || 0,
+            inactiveUsers: row.inactiveusers || 0,
+            recentlyActiveUsers: row.recentlyactiveusers || 0,
+            dormantUsers: row.dormantusers || 0,
             adminUsers: row.adminusers || 0,
             newUsersThisMonth: row.newusersthismonth || 0,
             totalQuizzes: row.totalquizzes || 0,
