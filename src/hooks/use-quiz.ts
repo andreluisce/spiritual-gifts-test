@@ -34,6 +34,7 @@ interface QuizState {
   currentQuestionIndex: number
   startedAt: number
   questionOrder?: number[] // Array of question IDs in backend-defined order
+  sessionId?: string // Backend session ID for time tracking
 }
 
 export function useQuiz(locale: string = 'pt'): UseQuizReturn {
@@ -42,6 +43,7 @@ export function useQuiz(locale: string = 'pt'): UseQuizReturn {
   const [hasPersistedState, setHasPersistedState] = useState<boolean>(false)
   const [questionOrder, setQuestionOrder] = useState<number[]>([])
   const [orderedQuestions, setOrderedQuestions] = useState<QuizQuestion[]>([])
+  const [sessionId, setSessionId] = useState<string | null>(null)
 
   const questionsQuery = useQuizQuestions(locale)
   const giftsQuery = useSpiritualGifts(locale)
@@ -82,6 +84,11 @@ export function useQuiz(locale: string = 'pt'): UseQuizReturn {
           if (state.questionOrder) {
             setQuestionOrder(state.questionOrder)
           }
+
+          // Load session ID if available
+          if (state.sessionId) {
+            setSessionId(state.sessionId)
+          }
         } else {
           // Clear old/invalid state
           localStorage.removeItem(QUIZ_STATE_KEY)
@@ -105,7 +112,8 @@ export function useQuiz(locale: string = 'pt'): UseQuizReturn {
         answers: currentAnswers,
         currentQuestionIndex,
         startedAt: Date.now(),
-        questionOrder: questionOrder.length > 0 ? questionOrder : undefined
+        questionOrder: questionOrder.length > 0 ? questionOrder : undefined,
+        sessionId: sessionId || undefined
       }
 
       try {
@@ -114,7 +122,7 @@ export function useQuiz(locale: string = 'pt'): UseQuizReturn {
         console.warn('Failed to save quiz state:', error)
       }
     }
-  }, [currentAnswers, currentQuestionIndex, questionOrder])
+  }, [currentAnswers, currentQuestionIndex, questionOrder, sessionId])
 
   const loading = questionsQuery.isLoading || giftsQuery.isLoading
   const error = questionsQuery.error?.message ||
@@ -122,19 +130,38 @@ export function useQuiz(locale: string = 'pt'): UseQuizReturn {
     submitQuizMutation.error?.message ||
     null
 
-  const updateAnswer = useCallback((questionId: number, score: number) => {
+  const updateAnswer = useCallback(async (questionId: number, score: number) => {
     setCurrentAnswers(prev => ({
       ...prev,
       [questionId]: score
     }))
-  }, [])
+
+    // If this is the first answer and we don't have a session yet, create one
+    if (!sessionId && Object.keys(currentAnswers).length === 0) {
+      try {
+        const { createClient } = await import('@/lib/supabase-client')
+        const supabase = createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+          const { data, error } = await supabase.rpc('start_quiz_session', { p_user_id: user.id })
+          if (!error && data) {
+            setSessionId(data)
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to create quiz session:', err)
+        // Continue anyway - backwards compatibility
+      }
+    }
+  }, [sessionId, currentAnswers])
 
   const submitQuiz = useCallback(async (userId: string): Promise<{ sessionId: string; topGifts: string[]; totalScore: Record<string, number> } | null> => {
     try {
       // Backend now handles all the logic - much simpler!
       const result = await submitQuizMutation.mutateAsync({
         userId,
-        answers: currentAnswers
+        answers: currentAnswers,
+        sessionId: sessionId || undefined  // Pass session ID for time tracking
         // No need to pass gifts anymore - backend handles everything
       })
 
@@ -144,18 +171,22 @@ export function useQuiz(locale: string = 'pt'): UseQuizReturn {
         localStorage.removeItem(QUIZ_QUESTION_ORDER_KEY)
       }
 
+      // Clear session ID
+      setSessionId(null)
+
       return result
     } catch (err) {
       console.error('Error submitting quiz:', err)
       return null
     }
-  }, [currentAnswers, submitQuizMutation])
+  }, [currentAnswers, submitQuizMutation, sessionId])
 
   const clearAnswers = useCallback(() => {
     setCurrentAnswers({})
     setCurrentQuestionIndex(0)
     setQuestionOrder([])
     setOrderedQuestions([])
+    setSessionId(null)
 
     // Clear persisted state
     if (typeof window !== 'undefined') {

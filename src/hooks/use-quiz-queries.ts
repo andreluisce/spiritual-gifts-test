@@ -688,15 +688,17 @@ export function useSubmitQuiz() {
     mutationFn: async ({
       userId,
       answers,
+      sessionId,
     }: {
       userId: string
       answers: Record<number, number>
+      sessionId?: string
     }) => {
       // Use the comprehensive backend function
       const { data, error } = await supabase.rpc('submit_complete_quiz', {
         p_user_id: userId,
         p_answers: answers, // Direct JSONB format
-        p_quiz_id: null
+        p_session_id: sessionId || null  // Pass session ID for time tracking
       })
 
       if (error) {
@@ -732,28 +734,19 @@ export function useDeleteResult() {
 
   return useMutation({
     mutationFn: async ({ sessionId, userId }: { sessionId: string; userId: string }) => {
+      // Use RPC function to safely delete session and answers
+      // This bypasses RLS permission issues
+      const { data, error } = await supabase.rpc('delete_quiz_session', {
+        p_session_id: sessionId
+      })
 
-      // First, delete all answers for this session
-      const { error: answersError } = await supabase
-        .from('answers')
-        .delete()
-        .eq('session_id', sessionId)
-
-      if (answersError) {
-        console.error('❌ Error deleting answers:', answersError)
-        throw new Error(`Failed to delete answers: ${answersError.message}`)
+      if (error) {
+        console.error('❌ Error deleting quiz session:', error)
+        throw new Error(`Failed to delete quiz session: ${error.message}`)
       }
 
-      // Then, delete the session
-      const { error: sessionError } = await supabase
-        .from('quiz_sessions')
-        .delete()
-        .eq('id', sessionId)
-        .eq('user_id', userId) // Extra safety check
-
-      if (sessionError) {
-        console.error('❌ Error deleting session:', sessionError)
-        throw new Error(`Failed to delete session: ${sessionError.message}`)
+      if (!data) {
+        throw new Error('Failed to delete quiz session: No response from server')
       }
 
       return { sessionId, userId }

@@ -1057,6 +1057,7 @@ export type Database = {
         }[]
       }
       cleanup_expired_reports: { Args: never; Returns: undefined }
+      delete_quiz_session: { Args: { p_session_id: string }; Returns: boolean }
       generate_balanced_quiz: {
         Args: {
           questions_per_gift?: number
@@ -1078,10 +1079,13 @@ export type Database = {
         Returns: {
           activeusers: number
           adminusers: number
-          averagescore: number
+          averagecompletiontimeminutes: number
           completedtoday: number
+          completionrate: number
           dormantusers: number
           inactiveusers: number
+          mostcommongift: string
+          mostcommongiftpercentage: number
           mostpopulargift: string
           newusersthismonth: number
           recentlyactiveusers: number
@@ -1294,6 +1298,7 @@ export type Database = {
           text: string
         }[]
       }
+      get_quiz_report: { Args: { p_session_id: string }; Returns: Json }
       get_quiz_result_by_id: {
         Args: { p_session_id: string }
         Returns: {
@@ -1305,17 +1310,21 @@ export type Database = {
           user_id: string
         }[]
       }
-      get_recent_activity: {
-        Args: { limit_count?: number }
+      get_quiz_session_details: {
+        Args: { p_session_id: string }
         Returns: {
-          action: string
-          created_at: string
-          id: string
-          type: string
+          answers_data: Json
+          completed_at: string
+          is_completed: boolean
+          session_id: string
+          started_at: string
+          total_score: number
           user_email: string
+          user_id: string
           user_name: string
         }[]
       }
+      get_recent_activity: { Args: { limit_count?: number }; Returns: Json }
       get_recent_ai_activity: {
         Args: { limit_count?: number }
         Returns: {
@@ -1341,7 +1350,7 @@ export type Database = {
         }[]
       }
       get_user_activities: {
-        Args: { limit_count?: number }
+        Args: { limit_count?: number; p_user_id?: string }
         Returns: {
           activity_description: string
           activity_type: string
@@ -1355,6 +1364,32 @@ export type Database = {
         }[]
       }
       get_user_profile: { Args: never; Returns: Json }
+      get_user_profile_activities: {
+        Args: { limit_count?: number; p_user_id: string }
+        Returns: {
+          activity_description: string
+          activity_type: string
+          created_at: string
+          id: string
+          ip_address: string
+          metadata: Json
+          user_agent: string
+          user_id: string
+          users: Json
+        }[]
+      }
+      get_user_quiz_results: {
+        Args: { p_user_id: string }
+        Returns: {
+          completed_at: string
+          gift_results: Json
+          is_completed: boolean
+          session_id: string
+          started_at: string
+          top_gifts: Json
+          total_score: number
+        }[]
+      }
       get_user_results_data: {
         Args: { p_user_id: string }
         Returns: {
@@ -1416,8 +1451,9 @@ export type Database = {
         }
         Returns: boolean
       }
+      start_quiz_session: { Args: { p_user_id: string }; Returns: string }
       submit_complete_quiz: {
-        Args: { p_answers: Json; p_quiz_id?: string; p_user_id: string }
+        Args: { p_answers: Json; p_session_id?: string; p_user_id: string }
         Returns: {
           completed_at: string
           session_id: string

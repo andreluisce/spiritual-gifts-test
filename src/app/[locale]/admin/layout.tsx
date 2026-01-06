@@ -22,17 +22,17 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  const { user, isAdmin, loading } = useAuth()
+  const { user, isAdmin, loading, adminLoading } = useAuth()
   const router = useRouter()
   const t = useTranslations('admin')
 
   useEffect(() => {
-    if (!loading && (!user || !isAdmin)) {
+    if (!loading && !adminLoading && (!user || !isAdmin)) {
       router.push('/dashboard')
     }
-  }, [user, isAdmin, loading, router])
+  }, [user, isAdmin, loading, adminLoading, router])
 
-  if (loading) {
+  if (loading || adminLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>

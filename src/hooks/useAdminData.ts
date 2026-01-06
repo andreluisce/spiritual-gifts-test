@@ -80,8 +80,14 @@ export type AdminStats = {
   newUsersThisMonth: number
   totalQuizzes: number
   completedToday: number
-  averageScore: number
+  // New useful metrics (replacing averageScore)
+  mostCommonGift: string           // Most common top gift among users
+  mostCommonGiftPercentage: number // Percentage of users with that gift
+  completionRate: number           // % of quizzes completed vs started
+  averageCompletionTimeMinutes: number // Avg time to complete in minutes
+  // Deprecated (kept for compatibility)
   mostPopularGift: string
+  averageScore?: number            // Deprecated, will be removed
 }
 
 export type RecentActivity = {
@@ -190,8 +196,14 @@ export function useAdminStats() {
             newUsersThisMonth: row.newusersthismonth || 0,
             totalQuizzes: row.totalquizzes || 0,
             completedToday: row.completedtoday || 0,
-            averageScore: row.averagescore || 0,
-            mostPopularGift: row.mostpopulargift || 'N/A'
+            // New metrics
+            mostCommonGift: row.mostcommongift || 'N/A',
+            mostCommonGiftPercentage: row.mostcommongiftpercentage || 0,
+            completionRate: row.completionrate || 0,
+            averageCompletionTimeMinutes: row.averagecompletiontimeminutes || 0,
+            // Deprecated
+            mostPopularGift: row.mostpopulargift || 'N/A',
+            averageScore: row.averagescore || 0
           })
         } else {
           console.warn('⚠️ No admin stats data returned')

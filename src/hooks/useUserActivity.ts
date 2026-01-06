@@ -53,9 +53,17 @@ export function useUserActivities(limit: number = 50, userId?: string) {
         setError(null)
 
         // Use the RPC function to get real activity data
-        const { data, error: rpcError } = await supabase.rpc('get_user_activities', {
+        // Pass userId to filter activities for specific user (profile page)
+        const rpcParams: { limit_count: number; p_user_id?: string } = {
           limit_count: limit
-        })
+        }
+
+        // Only add p_user_id if userId is provided
+        if (userId) {
+          rpcParams.p_user_id = userId
+        }
+
+        const { data, error: rpcError } = await supabase.rpc('get_user_activities', rpcParams)
 
         if (rpcError) throw rpcError
 

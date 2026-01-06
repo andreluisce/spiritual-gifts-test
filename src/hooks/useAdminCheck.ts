@@ -18,13 +18,8 @@ export function useAdminCheck(userId: string | null) {
     const checkAdmin = async () => {
       setLoading(true)
       try {
-        // Check if user has admin role in user_roles table
-        const { data, error } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', userId)
-          .eq('role', 'admin')
-          .single()
+        // Use RPC function to check admin status
+        const { data, error } = await supabase.rpc('is_user_admin_safe')
 
         setIsAdmin(!!data && !error)
       } catch {
@@ -50,16 +45,20 @@ export function useAdminUsers() {
     const fetchAdminUsers = async () => {
       setLoading(true)
       try {
-        const { data, error } = await supabase
-          .from('user_roles')
-          .select('user_id')
-          .eq('role', 'admin')
+        // Query auth.users for admin role in metadata
+        // Note: This requires service role or a function with SECURITY DEFINER
+        // For now, we'll return empty set as this is typically used server-side
+        const { data: currentUser } = await supabase.auth.getUser()
 
-        if (data && !error) {
-          setAdminUserIds(new Set(data.map((row: { user_id: string }) => row.user_id)))
+        // Only current user if they are admin
+        if (currentUser?.user?.user_metadata?.role === 'admin') {
+          setAdminUserIds(new Set([currentUser.user.id]))
+        } else {
+          setAdminUserIds(new Set())
         }
       } catch (error) {
         console.error('Error fetching admin users:', error)
+        setAdminUserIds(new Set())
       } finally {
         setLoading(false)
       }

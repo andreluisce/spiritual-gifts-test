@@ -11,7 +11,8 @@ import {
   TrendingUp,
   UserCheck,
   UserX,
-  Clock
+  Clock,
+  CheckCircle
 } from 'lucide-react'
 import { formatScore } from '@/data/quiz-data'
 import { useAdminStats, useRecentActivity, useGiftDistribution, useSystemStatus } from '@/hooks/useAdminData'
@@ -174,7 +175,7 @@ export default function AdminDashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Score Médio</CardTitle>
+            <CardTitle className="text-sm font-medium">Dom Mais Comum</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -182,11 +183,49 @@ export default function AdminDashboard() {
               {statsLoading ? (
                 <div className="animate-pulse h-6 bg-gray-200 rounded w-16"></div>
               ) : (
-                `${formatScore(stats?.averageScore || 0, 1)}%`
+                stats?.mostCommonGift || 'N/A'
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              Em todas as tentativas
+              Aparece em {formatScore(stats?.mostCommonGiftPercentage || 0, 1)}% dos resultados
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Taxa de Conclusão</CardTitle>
+            <CheckCircle className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-600">
+              {statsLoading ? (
+                <div className="animate-pulse h-6 bg-gray-200 rounded w-16"></div>
+              ) : (
+                `${formatScore(stats?.completionRate || 0, 1)}%`
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Quizzes completados vs iniciados
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Tempo Médio</CardTitle>
+            <Clock className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-blue-600">
+              {statsLoading ? (
+                <div className="animate-pulse h-6 bg-gray-200 rounded w-16"></div>
+              ) : (
+                `${formatScore(stats?.averageCompletionTimeMinutes || 0, 0)} min`
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Para completar o quiz
             </p>
           </CardContent>
         </Card>
