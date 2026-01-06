@@ -130,25 +130,23 @@ export default function QuizReportPage() {
           <CardContent className="space-y-3">
             {spiritual_gifts?.map((gift) => (
               <div
-                key={gift.rank}
-                className={`p-4 rounded-lg border-2 ${
-                  gift.strength === 'Primário'
-                    ? 'bg-yellow-50 border-yellow-300'
-                    : gift.strength === 'Secundário'
+                key={gift.gift_key || `gift-${gift.rank}`}
+                className={`p-4 rounded-lg border-2 ${gift.strength === 'Primário'
+                  ? 'bg-yellow-50 border-yellow-300'
+                  : gift.strength === 'Secundário'
                     ? 'bg-blue-50 border-blue-300'
                     : 'bg-gray-50 border-gray-200'
-                }`}
+                  }`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${
-                        gift.strength === 'Primário'
-                          ? 'bg-yellow-400 text-yellow-900'
-                          : gift.strength === 'Secundário'
+                      className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${gift.strength === 'Primário'
+                        ? 'bg-yellow-400 text-yellow-900'
+                        : gift.strength === 'Secundário'
                           ? 'bg-blue-400 text-blue-900'
                           : 'bg-gray-300 text-gray-700'
-                      }`}
+                        }`}
                     >
                       {gift.rank}
                     </div>
@@ -177,7 +175,7 @@ export default function QuizReportPage() {
             </CardHeader>
             <CardContent className="space-y-6">
               {ai_insights.map((insight, index) => (
-                <div key={index} className="space-y-4 pb-6 border-b last:border-b-0">
+                <div key={insight.gift_name || `insight-${index}`} className="space-y-4 pb-6 border-b last:border-b-0">
                   <h3 className="text-xl font-semibold text-purple-900">{insight.gift_name}</h3>
 
                   {insight.description && (
