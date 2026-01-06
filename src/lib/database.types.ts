@@ -673,6 +673,7 @@ export type Database = {
           id: string
           role: string | null
           state_province: string | null
+          status: string | null
           updated_at: string
         }
         Insert: {
@@ -687,6 +688,7 @@ export type Database = {
           id: string
           role?: string | null
           state_province?: string | null
+          status?: string | null
           updated_at?: string
         }
         Update: {
@@ -701,6 +703,7 @@ export type Database = {
           id?: string
           role?: string | null
           state_province?: string | null
+          status?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -1030,6 +1033,10 @@ export type Database = {
     }
     Functions: {
       admin_delete_user: { Args: { target_user_id: string }; Returns: Json }
+      admin_set_user_status: {
+        Args: { new_status: string; target_user_id: string }
+        Returns: boolean
+      }
       admin_update_user: {
         Args: {
           display_name?: string
@@ -1073,8 +1080,11 @@ export type Database = {
           adminusers: number
           averagescore: number
           completedtoday: number
+          dormantusers: number
+          inactiveusers: number
           mostpopulargift: string
           newusersthismonth: number
+          recentlyactiveusers: number
           totalquizzes: number
           totalusers: number
         }[]
