@@ -140,3 +140,42 @@ export async function collectUserDemographics(
     ipAddress: ipAddress !== 'unknown' ? ipAddress : undefined
   };
 }
+
+// Check if user has demographics data
+export async function userHasDemographics(userId: string): Promise<boolean> {
+  try {
+    const response = await fetch(`/api/demographics/check?userId=${userId}`);
+    if (!response.ok) {
+      console.warn('Failed to check demographics status');
+      return false;
+    }
+    const data = await response.json();
+    return data.hasDemographics || false;
+  } catch (error) {
+    console.error('Error checking demographics:', error);
+    return false;
+  }
+}
+
+// Trigger demographics collection for a user
+export async function triggerDemographicsCollection(userId: string): Promise<boolean> {
+  try {
+    const response = await fetch('/api/demographics/collect', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId })
+    });
+
+    if (!response.ok) {
+      console.warn('Demographics collection failed:', await response.text());
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error triggering demographics collection:', error);
+    return false;
+  }
+}

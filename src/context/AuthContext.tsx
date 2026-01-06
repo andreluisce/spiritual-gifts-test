@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase-client'
 import { getEnvironmentConfig } from '@/lib/env-config'
+import { userHasDemographics, triggerDemographicsCollection } from '@/lib/demographics'
 import type { User, AuthChangeEvent, Session } from '@supabase/supabase-js'
 
 type AuthContextType = {
@@ -112,6 +113,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             p_metadata: { provider: newUser.app_metadata?.provider || 'unknown' }
           }).then(({ error }: { error: unknown }) => {
             if (error) console.error('Failed to log login activity:', error)
+          })
+
+          // Check if user has demographics data and collect if missing
+          userHasDemographics(newUser.id).then((hasDemographics) => {
+            if (!hasDemographics) {
+              console.log('User missing demographics data, triggering collection...')
+              triggerDemographicsCollection(newUser.id).then((success) => {
+                if (success) {
+                  console.log('Demographics collection triggered successfully')
+                } else {
+                  console.warn('Demographics collection failed')
+                }
+              })
+            }
+          }).catch((error) => {
+            console.error('Error checking/collecting demographics:', error)
           })
         }
       } else if (event === 'SIGNED_OUT') {
