@@ -162,11 +162,17 @@ export function useAdminStats() {
         const { data: statsData, error: statsError } = await supabase
           .rpc('get_admin_stats')
 
-        if (statsError) throw statsError
+        console.log('📊 Admin Stats Response:', { statsData, statsError })
+
+        if (statsError) {
+          console.error('❌ Admin Stats Error:', statsError)
+          throw statsError
+        }
 
         // RPC returns TABLE as array, get first row
         if (statsData && statsData.length > 0) {
           const row = statsData[0]
+          console.log('✅ Admin Stats Row:', row)
           setStats({
             totalUsers: row.totalusers || 0,
             activeUsers: row.activeusers || 0,
@@ -177,9 +183,12 @@ export function useAdminStats() {
             averageScore: row.averagescore || 0,
             mostPopularGift: row.mostpopulargift || 'N/A'
           })
+        } else {
+          console.warn('⚠️ No admin stats data returned')
         }
       } catch (err) {
         console.error('Error fetching admin stats:', err)
+        console.error('Error details:', JSON.stringify(err, null, 2))
         setError(err instanceof Error ? err.message : 'Failed to fetch stats')
       } finally {
         setLoading(false)
