@@ -1402,11 +1402,19 @@ export type Database = {
           p_user_agent?: string
           p_user_id: string
         }
-        Returns: string
+        Returns: undefined
       }
       record_report_download: {
         Args: { p_report_id: string }
         Returns: undefined
+      }
+      should_log_activity: {
+        Args: {
+          p_activity_type: string
+          p_threshold_seconds?: number
+          p_user_id: string
+        }
+        Returns: boolean
       }
       submit_complete_quiz: {
         Args: { p_answers: Json; p_quiz_id?: string; p_user_id: string }
