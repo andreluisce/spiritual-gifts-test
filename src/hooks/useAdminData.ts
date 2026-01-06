@@ -318,7 +318,16 @@ export function useGiftDistribution() {
         const { data: distributionData, error: distributionError } = await supabase
           .rpc('get_gift_distribution')
 
-        if (distributionError) throw distributionError
+        console.log('📊 Gift Distribution Response:', { distributionData, distributionError })
+
+        if (distributionError) {
+          console.error('❌ Gift Distribution Error:', distributionError)
+          console.error('Error code:', distributionError.code)
+          console.error('Error message:', distributionError.message)
+          console.error('Error details:', distributionError.details)
+          console.error('Error hint:', distributionError.hint)
+          throw new Error(distributionError.message || 'Unknown error')
+        }
 
         if (distributionData) {
           const distribution = distributionData.map((item: RawGiftDistributionData) => ({
@@ -328,10 +337,17 @@ export function useGiftDistribution() {
             percentage: item.percentage
           }))
 
+          console.log('✅ Gift Distribution:', distribution)
           setDistribution(distribution)
+        } else {
+          console.warn('⚠️ No gift distribution data returned')
         }
       } catch (err) {
         console.error('Error fetching gift distribution:', err)
+        if (err && typeof err === 'object') {
+          console.error('Error keys:', Object.keys(err))
+          console.error('Error values:', Object.values(err))
+        }
         setError(err instanceof Error ? err.message : 'Failed to fetch distribution')
       } finally {
         setLoading(false)

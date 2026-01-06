@@ -110,7 +110,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             p_description: 'User logged in',
             p_user_agent: typeof window !== 'undefined' ? window.navigator.userAgent : null,
             p_metadata: { provider: newUser.app_metadata?.provider || 'unknown' }
-          }).catch(console.error)
+          }).then(({ error }: { error: unknown }) => {
+            if (error) console.error('Failed to log login activity:', error)
+          })
         }
       } else if (event === 'SIGNED_OUT') {
         // Log logout activity (use previous user if available)
@@ -122,7 +124,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             p_description: 'User logged out',
             p_user_agent: typeof window !== 'undefined' ? window.navigator.userAgent : null,
             p_metadata: {}
-          }).catch(console.error)
+          }).then(({ error }: { error: unknown }) => {
+            if (error) console.error('Failed to log logout activity:', error)
+          })
         }
       }
     })
