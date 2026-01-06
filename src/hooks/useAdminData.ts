@@ -164,16 +164,18 @@ export function useAdminStats() {
 
         if (statsError) throw statsError
 
-        if (statsData) {
+        // RPC returns TABLE as array, get first row
+        if (statsData && statsData.length > 0) {
+          const row = statsData[0]
           setStats({
-            totalUsers: statsData.totalUsers || 0,
-            activeUsers: statsData.activeUsers || 0,
-            adminUsers: statsData.adminUsers || 0,
-            newUsersThisMonth: statsData.newUsersThisMonth || 0,
-            totalQuizzes: statsData.totalQuizzes || 0,
-            completedToday: statsData.completedToday || 0,
-            averageScore: statsData.averageScore || 0,
-            mostPopularGift: statsData.mostPopularGift || 'N/A'
+            totalUsers: row.totalusers || 0,
+            activeUsers: row.activeusers || 0,
+            adminUsers: row.adminusers || 0,
+            newUsersThisMonth: row.newusersthismonth || 0,
+            totalQuizzes: row.totalquizzes || 0,
+            completedToday: row.completedtoday || 0,
+            averageScore: row.averagescore || 0,
+            mostPopularGift: row.mostpopulargift || 'N/A'
           })
         }
       } catch (err) {
