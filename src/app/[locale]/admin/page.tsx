@@ -22,7 +22,7 @@ export default function AdminDashboard() {
   const tStats = useTranslations('admin.dashboard.stats')
   const tActivity = useTranslations('admin.dashboard.recentActivity')
   const tGifts = useTranslations('admin.dashboard.topGifts')
-  
+
   // Fetch real data
   const { stats, loading: statsLoading } = useAdminStats()
   const { activities, loading: activityLoading } = useRecentActivity(5)
@@ -61,7 +61,7 @@ export default function AdminDashboard() {
     const date = new Date(dateString)
     const now = new Date()
     const seconds = Math.floor((now.getTime() - date.getTime()) / 1000)
-    
+
     if (seconds < 60) return `${seconds} seconds ago`
     const minutes = Math.floor(seconds / 60)
     if (minutes < 60) return `${minutes} min ago`
@@ -273,8 +273,8 @@ export default function AdminDashboard() {
                   </div>
                 ))
               ) : activities && activities.length > 0 ? (
-                activities.slice(0, 5).map((activity) => (
-                  <div key={activity.id} className="flex items-center space-x-3">
+                activities.slice(0, 5).map((activity, index) => (
+                  <div key={activity.id || `activity-${index}`} className="flex items-center space-x-3">
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center ${getActivityColor(activity.type)} flex-shrink-0`}>
                       {getActivityIcon(activity.type)}
                     </div>
@@ -319,14 +319,14 @@ export default function AdminDashboard() {
                 ))
               ) : topGifts.length > 0 ? (
                 topGifts.slice(0, 7).map((gift, index) => (
-                  <div key={gift.gift_name} className="space-y-2">
+                  <div key={gift.gift_name || `gift-${index}`} className="space-y-2">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between text-sm gap-1">
                       <span className="font-medium truncate">#{index + 1} {gift.gift_name}</span>
                       <span className="text-gray-500 whitespace-nowrap">{gift.count} {tGifts('users')}</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div 
-                        className="bg-blue-600 h-2 rounded-full" 
+                      <div
+                        className="bg-blue-600 h-2 rounded-full"
                         style={{ width: `${gift.percentage}%` }}
                       ></div>
                     </div>
