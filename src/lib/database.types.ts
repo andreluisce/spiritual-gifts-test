@@ -1206,14 +1206,16 @@ export type Database = {
         }[]
       }
       get_geographic_distribution: { Args: never; Returns: Json }
-      get_gift_compatibility: {
-        Args: {
-          p_locale?: string
-          p_primary_gift: Database["public"]["Enums"]["gift_key"]
-          p_secondary_gift: Database["public"]["Enums"]["gift_key"]
-        }
-        Returns: Json
-      }
+      get_gift_compatibility:
+        | { Args: { gift1_key: string; gift2_key: string }; Returns: Json }
+        | {
+            Args: {
+              p_locale?: string
+              p_primary_gift: Database["public"]["Enums"]["gift_key"]
+              p_secondary_gift: Database["public"]["Enums"]["gift_key"]
+            }
+            Returns: Json
+          }
       get_gift_complete_data: {
         Args: {
           p_gift_key: Database["public"]["Enums"]["gift_key"]
@@ -1260,13 +1262,15 @@ export type Database = {
           type: string
         }[]
       }
-      get_ministry_recommendations: {
-        Args: {
-          p_locale?: string
-          p_user_gifts: Database["public"]["Enums"]["gift_key"][]
-        }
-        Returns: Json
-      }
+      get_ministry_recommendations:
+        | {
+            Args: {
+              p_locale?: string
+              p_user_gifts: Database["public"]["Enums"]["gift_key"][]
+            }
+            Returns: Json
+          }
+        | { Args: { user_gift_key: string }; Returns: Json }
       get_questions_by_locale: {
         Args: { target_locale?: string }
         Returns: {
