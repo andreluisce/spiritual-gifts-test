@@ -169,6 +169,9 @@
       "preview": "Preview",
       "loginForFull": "Preview • Faça login para o teste completo",
       "questionsProgress": "{answered} de {total} questões"
+    },
+    "validation": {
+      "answerAllQuestions": "Responda todas as perguntas antes de finalizar"
     }
   },
   "welcome": {
@@ -966,5 +969,43 @@
   },
   "Index": {
     "title": "Teste de Dons Espirituais"
+  },
+  "quizReport": {
+    "loading": "Carregando relatório...",
+    "error": "Erro ao carregar relatório",
+    "back": "Voltar",
+    "print": "Imprimir / Salvar PDF",
+    "title": "Relatório Completo - Teste de Dons Espirituais",
+    "sessionInfo": {
+      "user": "Usuário:",
+      "date": "Data:",
+      "duration": "Duração: {duration} minutos"
+    },
+    "spiritualGifts": {
+      "title": "Dons Espirituais Descobertos",
+      "strength": {
+        "primary": "Primário",
+        "secondary": "Secundário",
+        "present": "Presente"
+      }
+    },
+    "aiInsights": {
+      "title": "Insights e Orientações",
+      "description": "Descrição:",
+      "biblicalFoundation": "Fundamento Bíblico:",
+      "practicalApplications": "Aplicações Práticas:",
+      "noDescription": "Descrição não disponível",
+      "noBiblicalFoundation": "Fundamento bíblico não disponível",
+      "noPracticalApplications": "Aplicações práticas não disponíveis"
+    },
+    "questions": {
+      "title": "Perguntas e Respostas ({count} perguntas)",
+      "answer": "Resposta:",
+      "noText": "Texto da pergunta não disponível"
+    },
+    "footer": {
+      "generated": "Relatório gerado em {date}",
+      "subtitle": "Teste de Dons Espirituais - Descubra Seu Dom"
+    }
   }
 }

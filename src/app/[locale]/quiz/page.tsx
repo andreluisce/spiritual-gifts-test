@@ -66,6 +66,7 @@ export default function QuizPage() {
   const progress = availableQuestions && availableQuestions.length > 0 ? ((currentQuestionIndex + 1) / availableQuestions.length) * 100 : 0
   const isLastQuestion = availableQuestions ? currentQuestionIndex === availableQuestions.length - 1 : false
   const canProceed = currentQuestion ? currentAnswers[currentQuestion.id] !== undefined : false
+  const allQuestionsAnswered = availableQuestions ? availableQuestions.every(q => currentAnswers[q.id] !== undefined) : false
 
   // Animate progress bar
   useEffect(() => {
@@ -531,14 +532,21 @@ export default function QuizPage() {
                   {t('status.loginForFull')}
                 </div>
               )}
+              {isLastQuestion && !allQuestionsAnswered && (
+                <div className="text-[10px] md:text-xs text-red-600 mt-1 flex items-center justify-center gap-1">
+                  <AlertCircle size={12} />
+                  {t('validation.answerAllQuestions')}
+                </div>
+              )}
             </div>
           </div>
 
           {isLastQuestion && (
             <Button
               onClick={goToNext}
-              disabled={!canProceed || isSubmitting || isTransitioning}
+              disabled={!allQuestionsAnswered || isSubmitting || isTransitioning}
               className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-800 text-white disabled:opacity-50 text-sm md:text-base"
+              title={!allQuestionsAnswered ? t('validation.answerAllQuestions') : ''}
             >
               {isSubmitting ? (
                 <>
