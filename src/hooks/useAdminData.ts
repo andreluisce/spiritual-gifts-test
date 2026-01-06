@@ -166,7 +166,11 @@ export function useAdminStats() {
 
         if (statsError) {
           console.error('❌ Admin Stats Error:', statsError)
-          throw statsError
+          console.error('Error code:', statsError.code)
+          console.error('Error message:', statsError.message)
+          console.error('Error details:', statsError.details)
+          console.error('Error hint:', statsError.hint)
+          throw new Error(statsError.message || 'Unknown error')
         }
 
         // RPC returns TABLE as array, get first row
@@ -188,7 +192,10 @@ export function useAdminStats() {
         }
       } catch (err) {
         console.error('Error fetching admin stats:', err)
-        console.error('Error details:', JSON.stringify(err, null, 2))
+        if (err && typeof err === 'object') {
+          console.error('Error keys:', Object.keys(err))
+          console.error('Error values:', Object.values(err))
+        }
         setError(err instanceof Error ? err.message : 'Failed to fetch stats')
       } finally {
         setLoading(false)
