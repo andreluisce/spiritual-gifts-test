@@ -99,6 +99,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Check admin status when user changes (non-blocking)
       checkAdminStatus(newUser).catch(console.error)
+
+      // Log activity based on auth event
+      if (newUser) {
+        if (event === 'SIGNED_IN') {
+          // Log login activity
+          supabase.rpc('log_user_activity', {
+            p_user_id: newUser.id,
+            p_activity_type: 'login',
+            p_description: 'User logged in',
+            p_user_agent: typeof window !== 'undefined' ? window.navigator.userAgent : null,
+            p_metadata: { provider: newUser.app_metadata?.provider || 'unknown' }
+          }).catch(console.error)
+        }
+      } else if (event === 'SIGNED_OUT') {
+        // Log logout activity (use previous user if available)
+        const previousUser = user
+        if (previousUser) {
+          supabase.rpc('log_user_activity', {
+            p_user_id: previousUser.id,
+            p_activity_type: 'logout',
+            p_description: 'User logged out',
+            p_user_agent: typeof window !== 'undefined' ? window.navigator.userAgent : null,
+            p_metadata: {}
+          }).catch(console.error)
+        }
+      }
     })
 
     return () => subscription.unsubscribe()

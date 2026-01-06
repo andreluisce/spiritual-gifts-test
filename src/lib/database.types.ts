@@ -1379,6 +1379,17 @@ export type Database = {
         }
         Returns: undefined
       }
+      log_user_activity: {
+        Args: {
+          p_activity_type: string
+          p_description?: string
+          p_ip_address?: string
+          p_metadata?: Json
+          p_user_agent?: string
+          p_user_id: string
+        }
+        Returns: string
+      }
       record_report_download: {
         Args: { p_report_id: string }
         Returns: undefined
