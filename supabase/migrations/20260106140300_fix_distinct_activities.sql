@@ -1,6 +1,4 @@
--- Fix get_user_activities to show only the most recent activity per user
--- This prevents the "Monica Barrense: login 26 min ago, login 27 min ago..." duplicate spam
-
+-- Force update of get_user_activities with corrected DISTINCT ON logic
 DROP FUNCTION IF EXISTS public.get_user_activities(integer);
 
 CREATE OR REPLACE FUNCTION public.get_user_activities(limit_count integer DEFAULT 50)
