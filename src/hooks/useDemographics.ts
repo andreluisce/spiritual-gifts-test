@@ -53,15 +53,14 @@ export function useDemographics() {
       const totalUsersWithAge = ageData?.reduce((sum: number, item: AgeDemographic) => sum + item.user_count, 0) || 0
       const totalUsersWithGeo = geoData?.reduce((sum: number, item: GeographicDemographic) => sum + item.user_count, 0) || 0
 
-      // Get total users count
-      const { count: totalUsers } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true })
+      // Get total users count from auth.users (via RPC for proper count)
+      const { data: statsData } = await supabase.rpc('get_admin_stats')
+      const totalUsers = statsData?.[0]?.totalusers || 0
 
       const demographicData: DemographicData = {
         ageDistribution: ageData || [],
         geographicDistribution: geoData || [],
-        totalUsers: totalUsers || 0,
+        totalUsers: totalUsers,
         usersWithDemographicData: Math.max(totalUsersWithAge, totalUsersWithGeo)
       }
 
