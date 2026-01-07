@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase-client'
 import { useAuth } from '@/context/AuthContext'
+import { approveUserAction, rejectUserAction } from '@/app/actions/admin'
 
 export interface PendingUser {
     id: string
@@ -45,14 +46,18 @@ export function usePendingUsers() {
 export function useApproveUsers() {
     const [processing, setProcessing] = useState(false)
     const [error, setError] = useState<string | null>(null)
-    const supabase = createClient()
 
     const approveUser = async (userId: string) => {
         try {
             setProcessing(true)
             setError(null)
-            const { error } = await supabase.rpc('approve_user', { target_user_id: userId })
-            if (error) throw error
+
+            const result = await approveUserAction(userId)
+
+            if (!result.success) {
+                throw new Error(result.error || 'Failed to approve user')
+            }
+
             return { success: true }
         } catch (err) {
             console.error('Error approving user:', err)
@@ -67,11 +72,13 @@ export function useApproveUsers() {
         try {
             setProcessing(true)
             setError(null)
-            const { error } = await supabase.rpc('reject_user', {
-                target_user_id: userId,
-                reject_reason: reason
-            })
-            if (error) throw error
+
+            const result = await rejectUserAction(userId, reason)
+
+            if (!result.success) {
+                throw new Error(result.error || 'Failed to reject user')
+            }
+
             return { success: true }
         } catch (err) {
             console.error('Error rejecting user:', err)
