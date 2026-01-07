@@ -28,7 +28,7 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
   const router = useRouter()
   const pathname = usePathname()
   const t = useTranslations('admin.settings')
-  
+
   const {
     settings,
     loading: settingsLoading,
@@ -56,7 +56,7 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
 
   const handleSaveSettings = async () => {
     if (!settings) return
-    
+
     try {
       await updateSettings(settings)
       // Show success toast or notification
@@ -70,25 +70,25 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
       href: '/admin/settings/quiz',
       label: t('tabs.quiz'),
       icon: <HelpCircle className="h-4 w-4" />,
-      description: 'Configure quiz parameters and questions'
+      description: t('navigation.descriptions.quiz')
     },
     {
       href: '/admin/settings/general',
       label: t('tabs.general'),
       icon: <Settings className="h-4 w-4" />,
-      description: 'General system settings'
+      description: t('navigation.descriptions.general')
     },
     {
       href: '/admin/settings/ai',
-      label: 'IA & Análise',
+      label: t('tabs.ai'),
       icon: <Sparkles className="h-4 w-4" />,
-      description: 'AI analysis configuration'
+      description: t('navigation.descriptions.ai')
     },
     {
       href: '/admin/settings/email',
-      label: 'Email & Notificações',
+      label: t('tabs.email'),
       icon: <Mail className="h-4 w-4" />,
-      description: 'Email service configuration using Resend'
+      description: t('navigation.descriptions.email')
     }
   ]
 
@@ -97,163 +97,163 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
   return (
     <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
       <div className="p-2 sm:p-4 m-1 sm:m-4">
-      {/* Mobile Header */}
-      <div className="block lg:hidden mb-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => router.push('/admin')}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Admin
-          </Button>
-        </div>
-        <div className="mb-4">
-          <h1 className="text-xl font-bold">{t('title')}</h1>
-          <p className="text-sm text-gray-600">{t('subtitle')}</p>
-        </div>
-        <Button 
-          onClick={handleSaveSettings}
-          className="w-full flex items-center justify-center gap-2"
-          size="lg"
-        >
-          <Save className="h-4 w-4" />
-          {t('saveChanges')}
-        </Button>
-      </div>
-
-      {/* Desktop Header */}
-      <div className="hidden lg:flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => router.push('/admin')}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Admin
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold">{t('title')}</h1>
+        {/* Mobile Header */}
+        <div className="block lg:hidden mb-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.push('/admin')}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              {t('navigation.backToAdmin')}
+            </Button>
+          </div>
+          <div className="mb-4">
+            <h1 className="text-xl font-bold">{t('title')}</h1>
             <p className="text-sm text-gray-600">{t('subtitle')}</p>
           </div>
+          <Button
+            onClick={handleSaveSettings}
+            className="w-full flex items-center justify-center gap-2"
+            size="lg"
+          >
+            <Save className="h-4 w-4" />
+            {t('saveChanges')}
+          </Button>
         </div>
-        <Button 
-          onClick={handleSaveSettings}
-          className="flex items-center gap-2"
-        >
-          <Save className="h-4 w-4" />
-          {t('saveChanges')}
-        </Button>
-      </div>
 
-      {error && (
-        <Card className="mb-6 border-red-200 bg-red-50">
-          <CardContent className="p-4">
-            <p className="text-red-700 text-sm">Error: {error}</p>
-          </CardContent>
-        </Card>
-      )}
+        {/* Desktop Header */}
+        <div className="hidden lg:flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.push('/admin')}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              {t('navigation.backToAdmin')}
+            </Button>
+            <div>
+              <h1 className="text-2xl font-bold">{t('title')}</h1>
+              <p className="text-sm text-gray-600">{t('subtitle')}</p>
+            </div>
+          </div>
+          <Button
+            onClick={handleSaveSettings}
+            className="flex items-center gap-2"
+          >
+            <Save className="h-4 w-4" />
+            {t('saveChanges')}
+          </Button>
+        </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Navigation Sidebar */}
-        <div className="lg:col-span-1">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Settings Categories
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <nav className="space-y-1">
-                {navItems.map((item) => {
-                  const isActive = currentPath === item.href.split('/').pop()
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={cn(
-                        "flex items-start gap-3 px-4 py-3 transition-colors hover:bg-gray-50",
-                        isActive && "bg-blue-50 border-l-2 border-blue-600"
-                      )}
-                    >
-                      <div className={cn(
-                        "mt-0.5",
-                        isActive ? "text-blue-600" : "text-gray-400"
-                      )}>
-                        {item.icon}
-                      </div>
-                      <div className="flex-1">
+        {error && (
+          <Card className="mb-6 border-red-200 bg-red-50">
+            <CardContent className="p-4">
+              <p className="text-red-700 text-sm">Error: {error}</p>
+            </CardContent>
+          </Card>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Navigation Sidebar */}
+          <div className="lg:col-span-1">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm font-medium text-gray-600">
+                  {t('navigation.categories')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <nav className="space-y-1">
+                  {navItems.map((item) => {
+                    const isActive = currentPath === item.href.split('/').pop()
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className={cn(
+                          "flex items-start gap-3 px-4 py-3 transition-colors hover:bg-gray-50",
+                          isActive && "bg-blue-50 border-l-2 border-blue-600"
+                        )}
+                      >
                         <div className={cn(
-                          "font-medium text-sm",
-                          isActive ? "text-blue-900" : "text-gray-900"
+                          "mt-0.5",
+                          isActive ? "text-blue-600" : "text-gray-400"
                         )}>
-                          {item.label}
+                          {item.icon}
                         </div>
-                        <div className="text-xs text-gray-500 mt-0.5">
-                          {item.description}
+                        <div className="flex-1">
+                          <div className={cn(
+                            "font-medium text-sm",
+                            isActive ? "text-blue-900" : "text-gray-900"
+                          )}>
+                            {item.label}
+                          </div>
+                          <div className="text-xs text-gray-500 mt-0.5">
+                            {item.description}
+                          </div>
                         </div>
-                      </div>
-                    </Link>
-                  )
-                })}
-              </nav>
-            </CardContent>
-          </Card>
+                      </Link>
+                    )
+                  })}
+                </nav>
+              </CardContent>
+            </Card>
 
-          {/* Quick Stats */}
-          <Card className="mt-4">
-            <CardHeader>
-              <CardTitle className="text-sm font-medium text-gray-600">
-                Current Status
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-600">Quiz Questions</span>
-                <Badge variant="outline">
-                  {(() => {
-                    const questionsPerGift = settings?.quiz?.questionsPerGift
-                    if (typeof questionsPerGift === 'number') {
-                      return questionsPerGift
-                    }
-                    if (typeof questionsPerGift === 'object' && questionsPerGift) {
-                      return Object.values(questionsPerGift)[0] || 5
-                    }
-                    return 0
-                  })()} per gift
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-600">Registration</span>
-                <Badge variant={settings?.general?.enableRegistration ? "default" : "secondary"}>
-                  {settings?.general?.enableRegistration ? 'Enabled' : 'Disabled'}
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-600">AI Analysis</span>
-                <Badge variant={settings?.ai?.showAIButton ? "default" : "secondary"}>
-                  {settings?.ai?.showAIButton ? 'Visible' : 'Hidden'}
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-600">Email Service</span>
-                <Badge variant={process.env.RESEND_API_KEY ? "default" : "destructive"}>
-                  {process.env.RESEND_API_KEY ? 'Configured' : 'Not Set'}
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+            {/* Quick Stats */}
+            <Card className="mt-4">
+              <CardHeader>
+                <CardTitle className="text-sm font-medium text-gray-600">
+                  {t('status.title')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">{t('status.quizQuestions')}</span>
+                  <Badge variant="outline">
+                    {(() => {
+                      const questionsPerGift = settings?.quiz?.questionsPerGift
+                      if (typeof questionsPerGift === 'number') {
+                        return questionsPerGift
+                      }
+                      if (typeof questionsPerGift === 'object' && questionsPerGift) {
+                        return Object.values(questionsPerGift)[0] || 5
+                      }
+                      return 0
+                    })()} {t('status.perGift')}
+                  </Badge>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">{t('status.registration')}</span>
+                  <Badge variant={settings?.general?.enableRegistration ? "default" : "secondary"}>
+                    {settings?.general?.enableRegistration ? t('status.enabled') : t('status.disabled')}
+                  </Badge>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">{t('status.aiAnalysis')}</span>
+                  <Badge variant={settings?.ai?.showAIButton ? "default" : "secondary"}>
+                    {settings?.ai?.showAIButton ? t('status.visible') : t('status.hidden')}
+                  </Badge>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">{t('status.emailService')}</span>
+                  <Badge variant={process.env.RESEND_API_KEY ? "default" : "destructive"}>
+                    {process.env.RESEND_API_KEY ? t('status.configured') : t('status.notSet')}
+                  </Badge>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
-        {/* Main Content Area */}
-        <div className="lg:col-span-3">
-          {children}
+          {/* Main Content Area */}
+          <div className="lg:col-span-3">
+            {children}
+          </div>
         </div>
-      </div>
       </div>
     </div>
   )

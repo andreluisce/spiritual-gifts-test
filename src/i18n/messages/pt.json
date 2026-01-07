@@ -489,7 +489,33 @@
       "unsavedChanges": "Alterações Não Salvas",
       "tabs": {
         "quiz": "Configurações do Quiz",
-        "general": "Geral"
+        "general": "Geral",
+        "ai": "IA & Análise",
+        "email": "Email & Notificações"
+      },
+      "navigation": {
+        "backToAdmin": "Voltar ao Admin",
+        "categories": "Categorias de Configurações",
+        "descriptions": {
+          "quiz": "Configure parâmetros e perguntas do quiz",
+          "general": "Configurações gerais do sistema",
+          "ai": "Configuração de análise de IA",
+          "email": "Configuração do serviço de email usando Resend"
+        }
+      },
+      "status": {
+        "title": "Status Atual",
+        "quizQuestions": "Perguntas do Quiz",
+        "perGift": "por dom",
+        "registration": "Registro",
+        "enabled": "Habilitado",
+        "disabled": "Desabilitado",
+        "aiAnalysis": "Análise IA",
+        "visible": "Visível",
+        "hidden": "Oculto",
+        "emailService": "Serviço de Email",
+        "configured": "Configurado",
+        "notSet": "Não Configurado"
       },
       "quiz": {
         "title": "Perguntas por Tipo de Dom",
