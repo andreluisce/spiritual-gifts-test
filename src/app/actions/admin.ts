@@ -6,7 +6,7 @@ import { revalidatePath } from 'next/cache'
 
 export async function approveUserAction(userId: string) {
     // Use a fresh client for the action
-    const supabase = createClient()
+    const supabase = await createClient()
 
     try {
         // 1. Check permissions (manager/admin)
@@ -64,7 +64,7 @@ export async function approveUserAction(userId: string) {
 }
 
 export async function rejectUserAction(userId: string, reason: string) {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     try {
         // 1. Check permissions
