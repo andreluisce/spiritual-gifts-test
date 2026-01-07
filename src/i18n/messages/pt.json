@@ -514,7 +514,23 @@
           "allowRetake": {
             "label": "Permitir Refazer",
             "description": "Usuários podem refazer o quiz múltiplas vezes"
+          },
+          "debugMode": {
+            "label": "Modo Debug",
+            "description": "Mostrar informações de debug durante o quiz"
           }
+        },
+        "saving": "Salvando alterações...",
+        "summary": {
+          "title": "Configuração Atual",
+          "totalQuestions": "Total de Perguntas:",
+          "questionsPerGift": "Perguntas por Dom:",
+          "shuffle": "Embaralhar:",
+          "retakes": "Refazer:",
+          "yes": "Sim",
+          "no": "Não",
+          "allowed": "Permitido",
+          "notAllowed": "Não Permitido"
         }
       },
       "general": {

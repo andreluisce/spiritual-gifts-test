@@ -122,7 +122,7 @@ export default function QuizSettingsPage() {
       {isSaving && (
         <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-2 rounded-lg flex items-center gap-2">
           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-          <span className="text-sm">Saving changes...</span>
+          <span className="text-sm">{t('saving')}</span>
         </div>
       )}
 
@@ -130,7 +130,7 @@ export default function QuizSettingsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <HelpCircle className="h-5 w-5 text-blue-600" />
-            Quiz Configuration
+            {t('title')}
           </CardTitle>
           <CardDescription>
             {t('subtitle', { total: totalQuestions })}
@@ -244,10 +244,10 @@ export default function QuizSettingsPage() {
                   <Settings2 className="h-4 w-4 text-gray-500" />
                   <div className="space-y-0.5">
                     <Label htmlFor="debug-mode" className="text-sm font-medium cursor-pointer">
-                      Debug Mode
+                      {t('options.debugMode.label')}
                     </Label>
                     <p className="text-xs text-gray-500">
-                      Show debug information during quiz
+                      {t('options.debugMode.description')}
                     </p>
                   </div>
                 </div>
@@ -262,19 +262,19 @@ export default function QuizSettingsPage() {
 
           {/* Summary Card */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h4 className="text-sm font-semibold text-blue-900 mb-2">Current Configuration</h4>
+            <h4 className="text-sm font-semibold text-blue-900 mb-2">{t('summary.title')}</h4>
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div className="text-blue-700">
-                <span className="font-medium">Total Questions:</span> {totalQuestions}
+                <span className="font-medium">{t('summary.totalQuestions')}</span> {totalQuestions}
               </div>
               <div className="text-blue-700">
-                <span className="font-medium">Questions per Gift:</span> {questionsPerGiftValue}
+                <span className="font-medium">{t('summary.questionsPerGift')}</span> {questionsPerGiftValue}
               </div>
               <div className="text-blue-700">
-                <span className="font-medium">Shuffle:</span> {localSettings.quiz.shuffleQuestions ? 'Yes' : 'No'}
+                <span className="font-medium">{t('summary.shuffle')}</span> {localSettings.quiz.shuffleQuestions ? t('summary.yes') : t('summary.no')}
               </div>
               <div className="text-blue-700">
-                <span className="font-medium">Retakes:</span> {localSettings.quiz.allowRetake ? 'Allowed' : 'Not Allowed'}
+                <span className="font-medium">{t('summary.retakes')}</span> {localSettings.quiz.allowRetake ? t('summary.allowed') : t('summary.notAllowed')}
               </div>
             </div>
           </div>
