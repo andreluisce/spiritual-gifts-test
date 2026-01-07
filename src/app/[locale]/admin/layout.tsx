@@ -1,6 +1,7 @@
 'use client'
 
 import { useAuth } from '@/context/AuthContext'
+import { usePermissions } from '@/hooks/usePermissions'
 import { useRouter } from '@/i18n/navigation'
 import { useEffect } from 'react'
 import { useTranslations } from 'next-intl'
@@ -13,7 +14,8 @@ import {
   Home,
   ArrowLeft,
   Database,
-  Shield
+  Shield,
+  Crown
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -22,15 +24,17 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  const { user, isAdmin, loading, adminLoading } = useAuth()
+  const { user, isAdmin, loading, adminLoading, userRole, isManager } = useAuth()
+  const { canViewUsers, canManageContent, canEditSettings, canViewAuditLogs } = usePermissions()
   const router = useRouter()
   const t = useTranslations('admin')
 
   useEffect(() => {
-    if (!loading && !adminLoading && (!user || !isAdmin)) {
+    // Allow both admins and managers
+    if (!loading && !adminLoading && (!user || (!isAdmin && !isManager))) {
       router.push('/dashboard')
     }
-  }, [user, isAdmin, loading, adminLoading, router])
+  }, [user, isAdmin, isManager, loading, adminLoading, router])
 
   if (loading || adminLoading) {
     return (
@@ -40,7 +44,7 @@ export default function AdminLayout({
     )
   }
 
-  if (!user || !isAdmin) {
+  if (!user || (!isAdmin && !isManager)) {
     return null
   }
 
@@ -60,7 +64,7 @@ export default function AdminLayout({
               </p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-4">
             <Link href="/dashboard">
               <Button variant="outline" size="sm" className="flex items-center gap-2 hover:bg-gray-50 border-gray-300">
@@ -70,9 +74,20 @@ export default function AdminLayout({
               </Button>
             </Link>
             <div className="flex items-center gap-3">
-              <Badge variant="outline" className="text-green-600 border-green-300 bg-green-50">
-                {t('adminAccess')}
-              </Badge>
+              {/* Role Badge */}
+              {isAdmin ? (
+                <Badge className="bg-yellow-100 text-yellow-800 border-yellow-300 flex items-center gap-1">
+                  <Crown className="h-3 w-3" />
+                  <span className="hidden sm:inline">Administrator</span>
+                  <span className="sm:hidden">Admin</span>
+                </Badge>
+              ) : isManager ? (
+                <Badge className="bg-blue-100 text-blue-800 border-blue-300 flex items-center gap-1">
+                  <Shield className="h-3 w-3" />
+                  <span className="hidden sm:inline">Manager</span>
+                  <span className="sm:hidden">Mgr</span>
+                </Badge>
+              ) : null}
               <div className="text-sm text-gray-600 hidden md:block">
                 {user.user_metadata?.full_name || user.email}
               </div>
@@ -89,13 +104,19 @@ export default function AdminLayout({
               <span className="sm:hidden">Home</span>
             </Button>
           </Link>
-          <Link href="/admin/users">
-            <Button variant="ghost" size="sm" className="flex items-center gap-2 whitespace-nowrap flex-shrink-0">
-              <Users className="h-4 w-4" />
-              <span className="hidden sm:inline">{t('navigation.users')}</span>
-              <span className="sm:hidden">Users</span>
-            </Button>
-          </Link>
+
+          {/* Users - Visible to managers and admins */}
+          {canViewUsers && (
+            <Link href="/admin/users">
+              <Button variant="ghost" size="sm" className="flex items-center gap-2 whitespace-nowrap flex-shrink-0">
+                <Users className="h-4 w-4" />
+                <span className="hidden sm:inline">{t('navigation.users')}</span>
+                <span className="sm:hidden">Users</span>
+              </Button>
+            </Link>
+          )}
+
+          {/* Analytics - Visible to managers and admins */}
           <Link href="/admin/analytics">
             <Button variant="ghost" size="sm" className="flex items-center gap-2 whitespace-nowrap flex-shrink-0">
               <BarChart3 className="h-4 w-4" />
@@ -103,27 +124,39 @@ export default function AdminLayout({
               <span className="sm:hidden">Analytics</span>
             </Button>
           </Link>
-          <Link href="/admin/content">
-            <Button variant="ghost" size="sm" className="flex items-center gap-2 whitespace-nowrap flex-shrink-0">
-              <Database className="h-4 w-4" />
-              <span className="hidden sm:inline">{t('navigation.content')}</span>
-              <span className="sm:hidden">Content</span>
-            </Button>
-          </Link>
-          <Link href="/admin/settings">
-            <Button variant="ghost" size="sm" className="flex items-center gap-2 whitespace-nowrap flex-shrink-0">
-              <Settings className="h-4 w-4" />
-              <span className="hidden sm:inline">{t('navigation.settings')}</span>
-              <span className="sm:hidden">Settings</span>
-            </Button>
-          </Link>
-          <Link href="/admin/audit">
-            <Button variant="ghost" size="sm" className="flex items-center gap-2 whitespace-nowrap flex-shrink-0">
-              <Shield className="h-4 w-4" />
-              <span className="hidden sm:inline">{t('navigation.audit')}</span>
-              <span className="sm:hidden">Audit</span>
-            </Button>
-          </Link>
+
+          {/* Content - Admin only */}
+          {canManageContent && (
+            <Link href="/admin/content">
+              <Button variant="ghost" size="sm" className="flex items-center gap-2 whitespace-nowrap flex-shrink-0">
+                <Database className="h-4 w-4" />
+                <span className="hidden sm:inline">{t('navigation.content')}</span>
+                <span className="sm:hidden">Content</span>
+              </Button>
+            </Link>
+          )}
+
+          {/* Settings - Admin only */}
+          {canEditSettings && (
+            <Link href="/admin/settings">
+              <Button variant="ghost" size="sm" className="flex items-center gap-2 whitespace-nowrap flex-shrink-0">
+                <Settings className="h-4 w-4" />
+                <span className="hidden sm:inline">{t('navigation.settings')}</span>
+                <span className="sm:hidden">Settings</span>
+              </Button>
+            </Link>
+          )}
+
+          {/* Audit - Admin only */}
+          {canViewAuditLogs && (
+            <Link href="/admin/audit">
+              <Button variant="ghost" size="sm" className="flex items-center gap-2 whitespace-nowrap flex-shrink-0">
+                <Shield className="h-4 w-4" />
+                <span className="hidden sm:inline">{t('navigation.audit')}</span>
+                <span className="sm:hidden">Audit</span>
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
 
