@@ -688,6 +688,9 @@ export type Database = {
       profiles: {
         Row: {
           age_range: string | null
+          approved: boolean | null
+          approved_at: string | null
+          approved_by: string | null
           avatar_url: string | null
           birth_date: string | null
           city: string | null
@@ -697,6 +700,7 @@ export type Database = {
           full_name: string | null
           id: string
           permissions: Json
+          rejection_reason: string | null
           role: Database["public"]["Enums"]["user_role_type"]
           state_province: string | null
           status: string | null
@@ -704,6 +708,9 @@ export type Database = {
         }
         Insert: {
           age_range?: string | null
+          approved?: boolean | null
+          approved_at?: string | null
+          approved_by?: string | null
           avatar_url?: string | null
           birth_date?: string | null
           city?: string | null
@@ -713,6 +720,7 @@ export type Database = {
           full_name?: string | null
           id: string
           permissions?: Json
+          rejection_reason?: string | null
           role?: Database["public"]["Enums"]["user_role_type"]
           state_province?: string | null
           status?: string | null
@@ -720,6 +728,9 @@ export type Database = {
         }
         Update: {
           age_range?: string | null
+          approved?: boolean | null
+          approved_at?: string | null
+          approved_by?: string | null
           avatar_url?: string | null
           birth_date?: string | null
           city?: string | null
@@ -729,6 +740,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           permissions?: Json
+          rejection_reason?: string | null
           role?: Database["public"]["Enums"]["user_role_type"]
           state_province?: string | null
           status?: string | null
@@ -1020,6 +1032,33 @@ export type Database = {
         }
         Relationships: []
       }
+      user_approvals: {
+        Row: {
+          action: string
+          created_at: string | null
+          id: string
+          performed_by: string
+          reason: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          id?: string
+          performed_by: string
+          reason?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          id?: string
+          performed_by?: string
+          reason?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_demographics: {
         Row: {
           birth_year: number | null
@@ -1151,6 +1190,7 @@ export type Database = {
             }
             Returns: Json
           }
+      approve_user: { Args: { target_user_id: string }; Returns: Json }
       calculate_quiz_result: {
         Args: { p_session_id: string }
         Returns: {
@@ -1423,6 +1463,17 @@ export type Database = {
             Returns: Json
           }
         | { Args: { user_gift_key: string }; Returns: Json }
+      get_pending_users: {
+        Args: never
+        Returns: {
+          approved: boolean
+          created_at: string
+          display_name: string
+          email: string
+          id: string
+          rejection_reason: string
+        }[]
+      }
       get_questions_by_locale: {
         Args: { target_locale?: string }
         Returns: {
@@ -1581,6 +1632,7 @@ export type Database = {
       has_permission: { Args: { p_permission: string }; Returns: boolean }
       is_admin: { Args: never; Returns: boolean }
       is_user_admin_safe: { Args: never; Returns: boolean }
+      is_user_approved: { Args: never; Returns: boolean }
       is_user_manager: { Args: never; Returns: boolean }
       log_audit_event: {
         Args: {
@@ -1622,6 +1674,10 @@ export type Database = {
       record_report_download: {
         Args: { p_report_id: string }
         Returns: undefined
+      }
+      reject_user: {
+        Args: { reject_reason: string; target_user_id: string }
+        Returns: Json
       }
       should_log_activity: {
         Args: {

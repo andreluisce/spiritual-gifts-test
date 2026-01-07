@@ -15,7 +15,8 @@ import {
   ArrowLeft,
   Database,
   Shield,
-  Crown
+  Crown,
+  UserCheck
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -112,6 +113,17 @@ export default function AdminLayout({
                 <Users className="h-4 w-4" />
                 <span className="hidden sm:inline">{t('navigation.users')}</span>
                 <span className="sm:hidden">Users</span>
+              </Button>
+            </Link>
+          )}
+
+          {/* Approvals - Visible to managers and admins */}
+          {canViewUsers && (
+            <Link href="/admin/approvals">
+              <Button variant="ghost" size="sm" className="flex items-center gap-2 whitespace-nowrap flex-shrink-0">
+                <UserCheck className="h-4 w-4" />
+                <span className="hidden sm:inline">Approvals</span>
+                <span className="sm:hidden">Approve</span>
               </Button>
             </Link>
           )}

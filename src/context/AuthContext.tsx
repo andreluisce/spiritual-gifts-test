@@ -17,6 +17,8 @@ type AuthContextType = {
   isManager: boolean
   permissions: string[]
   hasPermission: (permission: string) => boolean
+  isApproved: boolean
+  approvedLoading: boolean
   signInWithGoogle: () => Promise<void>
   signOut: () => Promise<void>
 }
@@ -30,6 +32,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [adminLoading, setAdminLoading] = useState(false)
   const [userRole, setUserRole] = useState<UserRole | null>(null)
   const [permissions, setPermissions] = useState<string[]>([])
+  const [isApproved, setIsApproved] = useState(false)
+  const [approvedLoading, setApprovedLoading] = useState(false)
   const [supabase] = useState(() => createClient())
 
   // Function to check admin status using secure RPC function
@@ -59,13 +63,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsAdmin(false)
       setUserRole(null)
       setPermissions([])
+      setIsApproved(false)
       return
     }
 
     setAdminLoading(true)
+    setApprovedLoading(true)
     try {
       // Get user role using new RPC function
       const { data: roleData, error: roleError } = await supabase.rpc('get_user_role')
+
+      // Get approval status
+      const { data: approvedData, error: approvedError } = await supabase.rpc('is_user_approved')
+      if (!approvedError) {
+        setIsApproved(!!approvedData)
+      } else {
+        // Fallback or assume false if error (except for admins/managers who are always approved)
+        setIsApproved(false)
+      }
 
       if (!roleError && roleData) {
         setUserRole(roleData as UserRole)
@@ -98,8 +113,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsAdmin(isAdminFallback)
       setUserRole(isAdminFallback ? 'admin' : 'user')
       setPermissions(isAdminFallback ? ['analytics', 'users_read', 'users_write', 'system_admin'] : [])
+      setIsApproved(isAdminFallback) // Admins are approved by default
     } finally {
       setAdminLoading(false)
+      setApprovedLoading(false)
     }
   }, [supabase, deriveAdminFromMetadata])
 
@@ -257,6 +274,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isManager,
       permissions,
       hasPermission,
+      isApproved: isApproved || isAdmin || isManager,
+      approvedLoading,
       signInWithGoogle,
       signOut
     }}>
