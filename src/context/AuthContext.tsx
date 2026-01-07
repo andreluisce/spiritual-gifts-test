@@ -6,11 +6,17 @@ import { getEnvironmentConfig } from '@/lib/env-config'
 import { userHasDemographics, triggerDemographicsCollection } from '@/lib/demographics'
 import type { User, AuthChangeEvent, Session } from '@supabase/supabase-js'
 
+type UserRole = 'user' | 'manager' | 'admin'
+
 type AuthContextType = {
   user: User | null
   loading: boolean
   isAdmin: boolean
   adminLoading: boolean
+  userRole: UserRole | null
+  isManager: boolean
+  permissions: string[]
+  hasPermission: (permission: string) => boolean
   signInWithGoogle: () => Promise<void>
   signOut: () => Promise<void>
 }
@@ -22,6 +28,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
   const [isAdmin, setIsAdmin] = useState(false)
   const [adminLoading, setAdminLoading] = useState(false)
+  const [userRole, setUserRole] = useState<UserRole | null>(null)
+  const [permissions, setPermissions] = useState<string[]>([])
   const [supabase] = useState(() => createClient())
 
   // Function to check admin status using secure RPC function
@@ -49,25 +57,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const checkAdminStatus = useCallback(async (currentUser: User | null) => {
     if (!currentUser) {
       setIsAdmin(false)
+      setUserRole(null)
+      setPermissions([])
       return
     }
 
     setAdminLoading(true)
     try {
-      // Use secure RPC function that checks auth.users metadata
-      const { data, error } = await supabase.rpc('is_user_admin_safe')
+      // Get user role using new RPC function
+      const { data: roleData, error: roleError } = await supabase.rpc('get_user_role')
 
-      if (error) {
-        console.error('Error checking admin status, using metadata fallback:', error)
-        setIsAdmin(deriveAdminFromMetadata(currentUser))
+      if (!roleError && roleData) {
+        setUserRole(roleData as UserRole)
+        setIsAdmin(roleData === 'admin')
       } else {
-        const adminFromRpc = typeof data === 'boolean' ? data : false
-        const fallback = deriveAdminFromMetadata(currentUser)
-        setIsAdmin(adminFromRpc || fallback) // Function returns boolean
+        // Fallback to old method
+        const isAdminFallback = deriveAdminFromMetadata(currentUser)
+        setIsAdmin(isAdminFallback)
+        setUserRole(isAdminFallback ? 'admin' : 'user')
+      }
+
+      // Get user permissions
+      const { data: permsData, error: permsError } = await supabase.rpc('get_user_permissions')
+
+      if (!permsError && permsData) {
+        setPermissions(Array.isArray(permsData) ? permsData : [])
+      } else {
+        // Set default permissions based on role
+        if (roleData === 'admin') {
+          setPermissions(['analytics', 'users_read', 'users_write', 'system_admin'])
+        } else if (roleData === 'manager') {
+          setPermissions(['analytics', 'users_read'])
+        } else {
+          setPermissions([])
+        }
       }
     } catch (error) {
       console.error('Error checking admin status, using metadata fallback:', error)
-      setIsAdmin(deriveAdminFromMetadata(currentUser))
+      const isAdminFallback = deriveAdminFromMetadata(currentUser)
+      setIsAdmin(isAdminFallback)
+      setUserRole(isAdminFallback ? 'admin' : 'user')
+      setPermissions(isAdminFallback ? ['analytics', 'users_read', 'users_write', 'system_admin'] : [])
     } finally {
       setAdminLoading(false)
     }
@@ -211,12 +241,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const hasPermission = useCallback((permission: string) => {
+    return permissions.includes(permission)
+  }, [permissions])
+
+  const isManager = userRole === 'manager' || userRole === 'admin'
+
   return (
     <AuthContext.Provider value={{
       user,
       loading,
       isAdmin,
       adminLoading,
+      userRole,
+      isManager,
+      permissions,
+      hasPermission,
       signInWithGoogle,
       signOut
     }}>
