@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { useQuizReport } from '@/hooks/useQuizReport'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -18,6 +19,7 @@ import {
 } from 'lucide-react'
 
 export default function QuizReportPage() {
+  const t = useTranslations('quizReport')
   const params = useParams()
   const router = useRouter()
   const sessionId = params.sessionId as string
@@ -43,7 +45,7 @@ export default function QuizReportPage() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="text-gray-600 mt-4">Carregando relatório...</p>
+          <p className="text-gray-600 mt-4">{t('loading')}</p>
         </div>
       </div>
     )
@@ -54,10 +56,10 @@ export default function QuizReportPage() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <Card className="max-w-md">
           <CardContent className="pt-6 text-center">
-            <p className="text-red-600 mb-4">Erro ao carregar relatório</p>
+            <p className="text-red-600 mb-4">{t('error')}</p>
             <Button onClick={() => router.back()}>
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Voltar
+              {t('back')}
             </Button>
           </CardContent>
         </Card>
@@ -74,11 +76,11 @@ export default function QuizReportPage() {
         <div className={`flex items-center justify-between ${isPrinting ? 'print:hidden' : ''}`}>
           <Button variant="ghost" onClick={() => router.back()}>
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Voltar
+            {t('back')}
           </Button>
           <Button onClick={handlePrint} variant="outline">
             <FileText className="h-4 w-4 mr-2" />
-            Imprimir / Salvar PDF
+            {t('print')}
           </Button>
         </div>
 
@@ -87,18 +89,18 @@ export default function QuizReportPage() {
           <CardHeader>
             <CardTitle className="text-2xl flex items-center gap-3">
               <FileText className="h-8 w-8 text-blue-600" />
-              Relatório Completo - Teste de Dons Espirituais
+              {t('title')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <span className="text-sm text-gray-500">Usuário:</span>
+                <span className="text-sm text-gray-500">{t('sessionInfo.user')}</span>
                 <p className="font-medium">{session_info.user_name}</p>
                 <p className="text-sm text-gray-600">{session_info.user_email}</p>
               </div>
               <div>
-                <span className="text-sm text-gray-500">Data:</span>
+                <span className="text-sm text-gray-500">{t('sessionInfo.date')}</span>
                 <p className="font-medium">
                   {new Date(session_info.started_at).toLocaleDateString('pt-BR', {
                     day: '2-digit',
@@ -111,7 +113,7 @@ export default function QuizReportPage() {
                 {session_info.duration_minutes && (
                   <p className="text-sm text-gray-600 flex items-center gap-1">
                     <Clock className="h-3 w-3" />
-                    Duração: {session_info.duration_minutes} minutos
+                    {t('sessionInfo.duration', { duration: session_info.duration_minutes })}
                   </p>
                 )}
               </div>
@@ -124,7 +126,7 @@ export default function QuizReportPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-6 w-6 text-blue-600" />
-              Dons Espirituais Descobertos
+              {t('spiritualGifts.title')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -170,7 +172,7 @@ export default function QuizReportPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Lightbulb className="h-6 w-6 text-purple-600" />
-                Insights e Orientações
+                {t('aiInsights.title')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -180,7 +182,7 @@ export default function QuizReportPage() {
 
                   {insight.description && (
                     <div>
-                      <h4 className="font-medium text-gray-700 mb-2">Descrição:</h4>
+                      <h4 className="font-medium text-gray-700 mb-2">{t('aiInsights.description')}</h4>
                       <p className="text-gray-600 leading-relaxed">{insight.description}</p>
                     </div>
                   )}
@@ -189,7 +191,7 @@ export default function QuizReportPage() {
                     <div className="flex gap-2">
                       <BookOpen className="h-5 w-5 text-blue-600 flex-shrink-0 mt-1" />
                       <div>
-                        <h4 className="font-medium text-gray-700 mb-2">Fundamento Bíblico:</h4>
+                        <h4 className="font-medium text-gray-700 mb-2">{t('aiInsights.biblicalFoundation')}</h4>
                         <p className="text-gray-600 leading-relaxed">{insight.biblical_foundation}</p>
                       </div>
                     </div>
@@ -199,7 +201,7 @@ export default function QuizReportPage() {
                     <div className="flex gap-2">
                       <Target className="h-5 w-5 text-green-600 flex-shrink-0 mt-1" />
                       <div>
-                        <h4 className="font-medium text-gray-700 mb-2">Aplicações Práticas:</h4>
+                        <h4 className="font-medium text-gray-700 mb-2">{t('aiInsights.practicalApplications')}</h4>
                         <p className="text-gray-600 leading-relaxed">{insight.practical_applications}</p>
                       </div>
                     </div>
@@ -216,7 +218,7 @@ export default function QuizReportPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <FileText className="h-6 w-6 text-gray-600" />
-                Perguntas e Respostas ({questions_and_answers.length} perguntas)
+                {t('questions.title', { count: questions_and_answers.length })}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -232,7 +234,7 @@ export default function QuizReportPage() {
                         <div className="flex items-center gap-4 text-sm">
                           <Badge variant="outline">{qa.gift_category}</Badge>
                           <span className="text-gray-600">
-                            Resposta: <span className="font-medium text-blue-600">{qa.answer_label}</span>
+                            {t('questions.answer')} <span className="font-medium text-blue-600">{qa.answer_label}</span>
                           </span>
                         </div>
                       </div>
@@ -246,8 +248,8 @@ export default function QuizReportPage() {
 
         {/* Footer */}
         <div className="text-center text-sm text-gray-500 py-4">
-          <p>Relatório gerado em {new Date().toLocaleDateString('pt-BR')}</p>
-          <p className="mt-1">Teste de Dons Espirituais - Descubra Seu Dom</p>
+          <p>{t('footer.generated', { date: new Date().toLocaleDateString('pt-BR') })}</p>
+          <p className="mt-1">{t('footer.subtitle')}</p>
         </div>
       </div>
     </div>
