@@ -58,8 +58,22 @@ export default function AdminEmailSettingsPage() {
     const loadEmailStatus = async () => {
       try {
         const response = await fetch('/api/email/config/status')
+
+        // Check if response is OK (status 200-299)
+        if (!response.ok) {
+          // Handle auth errors (401, 403) silently - user will be redirected by layout
+          if (response.status === 401 || response.status === 403) {
+            setEmailStatus({
+              isConfigured: false,
+              loading: false
+            })
+            return
+          }
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+
         const result = await response.json()
-        
+
         if (result.success) {
           setEmailStatus({
             isConfigured: result.config.isConfigured,
@@ -71,7 +85,7 @@ export default function AdminEmailSettingsPage() {
             adminEmails: 'andreluisce@gmail.com'
           }))
         } else {
-          throw new Error(result.error)
+          throw new Error(result.error || 'Failed to load email status')
         }
       } catch (error) {
         console.error('Failed to load email status:', error)
@@ -79,11 +93,14 @@ export default function AdminEmailSettingsPage() {
           isConfigured: false,
           loading: false
         })
-        addToast({
-          type: 'error',
-          title: 'Erro ao carregar configurações',
-          description: 'Não foi possível verificar o status do serviço de email'
-        })
+        // Only show toast for non-auth errors
+        if (error instanceof Error && !error.message.includes('401') && !error.message.includes('403')) {
+          addToast({
+            type: 'error',
+            title: 'Erro ao carregar configurações',
+            description: 'Não foi possível verificar o status do serviço de email'
+          })
+        }
       }
     }
 
@@ -167,7 +184,7 @@ export default function AdminEmailSettingsPage() {
               <span className="text-sm font-medium">Provedor de Email</span>
               <Badge variant="secondary">Resend</Badge>
             </div>
-            
+
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Status da Configuração</span>
               {emailStatus.loading ? (
@@ -185,8 +202,8 @@ export default function AdminEmailSettingsPage() {
             </div>
 
             <div className="pt-4 border-t">
-              <Button 
-                onClick={handleTestEmail} 
+              <Button
+                onClick={handleTestEmail}
                 disabled={testing || !emailStatus.isConfigured || emailStatus.loading}
                 className="w-full"
               >
@@ -202,13 +219,12 @@ export default function AdminEmailSettingsPage() {
                   </>
                 )}
               </Button>
-              
+
               {testResult && (
-                <div className={`mt-3 p-3 rounded-md text-sm ${
-                  testResult.includes('✅') 
-                    ? 'bg-green-50 text-green-700 border border-green-200' 
+                <div className={`mt-3 p-3 rounded-md text-sm ${testResult.includes('✅')
+                    ? 'bg-green-50 text-green-700 border border-green-200'
                     : 'bg-red-50 text-red-700 border border-red-200'
-                }`}>
+                  }`}>
                   {testResult}
                 </div>
               )}
