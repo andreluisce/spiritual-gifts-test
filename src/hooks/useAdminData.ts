@@ -453,7 +453,7 @@ export function useUpdateUser() {
     userId: string,
     updates: {
       displayName?: string
-      role?: 'user' | 'admin'
+      role?: 'user' | 'manager' | 'admin'
       status?: 'active' | 'inactive' | 'suspended'
     }
   ) => {

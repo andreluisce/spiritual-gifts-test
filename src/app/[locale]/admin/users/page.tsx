@@ -1,6 +1,7 @@
 'use client'
 
 import { useAuth } from '@/context/AuthContext'
+import { usePermissions } from '@/hooks/usePermissions'
 import { useRouter } from '@/i18n/navigation'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -56,14 +57,15 @@ import { useUserQuizResults, QuizResult } from '@/hooks/useUserQuizResults'
 // Validation schema for user editing
 const userEditSchema = z.object({
   displayName: z.string().min(1, 'Display name is required').max(100, 'Display name must be less than 100 characters'),
-  role: z.enum(['user', 'admin']),
+  role: z.enum(['user', 'manager', 'admin']),
   status: z.enum(['active', 'inactive', 'suspended'])
 })
 
 type UserEditForm = z.infer<typeof userEditSchema>
 
 export default function AdminUsersPage() {
-  const { user, isAdmin, loading } = useAuth()
+  const { user, isAdmin, loading, userRole } = useAuth()
+  const { canEditUsers, canDeleteUsers } = usePermissions()
   const router = useRouter()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedRole, setSelectedRole] = useState('all')
@@ -88,7 +90,7 @@ export default function AdminUsersPage() {
       status: 'active'
     }
   })
-  
+
   // Fetch real data
   const { users: realUsers, loading: usersLoading } = useUsersWithStats()
   const { stats: realStats, loading: statsLoading } = useAdminStats()
@@ -124,15 +126,15 @@ export default function AdminUsersPage() {
     newUsersThisMonth: 0,
     suspendedUsers: 0
   }
-  
+
   const filteredUsers = usersData.filter(user => {
     const userName = user.user_metadata?.name || (user.email ? user.email.split('@')[0] : '') || ''
     const matchesSearch = userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         (user.email ? user.email.toLowerCase().includes(searchTerm.toLowerCase()) : false)
+      (user.email ? user.email.toLowerCase().includes(searchTerm.toLowerCase()) : false)
     const userRole = user.user_metadata?.role || 'user'
     const matchesRole = selectedRole === 'all' || userRole === selectedRole
     const matchesStatus = selectedStatus === 'all' || user.status === selectedStatus
-    
+
     return matchesSearch && matchesRole && matchesStatus
   })
 
@@ -146,7 +148,15 @@ export default function AdminUsersPage() {
   }
 
   const getRoleIcon = (role: string) => {
-    return role === 'admin' ? <Crown className="h-4 w-4" /> : <Users className="h-4 w-4" />
+    if (role === 'admin') return <Crown className="h-4 w-4" />
+    if (role === 'manager') return <Shield className="h-4 w-4" />
+    return <Users className="h-4 w-4" />
+  }
+
+  const getRoleBadgeColor = (role: string) => {
+    if (role === 'admin') return 'bg-yellow-100 text-yellow-800 border-yellow-300'
+    if (role === 'manager') return 'bg-blue-100 text-blue-800 border-blue-300'
+    return 'bg-gray-100 text-gray-800 border-gray-300'
   }
 
 
@@ -182,7 +192,7 @@ export default function AdminUsersPage() {
     const date = new Date(dateString)
     const now = new Date()
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
-    
+
     if (diffInSeconds < 60) return `${diffInSeconds}s ago`
     if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`
     if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`
@@ -193,13 +203,13 @@ export default function AdminUsersPage() {
     setEditingUser(user)
     reset({
       displayName: user.user_metadata?.name || (user.email ? user.email.split('@')[0] : '') || '',
-      role: (user.user_metadata?.role as 'user' | 'admin') || 'user',
+      role: (user.user_metadata?.role as 'user' | 'manager' | 'admin') || 'user',
       status: user.status || 'active'
     })
   }
 
   const handleSaveUser = async (data: UserEditForm) => {
-    
+
     if (!editingUser) {
       console.error('No editing user found')
       return
@@ -268,7 +278,7 @@ export default function AdminUsersPage() {
             </Button>
           </Link>
         </div>
-        
+
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex-1">
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">User Management</h1>
@@ -422,7 +432,7 @@ export default function AdminUsersPage() {
                     />
                   </div>
                 </div>
-                
+
                 <div className="flex flex-col sm:flex-row gap-2">
                   <select
                     value={selectedRole}
@@ -431,9 +441,10 @@ export default function AdminUsersPage() {
                   >
                     <option value="all">All Roles</option>
                     <option value="admin">Admin</option>
+                    <option value="manager">Manager</option>
                     <option value="user">User</option>
                   </select>
-                  
+
                   <select
                     value={selectedStatus}
                     onChange={(e) => setSelectedStatus(e.target.value)}
@@ -463,7 +474,7 @@ export default function AdminUsersPage() {
                         {(user.user_metadata?.name || (user.email ? user.email.split('@')[0] : '') || 'U').split(' ').map(n => n[0]).join('').toUpperCase()}
                       </span>
                     </div>
-                    
+
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="text-sm font-medium text-gray-900">
@@ -481,17 +492,17 @@ export default function AdminUsersPage() {
                         <span className="whitespace-nowrap">Avg Score: {formatScore(user.avg_score, 1)}</span>
                       </div>
                     </div>
-                    
+
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 mt-2 sm:mt-0">
-                      <Badge variant="outline" className="flex items-center gap-1 whitespace-nowrap">
+                      <Badge className={`flex items-center gap-1 whitespace-nowrap border ${getRoleBadgeColor(user.user_metadata?.role || 'user')}`}>
                         {getRoleIcon(user.user_metadata?.role || 'user')}
-                        {user.user_metadata?.role || 'user'}
+                        <span className="capitalize">{user.user_metadata?.role || 'user'}</span>
                       </Badge>
                       <Badge className={`${getUserStatusColor(user.status)} whitespace-nowrap`}>
                         {user.status}
                       </Badge>
                     </div>
-                    
+
                     <div className="flex items-center gap-1 mt-2 sm:mt-0">
                       <Button
                         variant="ghost"
@@ -501,36 +512,40 @@ export default function AdminUsersPage() {
                       >
                         <FileText className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="sm" onClick={() => handleEditUser(user)}>
-                        <Edit className="h-4 w-4" />
-                      </Button>
+                      {canEditUsers && (
+                        <Button variant="ghost" size="sm" onClick={() => handleEditUser(user)}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      )}
 
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete User</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to delete {user.user_metadata?.name || user.email}? This action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction className="bg-red-600 hover:bg-red-700">
-                              Delete User
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
+                      {canDeleteUsers && (
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete User</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to delete {user.user_metadata?.name || user.email}? This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction className="bg-red-600 hover:bg-red-700">
+                                Delete User
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      )}
                     </div>
                   </div>
                 ))}
               </div>
-              
+
               {filteredUsers.length === 0 && (
                 <div className="text-center py-8">
                   <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -556,7 +571,7 @@ export default function AdminUsersPage() {
                     <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
                       <Crown className="h-6 w-6 text-yellow-600" />
                     </div>
-                    
+
                     <div className="flex-1">
                       <h3 className="font-medium text-gray-900">{admin.user_metadata?.name || (admin.email ? admin.email.split('@')[0] : '') || 'Unknown'}</h3>
                       <p className="text-sm text-gray-500">{admin.email}</p>
@@ -564,7 +579,7 @@ export default function AdminUsersPage() {
                         Administrator since {new Date(admin.created_at).toLocaleDateString('pt-BR')}
                       </p>
                     </div>
-                    
+
                     <Badge className="bg-yellow-100 text-yellow-800">
                       Administrator
                     </Badge>
@@ -718,10 +733,10 @@ export default function AdminUsersPage() {
                           <span className="text-gray-500">{activity.count}</span>
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div 
-                            className="bg-blue-600 h-2 rounded-full" 
-                            style={{ 
-                              width: `${(activity.count / (activityStats.topActivities[0]?.count || 1)) * 100}%` 
+                          <div
+                            className="bg-blue-600 h-2 rounded-full"
+                            style={{
+                              width: `${(activity.count / (activityStats.topActivities[0]?.count || 1)) * 100}%`
                             }}
                           ></div>
                         </div>
@@ -780,7 +795,7 @@ export default function AdminUsersPage() {
               Update user information and permissions for {editingUser?.email}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          
+
           <form onSubmit={handleSubmit(handleSaveUser)} className="space-y-4 py-4">
             {/* Display Name */}
             <div className="space-y-2">
@@ -803,6 +818,7 @@ export default function AdminUsersPage() {
                 className={`w-full px-3 py-2 border rounded-md text-sm ${errors.role ? 'border-red-500' : ''}`}
               >
                 <option value="user">User</option>
+                <option value="manager">Manager</option>
                 <option value="admin">Administrator</option>
               </select>
               {errors.role && (
@@ -828,7 +844,7 @@ export default function AdminUsersPage() {
 
             <AlertDialogFooter className="mt-6">
               <AlertDialogCancel type="button" onClick={handleCancelEdit}>Cancel</AlertDialogCancel>
-              <Button 
+              <Button
                 type="submit"
                 disabled={isSubmitting || updating}
                 className="bg-blue-600 hover:bg-blue-700"
@@ -919,11 +935,10 @@ export default function AdminUsersPage() {
                             <div className="space-y-2">
                               {result.top_gifts.slice(0, 3).map((gift, giftIndex) => (
                                 <div key={gift.gift_id} className="flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-100">
-                                  <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${
-                                    giftIndex === 0 ? 'bg-yellow-400 text-yellow-900' :
+                                  <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${giftIndex === 0 ? 'bg-yellow-400 text-yellow-900' :
                                     giftIndex === 1 ? 'bg-gray-300 text-gray-700' :
-                                    'bg-orange-300 text-orange-900'
-                                  }`}>
+                                      'bg-orange-300 text-orange-900'
+                                    }`}>
                                     {giftIndex + 1}
                                   </div>
                                   <div className="flex-1">
