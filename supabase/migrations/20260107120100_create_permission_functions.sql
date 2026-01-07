@@ -22,10 +22,10 @@ BEGIN
     RETURN 'user'::user_role_type;
   END IF;
 
-  -- Get role from profiles
+  -- Get role from profiles (using 'id' column)
   SELECT role INTO v_role
   FROM profiles
-  WHERE user_id = v_user_id;
+  WHERE id = v_user_id;
 
   RETURN COALESCE(v_role, 'user'::user_role_type);
 END;
@@ -49,10 +49,10 @@ BEGIN
     RETURN FALSE;
   END IF;
 
-  -- Get user permissions
+  -- Get user permissions (using 'id' column)
   SELECT permissions INTO v_permissions
   FROM profiles
-  WHERE user_id = v_user_id;
+  WHERE id = v_user_id;
 
   -- Check if permission exists in array
   RETURN COALESCE(v_permissions ? p_permission, FALSE);
@@ -110,9 +110,10 @@ BEGIN
     RETURN '[]'::jsonb;
   END IF;
 
+  -- Get user permissions (using 'id' column)
   SELECT permissions INTO v_permissions
   FROM profiles
-  WHERE user_id = v_user_id;
+  WHERE id = v_user_id;
 
   RETURN COALESCE(v_permissions, '[]'::jsonb);
 END;

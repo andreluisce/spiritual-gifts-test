@@ -11,7 +11,7 @@ CREATE POLICY "Managers can view quiz sessions"
   ON quiz_sessions FOR SELECT
   USING (
     is_user_manager() OR
-    user_id = auth.uid()
+    id = auth.uid()
   );
 
 -- ============================================
@@ -27,7 +27,7 @@ CREATE POLICY "Only admins can update profiles"
   ON profiles FOR UPDATE
   USING (
     is_user_admin_safe() OR
-    user_id = auth.uid()  -- Users can update their own profile
+    id = auth.uid()  -- Users can update their own profile
   );
 
 DROP POLICY IF EXISTS "Only admins can delete profiles" ON profiles;
@@ -59,18 +59,6 @@ CREATE POLICY "Only admins can delete system settings"
   USING (is_user_admin_safe());
 
 -- ============================================
--- QUIZ RESULTS - Managers can view all results
--- ============================================
-DROP POLICY IF EXISTS "Managers can view quiz results" ON quiz_results_weighted;
-CREATE POLICY "Managers can view quiz results"
-  ON quiz_results_weighted FOR SELECT
-  USING (
-    is_user_manager() OR
-    session_id IN (
-      SELECT id FROM quiz_sessions WHERE user_id = auth.uid()
-    )
-  );
-
 -- ============================================
 -- ANSWERS - Managers can view all answers
 -- ============================================
@@ -80,7 +68,7 @@ CREATE POLICY "Managers can view answers"
   USING (
     is_user_manager() OR
     session_id IN (
-      SELECT id FROM quiz_sessions WHERE user_id = auth.uid()
+      SELECT id FROM quiz_sessions WHERE id = auth.uid()
     )
   );
 
@@ -92,7 +80,7 @@ CREATE POLICY "Managers can view user activities"
   ON user_activities FOR SELECT
   USING (
     is_user_manager() OR
-    user_id = auth.uid()
+    id = auth.uid()
   );
 
 -- ============================================

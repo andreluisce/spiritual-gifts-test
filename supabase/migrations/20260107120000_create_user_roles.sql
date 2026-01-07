@@ -16,21 +16,20 @@ ADD COLUMN IF NOT EXISTS role_new user_role_type DEFAULT 'user',
 ADD COLUMN IF NOT EXISTS permissions JSONB DEFAULT '[]'::jsonb;
 
 -- Migrate existing admin users to new role system
--- Check multiple sources for admin status
+-- Check old role column and auth.users raw_user_meta_data
 UPDATE profiles
 SET
   role_new = 'admin',
   permissions = '["analytics", "users_read", "users_write", "system_admin"]'::jsonb
 WHERE
-  -- Check old role column
+  -- Check old role column (if it exists and is text-based)
   role = 'admin'
-  -- Check user metadata
-  OR (raw_user_meta_data->>'role')::text = 'admin'
-  OR (raw_user_meta_data->>'is_admin')::boolean = true
-  -- Check if user is in admin list (fallback)
-  OR user_id IN (
+  -- Check if user is in auth.users with admin in raw_user_meta_data
+  OR id IN (
     SELECT id FROM auth.users
-    WHERE raw_user_meta_data->>'role' = 'admin'
+    WHERE
+      (raw_user_meta_data->>'role')::text = 'admin'
+      OR (raw_user_meta_data->>'is_admin')::boolean = true
   );
 
 -- Set all non-admin users to 'user' role with no permissions

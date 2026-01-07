@@ -30,7 +30,7 @@ BEGIN
 
   RETURN QUERY
   SELECT
-    p.user_id,
+    p.id as user_id,
     COALESCE(p.display_name, 'Unknown User') as display_name,
     -- Mask email: show first 3 chars + @domain
     CASE
@@ -44,9 +44,9 @@ BEGIN
     p.role,
     COALESCE(p.is_active, true) as is_active
   FROM profiles p
-  LEFT JOIN auth.users u ON u.id = p.user_id
-  LEFT JOIN quiz_sessions qs ON qs.user_id = p.user_id AND qs.is_completed = true
-  GROUP BY p.user_id, p.display_name, u.email, p.created_at, p.last_login, p.role, p.is_active
+  LEFT JOIN auth.users u ON u.id = p.id
+  LEFT JOIN quiz_sessions qs ON qs.user_id = p.id AND qs.is_completed = true
+  GROUP BY p.id, p.display_name, u.email, p.created_at, p.last_login, p.role, p.is_active
   ORDER BY p.created_at DESC;
 END;
 $$;
@@ -55,6 +55,7 @@ $$;
 -- Update existing admin functions to check for admin role
 -- ============================================
 
+DROP FUNCTION IF EXISTS public.admin_delete_user(UUID);
 -- Admin delete user - Only admins can delete
 CREATE OR REPLACE FUNCTION public.admin_delete_user(p_user_id UUID)
 RETURNS JSONB
@@ -75,8 +76,8 @@ BEGIN
     RAISE EXCEPTION 'Cannot delete your own account';
   END IF;
 
-  -- Delete user profile
-  DELETE FROM profiles WHERE user_id = p_user_id;
+  -- Delete user profile (using 'id' column)
+  DELETE FROM profiles WHERE id = p_user_id;
 
   -- Delete auth user (cascade will handle related data)
   DELETE FROM auth.users WHERE id = p_user_id;
@@ -98,6 +99,7 @@ END;
 $$;
 
 -- Admin update user - Only admins can change roles
+DROP FUNCTION IF EXISTS public.admin_update_user(UUID, TEXT, user_role_type, BOOLEAN);
 CREATE OR REPLACE FUNCTION public.admin_update_user(
   p_user_id UUID,
   p_display_name TEXT DEFAULT NULL,
@@ -118,19 +120,19 @@ BEGIN
     RAISE EXCEPTION 'Admin access required to update users';
   END IF;
 
-  -- Get current role
-  SELECT role INTO v_old_role FROM profiles WHERE user_id = p_user_id;
+  -- Get current role (using 'id' column)
+  SELECT role INTO v_old_role FROM profiles WHERE id = p_user_id;
 
-  -- Update profile
+  -- Update profile (using 'id' column)
   UPDATE profiles
   SET
     display_name = COALESCE(p_display_name, display_name),
     role = COALESCE(p_role, role),
     is_active = COALESCE(p_is_active, is_active),
     updated_at = NOW()
-  WHERE user_id = p_user_id;
+  WHERE id = p_user_id;
 
-  -- If role changed, update permissions
+  -- If role changed, update permissions (using 'id' column)
   IF p_role IS NOT NULL AND p_role != v_old_role THEN
     UPDATE profiles
     SET permissions = CASE p_role
@@ -138,7 +140,7 @@ BEGIN
       WHEN 'manager' THEN '["analytics", "users_read"]'::jsonb
       ELSE '[]'::jsonb
     END
-    WHERE user_id = p_user_id;
+    WHERE id = p_user_id;
   END IF;
 
   v_result := jsonb_build_object(
