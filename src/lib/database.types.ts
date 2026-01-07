@@ -12,6 +12,31 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.1"
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       ai_analysis_cache: {
@@ -671,7 +696,8 @@ export type Database = {
           email: string | null
           full_name: string | null
           id: string
-          role: string | null
+          permissions: Json
+          role: Database["public"]["Enums"]["user_role_type"]
           state_province: string | null
           status: string | null
           updated_at: string
@@ -686,7 +712,8 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id: string
-          role?: string | null
+          permissions?: Json
+          role?: Database["public"]["Enums"]["user_role_type"]
           state_province?: string | null
           status?: string | null
           updated_at?: string
@@ -701,7 +728,8 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
-          role?: string | null
+          permissions?: Json
+          role?: Database["public"]["Enums"]["user_role_type"]
           state_province?: string | null
           status?: string | null
           updated_at?: string
@@ -743,6 +771,51 @@ export type Database = {
           },
         ]
       }
+      question_history: {
+        Row: {
+          changed_at: string
+          changed_by: string | null
+          default_weight: number
+          gift: Database["public"]["Enums"]["gift_key"]
+          id: number
+          pclass: Database["public"]["Enums"]["weight_class"]
+          question_id: number
+          reason_for_change: string | null
+          reverse_scored: boolean
+          source: Database["public"]["Enums"]["source_type"]
+          text: string
+          version: number
+        }
+        Insert: {
+          changed_at?: string
+          changed_by?: string | null
+          default_weight: number
+          gift: Database["public"]["Enums"]["gift_key"]
+          id?: number
+          pclass: Database["public"]["Enums"]["weight_class"]
+          question_id: number
+          reason_for_change?: string | null
+          reverse_scored: boolean
+          source: Database["public"]["Enums"]["source_type"]
+          text: string
+          version: number
+        }
+        Update: {
+          changed_at?: string
+          changed_by?: string | null
+          default_weight?: number
+          gift?: Database["public"]["Enums"]["gift_key"]
+          id?: number
+          pclass?: Database["public"]["Enums"]["weight_class"]
+          question_id?: number
+          reason_for_change?: string | null
+          reverse_scored?: boolean
+          source?: Database["public"]["Enums"]["source_type"]
+          text?: string
+          version?: number
+        }
+        Relationships: []
+      }
       question_pool: {
         Row: {
           created_at: string
@@ -755,6 +828,7 @@ export type Database = {
           source: Database["public"]["Enums"]["source_type"]
           text: string
           updated_at: string
+          version: number
         }
         Insert: {
           created_at?: string
@@ -767,6 +841,7 @@ export type Database = {
           source?: Database["public"]["Enums"]["source_type"]
           text: string
           updated_at?: string
+          version?: number
         }
         Update: {
           created_at?: string
@@ -779,6 +854,7 @@ export type Database = {
           source?: Database["public"]["Enums"]["source_type"]
           text?: string
           updated_at?: string
+          version?: number
         }
         Relationships: []
       }
@@ -979,6 +1055,25 @@ export type Database = {
       }
     }
     Views: {
+      question_version_history: {
+        Row: {
+          changed_at: string | null
+          changed_by: string | null
+          current_reverse_scored: boolean | null
+          current_text: string | null
+          current_version: number | null
+          gift: Database["public"]["Enums"]["gift_key"] | null
+          history_id: number | null
+          old_reverse_scored: boolean | null
+          old_text: string | null
+          old_version: number | null
+          pclass: Database["public"]["Enums"]["weight_class"] | null
+          question_id: number | null
+          reason_for_change: string | null
+          source: Database["public"]["Enums"]["source_type"] | null
+        }
+        Relationships: []
+      }
       quiz_results_weighted: {
         Row: {
           avg_weighted: number | null
@@ -1032,20 +1127,30 @@ export type Database = {
       }
     }
     Functions: {
-      admin_delete_user: { Args: { target_user_id: string }; Returns: Json }
+      admin_delete_user: { Args: { p_user_id: string }; Returns: Json }
       admin_set_user_status: {
         Args: { new_status: string; target_user_id: string }
         Returns: boolean
       }
-      admin_update_user: {
-        Args: {
-          display_name?: string
-          target_user_id: string
-          user_role?: string
-          user_status?: string
-        }
-        Returns: Json
-      }
+      admin_update_user:
+        | {
+            Args: {
+              p_display_name?: string
+              p_is_active?: boolean
+              p_role?: Database["public"]["Enums"]["user_role_type"]
+              p_user_id: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              display_name?: string
+              target_user_id: string
+              user_role?: string
+              user_status?: string
+            }
+            Returns: Json
+          }
       calculate_quiz_result: {
         Args: { p_session_id: string }
         Returns: {
@@ -1418,6 +1523,7 @@ export type Database = {
           users: Json
         }[]
       }
+      get_user_permissions: { Args: never; Returns: Json }
       get_user_profile: { Args: never; Returns: Json }
       get_user_profile_activities: {
         Args: { limit_count?: number; p_user_id: string }
@@ -1455,6 +1561,10 @@ export type Database = {
           total_scores: Json
         }[]
       }
+      get_user_role: {
+        Args: never
+        Returns: Database["public"]["Enums"]["user_role_type"]
+      }
       get_users_with_stats: {
         Args: never
         Returns: {
@@ -1468,8 +1578,10 @@ export type Database = {
           user_metadata: Json
         }[]
       }
+      has_permission: { Args: { p_permission: string }; Returns: boolean }
       is_admin: { Args: never; Returns: boolean }
       is_user_admin_safe: { Args: never; Returns: boolean }
+      is_user_manager: { Args: never; Returns: boolean }
       log_audit_event: {
         Args: {
           p_action: string
@@ -1493,6 +1605,19 @@ export type Database = {
           p_user_id: string
         }
         Returns: undefined
+      }
+      manager_get_users_with_stats: {
+        Args: never
+        Returns: {
+          created_at: string
+          display_name: string
+          email_masked: string
+          is_active: boolean
+          last_login: string
+          quiz_count: number
+          role: Database["public"]["Enums"]["user_role_type"]
+          user_id: string
+        }[]
       }
       record_report_download: {
         Args: { p_report_id: string }
@@ -1556,6 +1681,7 @@ export type Database = {
         | "DANGER"
         | "MISUNDERSTANDING"
         | "OTHER"
+      user_role_type: "user" | "manager" | "admin"
       weight_class: "P1" | "P2" | "P3"
     }
     CompositeTypes: {
@@ -1682,6 +1808,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       gift_key: [
@@ -1700,6 +1829,7 @@ export const Constants = {
         "MISUNDERSTANDING",
         "OTHER",
       ],
+      user_role_type: ["user", "manager", "admin"],
       weight_class: ["P1", "P2", "P3"],
     },
   },
