@@ -1,31 +1,84 @@
 'use client'
 
+import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { useSystemSettings } from '@/hooks/useSystemSettings'
+import { useSystemSettings, type SystemSettings } from '@/hooks/useSystemSettings'
 import { useTranslations } from 'next-intl'
 import { Globe, UserPlus, Users, Mail, AlertTriangle, FileText } from 'lucide-react'
+
+// Debounce hook for performance optimization
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value)
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value)
+    }, delay)
+
+    return () => {
+      clearTimeout(handler)
+    }
+  }, [value, delay])
+
+  return debouncedValue
+}
 
 export default function GeneralSettingsPage() {
   const t = useTranslations('admin.settings.general')
   const { settings, updateSettings } = useSystemSettings()
+  const [localSettings, setLocalSettings] = useState<SystemSettings | null>(null)
+  const [isSaving, setIsSaving] = useState(false)
 
-  const handleSettingChange = (key: string, value: string | boolean | number) => {
-    if (!settings) return
+  // Sync local settings with fetched settings
+  useEffect(() => {
+    if (settings) {
+      setLocalSettings(settings)
+    }
+  }, [settings])
 
-    const newSettings = { ...settings }
+  // Debounce local settings changes
+  const debouncedSettings = useDebounce(localSettings, 1500)
+
+  // Update server when debounced settings change
+  useEffect(() => {
+    if (!debouncedSettings || !settings) return
+
+    // Only update if the settings actually changed (deep comparison)
+    // Simple JSON stringify comparison is enough for this structure
+    const hasChanged = JSON.stringify(debouncedSettings.general) !== JSON.stringify(settings.general)
+
+    if (hasChanged) {
+      setIsSaving(true)
+      updateSettings(debouncedSettings)
+        .then(() => {
+          setIsSaving(false)
+        })
+        .catch((error) => {
+          console.error('Failed to update settings:', error)
+          setIsSaving(false)
+          // Revert to previous settings on error
+          setLocalSettings(settings)
+        })
+    }
+  }, [debouncedSettings, settings, updateSettings])
+
+  const handleSettingChange = useCallback((key: string, value: string | boolean | number) => {
+    if (!localSettings) return
+
+    const newSettings = { ...localSettings }
     newSettings.general = {
       ...newSettings.general,
       [key]: value
     }
 
-    updateSettings(newSettings)
-  }
+    setLocalSettings(newSettings)
+  }, [localSettings])
 
-  if (!settings) {
+  if (!localSettings) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -35,6 +88,14 @@ export default function GeneralSettingsPage() {
 
   return (
     <div className="space-y-6">
+      {/* Saving indicator */}
+      {isSaving && (
+        <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-2 rounded-lg flex items-center gap-2">
+          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+          <span className="text-sm">Saving changes...</span>
+        </div>
+      )}
+
       {/* User Access Settings */}
       <Card>
         <CardHeader>
@@ -62,7 +123,7 @@ export default function GeneralSettingsPage() {
             </div>
             <Switch
               id="enable-registration"
-              checked={settings.general.enableRegistration || false}
+              checked={localSettings.general.enableRegistration || false}
               onCheckedChange={(checked) => handleSettingChange('enableRegistration', checked)}
             />
           </div>
@@ -82,7 +143,7 @@ export default function GeneralSettingsPage() {
             </div>
             <Switch
               id="require-approval"
-              checked={settings.general.requireApproval || false}
+              checked={localSettings.general.requireApproval || false}
               onCheckedChange={(checked) => handleSettingChange('requireApproval', checked)}
             />
           </div>
@@ -102,7 +163,7 @@ export default function GeneralSettingsPage() {
             </div>
             <Switch
               id="allow-guest"
-              checked={settings.general.enableGuestQuiz || false}
+              checked={localSettings.general.enableGuestQuiz || false}
               onCheckedChange={(checked) => handleSettingChange('enableGuestQuiz', checked)}
             />
           </div>
@@ -126,7 +187,7 @@ export default function GeneralSettingsPage() {
             <Label htmlFor="site-name">Site Name</Label>
             <Input
               id="site-name"
-              value={settings.general.siteName || ''}
+              value={localSettings.general.siteName || ''}
               onChange={(e) => handleSettingChange('siteName', e.target.value)}
               placeholder="Enter site name"
             />
@@ -137,7 +198,7 @@ export default function GeneralSettingsPage() {
             <Label htmlFor="site-description">Site Description</Label>
             <Input
               id="site-description"
-              value={settings.general.siteDescription || ''}
+              value={localSettings.general.siteDescription || ''}
               onChange={(e) => handleSettingChange('siteDescription', e.target.value)}
               placeholder="Brief description of your site"
             />
@@ -151,7 +212,7 @@ export default function GeneralSettingsPage() {
               <Input
                 id="contact-email"
                 type="email"
-                value={settings.general.contactEmail || ''}
+                value={localSettings.general.contactEmail || ''}
                 onChange={(e) => handleSettingChange('contactEmail', e.target.value)}
                 placeholder="admin@example.com"
                 className="flex-1"
@@ -179,7 +240,7 @@ export default function GeneralSettingsPage() {
               {t('localization.defaultLanguage.label')}
             </Label>
             <Select
-              value={settings.general.defaultLanguage || 'pt'}
+              value={localSettings.general.defaultLanguage || 'pt'}
               onValueChange={(value) => handleSettingChange('defaultLanguage', value)}
             >
               <SelectTrigger id="default-language" className="w-full">
@@ -238,12 +299,12 @@ export default function GeneralSettingsPage() {
             </div>
             <Switch
               id="maintenance-mode"
-              checked={settings.general.maintenanceMode || false}
+              checked={localSettings.general.maintenanceMode || false}
               onCheckedChange={(checked) => handleSettingChange('maintenanceMode', checked)}
             />
           </div>
 
-          {settings.general.maintenanceMode && (
+          {localSettings.general.maintenanceMode && (
             <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
               <div className="flex items-start gap-2">
                 <AlertTriangle className="h-4 w-4 text-orange-600 mt-0.5" />
