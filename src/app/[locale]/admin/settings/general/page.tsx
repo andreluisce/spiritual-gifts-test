@@ -67,6 +67,26 @@ export default function GeneralSettingsPage() {
             />
           </div>
 
+          {/* Require Approval */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Users className="h-4 w-4 text-gray-500" />
+              <div className="space-y-0.5">
+                <Label htmlFor="require-approval" className="text-sm font-medium cursor-pointer">
+                  Require Admin Approval
+                </Label>
+                <p className="text-xs text-gray-500">
+                  Only approved users can access the dashboard and take the test
+                </p>
+              </div>
+            </div>
+            <Switch
+              id="require-approval"
+              checked={settings.general.requireApproval || false}
+              onCheckedChange={(checked) => handleSettingChange('requireApproval', checked)}
+            />
+          </div>
+
           {/* Allow Guest Quiz */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -187,7 +207,7 @@ export default function GeneralSettingsPage() {
             <div className="flex items-start gap-2">
               <Globe className="h-4 w-4 text-blue-600 mt-0.5" />
               <div className="text-xs text-blue-700">
-                <strong>Note:</strong> The default language applies to new users and guest sessions. 
+                <strong>Note:</strong> The default language applies to new users and guest sessions.
                 Existing users can continue using their preferred language.
               </div>
             </div>
@@ -228,7 +248,7 @@ export default function GeneralSettingsPage() {
               <div className="flex items-start gap-2">
                 <AlertTriangle className="h-4 w-4 text-orange-600 mt-0.5" />
                 <div className="text-xs text-orange-700">
-                  <strong>Warning:</strong> Maintenance mode is active. 
+                  <strong>Warning:</strong> Maintenance mode is active.
                   Regular users cannot access the site.
                 </div>
               </div>

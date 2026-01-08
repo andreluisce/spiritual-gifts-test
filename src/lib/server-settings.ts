@@ -127,7 +127,8 @@ function getDefaultSettings() {
       enableGuestQuiz: false,
       maintenanceMode: false,
       contactEmail: 'admin@spiritualgifts.app',
-      defaultLanguage: 'pt'
+      defaultLanguage: 'pt',
+      requireApproval: false
     }
   }
 }

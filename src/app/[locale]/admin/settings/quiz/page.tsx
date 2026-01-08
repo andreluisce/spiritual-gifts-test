@@ -9,6 +9,7 @@ import { Separator } from '@/components/ui/separator'
 import { useSystemSettings, type SystemSettings } from '@/hooks/useSystemSettings'
 import { useTranslations } from 'next-intl'
 import { HelpCircle, Settings2, Shuffle, Eye, RefreshCw } from 'lucide-react'
+import Link from 'next/link'
 
 // Debounce hook for performance optimization
 function useDebounce<T>(value: T, delay: number): T {
@@ -146,6 +147,20 @@ export default function QuizSettingsPage() {
             <p className="text-sm text-gray-600">
               {t('questionsConfig.description')}
             </p>
+
+            {/* Approval Requirement Hint */}
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-sm text-yellow-800 flex items-start gap-2">
+              <Settings2 className="h-4 w-4 mt-0.5 flex-shrink-0" />
+              <div>
+                <strong>Want to restrict quiz access?</strong>
+                <p>
+                  You can require admin approval for users to take the test in{' '}
+                  <Link href="/admin/settings/general" className="underline hover:text-yellow-900">
+                    General Settings
+                  </Link>.
+                </p>
+              </div>
+            </div>
 
             <div className="grid gap-4">
               <div className="grid gap-2">

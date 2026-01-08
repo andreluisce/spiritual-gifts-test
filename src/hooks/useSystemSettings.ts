@@ -38,6 +38,7 @@ export interface SystemSettings {
     maintenanceMode: boolean
     siteDescription: string
     enableRegistration: boolean
+    requireApproval: boolean
   }
   ai: {
     enableAIAnalysis: boolean

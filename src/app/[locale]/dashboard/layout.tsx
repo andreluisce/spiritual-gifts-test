@@ -1,6 +1,6 @@
 import ApprovalGuard from '@/components/ApprovalGuard'
 
-export default function QuizLayout({
+export default function DashboardLayout({
     children,
 }: {
     children: React.ReactNode
