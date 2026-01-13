@@ -69,14 +69,13 @@ export async function middleware(request: NextRequest) {
 
 
     // Public routes and auth callbacks don't need authentication
-    // Include /quiz so guest users don't get stuck in redirect loops
-    const publicRoutes = ['/login', '/auth/callback', '/gifts', '/quiz'];
+    const publicRoutes = ['/login', '/auth/callback', '/gifts'];
     const isPublicRoute = publicRoutes.some(route =>
       request.nextUrl.pathname.includes(route)
     );
     
     // Protected routes that absolutely require authentication
-    const protectedRoutes = ['/dashboard', '/profile', '/admin'];
+    const protectedRoutes = ['/dashboard', '/profile', '/quiz', '/admin'];
     const isProtectedRoute = protectedRoutes.some(route =>
       request.nextUrl.pathname.includes(route)
     );
