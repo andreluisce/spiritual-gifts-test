@@ -164,6 +164,16 @@ export default function QuizPage() {
     return labels[score] || ''
   }
 
+  const goToFirstUnanswered = () => {
+    if (!availableQuestions) return
+
+    const firstUnansweredIndex = availableQuestions.findIndex(q => currentAnswers[q.id] === undefined)
+    if (firstUnansweredIndex !== -1) {
+      setCurrentQuestionIndex(firstUnansweredIndex)
+      setSelectedAnswer(null)
+    }
+  }
+
   // Show guest quiz blocked message if not allowed
   if (!authLoading && !settingsLoading && !user && !allowGuestQuiz) {
     return (
@@ -534,10 +544,13 @@ export default function QuizPage() {
                 </div>
               )}
               {isLastQuestion && !allQuestionsAnswered && (
-                <div className="text-[10px] md:text-xs text-red-600 mt-1 flex items-center justify-center gap-1">
+                <button
+                  onClick={goToFirstUnanswered}
+                  className="text-[10px] md:text-xs text-red-600 mt-1 flex items-center justify-center gap-1 hover:text-red-700 hover:underline cursor-pointer"
+                >
                   <AlertCircle size={12} />
                   {t('validation.answerAllQuestions')}
-                </div>
+                </button>
               )}
             </div>
           </div>

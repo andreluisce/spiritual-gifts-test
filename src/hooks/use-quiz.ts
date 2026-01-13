@@ -53,10 +53,10 @@ export function useQuiz(locale: string = 'pt'): UseQuizReturn {
   useEffect(() => {
     if (questionsQuery.data && questionsQuery.data.length > 0) {
       // Backend already provides ordered questions, just use them
-      const orderedQuestions = [...questionsQuery.data].sort((a, b) => 
+      const orderedQuestions = [...questionsQuery.data].sort((a, b) =>
         (a.question_order || 0) - (b.question_order || 0)
       )
-      
+
       setQuestionOrder(orderedQuestions.map(q => q.id))
       setOrderedQuestions(orderedQuestions)
     }
@@ -100,6 +100,35 @@ export function useQuiz(locale: string = 'pt'): UseQuizReturn {
       localStorage.removeItem(QUIZ_STATE_KEY)
     }
   }, [])
+
+  // Clean up orphaned answers when questions are loaded
+  useEffect(() => {
+    if (!questionsQuery.data || questionsQuery.data.length === 0) return
+
+    const validQuestionIds = new Set(questionsQuery.data.map(q => q.id))
+    const currentAnswerIds = Object.keys(currentAnswers).map(Number)
+    const hasOrphanedAnswers = currentAnswerIds.some(id => !validQuestionIds.has(id))
+
+    if (hasOrphanedAnswers) {
+      // Remove answers for questions that no longer exist
+      const cleanedAnswers = Object.fromEntries(
+        Object.entries(currentAnswers).filter(([id]) => validQuestionIds.has(Number(id)))
+      )
+      setCurrentAnswers(cleanedAnswers)
+
+      // Update localStorage
+      if (typeof window !== 'undefined' && Object.keys(cleanedAnswers).length > 0) {
+        const state: QuizState = {
+          answers: cleanedAnswers,
+          currentQuestionIndex,
+          startedAt: Date.now(),
+          questionOrder: questionOrder.length > 0 ? questionOrder : undefined,
+          sessionId: sessionId || undefined
+        }
+        localStorage.setItem(QUIZ_STATE_KEY, JSON.stringify(state))
+      }
+    }
+  }, [questionsQuery.data, currentAnswers, currentQuestionIndex, questionOrder, sessionId])
 
   // Save state to localStorage whenever answers or currentQuestionIndex change
   useEffect(() => {
