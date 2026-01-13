@@ -17,15 +17,19 @@ interface SystemSettings {
 
 // Hook público para acessar configurações do sistema (somente leitura)
 export function usePublicSettings() {
+  console.log('🔄 usePublicSettings MOUNT')
+
   const [settings, setSettings] = useState<SystemSettings | null>(null)
   const [loading, setLoading] = useState(true)
   const [supabase] = useState(() => createClient())
 
   useEffect(() => {
+    console.log('🔄 usePublicSettings useEffect running')
+
     const fetchSettings = async () => {
       try {
         setLoading(true)
-        
+
         // Use RPC function to get settings
         const { data: settingsData, error: settingsError } = await supabase
           .rpc('get_system_settings')
@@ -59,7 +63,8 @@ export function usePublicSettings() {
     }
 
     fetchSettings()
-  }, [supabase])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // supabase client is stable, no need to include in deps
 
   return {
     settings,

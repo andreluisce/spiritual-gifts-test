@@ -25,6 +25,7 @@ export default function QuizPage() {
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [showContinuePrompt, setShowContinuePrompt] = useState(false)
   const promptShownRef = useRef(false)
+  const redirectedRef = useRef(false)
 
   const router = useRouter()
   const t = useTranslations('quiz')
@@ -45,11 +46,14 @@ export default function QuizPage() {
 
   // Enforce auth for non-guest flow on client to avoid middleware redirect loops
   useEffect(() => {
-    console.log('Auth gate effect', { authLoading, settingsLoading, allowGuestQuiz, hasUser: !!user })
-    if (!authLoading && !settingsLoading && !allowGuestQuiz && !user) {
+    console.log('Auth gate effect', { authLoading, settingsLoading, allowGuestQuiz, hasUser: !!user, redirected: redirectedRef.current })
+    if (!authLoading && !settingsLoading && !allowGuestQuiz && !user && !redirectedRef.current) {
+      console.log('🔴 Redirecting to login')
+      redirectedRef.current = true
       router.replace(`/${locale}/login?from=quiz`)
     }
-  }, [authLoading, settingsLoading, allowGuestQuiz, user, router, locale])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authLoading, settingsLoading, allowGuestQuiz, user, locale]) // router excluded to prevent loops
 
   const {
     questions,
