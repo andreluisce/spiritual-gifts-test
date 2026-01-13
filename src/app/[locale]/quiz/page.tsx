@@ -18,6 +18,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { formatPercentage } from '@/data/quiz-data'
 
 export default function QuizPage() {
+  console.log('QuizPage render start')
+
   const [progressValue, setProgressValue] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [isTransitioning, setIsTransitioning] = useState(false)
@@ -32,8 +34,18 @@ export default function QuizPage() {
   const { allowGuestQuiz, settings, loading: settingsLoading, debugMode } = usePublicSettings()
   const { data: latestResult, isLoading: loadingLatestResult } = useLatestResult(user?.id || null)
 
+  console.log('QuizPage state', {
+    authLoading,
+    settingsLoading,
+    loadingLatestResult,
+    hasUser: !!user,
+    allowGuestQuiz,
+    latestResult: !!latestResult
+  })
+
   // Enforce auth for non-guest flow on client to avoid middleware redirect loops
   useEffect(() => {
+    console.log('Auth gate effect', { authLoading, settingsLoading, allowGuestQuiz, hasUser: !!user })
     if (!authLoading && !settingsLoading && !allowGuestQuiz && !user) {
       router.replace(`/${locale}/login?from=quiz`)
     }
