@@ -32,16 +32,6 @@ export default function QuizPage() {
   const { allowGuestQuiz, settings, loading: settingsLoading, debugMode } = usePublicSettings()
   const { data: latestResult, isLoading: loadingLatestResult } = useLatestResult(user?.id || null)
 
-  useEffect(() => {
-    // Only redirect to login after auth and settings are loaded
-    if (!authLoading && !settingsLoading && !user) {
-      // Check if guest quiz is allowed
-      if (!allowGuestQuiz) {
-        router.replace(`/${locale}/login?from=quiz`)
-      }
-    }
-  }, [user, router, locale, authLoading, settingsLoading, allowGuestQuiz])
-
   const {
     questions,
     loading,
