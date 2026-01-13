@@ -376,6 +376,56 @@ export default function QuizPage() {
               <span>{t('answeredOf', { answered: answeredCount, total: availableQuestions.length })}</span>
               <span>{tCommon('completed')}</span>
             </div>
+
+            {/* Visual question navigator */}
+            <div className="mt-4 md:mt-6">
+              <div className="text-xs text-slate-600 mb-2 font-medium">
+                {t('questionNavigator', { default: 'Navegador de Questões' })}
+              </div>
+              <div className="flex flex-wrap gap-2 justify-center">
+                {availableQuestions.map((question, index) => {
+                  const isAnswered = currentAnswers[question.id] !== undefined
+                  const isCurrent = index === currentQuestionIndex
+
+                  return (
+                    <button
+                      key={question.id}
+                      onClick={() => {
+                        setCurrentQuestionIndex(index)
+                        setSelectedAnswer(null)
+                      }}
+                      className={`
+                        w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-xs md:text-sm font-medium
+                        transition-all duration-200 hover:scale-110
+                        ${isCurrent
+                          ? 'bg-blue-600 text-white ring-2 ring-blue-300 ring-offset-2'
+                          : isAnswered
+                            ? 'bg-green-500 text-white hover:bg-green-600'
+                            : 'bg-gray-300 text-gray-600 hover:bg-gray-400'
+                        }
+                      `}
+                      title={`Questão ${index + 1}${isAnswered ? ' (respondida)' : ' (não respondida)'}`}
+                    >
+                      {index + 1}
+                    </button>
+                  )
+                })}
+              </div>
+              <div className="flex items-center justify-center gap-4 mt-3 text-[10px] md:text-xs text-slate-600">
+                <div className="flex items-center gap-1">
+                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  <span>{t('answered', { default: 'Respondida' })}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-3 h-3 rounded-full bg-blue-600"></div>
+                  <span>{t('current', { default: 'Atual' })}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-3 h-3 rounded-full bg-gray-300"></div>
+                  <span>{t('unanswered', { default: 'Não respondida' })}</span>
+                </div>
+              </div>
+            </div>
           </motion.div>
         )}
 
