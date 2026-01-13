@@ -61,7 +61,8 @@ export default function QuizPage() {
   const availableQuestions = questions ? questions.slice(0, maxQuestions) : []
 
   const currentQuestion = availableQuestions && availableQuestions.length > 0 ? availableQuestions[currentQuestionIndex] : null
-  const answeredCount = Object.keys(currentAnswers).length
+  // Only count answers for questions that are currently available
+  const answeredCount = availableQuestions ? availableQuestions.filter(q => currentAnswers[q.id] !== undefined).length : 0
   const currentPosition = currentQuestionIndex + 1
   const progress = availableQuestions && availableQuestions.length > 0 ? ((currentQuestionIndex + 1) / availableQuestions.length) * 100 : 0
   const isLastQuestion = availableQuestions ? currentQuestionIndex === availableQuestions.length - 1 : false
@@ -386,7 +387,7 @@ export default function QuizPage() {
                     <span><strong>Peso:</strong> {currentQuestion.default_weight || 1}</span>
                     {currentQuestion.quiz_id && <span><strong>Quiz ID:</strong> {currentQuestion.quiz_id}</span>}
                   </div>
-                  
+
                   {/* Score breakdown for current question */}
                   <div className="mt-2 pt-2 border-t border-orange-200">
                     <div className="text-xs font-semibold text-orange-700 mb-1">Pontuação por Opção:</div>
@@ -401,7 +402,7 @@ export default function QuizPage() {
                       })()}
                     </div>
                   </div>
-                  
+
                   {/* Current Scores */}
                   <div className="mt-2 pt-2 border-t border-orange-200">
                     <div className="text-xs font-semibold text-orange-700 mb-1">Pontuações Atuais:</div>
@@ -411,7 +412,7 @@ export default function QuizPage() {
                         (() => {
                           const scoresByGift: Record<string, number> = {}
                           const countsByGift: Record<string, number> = {}
-                          
+
                           Object.entries(currentAnswers).forEach(([questionId, score]) => {
                             const q = questions?.find(q => q.id === parseInt(questionId))
                             if (q) {
@@ -423,10 +424,10 @@ export default function QuizPage() {
                               countsByGift[q.gift_key] += 1
                             }
                           })
-                          
+
                           return Object.entries(scoresByGift).map(([gift, score]) => (
                             <span key={gift} className="text-orange-700">
-                              <strong>{gift.replace(/^[A-Z]_/, '')}:</strong> {score}/{countsByGift[gift]*3}
+                              <strong>{gift.replace(/^[A-Z]_/, '')}:</strong> {score}/{countsByGift[gift] * 3}
                             </span>
                           ))
                         })()
