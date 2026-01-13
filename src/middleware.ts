@@ -9,6 +9,12 @@ import { staticRouting, isValidLocale } from './i18n/dynamic-routing';
 const intlMiddleware = createMiddleware(staticRouting);
 
 export async function middleware(request: NextRequest) {
+  // In local development, skip auth middleware to avoid redirect loops
+  const host = request.headers.get('host') || ''
+  if (host.startsWith('localhost') || host.startsWith('127.0.0.1')) {
+    return intlMiddleware(request);
+  }
+
   const response = NextResponse.next({
     request: {
       headers: request.headers,
