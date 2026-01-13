@@ -9,12 +9,6 @@ import { staticRouting, isValidLocale } from './i18n/dynamic-routing';
 const intlMiddleware = createMiddleware(staticRouting);
 
 export async function middleware(request: NextRequest) {
-  // In local development, skip auth middleware to avoid redirect loops
-  const host = request.headers.get('host') || ''
-  if (host.startsWith('localhost') || host.startsWith('127.0.0.1')) {
-    return intlMiddleware(request);
-  }
-
   const response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -75,7 +69,7 @@ export async function middleware(request: NextRequest) {
 
 
     // Public routes and auth callbacks don't need authentication
-    // Keep /quiz public to avoid middleware redirect loops; the page itself gates access
+    // Keep /quiz as public (page will gate access) to avoid redirect loops
     const publicRoutes = ['/login', '/auth/callback', '/gifts', '/quiz'];
     const isPublicRoute = publicRoutes.some(route =>
       request.nextUrl.pathname.includes(route)
