@@ -7,11 +7,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "14.1"
-  }
   graphql_public: {
     Tables: {
       [_ in never]: never
@@ -984,21 +979,30 @@ export type Database = {
       system_settings: {
         Row: {
           created_at: string | null
+          description: string | null
           id: number
+          key: string | null
           settings: Json
           updated_at: string | null
+          value: Json | null
         }
         Insert: {
           created_at?: string | null
+          description?: string | null
           id?: number
+          key?: string | null
           settings?: Json
           updated_at?: string | null
+          value?: Json | null
         }
         Update: {
           created_at?: string | null
+          description?: string | null
           id?: number
+          key?: string | null
           settings?: Json
           updated_at?: string | null
+          value?: Json | null
         }
         Relationships: []
       }
@@ -1315,17 +1319,17 @@ export type Database = {
       get_analytics_data: { Args: { date_range_param?: string }; Returns: Json }
       get_audit_logs: {
         Args: {
-          filter_action?: string
-          filter_status?: string
-          filter_user?: string
+          action_filter?: string
           limit_count?: number
           offset_count?: number
+          search_term?: string
+          status_filter?: string
         }
         Returns: {
           action: string
           created_at: string
           details: Json
-          id: number
+          id: string
           ip_address: string
           resource: string
           status: string
@@ -1619,6 +1623,7 @@ export type Database = {
       get_users_with_stats: {
         Args: never
         Returns: {
+          approved: boolean
           avg_score: number
           created_at: string
           email: string
@@ -1636,16 +1641,14 @@ export type Database = {
       is_user_manager: { Args: never; Returns: boolean }
       log_audit_event: {
         Args: {
-          p_action: string
-          p_details?: Json
-          p_ip_address?: string
-          p_resource: string
-          p_status?: string
-          p_user_agent?: string
-          p_user_email: string
-          p_user_id: string
+          action_name: string
+          details_json?: Json
+          ip_addr?: string
+          resource_name: string
+          status_value?: string
+          user_agent_string?: string
         }
-        Returns: undefined
+        Returns: string
       }
       log_user_activity: {
         Args: {
@@ -1658,17 +1661,22 @@ export type Database = {
         }
         Returns: undefined
       }
+      manager_get_user_email: {
+        Args: { target_user_id: string }
+        Returns: string
+      }
       manager_get_users_with_stats: {
         Args: never
         Returns: {
+          approved: boolean
+          avg_score: number
           created_at: string
-          display_name: string
-          email_masked: string
-          is_active: boolean
-          last_login: string
+          email: string
+          id: string
+          last_sign_in_at: string
           quiz_count: number
-          role: Database["public"]["Enums"]["user_role_type"]
-          user_id: string
+          status: string
+          user_metadata: Json
         }[]
       }
       record_report_download: {
@@ -1698,7 +1706,7 @@ export type Database = {
           total_scores: Json
         }[]
       }
-      update_system_settings: { Args: { new_settings: Json }; Returns: boolean }
+      update_system_settings: { Args: { new_settings: Json }; Returns: Json }
       upsert_user_demographics: {
         Args: {
           p_birth_year?: number
@@ -1890,3 +1898,4 @@ export const Constants = {
     },
   },
 } as const
+
