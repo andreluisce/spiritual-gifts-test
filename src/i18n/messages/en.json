@@ -180,7 +180,6 @@
     },
     "unansweredQuestions": "{count, plural, one {# unanswered question} other {# unanswered questions}}",
     "clickToAnswer": "Click a question below to answer it:"
-    }
   },
   "welcome": {
     "greeting": "Welcome",

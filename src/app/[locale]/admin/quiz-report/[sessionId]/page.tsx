@@ -30,7 +30,7 @@ export default function QuizReportPage() {
     if (sessionId) {
       fetchReport(sessionId)
     }
-  }, [sessionId])
+  }, [sessionId, fetchReport])
 
   const handlePrint = () => {
     setIsPrinting(true)

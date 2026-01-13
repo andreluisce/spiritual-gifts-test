@@ -180,7 +180,7 @@ export default function OverviewPage() {
                         <div className="space-y-2">
                           {(isCharExpanded ? giftData.characteristics : giftData.characteristics.slice(0, 3)).map((char, charIndex) => (
                             <div
-                              key={char.id ? `char-${char.id}` : `char-${giftKey}-${charIndex}-${char.characteristic}`}
+                              key={`char-${giftKey}-${charIndex}-${char.characteristic}`}
                               className="flex items-start gap-2"
                             >
                               <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
@@ -222,7 +222,7 @@ export default function OverviewPage() {
                         <div className="space-y-2">
                           {(isQualitiesExpanded ? giftData.qualities : giftData.qualities.slice(0, 3)).map((quality, qualityIndex) => (
                             <div
-                              key={quality.id ? `qual-${quality.id}` : `qual-${giftKey}-${qualityIndex}-${quality.quality_name}`}
+                              key={`qual-${giftKey}-${qualityIndex}-${quality.quality_name}`}
                               className="flex items-start gap-2"
                             >
                               <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>

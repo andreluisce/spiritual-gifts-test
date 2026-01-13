@@ -196,7 +196,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })
 
     return () => subscription.unsubscribe()
-  }, [supabase, checkAdminStatus])
+  }, [supabase, checkAdminStatus, user])
 
   const signInWithGoogle = async () => {
     // Check if registration is enabled before proceeding

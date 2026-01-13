@@ -1,10 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase-server'
-import { emailService } from '@/lib/email'
 import { revalidatePath } from 'next/cache'
-
-const EMAIL_ENABLED = false
 
 export async function approveUserAction(userId: string) {
     // Use a fresh client for the action
@@ -68,7 +65,7 @@ export async function rejectUserAction(userId: string, reason: string) {
 
         revalidatePath('/admin/approvals')
         return { success: true }
-    } catch (error) {
+    } catch {
         return { success: false, error: 'Internal server error' }
     }
 }

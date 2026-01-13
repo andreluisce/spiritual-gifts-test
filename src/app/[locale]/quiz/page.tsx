@@ -57,28 +57,6 @@ export default function QuizPage() {
     clearAnswers
   } = useQuiz(locale)
 
-  const isPrivileged = isAdmin || isManager
-
-  // If the user already has a completed quiz, block new attempts (except admin/manager)
-  if (!authLoading && !settingsLoading && user && !isPrivileged && !loadingLatestResult && latestResult) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-gray-100 px-4">
-        <div className="max-w-md bg-white rounded-xl shadow-lg p-8 text-center space-y-4">
-          <div className="w-14 h-14 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto">
-            <CheckCircle2 className="h-7 w-7" />
-          </div>
-          <h2 className="text-xl font-semibold text-gray-800">{t('alreadyCompleted.title')}</h2>
-          <p className="text-gray-600">{t('alreadyCompleted.description')}</p>
-          <Link href={`/quiz/results/${latestResult.sessionId}`}>
-            <Button className="w-full">
-              {t('alreadyCompleted.viewResult')}
-            </Button>
-          </Link>
-        </div>
-      </div>
-    )
-  }
-
   // Preview mode: only 3 questions for non-logged users
   const isPreviewMode = !user
   const maxQuestions = isPreviewMode ? 3 : (questions?.length || 0)
@@ -90,7 +68,6 @@ export default function QuizPage() {
   const currentPosition = currentQuestionIndex + 1
   const progress = availableQuestions && availableQuestions.length > 0 ? ((currentQuestionIndex + 1) / availableQuestions.length) * 100 : 0
   const isLastQuestion = availableQuestions ? currentQuestionIndex === availableQuestions.length - 1 : false
-  const canProceed = currentQuestion ? currentAnswers[currentQuestion.id] !== undefined : false
   const allQuestionsAnswered = availableQuestions ? availableQuestions.every(q => currentAnswers[q.id] !== undefined) : false
 
   // Animate progress bar
@@ -115,6 +92,28 @@ export default function QuizPage() {
       promptShownRef.current = true
     }
   }, [hasPersistedState, currentAnswers])
+
+  const isPrivileged = isAdmin || isManager
+  const shouldBlockRetake = !authLoading && !settingsLoading && user && !isPrivileged && !loadingLatestResult && latestResult
+
+  if (shouldBlockRetake) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-gray-100 px-4">
+        <div className="max-w-md bg-white rounded-xl shadow-lg p-8 text-center space-y-4">
+          <div className="w-14 h-14 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto">
+            <CheckCircle2 className="h-7 w-7" />
+          </div>
+          <h2 className="text-xl font-semibold text-gray-800">{t('alreadyCompleted.title')}</h2>
+          <p className="text-gray-600">{t('alreadyCompleted.description')}</p>
+          <Link href={`/quiz/results/${latestResult.sessionId}`}>
+            <Button className="w-full">
+              {t('alreadyCompleted.viewResult')}
+            </Button>
+          </Link>
+        </div>
+      </div>
+    )
+  }
 
   const handleAnswer = (score: number) => {
     if (currentQuestion && !isTransitioning) {

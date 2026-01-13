@@ -19,7 +19,6 @@ import { useAdminStats, useRecentActivity, useGiftDistribution, useSystemStatus 
 import DemographicsDashboard from '@/components/DemographicsDashboard'
 
 export default function AdminDashboard() {
-  const tStats = useTranslations('admin.dashboard.stats')
   const tActivity = useTranslations('admin.dashboard.recentActivity')
   const tGifts = useTranslations('admin.dashboard.topGifts')
 

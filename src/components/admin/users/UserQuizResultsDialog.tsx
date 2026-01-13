@@ -161,7 +161,7 @@ export function UserQuizResultsDialog({ user, open, onOpenChange }: UserQuizResu
                     ) : (
                         <div className="text-center py-12">
                             <FileText className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                            <p className="text-gray-500">This user hasn't taken any quizzes yet</p>
+                            <p className="text-gray-500">This user hasn&apos;t taken any quizzes yet</p>
                         </div>
                     )}
                 </div>

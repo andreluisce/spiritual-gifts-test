@@ -130,7 +130,10 @@ export default function CharacteristicsPage() {
                       {giftData.characteristics && giftData.characteristics.length > 0 ? (
                         <div className="space-y-2">
                           {giftData.characteristics.map((char, charIndex) => (
-                            <div key={char.characteristic || `char-${giftKey}-${charIndex}`} className="flex items-start gap-2">
+                            <div
+                              key={`char-${giftData.gift_key}-${charIndex}-${char.characteristic}`}
+                              className="flex items-start gap-2"
+                            >
                               <div className="w-1.5 h-1.5 bg-gray-500 rounded-full mt-2 flex-shrink-0"></div>
                               <p className="text-sm text-gray-700">{char.characteristic}</p>
                             </div>

@@ -46,6 +46,10 @@ export class EmailService {
       return { success: false, error: 'Email sending is disabled' }
     }
 
+    if (!resend) {
+      return { success: false, error: 'Email client is not configured' }
+    }
+
     try {
       
       const emailPayload: {

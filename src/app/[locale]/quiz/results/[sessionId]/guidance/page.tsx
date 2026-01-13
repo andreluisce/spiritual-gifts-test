@@ -154,8 +154,8 @@ export default function GuidancePage() {
             .map(({ giftKey }) => spiritualGiftsData.find(gift => gift.gift_key === giftKey))
             .filter((giftData): giftData is NonNullable<typeof giftData> => {
               if (!giftData) return false
-              const hasDangers = giftData.dangers && giftData.dangers.length > 0
-              const hasMisunderstandings = giftData.misunderstandings && giftData.misunderstandings.length > 0
+              const hasDangers = !!(giftData.dangers && giftData.dangers.length > 0)
+              const hasMisunderstandings = !!(giftData.misunderstandings && giftData.misunderstandings.length > 0)
               return hasDangers || hasMisunderstandings
             })
             .map((giftData) => {
@@ -176,7 +176,7 @@ export default function GuidancePage() {
                     </h4>
                     <div className="space-y-2">
                       {giftData.dangers?.map((danger, index) => (
-                        <div key={danger.danger || `danger-${giftKey}-${index}`} className="flex items-start gap-2">
+                        <div key={danger.danger || `danger-${giftData.gift_key}-${index}`} className="flex items-start gap-2">
                           <div className="w-1.5 h-1.5 bg-amber-500 rounded-full mt-2 flex-shrink-0"></div>
                           <p className="text-sm text-gray-700">{danger.danger}</p>
                         </div>
@@ -193,7 +193,7 @@ export default function GuidancePage() {
                     </h4>
                     <div className="space-y-2">
                       {giftData.misunderstandings?.map((misunderstanding, index) => (
-                        <div key={misunderstanding.misunderstanding || `misunderstanding-${giftKey}-${index}`} className="flex items-start gap-2">
+                        <div key={misunderstanding.misunderstanding || `misunderstanding-${giftData.gift_key}-${index}`} className="flex items-start gap-2">
                           <div className="w-1.5 h-1.5 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
                           <p className="text-sm text-gray-700">{misunderstanding.misunderstanding}</p>
                         </div>
