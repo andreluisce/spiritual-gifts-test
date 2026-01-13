@@ -4,6 +4,8 @@ import { createClient } from '@/lib/supabase-server'
 import { emailService } from '@/lib/email'
 import { revalidatePath } from 'next/cache'
 
+const EMAIL_ENABLED = false
+
 export async function approveUserAction(userId: string) {
     // Use a fresh client for the action
     const supabase = await createClient()
@@ -29,31 +31,7 @@ export async function approveUserAction(userId: string) {
             return { success: false, error: rpcError.message }
         }
 
-        // 3. Send approval email
-        try {
-            // Fetch secure email via RPC
-            const { data: userEmail, error: emailError } = await supabase.rpc('manager_get_user_email', { target_user_id: userId })
-
-            if (emailError || !userEmail) {
-                console.warn('Could not fetch user email for notification:', emailError)
-            } else {
-                // Fetch display name from PROFILE (can be read by manager due to RLS)
-                const { data: profile } = await supabase
-                    .from('profiles')
-                    .select('display_name')
-                    .eq('id', userId)
-                    .single()
-
-                const userName = profile?.display_name || userEmail.split('@')[0]
-
-                // Send Welcome/Approval Email
-                // Note: sendWelcomeEmail content implies "Welcome to the test", which fits perfectly for "You are approved to start"
-                await emailService.sendWelcomeEmail(userName, userEmail)
-            }
-        } catch (emailError) {
-            console.error('Failed to send approval email (action succeeded):', emailError)
-            // We do not fail the action, as the user is approved in DB
-        }
+        // 3. Email notifications are currently disabled
 
         revalidatePath('/admin/approvals')
         return { success: true }
@@ -86,20 +64,7 @@ export async function rejectUserAction(userId: string, reason: string) {
             return { success: false, error: error.message }
         }
 
-        // 3. Send Rejection Email (Optional - using generic text)
-        try {
-            const { data: userEmail } = await supabase.rpc('manager_get_user_email', { target_user_id: userId })
-
-            if (userEmail) {
-                await emailService.sendEmail({
-                    to: userEmail,
-                    subject: 'Atualização sobre sua conta',
-                    text: `Olá,\n\nInfelizmente seu acesso ao Teste de Dons Espirituais não foi aprovado neste momento.\nMotivo: ${reason}\n\nSe acredita que isso é um erro, entre em contato com a administração.`
-                })
-            }
-        } catch (e) {
-            console.error('Error sending rejection email:', e)
-        }
+        // 3. Email notifications are currently disabled
 
         revalidatePath('/admin/approvals')
         return { success: true }

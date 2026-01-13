@@ -29,6 +29,8 @@ export default function OverviewPage() {
   const sessionId = params.sessionId as string
   const [expandedGifts, setExpandedGifts] = useState<Set<string>>(new Set())
   const [expandedVerses, setExpandedVerses] = useState<Set<string>>(new Set())
+  const [expandedCharacteristics, setExpandedCharacteristics] = useState<Set<string>>(new Set())
+  const [expandedQualities, setExpandedQualities] = useState<Set<string>>(new Set())
 
   const { data: result, isLoading: loadingResults } = useResultBySessionId(sessionId)
   const { data: spiritualGiftsData, isLoading: loadingSpiritualGifts } = useSpiritualGifts(locale)
@@ -127,6 +129,8 @@ export default function OverviewPage() {
             const percentage = getScorePercentage(score, maxScoreInResults)
             const giftData = getGiftByKey(giftKey)
             const isExpanded = expandedGifts.has(giftKey)
+            const isCharExpanded = expandedCharacteristics.has(giftKey)
+            const isQualitiesExpanded = expandedQualities.has(giftKey)
 
             return (
               <div key={giftKey}>
@@ -174,16 +178,35 @@ export default function OverviewPage() {
                           {t('expandedDetails.topCharacteristics')}
                         </h4>
                         <div className="space-y-2">
-                          {giftData.characteristics.slice(0, 3).map((char, charIndex) => (
-                            <div key={char.characteristic || `char-${giftKey}-${charIndex}`} className="flex items-start gap-2">
+                          {(isCharExpanded ? giftData.characteristics : giftData.characteristics.slice(0, 3)).map((char, charIndex) => (
+                            <div
+                              key={char.id ? `char-${char.id}` : `char-${giftKey}-${charIndex}-${char.characteristic}`}
+                              className="flex items-start gap-2"
+                            >
                               <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
                               <p className="text-sm text-gray-600">{char.characteristic}</p>
                             </div>
                           ))}
                           {giftData.characteristics.length > 3 && (
-                            <p className="text-xs text-gray-500 italic">
-                              {t('expandedDetails.andMore', { count: giftData.characteristics.length - 3, type: t('expandedDetails.characteristics') })}
-                            </p>
+                            <button
+                              type="button"
+                              className="text-xs text-blue-600 font-medium italic hover:underline flex items-center gap-1"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                const newSet = new Set(expandedCharacteristics)
+                                if (newSet.has(giftKey)) {
+                                  newSet.delete(giftKey)
+                                } else {
+                                  newSet.add(giftKey)
+                                }
+                                setExpandedCharacteristics(newSet)
+                              }}
+                            >
+                              {isCharExpanded
+                                ? t('expandedDetails.showLess')
+                                : t('expandedDetails.andMore', { count: giftData.characteristics.length - 3, type: t('expandedDetails.characteristics') })
+                              }
+                            </button>
                           )}
                         </div>
                       </div>
@@ -197,16 +220,35 @@ export default function OverviewPage() {
                           {t('expandedDetails.qualitiesToDevelop')}
                         </h4>
                         <div className="space-y-2">
-                          {giftData.qualities.slice(0, 3).map((quality, qualityIndex) => (
-                            <div key={quality.quality_name || `quality-${giftKey}-${qualityIndex}`} className="flex items-start gap-2">
+                          {(isQualitiesExpanded ? giftData.qualities : giftData.qualities.slice(0, 3)).map((quality, qualityIndex) => (
+                            <div
+                              key={quality.id ? `qual-${quality.id}` : `qual-${giftKey}-${qualityIndex}-${quality.quality_name}`}
+                              className="flex items-start gap-2"
+                            >
                               <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
                               <p className="text-sm text-gray-600">{quality.quality_name}</p>
                             </div>
                           ))}
                           {giftData.qualities.length > 3 && (
-                            <p className="text-xs text-gray-500 italic">
-                              {t('expandedDetails.andMore', { count: giftData.qualities.length - 3, type: t('expandedDetails.qualities') })}
-                            </p>
+                            <button
+                              type="button"
+                              className="text-xs text-blue-600 font-medium italic hover:underline flex items-center gap-1"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                const newSet = new Set(expandedQualities)
+                                if (newSet.has(giftKey)) {
+                                  newSet.delete(giftKey)
+                                } else {
+                                  newSet.add(giftKey)
+                                }
+                                setExpandedQualities(newSet)
+                              }}
+                            >
+                              {isQualitiesExpanded
+                                ? t('expandedDetails.showLess')
+                                : t('expandedDetails.andMore', { count: giftData.qualities.length - 3, type: t('expandedDetails.qualities') })
+                              }
+                            </button>
                           )}
                         </div>
                       </div>

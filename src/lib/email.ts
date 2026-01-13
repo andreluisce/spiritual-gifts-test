@@ -1,7 +1,9 @@
 import { Resend } from 'resend'
 
-// Initialize Resend client
-const resend = new Resend(process.env.RESEND_API_KEY)
+const EMAIL_ENABLED = false
+
+// Initialize Resend client only when enabled
+const resend = EMAIL_ENABLED ? new Resend(process.env.RESEND_API_KEY) : null
 
 export interface EmailData {
   to: string | string[]
@@ -40,6 +42,10 @@ export class EmailService {
 
   // Send basic email
   async sendEmail(data: EmailData) {
+    if (!EMAIL_ENABLED) {
+      return { success: false, error: 'Email sending is disabled' }
+    }
+
     try {
       
       const emailPayload: {
@@ -92,6 +98,10 @@ export class EmailService {
 
   // Send quiz results email to user
   async sendQuizResultsEmail(data: QuizResultEmailData) {
+    if (!EMAIL_ENABLED) {
+      return { success: false, error: 'Email sending is disabled' }
+    }
+
     const html = this.generateQuizResultsEmailHTML(data)
     const text = this.generateQuizResultsEmailText(data)
 
@@ -105,6 +115,10 @@ export class EmailService {
 
   // Send admin notification
   async sendAdminNotification(data: AdminNotificationData) {
+    if (!EMAIL_ENABLED) {
+      return { success: false, error: 'Email sending is disabled' }
+    }
+
     const adminEmails = await this.getAdminEmails()
     if (adminEmails.length === 0) {
       return { success: false, error: 'No admin emails configured' }
@@ -123,6 +137,10 @@ export class EmailService {
 
   // Send welcome email to new users
   async sendWelcomeEmail(userName: string, userEmail: string) {
+    if (!EMAIL_ENABLED) {
+      return { success: false, error: 'Email sending is disabled' }
+    }
+
     const html = this.generateWelcomeEmailHTML(userName)
     const text = this.generateWelcomeEmailText(userName)
 

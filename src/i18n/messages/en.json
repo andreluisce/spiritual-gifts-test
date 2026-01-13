@@ -153,6 +153,11 @@
       "description": "To access the spiritual gifts test, you need to log in first. This allows us to save your progress and provide personalized results.",
       "button": "Log In"
     },
+    "alreadyCompleted": {
+      "title": "You have already completed the test",
+      "description": "Each user can take the test only once. View your full result below.",
+      "viewResult": "View my result"
+    },
     "continuePrompt": {
       "title": "Continue test?",
       "description": "We found a test in progress. You have {count} saved answer(s). Do you want to continue where you left off or start a new test?",
@@ -169,6 +174,12 @@
       "preview": "Preview",
       "loginForFull": "Preview • Login for full test",
       "questionsProgress": "{answered} of {total} questions"
+    },
+    "validation": {
+      "answerAllQuestions": "Answer all questions before finishing"
+    },
+    "unansweredQuestions": "{count, plural, one {# unanswered question} other {# unanswered questions}}",
+    "clickToAnswer": "Click a question below to answer it:"
     }
   },
   "welcome": {
@@ -710,7 +721,8 @@
       "characteristics": "characteristics",
       "qualities": "qualities",
       "viewAllCharacteristics": "View All Characteristics",
-      "viewAllQualities": "View All Qualities"
+      "viewAllQualities": "View All Qualities",
+      "showLess": "Show less"
     },
     "compatibility": {
       "generateAI": "Generate AI Analysis",

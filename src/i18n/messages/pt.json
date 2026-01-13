@@ -153,6 +153,11 @@
       "description": "Para acessar o teste de dons espirituais, você precisa fazer login primeiro. Isso nos permite salvar seu progresso e fornecer resultados personalizados.",
       "button": "Fazer Login"
     },
+    "alreadyCompleted": {
+      "title": "Você já concluiu o teste",
+      "description": "Cada usuário só pode realizar o teste uma vez. Veja o seu resultado completo abaixo.",
+      "viewResult": "Ver meu resultado"
+    },
     "continuePrompt": {
       "title": "Continuar teste?",
       "description": "Encontramos um teste em progresso. Você tem {count} resposta(s) salva(s). Deseja continuar de onde parou ou começar um novo teste?",
@@ -172,7 +177,9 @@
     },
     "validation": {
       "answerAllQuestions": "Responda todas as perguntas antes de finalizar"
-    }
+    },
+    "unansweredQuestions": "{count, plural, one {# questão não respondida} other {# questões não respondidas}}",
+    "clickToAnswer": "Clique em uma questão abaixo para respondê-la:"
   },
   "welcome": {
     "greeting": "Bem-vindo",
@@ -287,7 +294,8 @@
       "characteristics": "características",
       "qualities": "qualidades",
       "viewAllCharacteristics": "Ver Todas as Características",
-      "viewAllQualities": "Ver Todas as Qualidades"
+      "viewAllQualities": "Ver Todas as Qualidades",
+      "showLess": "Mostrar menos"
     },
     "compatibility": {
       "generateAI": "Gerar Análise IA",

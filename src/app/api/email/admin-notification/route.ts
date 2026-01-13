@@ -6,8 +6,16 @@ import { emailService, AdminNotificationData } from '@/lib/email'
 
 // Force Node.js runtime for Supabase compatibility
 export const runtime = 'nodejs'
+const EMAIL_ENABLED = false
 
 export async function POST(request: NextRequest) {
+  if (!EMAIL_ENABLED) {
+    return NextResponse.json(
+      { error: 'Email sending is currently disabled' },
+      { status: 503 }
+    )
+  }
+
   try {
     const cookieStore = await cookies()
     const supabase = createServerClient<Database>(

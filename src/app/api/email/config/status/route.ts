@@ -3,6 +3,8 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import type { Database } from '@/lib/database.types'
 
+const EMAIL_ENABLED = false
+
 export async function GET() {
   try {
     const cookieStore = await cookies()
@@ -55,7 +57,23 @@ export async function GET() {
       )
     }
 
-    // Check email service configuration
+    // Email service disabled for now
+    if (!EMAIL_ENABLED) {
+      return NextResponse.json({
+        success: true,
+        config: {
+          isConfigured: false,
+          hasResendApiKey: false,
+          hasFromEmail: false,
+          fromEmail: null,
+          apiKeyConfigured: false,
+          provider: 'Resend',
+          disabled: true,
+          message: 'Email sending is currently disabled'
+        }
+      })
+    }
+
     const hasResendApiKey = !!process.env.RESEND_API_KEY
     const hasFromEmail = !!process.env.RESEND_FROM_EMAIL
     const isConfigured = hasResendApiKey && hasFromEmail

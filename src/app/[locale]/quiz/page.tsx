@@ -9,6 +9,7 @@ import { ArrowLeft, AlertCircle, CheckCircle2, Book, BookOpen, Star, User } from
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useQuiz } from '@/hooks/use-quiz'
+import { useLatestResult } from '@/hooks/use-quiz-queries'
 import { useTranslations, useLocale } from 'next-intl'
 import { useAuth } from '@/context/AuthContext'
 import { usePublicSettings } from '@/hooks/usePublicSettings'
@@ -27,8 +28,9 @@ export default function QuizPage() {
   const t = useTranslations('quiz')
   const tCommon = useTranslations('common')
   const locale = useLocale()
-  const { user, loading: authLoading } = useAuth()
+  const { user, loading: authLoading, isAdmin, isManager } = useAuth()
   const { allowGuestQuiz, settings, loading: settingsLoading, debugMode } = usePublicSettings()
+  const { data: latestResult, isLoading: loadingLatestResult } = useLatestResult(user?.id || null)
 
   useEffect(() => {
     // Only redirect to login after auth and settings are loaded
@@ -54,6 +56,28 @@ export default function QuizPage() {
     hasPersistedState,
     clearAnswers
   } = useQuiz(locale)
+
+  const isPrivileged = isAdmin || isManager
+
+  // If the user already has a completed quiz, block new attempts (except admin/manager)
+  if (!authLoading && !settingsLoading && user && !isPrivileged && !loadingLatestResult && latestResult) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-gray-100 px-4">
+        <div className="max-w-md bg-white rounded-xl shadow-lg p-8 text-center space-y-4">
+          <div className="w-14 h-14 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto">
+            <CheckCircle2 className="h-7 w-7" />
+          </div>
+          <h2 className="text-xl font-semibold text-gray-800">{t('alreadyCompleted.title')}</h2>
+          <p className="text-gray-600">{t('alreadyCompleted.description')}</p>
+          <Link href={`/quiz/results/${latestResult.sessionId}`}>
+            <Button className="w-full">
+              {t('alreadyCompleted.viewResult')}
+            </Button>
+          </Link>
+        </div>
+      </div>
+    )
+  }
 
   // Preview mode: only 3 questions for non-logged users
   const isPreviewMode = !user

@@ -43,7 +43,7 @@ interface QuizState {
 }
 
 export default function DashboardPage() {
-  const { user, loading: authLoading } = useAuth()
+  const { user, loading: authLoading, isAdmin, isManager } = useAuth()
   const locale = useLocale()
   const { data: results, isLoading: loadingResults } = useUserResults(user?.id || null)
   const { data: latestResult, isLoading: loadingLatestResult } = useLatestResult(user?.id || null)
@@ -100,8 +100,10 @@ export default function DashboardPage() {
     })
   }
 
+  const canManageResults = isAdmin || isManager
+
   const handleDeleteResult = async (sessionId: string) => {
-    if (!user?.id) {
+    if (!user?.id || !canManageResults) {
       return
     }
     
@@ -112,7 +114,6 @@ export default function DashboardPage() {
       })
     } catch (error) {
       console.error('❌ Dashboard error deleting result:', error)
-      // Could add toast notification here
       alert(t('deleteError', { error: error instanceof Error ? error.message : 'Erro desconhecido' }))
     }
   }
@@ -450,37 +451,39 @@ export default function DashboardPage() {
                                 <span>{t('sections.view')}</span>
                               </Button>
                             </Link>
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button 
-                                  variant="outline" 
-                                  size="sm" 
-                                  className="w-full sm:w-auto flex items-center justify-center gap-1 text-red-600 hover:text-red-700 hover:bg-red-50"
-                                  disabled={deleteResultMutation.isPending}
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                  <span>{t('sections.remove')}</span>
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>{t('sections.confirmRemoval')}</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    {t('sections.confirmRemovalDescription', { date: formatDate(result.createdAt) })}
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>{tCommon('cancel')}</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    onClick={() => handleDeleteResult(result.sessionId)}
-                                    className="bg-red-600 hover:bg-red-700 text-white"
+                            {canManageResults && (
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm" 
+                                    className="w-full sm:w-auto flex items-center justify-center gap-1 text-red-600 hover:text-red-700 hover:bg-red-50"
                                     disabled={deleteResultMutation.isPending}
                                   >
-                                    {deleteResultMutation.isPending ? t('sections.removing') : t('sections.removeTest')}
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
+                                    <Trash2 className="h-4 w-4" />
+                                    <span>{t('sections.remove')}</span>
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>{t('sections.confirmRemoval')}</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      {t('sections.confirmRemovalDescription', { date: formatDate(result.createdAt) })}
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>{tCommon('cancel')}</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => handleDeleteResult(result.sessionId)}
+                                      className="bg-red-600 hover:bg-red-700 text-white"
+                                      disabled={deleteResultMutation.isPending}
+                                    >
+                                      {deleteResultMutation.isPending ? t('sections.removing') : t('sections.removeTest')}
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            )}
                           </div>
                         </div>
                         

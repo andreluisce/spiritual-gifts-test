@@ -138,6 +138,11 @@
       "description": "Para acceder a la prueba de dones espirituales, necesitas iniciar sesión primero. Esto nos permite guardar tu progreso y proporcionar resultados personalizados.",
       "button": "Iniciar Sesión"
     },
+    "alreadyCompleted": {
+      "title": "Ya completaste la prueba",
+      "description": "Cada usuario solo puede realizar la prueba una vez. Mira tu resultado completo abajo.",
+      "viewResult": "Ver mi resultado"
+    },
     "continuePrompt": {
       "title": "¿Continuar prueba?",
       "description": "Encontramos una prueba en progreso. Tienes {count} respuesta(s) guardada(s). ¿Quieres continuar donde lo dejaste o comenzar una nueva prueba?",
@@ -155,6 +160,11 @@
       "loginForFull": "Vista Previa • Inicia sesión para la prueba completa",
       "questionsProgress": "{answered} de {total} preguntas"
     },
+    "validation": {
+      "answerAllQuestions": "Responde todas las preguntas antes de finalizar"
+    },
+    "unansweredQuestions": "{count, plural, one {# pregunta sin responder} other {# preguntas sin responder}}",
+    "clickToAnswer": "Haz clic en una pregunta abajo para responderla:",
     "fullTest": "Prueba completa",
     "previewNotice": "Vista previa • Iniciar sesión para una prueba completa",
     "previewTitle": "Vista previa - Regalos espirituales",
@@ -710,7 +720,8 @@
       "characteristics": "características",
       "qualities": "cualidades",
       "viewAllCharacteristics": "Ver Todas las Características",
-      "viewAllQualities": "Ver Todas las Cualidades"
+      "viewAllQualities": "Ver Todas las Cualidades",
+      "showLess": "Mostrar menos"
     },
     "compatibility": {
       "generateAI": "Generar Análisis IA",
