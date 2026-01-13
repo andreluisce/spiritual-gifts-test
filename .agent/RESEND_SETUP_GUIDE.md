@@ -16,7 +16,7 @@ Para enviar emails para qualquer destinatário (não apenas seu próprio email),
 1. Vá em **Domains** no dashboard do Resend.
 2. Adicione seu domínio (ex: `espiritualismo.com.br`).
 3. Adicione os registros DNS (DKIM, SPF, DMARC) no seu provedor de domínio (Cloudflare, GoDaddy, Registro.br, etc).
-4. Aguarde a verificação (clique em Verify DNS records).
+4. Aguarde a verificação (clique no link enviado por email ou use o link de teste: `http://localhost:3000/pt/auth/callback?code=06598fb3-918b-4408-922b-c3bb248c6f50`).
 
 **Nota de Desenvolvimento:** Sem verificar domínio, você só pode enviar emails para o endereço de email cadastrado na sua conta Resend (ex: `andreluisce@gmail.com`).
 

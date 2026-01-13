@@ -6,6 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import { LanguageToggleCompact } from '@/components/LanguageToggle'
+import { useSystemSettings } from '@/hooks/useSystemSettings'
 import {
   Home,
   User,
@@ -17,16 +18,25 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 
 export function AppHeader() {
-  const { user, signOut, isAdmin } = useAuth()
+  const { user, signOut, isAdmin, isApproved } = useAuth()
+  const { settings, loading: settingsLoading } = useSystemSettings()
   const t = useTranslations('dashboard')
   const tCommon = useTranslations('common')
   const pathname = usePathname()
+
+  // Secure by default: If settings are loading or undefined, assume approval IS required.
+  // This prevents unapproved users from seeing buttons briefly while settings load.
+  // Also treat undefined setting as TRUE (secure default) to match ApprovalGuard logic.
+  const requireApproval = settingsLoading || !settings ? true : (settings.general?.requireApproval ?? true)
+
+  // Admin is always allowed (handled by isApproved in context, but good to be explicit if needed)
+  const isAccessAllowed = !requireApproval || isApproved
 
   // Don't render if no user, on homepage, or on login pages
   if (!user) {
     return null
   }
-  
+
   // Don't render on homepage (has its own header)
   if (pathname === '/' || pathname.match(/^\/[a-z]{2}$/) || pathname.match(/^\/[a-z]{2}\/$/) || pathname.includes('/login')) {
     return null
@@ -93,11 +103,13 @@ export function AppHeader() {
                     <User className="h-4 w-4" />
                   </Button>
                 </Link>
-                <Link href="/gifts">
-                  <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900 p-2">
-                    <Heart className="h-4 w-4" />
-                  </Button>
-                </Link>
+                {isAccessAllowed && (
+                  <Link href="/gifts">
+                    <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900 p-2">
+                      <Heart className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                )}
                 {isAdmin && (
                   <Link href="/admin">
                     <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900 p-2">
@@ -106,12 +118,14 @@ export function AppHeader() {
                   </Link>
                 )}
               </nav>
-              <Link href="/quiz">
-                <Button variant="default" size="sm" className="bg-blue-600 hover:bg-blue-700 text-white px-4">
-                  <Award className="h-4 w-4 mr-1" />
-                  {t('takeTest')}
-                </Button>
-              </Link>
+              {isAccessAllowed && (
+                <Link href="/quiz">
+                  <Button variant="default" size="sm" className="bg-blue-600 hover:bg-blue-700 text-white px-4">
+                    <Award className="h-4 w-4 mr-1" />
+                    {t('takeTest')}
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
 
@@ -172,12 +186,14 @@ export function AppHeader() {
                     {t('profile')}
                   </Button>
                 </Link>
-                <Link href="/gifts">
-                  <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900">
-                    <Heart className="h-4 w-4 mr-1.5" />
-                    {t('gifts')}
-                  </Button>
-                </Link>
+                {isAccessAllowed && (
+                  <Link href="/gifts">
+                    <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900">
+                      <Heart className="h-4 w-4 mr-1.5" />
+                      {t('gifts')}
+                    </Button>
+                  </Link>
+                )}
                 {isAdmin && (
                   <Link href="/admin">
                     <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900">
@@ -190,12 +206,14 @@ export function AppHeader() {
             </div>
 
             <div className="flex items-center gap-2">
-              <Link href="/quiz">
-                <Button variant="default" size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
-                  <Award className="h-4 w-4 mr-2" />
-                  {t('takeTest')}
-                </Button>
-              </Link>
+              {isAccessAllowed && (
+                <Link href="/quiz">
+                  <Button variant="default" size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
+                    <Award className="h-4 w-4 mr-2" />
+                    {t('takeTest')}
+                  </Button>
+                </Link>
+              )}
               <LanguageToggleCompact />
             </div>
           </div>

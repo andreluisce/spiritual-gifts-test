@@ -44,3 +44,6 @@ next-env.d.ts
 database/supabase/.temp
 .supabase
 .env.local
+
+# MCP Configuration (contains sensitive credentials)
+.mcp/

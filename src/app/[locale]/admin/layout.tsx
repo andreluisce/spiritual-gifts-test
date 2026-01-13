@@ -15,8 +15,7 @@ import {
   ArrowLeft,
   Database,
   Shield,
-  Crown,
-  UserCheck
+  Crown
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -25,7 +24,7 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  const { user, isAdmin, loading, adminLoading, userRole, isManager } = useAuth()
+  const { user, isAdmin, loading, adminLoading, isManager } = useAuth()
   const { canViewUsers, canManageContent, canEditSettings, canViewAuditLogs } = usePermissions()
   const router = useRouter()
   const t = useTranslations('admin')
@@ -117,16 +116,7 @@ export default function AdminLayout({
             </Link>
           )}
 
-          {/* Approvals - Visible to managers and admins */}
-          {canViewUsers && (
-            <Link href="/admin/approvals">
-              <Button variant="ghost" size="sm" className="flex items-center gap-2 whitespace-nowrap flex-shrink-0">
-                <UserCheck className="h-4 w-4" />
-                <span className="hidden sm:inline">Approvals</span>
-                <span className="sm:hidden">Approve</span>
-              </Button>
-            </Link>
-          )}
+
 
           {/* Analytics - Visible to managers and admins */}
           <Link href="/admin/analytics">

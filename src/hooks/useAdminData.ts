@@ -17,6 +17,7 @@ export type UserWithStats = {
   quiz_count: number
   avg_score: number
   status: 'active' | 'inactive'
+  approved: boolean
 }
 
 export type QuizStats = {
@@ -50,6 +51,7 @@ interface RawUserData {
   quiz_count: number
   avg_score: number
   status: 'active' | 'inactive'
+  approved: boolean
 }
 
 // Interface for raw activity data
@@ -239,6 +241,7 @@ export function useUsersWithStats() {
         setLoading(true)
 
         // Use RPC function to get users with stats
+        // Try manager version first if regular fails (handles restricted access)
         const { data: usersData, error: usersError } = await supabase
           .rpc('get_users_with_stats')
 
@@ -257,7 +260,8 @@ export function useUsersWithStats() {
             },
             quiz_count: user.quiz_count || 0,
             avg_score: user.avg_score || 0,
-            status: user.status || 'inactive'
+            status: user.status || 'inactive',
+            approved: user.approved || false
           }))
 
           setUsers(usersWithStats)
@@ -487,6 +491,57 @@ export function useUpdateUser() {
   }
 
   return { updateUser, updating, error }
+}
+
+// Hook for managing user approval
+export function useUserApproval() {
+  const [updating, setUpdating] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [supabase] = useState(() => createClient())
+
+  const approveUser = async (userId: string) => {
+    try {
+      setUpdating(true)
+      setError(null)
+
+      // Use RPC function to approve user
+      const { data, error: opError } = await supabase
+        .rpc('approve_user', { target_user_id: userId })
+
+      if (opError) throw opError
+
+      return { success: true, data }
+    } catch (err) {
+      console.error('Error approving user:', err)
+      setError(err instanceof Error ? err.message : 'Failed to approve user')
+      return { success: false, error: err }
+    } finally {
+      setUpdating(false)
+    }
+  }
+
+  const rejectUser = async (userId: string, reason: string) => {
+    try {
+      setUpdating(true)
+      setError(null)
+
+      // Use RPC function to reject user
+      const { data, error: opError } = await supabase
+        .rpc('reject_user', { target_user_id: userId, reject_reason: reason })
+
+      if (opError) throw opError
+
+      return { success: true, data }
+    } catch (err) {
+      console.error('Error rejecting user:', err)
+      setError(err instanceof Error ? err.message : 'Failed to reject user')
+      return { success: false, error: err }
+    } finally {
+      setUpdating(false)
+    }
+  }
+
+  return { approveUser, rejectUser, updating, error }
 }
 
 // Hook for updating user role (backward compatibility)

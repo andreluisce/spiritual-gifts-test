@@ -5,8 +5,7 @@ import { useRouter } from '@/i18n/navigation'
 import { useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Clock, CheckCircle, RefreshCcw, LogOut } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { Clock, RefreshCcw, LogOut } from 'lucide-react'
 
 export default function PendingApprovalPage() {
     const { user, isApproved, approvedLoading, signOut } = useAuth()
@@ -18,7 +17,12 @@ export default function PendingApprovalPage() {
         if (isApproved && !approvedLoading) {
             router.push('/dashboard')
         }
-    }, [isApproved, approvedLoading, router])
+
+        // If not logged in, redirect to login
+        if (!approvedLoading && !user) {
+            router.push('/login')
+        }
+    }, [isApproved, approvedLoading, router, user])
 
     if (approvedLoading) {
         return (
@@ -28,10 +32,8 @@ export default function PendingApprovalPage() {
         )
     }
 
-    // If not logged in, redirect to login (handled by layout usually, but good to check)
     if (!user) {
-        router.push('/login')
-        return null
+        return null // Will redirect in useEffect
     }
 
     return (

@@ -17,7 +17,8 @@ export default function ApprovalGuard({ children }: ApprovalGuardProps) {
     const loading = approvedLoading || settingsLoading
 
     useEffect(() => {
-        const requireApproval = settings?.general?.requireApproval || false
+        // Secure by default: If requireApproval is undefined, assume TRUE unless explicitly set to false
+        const requireApproval = settings?.general?.requireApproval ?? true
 
         if (!loading && user && !isApproved && requireApproval) {
             router.push('/pending-approval')
@@ -32,7 +33,7 @@ export default function ApprovalGuard({ children }: ApprovalGuardProps) {
         )
     }
 
-    const requireApproval = settings?.general?.requireApproval || false
+    const requireApproval = settings?.general?.requireApproval ?? true
 
     if (user && !isApproved && requireApproval) {
         return null // Will redirect

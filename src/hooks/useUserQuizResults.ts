@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase-client'
 
 export type QuizResult = {
@@ -39,7 +39,7 @@ export function useUserQuizResults() {
   const [error, setError] = useState<string | null>(null)
   const [supabase] = useState(() => createClient())
 
-  const fetchUserQuizResults = async (userId: string) => {
+  const fetchUserQuizResults = useCallback(async (userId: string) => {
     try {
       setLoading(true)
       setError(null)
@@ -71,7 +71,7 @@ export function useUserQuizResults() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [supabase])
 
   return { results, loading, error, fetchUserQuizResults }
 }
@@ -82,7 +82,7 @@ export function useQuizSessionDetails() {
   const [error, setError] = useState<string | null>(null)
   const [supabase] = useState(() => createClient())
 
-  const fetchSessionDetails = async (sessionId: string) => {
+  const fetchSessionDetails = useCallback(async (sessionId: string) => {
     try {
       setLoading(true)
       setError(null)
@@ -103,7 +103,7 @@ export function useQuizSessionDetails() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [supabase])
 
   return { sessionDetails, loading, error, fetchSessionDetails }
 }

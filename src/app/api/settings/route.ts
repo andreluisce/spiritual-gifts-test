@@ -30,25 +30,24 @@ export async function GET() {
 
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-
-    // Get system settings
+    // Get system settings using RPC
     const { data: settings, error: settingsError } = await supabase
-      .from('system_settings')
-      .select('settings')
-      .eq('id', 1)
-      .single()
+      .rpc('get_system_settings')
 
     if (settingsError) {
       console.error('❌ Settings API: Error fetching settings:', settingsError)
       return NextResponse.json({ error: 'Failed to fetch settings' }, { status: 500 })
     }
 
-    return NextResponse.json(settings.settings)
+    // Result might be null if not initialized, return empty object or default
+    return NextResponse.json(settings || {})
+
+
 
   } catch (error) {
     console.error('Settings API GET Error:', error)
@@ -83,7 +82,7 @@ export async function PUT(request: NextRequest) {
 
     // Check authentication and admin role
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -91,32 +90,19 @@ export async function PUT(request: NextRequest) {
     // Parse request body
     const body = await request.json()
 
-    // Use the database function which handles admin checking via RLS
-    const { data: updateResult, error: updateError } = await supabase
+    // Update settings using RPC (handles admin check)
+    const { data: updatedSettings, error: updateError } = await supabase
       .rpc('update_system_settings', { new_settings: body })
 
     if (updateError) {
       console.error('❌ Settings API: Error updating settings:', updateError)
-      return NextResponse.json({ 
-        error: 'Failed to update settings', 
-        details: updateError.message 
+      return NextResponse.json({
+        error: 'Failed to update settings',
+        details: updateError.message
       }, { status: 500 })
     }
 
-    if (!updateResult) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
-    }
-
-    // Get the updated settings to return
-    const { data: settings, error: fetchError } = await supabase
-      .rpc('get_system_settings')
-
-    if (fetchError) {
-      console.error('❌ Settings API: Error fetching updated settings:', fetchError)
-      return NextResponse.json({ error: 'Settings updated but failed to fetch' }, { status: 500 })
-    }
-
-    return NextResponse.json(settings)
+    return NextResponse.json(updatedSettings)
 
   } catch (error) {
     console.error('Settings API PUT Error:', error)

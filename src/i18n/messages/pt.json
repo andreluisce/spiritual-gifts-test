@@ -481,6 +481,32 @@
         "noData": "Nenhum dado disponível"
       }
     },
+    "users": {
+      "title": "Gerenciamento de Usuários",
+      "subtitle": "Gerencie usuários do sistema, funções e permissões",
+      "export": "Exportar Usuários",
+      "add": "Adicionar Usuário",
+      "tabs": {
+        "overview": "Visão Geral",
+        "allUsers": "Todos os Usuários",
+        "admins": "Administradores",
+        "activity": "Atividade"
+      },
+      "stats": {
+        "totalUsers": "Total de Usuários",
+        "allRegistered": "Todos os usuários registrados",
+        "activeUsers": "Usuários Ativos",
+        "percentTotal": "{percent}% do total",
+        "administrators": "Administradores",
+        "adminPrivileges": "Privilégios de admin",
+        "newThisMonth": "Novos Este Mês",
+        "fromLastMonth": "{percent}% do mês passado",
+        "suspended": "Suspensos",
+        "requireAttention": "Requer atenção"
+      },
+      "recentRegistrations": "Registros Recentes",
+      "unknown": "Desconhecido"
+    },
     "settings": {
       "title": "Configurações do Sistema",
       "subtitle": "Configure as configurações globais da aplicação e preferências do quiz",
@@ -880,36 +906,6 @@
           "totalAnalyses": "Total de Análises"
         }
       }
-    }
-  },
-  "demographics": {
-    "totalUsers": "Total de Usuários",
-    "usersWithData": "Usuários com Dados",
-    "dataCompleteness": "Completude dos Dados",
-    "registeredUsers": "usuários registrados",
-    "completedProfiles": "perfis completos",
-    "profileCompletion": "completude do perfil",
-    "ageDistribution": "Distribuição por Idade",
-    "geographicDistribution": "Distribuição Geográfica",
-    "users": "usuários",
-    "noAgeData": "Nenhum dado de idade disponível",
-    "noGeographicData": "Nenhum dado geográfico disponível",
-    "insights": "Insights",
-    "dominantAgeGroup": "Faixa Etária Dominante",
-    "topLocation": "Localização Principal",
-    "ofUsers": "dos usuários",
-    "error": "Erro ao carregar dados demográficos: {error}",
-    "ageRanges": {
-      "18-24": "18-24 anos",
-      "25-34": "25-34 anos",
-      "35-44": "35-44 anos",
-      "45-54": "45-54 anos",
-      "55-64": "55-64 anos",
-      "65+": "65+ anos",
-      "Unknown": "Desconhecido"
-    },
-    "countries": {
-      "Unknown": "Desconhecido"
     }
   },
   "demographics": {
