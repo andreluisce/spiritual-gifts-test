@@ -377,55 +377,49 @@ export default function QuizPage() {
               <span>{tCommon('completed')}</span>
             </div>
 
-            {/* Visual question navigator */}
-            <div className="mt-4 md:mt-6">
-              <div className="text-xs text-slate-600 mb-2 font-medium">
-                {t('questionNavigator', { default: 'Navegador de Questões' })}
-              </div>
-              <div className="flex flex-wrap gap-2 justify-center">
-                {availableQuestions.map((question, index) => {
-                  const isAnswered = currentAnswers[question.id] !== undefined
-                  const isCurrent = index === currentQuestionIndex
 
-                  return (
-                    <button
-                      key={question.id}
-                      onClick={() => {
-                        setCurrentQuestionIndex(index)
-                        setSelectedAnswer(null)
-                      }}
-                      className={`
-                        w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-xs md:text-sm font-medium
-                        transition-all duration-200 hover:scale-110
-                        ${isCurrent
-                          ? 'bg-blue-600 text-white ring-2 ring-blue-300 ring-offset-2'
-                          : isAnswered
-                            ? 'bg-green-500 text-white hover:bg-green-600'
-                            : 'bg-gray-300 text-gray-600 hover:bg-gray-400'
-                        }
-                      `}
-                      title={`Questão ${index + 1}${isAnswered ? ' (respondida)' : ' (não respondida)'}`}
-                    >
-                      {index + 1}
-                    </button>
-                  )
-                })}
-              </div>
-              <div className="flex items-center justify-center gap-4 mt-3 text-[10px] md:text-xs text-slate-600">
-                <div className="flex items-center gap-1">
-                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                  <span>{t('answered', { default: 'Respondida' })}</span>
+            {/* Visual question navigator */}
+            {answeredCount < availableQuestions.length && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-4 md:mt-6 bg-amber-50 border border-amber-200 rounded-lg p-4"
+              >
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <h3 className="text-sm font-semibold text-amber-900 mb-2">
+                      {t('unansweredQuestions', {
+                        default: 'Questões não respondidas',
+                        count: availableQuestions.length - answeredCount
+                      })}
+                    </h3>
+                    <p className="text-xs text-amber-700 mb-3">
+                      {t('clickToAnswer', { default: 'Clique em uma questão abaixo para respondê-la:' })}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {availableQuestions.map((question, index) => {
+                        const isAnswered = currentAnswers[question.id] !== undefined
+                        if (isAnswered) return null
+
+                        return (
+                          <button
+                            key={question.id}
+                            onClick={() => {
+                              setCurrentQuestionIndex(index)
+                              setSelectedAnswer(null)
+                            }}
+                            className="px-3 py-1.5 bg-white border border-amber-300 rounded-md text-sm font-medium text-amber-900 hover:bg-amber-100 hover:border-amber-400 transition-colors"
+                          >
+                            Questão {index + 1}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1">
-                  <div className="w-3 h-3 rounded-full bg-blue-600"></div>
-                  <span>{t('current', { default: 'Atual' })}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <div className="w-3 h-3 rounded-full bg-gray-300"></div>
-                  <span>{t('unanswered', { default: 'Não respondida' })}</span>
-                </div>
-              </div>
-            </div>
+              </motion.div>
+            )}
           </motion.div>
         )}
 
