@@ -19,6 +19,7 @@ import { useAdminStats, useRecentActivity, useGiftDistribution, useSystemStatus 
 import DemographicsDashboard from '@/components/DemographicsDashboard'
 
 export default function AdminDashboard() {
+  const tDash = useTranslations('admin.dashboard')
   const tActivity = useTranslations('admin.dashboard.recentActivity')
   const tGifts = useTranslations('admin.dashboard.topGifts')
 
@@ -61,22 +62,21 @@ export default function AdminDashboard() {
     const now = new Date()
     const seconds = Math.floor((now.getTime() - date.getTime()) / 1000)
 
-    if (seconds < 60) return `${seconds} seconds ago`
+    if (seconds < 60) return tDash('timeAgo.seconds', { count: seconds })
     const minutes = Math.floor(seconds / 60)
-    if (minutes < 60) return `${minutes} min ago`
+    if (minutes < 60) return tDash('timeAgo.minutes', { count: minutes })
     const hours = Math.floor(minutes / 60)
-    if (hours < 24) return `${hours} hours ago`
+    if (hours < 24) return tDash('timeAgo.hours', { count: hours })
     const days = Math.floor(hours / 24)
-    return `${days} days ago`
+    return tDash('timeAgo.days', { count: days })
   }
 
   return (
     <div className="space-y-6">
-      {/* Quick Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total de Usuários</CardTitle>
+            <CardTitle className="text-sm font-medium">{tDash('stats.totalUsers')}</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -88,14 +88,14 @@ export default function AdminDashboard() {
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              +{formatScore(stats?.newUsersThisMonth || 0, 0)} este mês
+              +{formatScore(stats?.newUsersThisMonth || 0, 0)} {tDash('stats.thisMonth')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Usuários Ativos</CardTitle>
+            <CardTitle className="text-sm font-medium">{tDash('stats.activeUsers')}</CardTitle>
             <UserCheck className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
@@ -107,14 +107,14 @@ export default function AdminDashboard() {
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              Status: ativo (configuração)
+              {tDash('stats.statusActiveConfig')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Login Recente</CardTitle>
+            <CardTitle className="text-sm font-medium">{tDash('stats.recentLogin')}</CardTitle>
             <Activity className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
@@ -126,14 +126,14 @@ export default function AdminDashboard() {
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              Últimos 30 dias
+              {tDash('stats.last30Days')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Inativos (Sem Login)</CardTitle>
+            <CardTitle className="text-sm font-medium">{tDash('stats.inactiveNoLogin')}</CardTitle>
             <Clock className="h-4 w-4 text-orange-600" />
           </CardHeader>
           <CardContent>
@@ -145,7 +145,7 @@ export default function AdminDashboard() {
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              Ativos, mas sem login há 30+ dias
+              {tDash('stats.activeNoLogin30Days')}
             </p>
           </CardContent>
         </Card>
@@ -155,7 +155,7 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total de Quizzes</CardTitle>
+            <CardTitle className="text-sm font-medium">{tDash('stats.totalQuizzes')}</CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -167,14 +167,14 @@ export default function AdminDashboard() {
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              +{formatScore(stats?.completedToday || 0, 0)} completados hoje
+              +{formatScore(stats?.completedToday || 0, 0)} {tDash('stats.completedToday')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Dom Mais Comum</CardTitle>
+            <CardTitle className="text-sm font-medium">{tDash('stats.mostCommonGift')}</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -186,14 +186,14 @@ export default function AdminDashboard() {
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              Aparece em {formatScore(stats?.mostCommonGiftPercentage || 0, 1)}% dos resultados
+              {tDash('stats.appearsInResults', { percent: formatScore(stats?.mostCommonGiftPercentage || 0, 1) })}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Taxa de Conclusão</CardTitle>
+            <CardTitle className="text-sm font-medium">{tDash('stats.completionRate')}</CardTitle>
             <CheckCircle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -205,14 +205,14 @@ export default function AdminDashboard() {
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              Quizzes completados vs iniciados
+              {tDash('stats.completedVsStarted')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Tempo Médio</CardTitle>
+            <CardTitle className="text-sm font-medium">{tDash('stats.averageTime')}</CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -224,14 +224,14 @@ export default function AdminDashboard() {
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              Para completar o quiz
+              {tDash('stats.toCompleteQuiz')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Desativados</CardTitle>
+            <CardTitle className="text-sm font-medium">{tDash('stats.disabled')}</CardTitle>
             <UserX className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
@@ -243,7 +243,7 @@ export default function AdminDashboard() {
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              Status: inativo/suspenso
+              {tDash('stats.statusInactiveSuspended')}
             </p>
           </CardContent>
         </Card>

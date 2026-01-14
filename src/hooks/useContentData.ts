@@ -9,8 +9,10 @@ export type Gift = {
   id: number
   name: string
   nameEn: string
+  nameEs: string
   description: string
   descriptionEn: string
+  descriptionEs: string
   isActive: boolean
   questionsCount: number
   lastUpdated: string
@@ -24,6 +26,7 @@ export type Question = {
   giftKey: string
   questionPt: string
   questionEn: string
+  questionEs: string
   isActive: boolean
   lastUpdated: string
 }
@@ -33,6 +36,7 @@ interface RawGiftData {
   name: string
   definition: string | null
   gift_key: string
+  locale: string
 }
 
 interface RawQuestionData {
@@ -50,18 +54,22 @@ interface RawCharacteristicData {
   id: number
   gift_key: string
   characteristic: string
+  locale: string
+  order_sequence?: number
 }
 
 interface RawDangerData {
   id: number
   gift_key: string
   danger: string
+  locale: string
 }
 
 interface RawMisunderstandingData {
   id: number
   gift_key: string
   misunderstanding: string
+  locale: string
 }
 
 export type Characteristic = {
@@ -72,7 +80,13 @@ export type Characteristic = {
   type: 'characteristic' | 'danger' | 'misunderstanding'
   contentPt: string
   contentEn: string
+  contentEs: string
   isActive: boolean
+  ids?: {
+    pt?: number
+    en?: number
+    es?: number
+  }
 }
 
 // Hook for fetching spiritual gifts
@@ -81,18 +95,16 @@ export function useSpiritualGifts() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [supabase] = useState(() => createClient())
-  const locale = useLocale()
 
   useEffect(() => {
     const fetchGifts = async () => {
       try {
         setLoading(true)
 
-        // Get spiritual gifts from database
+        // Get spiritual gifts from database (all locales)
         const { data: giftsData, error: giftsError } = await supabase
           .from('spiritual_gifts')
           .select('*')
-          .eq('locale', locale)
           .order('name')
 
         if (giftsError) throw giftsError
@@ -110,19 +122,39 @@ export function useSpiritualGifts() {
             })
           }
 
-          const mappedGifts: Gift[] = giftsData.map((gift: RawGiftData) => ({
-            id: gift.id,
-            name: gift.name,
-            nameEn: gift.name, // TODO: Add English version
-            description: gift.definition || '',
-            descriptionEn: gift.definition || '',
-            isActive: true,
-            questionsCount: questionsPerGift[gift.gift_key] || 0,
-            lastUpdated: new Date().toISOString().split('T')[0],
-            giftKey: gift.gift_key
-          }))
+          // Group gifts by gift_key
+          const giftsMap: Record<string, Gift> = {}
 
-          setGifts(mappedGifts)
+          giftsData.forEach((gift: RawGiftData) => {
+            if (!giftsMap[gift.gift_key]) {
+              giftsMap[gift.gift_key] = {
+                id: gift.id, // Note: This ID might be different per locale, we use the first one encountered
+                giftKey: gift.gift_key,
+                name: '',
+                nameEn: '',
+                nameEs: '',
+                description: '',
+                descriptionEn: '',
+                descriptionEs: '',
+                isActive: true,
+                questionsCount: questionsPerGift[gift.gift_key] || 0,
+                lastUpdated: new Date().toISOString().split('T')[0]
+              }
+            }
+
+            if (gift.locale === 'pt') {
+              giftsMap[gift.gift_key].name = gift.name
+              giftsMap[gift.gift_key].description = gift.definition || ''
+            } else if (gift.locale === 'en') {
+              giftsMap[gift.gift_key].nameEn = gift.name
+              giftsMap[gift.gift_key].descriptionEn = gift.definition || ''
+            } else if (gift.locale === 'es') {
+              giftsMap[gift.gift_key].nameEs = gift.name
+              giftsMap[gift.gift_key].descriptionEs = gift.definition || ''
+            }
+          })
+
+          setGifts(Object.values(giftsMap))
         }
       } catch (err) {
         console.error('Error fetching gifts:', err)
@@ -133,7 +165,7 @@ export function useSpiritualGifts() {
     }
 
     fetchGifts()
-  }, [supabase, locale])
+  }, [supabase])
 
   return { gifts, loading, error }
 }
@@ -178,7 +210,7 @@ export function useQuestions() {
         const { data: translationsData, error: translationsError } = await supabase
           .from('question_translations')
           .select('*')
-          .in('locale', ['pt', 'en'])
+          .in('locale', ['pt', 'en', 'es'])
 
         const translations: Record<string, Record<string, string>> = {}
         if (!translationsError && translationsData) {
@@ -198,6 +230,7 @@ export function useQuestions() {
             giftKey: question.gift,
             questionPt: translations[question.id]?.['pt'] || question.text,
             questionEn: translations[question.id]?.['en'] || question.text,
+            questionEs: translations[question.id]?.['es'] || '',
             isActive: question.is_active,
             lastUpdated: new Date(question.updated_at).toISOString().split('T')[0]
           }))
@@ -245,70 +278,85 @@ export function useCharacteristics() {
         }
 
         const allCharacteristics: Characteristic[] = []
-        let idCounter = 1
 
-        // Get characteristics
-        const { data: charData, error: charError } = await supabase
-          .from('characteristics')
-          .select('*')
-          .eq('locale', locale)
+        const processData = (data: any[], type: 'characteristic' | 'danger' | 'misunderstanding') => {
+          // Group by Gift Key
+          const byGift: Record<string, any[]> = {}
+          data.forEach(item => {
+            const key = item.gift_key
+            if (!byGift[key]) byGift[key] = []
+            byGift[key].push(item)
+          })
 
-        if (!charError && charData) {
-          charData.forEach((char: RawCharacteristicData) => {
-            allCharacteristics.push({
-              id: `char-${idCounter++}`,
-              giftId: char.id,
-              giftName: giftNames[char.gift_key] || char.gift_key,
-              giftKey: char.gift_key,
-              type: 'characteristic',
-              contentPt: char.characteristic,
-              contentEn: char.characteristic, // TODO: Add English version
-              isActive: true
-            })
+          // For each gift
+          Object.keys(byGift).forEach(key => {
+            const items = byGift[key]
+            // Split by locale and sort by order_sequence (fallback to ID for dangers/misunderstandings)
+            const sorter = (a: any, b: any) => (a.order_sequence || 0) - (b.order_sequence || 0) || (a.id - b.id)
+            const pt = items.filter(i => i.locale === 'pt').sort(sorter)
+            const en = items.filter(i => i.locale === 'en').sort(sorter)
+            const es = items.filter(i => i.locale === 'es').sort(sorter)
+
+            // Max length (usually they should be equal)
+            const maxLen = Math.max(pt.length, en.length, es.length)
+
+            for (let i = 0; i < maxLen; i++) {
+              const rowPt = pt[i]
+              const rowEn = en[i]
+              const rowEs = es[i]
+
+              // We need at least one row to exist
+              if (!rowPt && !rowEn && !rowEs) continue
+
+              // Use PT ID as primary reference if available, else first available
+              const primaryId = rowPt?.id || rowEn?.id || rowEs?.id
+
+              // We construct content
+              let contentPt = '', contentEn = '', contentEs = ''
+              if (type === 'characteristic') {
+                contentPt = rowPt?.characteristic || ''
+                contentEn = rowEn?.characteristic || ''
+                contentEs = rowEs?.characteristic || ''
+              } else if (type === 'danger') {
+                contentPt = rowPt?.danger || ''
+                contentEn = rowEn?.danger || ''
+                contentEs = rowEs?.danger || ''
+              } else if (type === 'misunderstanding') {
+                contentPt = rowPt?.misunderstanding || ''
+                contentEn = rowEn?.misunderstanding || ''
+                contentEs = rowEs?.misunderstanding || ''
+              }
+
+              allCharacteristics.push({
+                id: `${type === 'characteristic' ? 'char' : type === 'danger' ? 'danger' : 'misund'}-${primaryId}`,
+                giftId: primaryId,
+                giftName: giftNames[key] || key,
+                giftKey: key,
+                type: type,
+                contentPt,
+                contentEn,
+                contentEs,
+                isActive: true,
+                ids: {
+                  pt: rowPt?.id,
+                  en: rowEn?.id,
+                  es: rowEs?.id
+                }
+              })
+            }
           })
         }
 
-        // Get dangers
-        const { data: dangerData, error: dangerError } = await supabase
-          .from('dangers')
-          .select('*')
-          .eq('locale', locale)
+        // Fetch ALL data
+        const [charRes, dangerRes, misundRes] = await Promise.all([
+          supabase.from('characteristics').select('*'),
+          supabase.from('dangers').select('*'),
+          supabase.from('misunderstandings').select('*')
+        ])
 
-        if (!dangerError && dangerData) {
-          dangerData.forEach((danger: RawDangerData) => {
-            allCharacteristics.push({
-              id: `danger-${idCounter++}`,
-              giftId: danger.id,
-              giftName: giftNames[danger.gift_key] || danger.gift_key,
-              giftKey: danger.gift_key,
-              type: 'danger',
-              contentPt: danger.danger,
-              contentEn: danger.danger, // TODO: Add English version
-              isActive: true
-            })
-          })
-        }
-
-        // Get misunderstandings
-        const { data: misundData, error: misundError } = await supabase
-          .from('misunderstandings')
-          .select('*')
-          .eq('locale', locale)
-
-        if (!misundError && misundData) {
-          misundData.forEach((misund: RawMisunderstandingData) => {
-            allCharacteristics.push({
-              id: `misund-${idCounter++}`,
-              giftId: misund.id,
-              giftName: giftNames[misund.gift_key] || misund.gift_key,
-              giftKey: misund.gift_key,
-              type: 'misunderstanding',
-              contentPt: misund.misunderstanding,
-              contentEn: misund.misunderstanding, // TODO: Add English version
-              isActive: true
-            })
-          })
-        }
+        if (charRes.data) processData(charRes.data, 'characteristic')
+        if (dangerRes.data) processData(dangerRes.data, 'danger')
+        if (misundRes.data) processData(misundRes.data, 'misunderstanding')
 
         setCharacteristics(allCharacteristics)
       } catch (err) {
@@ -409,11 +457,14 @@ export function useUpdateGift() {
 
   const updateGift = async (
     giftId: number,
+    giftKey: string,
     updates: {
       name?: string
       nameEn?: string
+      nameEs?: string
       description?: string
       descriptionEn?: string
+      descriptionEs?: string
       isActive?: boolean
     }
   ) => {
@@ -421,17 +472,49 @@ export function useUpdateGift() {
       setUpdating(true)
       setError(null)
 
-      // Update the spiritual gift
-      const { error: updateError } = await supabase
-        .from('spiritual_gifts')
-        .update({
-          name: updates.name,
-          definition: updates.description
-        })
-        .eq('id', giftId)
-        .eq('locale', 'pt')
+      // Update Portuguese (default/primary)
+      if (updates.name || updates.description) {
+        const { error: updateError } = await supabase
+          .from('spiritual_gifts')
+          .update({
+            name: updates.name,
+            definition: updates.description
+          })
+          .eq('gift_key', giftKey)
+          .eq('locale', 'pt')
 
-      if (updateError) throw updateError
+        if (updateError) throw updateError
+      }
+
+      // Update English
+      if (updates.nameEn || updates.descriptionEn) {
+        const { error: enError } = await supabase
+          .from('spiritual_gifts')
+          .upsert({
+            gift_key: giftKey,
+            locale: 'en',
+            name: updates.nameEn,
+            definition: updates.descriptionEn,
+            category: 'KARISMATA' // Fallback
+          }, { onConflict: 'gift_key, locale' })
+
+        if (enError) throw enError
+      }
+
+      // Update Spanish
+      if (updates.nameEs || updates.descriptionEs) {
+        const { error: esError } = await supabase
+          .from('spiritual_gifts')
+          .upsert({
+            gift_key: giftKey,
+            locale: 'es',
+            name: updates.nameEs,
+            definition: updates.descriptionEs,
+            category: 'KARISMATA' // Fallback
+          }, { onConflict: 'gift_key, locale' })
+
+        if (esError) throw esError
+      }
 
       return { success: true }
     } catch (err) {
@@ -457,6 +540,7 @@ export function useUpdateQuestion() {
     updates: {
       questionPt?: string
       questionEn?: string
+      questionEs?: string
       isActive?: boolean
       giftKey?: string
     }
@@ -474,7 +558,7 @@ export function useUpdateQuestion() {
         text: updates.questionPt || '',
         is_active: updates.isActive ?? true
       }
-      
+
       if (updates.giftKey) {
         updateData.gift = updates.giftKey
       }
@@ -502,8 +586,18 @@ export function useUpdateQuestion() {
           .from('question_translations')
           .upsert({
             question_id: questionId,
-            locale: 'en', 
+            locale: 'en',
             text: updates.questionEn
+          })
+      }
+
+      if (updates.questionEs) {
+        await supabase
+          .from('question_translations')
+          .upsert({
+            question_id: questionId,
+            locale: 'es',
+            text: updates.questionEs
           })
       }
 
@@ -532,8 +626,14 @@ export function useUpdateCharacteristic() {
     updates: {
       contentPt?: string
       contentEn?: string
+      contentEs?: string
       isActive?: boolean
       giftKey?: string
+      ids?: {
+        pt?: number
+        en?: number
+        es?: number
+      }
     }
   ) => {
     try {
@@ -543,7 +643,7 @@ export function useUpdateCharacteristic() {
       // Determine which table to update based on type
       let tableName = ''
       let fieldName = ''
-      
+
       switch (type) {
         case 'characteristic':
           tableName = 'characteristics'
@@ -559,25 +659,31 @@ export function useUpdateCharacteristic() {
           break
       }
 
-      // Extract numeric ID from the prefixed ID (e.g., "char-1" -> "1")
-      const numericId = characteristicId.split('-')[1]
+      // Helper to update a specific locale row
+      const updateRow = async (id: number | undefined, content: string | undefined) => {
+        if (!id || content === undefined) return
 
-      // Update the content and gift assignment
-      const updateData: Record<string, string | undefined> = {
-        [fieldName]: updates.contentPt
+        const updateData: any = { [fieldName]: content }
+        if (updates.giftKey) updateData.gift_key = updates.giftKey
+
+        const { error } = await supabase
+          .from(tableName)
+          .update(updateData)
+          .eq('id', id)
+
+        if (error) throw error
       }
-      
-      if (updates.giftKey) {
-        updateData.gift_key = updates.giftKey
+
+      // Update available translations using explicit IDs
+      if (updates.ids) {
+        if (updates.ids.pt) await updateRow(updates.ids.pt, updates.contentPt)
+        if (updates.ids.en) await updateRow(updates.ids.en, updates.contentEn)
+        if (updates.ids.es) await updateRow(updates.ids.es, updates.contentEs)
+      } else {
+        // Fallback to updating just PT using the ID from the string (old behavior)
+        const numericId = characteristicId.split('-')[1]
+        await updateRow(parseInt(numericId), updates.contentPt)
       }
-
-      const { error: updateError } = await supabase
-        .from(tableName)
-        .update(updateData)
-        .eq('id', numericId)
-        .eq('locale', 'pt')
-
-      if (updateError) throw updateError
 
       return { success: true }
     } catch (err) {
@@ -601,8 +707,10 @@ export function useCreateGift() {
   const createGift = async (giftData: {
     name: string
     nameEn?: string
+    nameEs?: string
     description: string
     descriptionEn?: string
+    descriptionEs?: string
     giftKey: string
     category: string
   }) => {
@@ -638,6 +746,21 @@ export function useCreateGift() {
         if (enError) throw enError
       }
 
+      // Create Spanish version if provided
+      if (giftData.nameEs || giftData.descriptionEs) {
+        const { error: esError } = await supabase
+          .from('spiritual_gifts')
+          .insert({
+            gift_key: giftData.giftKey,
+            name: giftData.nameEs || giftData.name,
+            definition: giftData.descriptionEs || giftData.description,
+            category: giftData.category,
+            locale: 'es'
+          })
+
+        if (esError) throw esError
+      }
+
       return { success: true }
     } catch (err) {
       console.error('Error creating gift:', err)
@@ -660,6 +783,7 @@ export function useCreateQuestion() {
   const createQuestion = async (questionData: {
     questionPt: string
     questionEn?: string
+    questionEs?: string
     giftKey: string
     isActive?: boolean
   }) => {
@@ -702,6 +826,17 @@ export function useCreateQuestion() {
           })
       }
 
+      // Add Spanish translation if provided
+      if (questionData.questionEs) {
+        await supabase
+          .from('question_translations')
+          .insert({
+            question_id: questionId,
+            locale: 'es',
+            text: questionData.questionEs
+          })
+      }
+
       return { success: true }
     } catch (err) {
       console.error('Error creating question:', err)
@@ -725,6 +860,7 @@ export function useCreateCharacteristic() {
     type: 'characteristic' | 'danger' | 'misunderstanding'
     contentPt: string
     contentEn?: string
+    contentEs?: string
     giftKey: string
   }) => {
     try {
@@ -734,7 +870,7 @@ export function useCreateCharacteristic() {
       // Determine table and field names
       let tableName = ''
       let fieldName = ''
-      
+
       switch (data.type) {
         case 'characteristic':
           tableName = 'characteristics'
@@ -774,6 +910,19 @@ export function useCreateCharacteristic() {
         if (enError) throw enError
       }
 
+      // Create Spanish version if provided
+      if (data.contentEs) {
+        const { error: esError } = await supabase
+          .from(tableName)
+          .insert({
+            gift_key: data.giftKey,
+            [fieldName]: data.contentEs,
+            locale: 'es'
+          })
+
+        if (esError) throw esError
+      }
+
       return { success: true }
     } catch (err) {
       console.error('Error creating characteristic:', err)
@@ -799,7 +948,7 @@ export function useDeleteGift() {
       setError(null)
 
       // Delete all related data first
-      
+
       // Delete questions
       const { error: questionsError } = await supabase
         .from('question_pool')

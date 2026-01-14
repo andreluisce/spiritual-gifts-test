@@ -50,15 +50,9 @@ export async function POST(request: NextRequest) {
       locale?: string
     }
 
+    const localeToUse = locale || profile?.locale || 'pt'
+
     // Debug logging to identify the UUID issue
-    console.log('🔍 AI Analysis API Debug:', {
-      hasProfile: !!profile,
-      sessionId: sessionId,
-      sessionIdType: typeof sessionId,
-      locale: locale,
-      localeType: typeof locale,
-      profileLocale: profile?.locale
-    })
 
     // Validate required fields
     if (!profile?.primaryGift?.key) {
@@ -87,7 +81,6 @@ export async function POST(request: NextRequest) {
 
     // Check cache first - use gift_scores based cache for users with same results
     if (useCache) {
-      console.log('🔍 AI Analysis API: Checking cache with useCache=true')
       try {
         const { data: cachedByScores, error: cacheByScoresError } = await supabase.rpc('get_ai_analysis_by_user_and_scores', {
           p_user_id: user.id,
@@ -100,10 +93,6 @@ export async function POST(request: NextRequest) {
 
         if (!cacheByScoresError && cachedByScores && cachedByScores.length > 0) {
           const cached = cachedByScores[0]
-          console.log('✅ AI Analysis API: CACHE HIT by gift_scores!', {
-            cacheDate: cached.created_at,
-            userId: user.id
-          })
           const analysis: AICompatibilityAnalysis = {
             personalizedInsights: cached.personalized_insights,
             strengthsDescription: cached.strengths_description,
@@ -121,7 +110,6 @@ export async function POST(request: NextRequest) {
             cacheDate: cached.created_at
           })
         } else {
-          console.log('❌ AI Analysis API: CACHE MISS by gift_scores')
         }
 
         // Fallback to session-based cache if available
@@ -136,10 +124,6 @@ export async function POST(request: NextRequest) {
 
           if (!cacheBySessionError && cachedBySession && cachedBySession.length > 0) {
             const cached = cachedBySession[0]
-            console.log('✅ AI Analysis API: CACHE HIT by session_id!', {
-              cacheDate: cached.created_at,
-              sessionId: sessionId
-            })
             const analysis: AICompatibilityAnalysis = {
               personalizedInsights: cached.personalized_insights,
               strengthsDescription: cached.strengths_description,
@@ -157,25 +141,19 @@ export async function POST(request: NextRequest) {
               cacheDate: cached.created_at
             })
           } else {
-            console.log('❌ AI Analysis API: CACHE MISS by session_id')
           }
         }
       } catch (cacheError) {
         console.warn('❌ AI Analysis API: Cache lookup failed:', cacheError)
       }
-    } else {
-      console.log('⚠️ AI Analysis API: Cache disabled (useCache=false)')
     }
 
     // Use client analysis if provided, otherwise generate new AI analysis
-    console.log('🤖 AI Analysis API: Generating NEW AI analysis (cache miss or disabled)')
     let analysis
     if (clientAnalysis) {
-      console.log('📥 AI Analysis API: Using client-provided analysis')
       analysis = clientAnalysis
     } else {
-      console.log('🔮 AI Analysis API: Calling AI service to generate analysis')
-      analysis = await aiCompatibilityAnalyzer.analyzeCompatibility(profile, locale)
+      analysis = await aiCompatibilityAnalyzer.analyzeCompatibility(profile, localeToUse)
     }
 
 
@@ -192,7 +170,7 @@ export async function POST(request: NextRequest) {
         ...(sessionId && { session_id: sessionId }), // Only include session_id if it exists
         gift_scores: giftScores,
         primary_gifts: primaryGifts,
-        locale: profile.locale || locale || 'pt',
+        locale: profile.locale || localeToUse || 'pt',
         personalized_insights: analysis.personalizedInsights,
         strengths_description: analysis.strengthsDescription,
         challenges_guidance: analysis.challengesGuidance,
@@ -203,15 +181,6 @@ export async function POST(request: NextRequest) {
         ai_service_used: clientAnalysis ? 'client-ai' : 'server-ai',
         analysis_version: '2.0'
       }
-
-      console.log('🔍 AI Analysis API: Attempting insert with data:', {
-        user_id: insertData.user_id,
-        session_id: insertData.session_id || 'not provided',
-        session_id_type: typeof insertData.session_id,
-        locale: insertData.locale,
-        locale_type: typeof insertData.locale,
-        primaryGiftsCount: insertData.primary_gifts.length
-      })
 
       const { error: insertError } = await supabase
         .from('ai_analysis_cache')

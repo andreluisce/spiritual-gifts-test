@@ -358,6 +358,38 @@ export default function CompatibilityAnalysis({ giftScores, className }: Compati
                     </div>
                   </div>
                 )}
+
+                {compatibility.mitigations && compatibility.mitigations.length > 0 && (
+                  <div className="mt-3">
+                    <h5 className="font-medium text-blue-700 text-sm mb-2 flex items-center gap-1">
+                      <Lightbulb className="h-3 w-3" />
+                      {t('mitigationStrategies')}
+                    </h5>
+                    <div className="space-y-1">
+                      {compatibility.mitigations.map((tip, idx) => (
+                        <p key={idx} className="text-xs text-gray-600 pl-4">
+                          • {tip}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {compatibility.examples && compatibility.examples.length > 0 && (
+                  <div className="mt-3">
+                    <h5 className="font-medium text-purple-700 text-sm mb-2 flex items-center gap-1">
+                      <Sparkles className="h-3 w-3" />
+                      {t('practicalExamples')}
+                    </h5>
+                    <div className="space-y-1">
+                      {compatibility.examples.map((example, idx) => (
+                        <p key={idx} className="text-xs text-gray-600 pl-4">
+                          • {example}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </CardContent>
@@ -418,6 +450,38 @@ export default function CompatibilityAnalysis({ giftScores, className }: Compati
                         {ministry.growthAreas.filter(a => a).slice(0, 3).map((area, idx) => (
                           <p key={idx} className="text-xs text-gray-600 pl-4">
                             • {area}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {ministry.successMetrics && ministry.successMetrics.length > 0 && (
+                    <div>
+                      <h5 className="font-medium text-amber-700 text-sm mb-2 flex items-center gap-1">
+                        <TrendingUp className="h-3 w-3" />
+                        {t('successMetrics')}
+                      </h5>
+                      <div className="space-y-1">
+                        {ministry.successMetrics.filter(m => m).slice(0, 3).map((metric, idx) => (
+                          <p key={idx} className="text-xs text-gray-600 pl-4">
+                            • {metric}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {ministry.spiritualPractices && ministry.spiritualPractices.length > 0 && (
+                    <div>
+                      <h5 className="font-medium text-indigo-700 text-sm mb-2 flex items-center gap-1">
+                        <Sparkles className="h-3 w-3" />
+                        {t('spiritualPractices')}
+                      </h5>
+                      <div className="space-y-1">
+                        {ministry.spiritualPractices.filter(p => p).slice(0, 3).map((practice, idx) => (
+                          <p key={idx} className="text-xs text-gray-600 pl-4">
+                            • {practice}
                           </p>
                         ))}
                       </div>

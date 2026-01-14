@@ -10,20 +10,23 @@ import { Brain } from 'lucide-react'
 import { formatPercentage } from '@/data/quiz-data'
 import { useGiftDistribution } from '@/hooks/useAdminData'
 import AnalyticsNavigation from '@/components/AnalyticsNavigation'
+import { usePermissions } from '@/hooks/usePermissions'
 
 export default function AnalyticsSpiritualGiftsPage() {
-  const { user, isAdmin, loading } = useAuth()
+  const { user, isAdmin, isManager, loading } = useAuth()
+  const { canViewAnalytics } = usePermissions()
   const router = useRouter()
   const t = useTranslations('admin.analytics')
-  
+
   // Fetch real data
   const { distribution: realGifts, loading: giftsLoading } = useGiftDistribution()
 
   useEffect(() => {
-    if (!loading && (!user || !isAdmin)) {
+    const allowed = isAdmin || isManager || canViewAnalytics
+    if (!loading && (!user || !allowed)) {
       router.push('/dashboard')
     }
-  }, [user, isAdmin, loading, router])
+  }, [user, isAdmin, isManager, canViewAnalytics, loading, router])
 
   if (loading || giftsLoading) {
     return (
@@ -33,7 +36,7 @@ export default function AnalyticsSpiritualGiftsPage() {
     )
   }
 
-  if (!user || !isAdmin) {
+  if (!user || !(isAdmin || isManager || canViewAnalytics)) {
     return null
   }
 
@@ -81,8 +84,8 @@ export default function AnalyticsSpiritualGiftsPage() {
                     </div>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-3">
-                    <div 
-                      className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-500" 
+                    <div
+                      className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-500"
                       style={{ width: `${gift.percentage}%` }}
                     ></div>
                   </div>
@@ -120,7 +123,7 @@ export default function AnalyticsSpiritualGiftsPage() {
                 {realGifts && realGifts.length > 0 ? `${formatPercentage(realGifts[0]?.percentage || 0)} dos usuários` : 'Aguardando dados'}
               </p>
             </div>
-            
+
             <div className="p-4 bg-green-50 rounded-lg">
               <h4 className="font-semibold text-green-900 mb-2">Diversidade</h4>
               <p className="text-2xl font-bold text-green-700">
@@ -130,14 +133,14 @@ export default function AnalyticsSpiritualGiftsPage() {
                 Dons identificados
               </p>
             </div>
-            
+
             <div className="p-4 bg-purple-50 rounded-lg">
               <h4 className="font-semibold text-purple-900 mb-2">Total de Identificações</h4>
               <p className="text-2xl font-bold text-purple-700">
                 {realGifts ? realGifts.reduce((sum, gift) => sum + gift.count, 0).toLocaleString() : '0'}
               </p>
               <p className="text-sm text-purple-600 mt-1">
-                Resultados únicos
+                Testes Realizados
               </p>
             </div>
           </div>

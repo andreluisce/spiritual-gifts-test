@@ -34,7 +34,7 @@ export default function AdminAuditPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedAction, setSelectedAction] = useState('all')
   const [selectedStatus, setSelectedStatus] = useState('all')
-  
+
   // Get real audit data
   const { logs: auditLogs, loading: auditLoading, error: auditError } = useAuditLogs(
     50, // limit
@@ -92,15 +92,6 @@ export default function AdminAuditPage() {
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
       {/* Header */}
       <div className="mb-8">
-        <div className="flex items-center gap-4 mb-4">
-          <Link href="/admin">
-            <Button variant="outline" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Admin
-            </Button>
-          </Link>
-        </div>
-        
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex-1">
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Audit & Activity Logs</h1>
@@ -181,7 +172,7 @@ export default function AdminAuditPage() {
               </Card>
             </div>
           )}
-          
+
           {/* Filters */}
           <Card>
             <CardContent className="pt-6">
@@ -197,7 +188,7 @@ export default function AdminAuditPage() {
                     />
                   </div>
                 </div>
-                
+
                 <div className="flex flex-col sm:flex-row gap-2">
                   <select
                     value={selectedAction}
@@ -211,7 +202,7 @@ export default function AdminAuditPage() {
                     <option value="user">User Management</option>
                     <option value="system">System</option>
                   </select>
-                  
+
                   <select
                     value={selectedStatus}
                     onChange={(e) => setSelectedStatus(e.target.value)}
@@ -242,7 +233,7 @@ export default function AdminAuditPage() {
                     <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${getStatusColor(log.status)} flex-shrink-0`}>
                       {getStatusIcon(log.status)}
                     </div>
-                    
+
                     <div className="flex-1 min-w-0 w-full">
                       <div className="flex flex-wrap items-center gap-2 mb-2">
                         <h3 className="font-medium text-gray-900">{log.action}</h3>
@@ -253,11 +244,11 @@ export default function AdminAuditPage() {
                           {log.status}
                         </Badge>
                       </div>
-                      
+
                       <p className="text-sm text-gray-600 mb-3 line-clamp-2">
                         {log.details ? (typeof log.details === 'string' ? log.details : JSON.stringify(log.details)) : 'No additional details'}
                       </p>
-                      
+
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs text-gray-500">
                         <div className="truncate">
                           <span className="font-medium">User:</span> {log.user_email}
@@ -273,14 +264,14 @@ export default function AdminAuditPage() {
                         </div>
                       </div>
                     </div>
-                    
+
                     <Button variant="ghost" size="sm" className="self-start mt-2 sm:mt-0">
                       <Eye className="h-4 w-4" />
                     </Button>
                   </div>
                 ))}
               </div>
-              
+
               {auditLogs.length === 0 && (
                 <div className="text-center py-8">
                   <Shield className="h-12 w-12 text-gray-400 mx-auto mb-4" />

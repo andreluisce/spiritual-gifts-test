@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase-client'
+import { useLocale } from 'next-intl'
 
 export type QuizReport = {
   session_info: {
@@ -18,6 +19,7 @@ export type QuizReport = {
     rank: number
     gift_key: string
     gift_name: string
+    score: number
     strength: 'Primário' | 'Secundário' | 'Presente'
   }>
   questions_and_answers: Array<{
@@ -40,27 +42,21 @@ export function useQuizReport() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [supabase] = useState(() => createClient())
+  const locale = useLocale()
 
-  const fetchReport = async (sessionId: string) => {
+  const fetchReport = useCallback(async (sessionId: string) => {
     try {
       setLoading(true)
       setError(null)
 
-      console.log('Fetching quiz report for session:', sessionId)
-
       const { data, error: rpcError } = await supabase.rpc('get_quiz_report', {
-        p_session_id: sessionId
+        p_session_id: sessionId,
+        p_locale: locale
       })
 
-      console.log('Quiz report response:', { data, error: rpcError })
-
       if (rpcError) {
-        console.error('RPC Error details:', {
-          message: rpcError.message,
-          details: rpcError.details,
-          hint: rpcError.hint,
-          code: rpcError.code
-        })
+        console.error('RPC Error details (FULL):', rpcError)
+        console.error('RPC Error message:', rpcError.message)
         throw rpcError
       }
 
@@ -73,7 +69,7 @@ export function useQuizReport() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [supabase, locale])
 
   return { report, loading, error, fetchReport }
 }

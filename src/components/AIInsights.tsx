@@ -14,6 +14,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion'
 import { type UserGiftProfile, type AICompatibilityAnalysis } from '@/lib/ai-compatibility-analyzer'
 import type { Database } from '@/lib/database.types'
+import { useTranslations } from 'next-intl'
 
 interface AIInsightsProps {
   giftScores: Record<string, number>
@@ -24,6 +25,7 @@ interface AIInsightsProps {
 }
 
 export default function AIInsights({ giftScores, topGifts, sessionId, locale = 'pt', className }: AIInsightsProps) {
+  const t = useTranslations('aiInsights')
   const [aiAnalysis, setAiAnalysis] = useState<AICompatibilityAnalysis | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -72,11 +74,11 @@ export default function AIInsights({ giftScores, topGifts, sessionId, locale = '
       setHasAnalyzed(true)
     } catch (err) {
       console.error('AI Analysis Error:', err)
-      setError('Não foi possível gerar a análise personalizada no momento. Tente novamente em alguns instantes.')
+      setError(t('error'))
     } finally {
       setIsLoading(false)
     }
-  }, [topGifts, giftScores, sessionId, locale])
+  }, [topGifts, giftScores, sessionId, locale, t])
 
   // Auto-generate on mount if we have data
   useEffect(() => {
@@ -105,7 +107,7 @@ export default function AIInsights({ giftScores, topGifts, sessionId, locale = '
         <CardContent className="text-center py-12">
           <Brain className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <p className="text-gray-500">
-            Complete o teste para ver insights personalizados com IA
+            {t('completeTest')}
           </p>
         </CardContent>
       </Card>
@@ -117,20 +119,20 @@ export default function AIInsights({ giftScores, topGifts, sessionId, locale = '
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-purple-600" />
-          Insights Personalizados com IA
+          {t('title')}
           <Badge variant="outline" className="ml-auto text-xs">
-            Beta
+            {t('beta')}
           </Badge>
         </CardTitle>
         {aiAnalysis && (
           <div className="flex items-center justify-between">
             <p className="text-sm text-gray-600">
-              Análise baseada em seus dons principais
+              {t('basedOnGifts')}
             </p>
             <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs ${getConfidenceColor(aiAnalysis.confidence)}`}>
               {getConfidenceIcon(aiAnalysis.confidence)}
               <span className="font-semibold">
-                {aiAnalysis.confidence}% confiança
+                {t('confidence', { value: aiAnalysis.confidence })}
               </span>
             </div>
           </div>
@@ -153,10 +155,10 @@ export default function AIInsights({ giftScores, topGifts, sessionId, locale = '
                 <Brain className="h-8 w-8 text-purple-600 mx-auto mb-4" />
               </motion.div>
               <p className="text-purple-700 font-medium">
-                Gerando insights personalizados...
+                {t('loading')}
               </p>
               <p className="text-sm text-gray-600 mt-2">
-                Nossa IA está analisando seus dons espirituais
+                {t('loadingSub')}
               </p>
             </motion.div>
           )}
@@ -179,7 +181,7 @@ export default function AIInsights({ giftScores, topGifts, sessionId, locale = '
                   className="ml-2"
                 >
                   <RefreshCw className="h-3 w-3 mr-1" />
-                  Tentar Novamente
+                  {t('retry')}
                 </Button>
               </Alert>
             </motion.div>
@@ -196,7 +198,7 @@ export default function AIInsights({ giftScores, topGifts, sessionId, locale = '
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <Lightbulb className="h-4 w-4 text-yellow-600" />
-                  <h4 className="font-semibold text-gray-800">Análise Personalizada</h4>
+                  <h4 className="font-semibold text-gray-800">{t('personalizedAnalysis')}</h4>
                 </div>
                 <p className="text-gray-700 leading-relaxed">
                   {aiAnalysis.personalizedInsights}
@@ -209,7 +211,7 @@ export default function AIInsights({ giftScores, topGifts, sessionId, locale = '
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <Star className="h-4 w-4 text-blue-600" />
-                  <h4 className="font-semibold text-gray-800">Suas Forças Naturais</h4>
+                  <h4 className="font-semibold text-gray-800">{t('strengths')}</h4>
                 </div>
                 <p className="text-gray-700 leading-relaxed">
                   {aiAnalysis.strengthsDescription}
@@ -222,7 +224,7 @@ export default function AIInsights({ giftScores, topGifts, sessionId, locale = '
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <Target className="h-4 w-4 text-green-600" />
-                  <h4 className="font-semibold text-gray-800">Plano de Desenvolvimento</h4>
+                  <h4 className="font-semibold text-gray-800">{t('developmentPlan')}</h4>
                 </div>
                 <p className="text-gray-700 leading-relaxed mb-3">
                   {aiAnalysis.developmentPlan}
@@ -231,7 +233,7 @@ export default function AIInsights({ giftScores, topGifts, sessionId, locale = '
                 {/* Practical Applications */}
                 {aiAnalysis.practicalApplications.length > 0 && (
                   <div className="space-y-2">
-                    <h5 className="font-medium text-gray-700 text-sm">Aplicações Práticas:</h5>
+                    <h5 className="font-medium text-gray-700 text-sm">{t('practicalApplications')}</h5>
                     {aiAnalysis.practicalApplications.map((application, index) => (
                       <div key={index} className="flex items-start gap-2">
                         <ArrowRight className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
@@ -249,7 +251,7 @@ export default function AIInsights({ giftScores, topGifts, sessionId, locale = '
                 <div>
                   <div className="flex items-center gap-2 mb-3">
                     <Users className="h-4 w-4 text-purple-600" />
-                    <h4 className="font-semibold text-gray-800">Recomendações de Ministério</h4>
+                    <h4 className="font-semibold text-gray-800">{t('ministryRecommendations')}</h4>
                   </div>
                   <div className="space-y-2">
                     {aiAnalysis.ministryRecommendations.map((recommendation, index) => (
@@ -269,7 +271,7 @@ export default function AIInsights({ giftScores, topGifts, sessionId, locale = '
                   <div>
                     <div className="flex items-center gap-2 mb-3">
                       <AlertCircle className="h-4 w-4 text-orange-600" />
-                      <h4 className="font-semibold text-gray-800">Pontos de Atenção</h4>
+                      <h4 className="font-semibold text-gray-800">{t('challenges')}</h4>
                     </div>
                     <p className="text-gray-700 leading-relaxed">
                       {aiAnalysis.challengesGuidance}
@@ -287,7 +289,7 @@ export default function AIInsights({ giftScores, topGifts, sessionId, locale = '
                   className="border-purple-300 text-purple-700 hover:bg-purple-50"
                 >
                   <RefreshCw className="h-3 w-3 mr-2" />
-                  Regenerar Análise
+                  {t('regenerate')}
                 </Button>
               </div>
             </motion.div>

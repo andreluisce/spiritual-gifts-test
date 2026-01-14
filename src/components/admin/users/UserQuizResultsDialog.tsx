@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button'
 import { FileText, CheckCircle, Clock, TrendingUp } from 'lucide-react'
 import { UserWithStats } from '@/hooks/useAdminData'
 import { useUserQuizResults, QuizResult } from '@/hooks/useUserQuizResults'
+import { useTranslations, useLocale } from 'next-intl'
 
 interface UserQuizResultsDialogProps {
     user: UserWithStats | null
@@ -24,8 +25,10 @@ interface UserQuizResultsDialogProps {
 }
 
 export function UserQuizResultsDialog({ user, open, onOpenChange }: UserQuizResultsDialogProps) {
+    const t = useTranslations('adminUserQuiz')
+    const locale = useLocale()
     const [quizResults, setQuizResults] = useState<QuizResult[]>([])
-    const { fetchUserQuizResults, loading: quizResultsLoading } = useUserQuizResults()
+    const { fetchUserQuizResults, loading: quizResultsLoading, error } = useUserQuizResults()
 
     useEffect(() => {
         if (user && open) {
@@ -52,31 +55,36 @@ export function UserQuizResultsDialog({ user, open, onOpenChange }: UserQuizResu
                 <AlertDialogHeader>
                     <AlertDialogTitle className="flex items-center gap-2">
                         <FileText className="h-5 w-5" />
-                        Quiz Results - {user?.user_metadata?.name || user?.email}
+                        {t('title', { user: user?.user_metadata?.name || user?.email || '' })}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        All quiz attempts and results for this user
+                        {t('description')}
                     </AlertDialogDescription>
                 </AlertDialogHeader>
 
                 <div className="py-4 space-y-4">
+                    {error && (
+                        <div className="bg-red-50 text-red-700 p-4 rounded-md text-sm border border-red-200">
+                            Error: {error}
+                        </div>
+                    )}
                     {quizResultsLoading ? (
                         <div className="text-center py-8">
                             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                            <p className="text-sm text-gray-500 mt-2">Loading quiz results...</p>
+                            <p className="text-sm text-gray-500 mt-2">{t('loading')}</p>
                         </div>
                     ) : quizResults.length > 0 ? (
                         <div className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                                 <Card>
                                     <CardContent className="pt-4">
-                                        <div className="text-sm text-gray-500">Total de Tentativas</div>
+                                        <div className="text-sm text-gray-500">{t('totalAttempts')}</div>
                                         <div className="text-2xl font-bold">{quizResults.length}</div>
                                     </CardContent>
                                 </Card>
                                 <Card>
                                     <CardContent className="pt-4">
-                                        <div className="text-sm text-gray-500">Completados</div>
+                                        <div className="text-sm text-gray-500">{t('completed')}</div>
                                         <div className="text-2xl font-bold text-green-600">
                                             {quizResults.filter(r => r.is_completed).length}
                                         </div>
@@ -94,22 +102,22 @@ export function UserQuizResultsDialog({ user, open, onOpenChange }: UserQuizResu
                                                 ) : (
                                                     <Clock className="h-5 w-5 text-yellow-600" />
                                                 )}
-                                                Attempt #{quizResults.length - index}
+                                                {t('attempt', { num: quizResults.length - index })}
                                             </span>
                                             <Badge className={result.is_completed ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>
-                                                {result.is_completed ? 'Completed' : 'In Progress'}
+                                                {result.is_completed ? t('status.completed') : t('status.inProgress')}
                                             </Badge>
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent className="space-y-4">
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                                             <div>
-                                                <span className="text-gray-500">Iniciado:</span>
+                                                <span className="text-gray-500">{t('started')}:</span>
                                                 <span className="ml-2 font-medium">{formatDate(result.started_at)}</span>
                                             </div>
                                             {result.completed_at && (
                                                 <div>
-                                                    <span className="text-gray-500">Completado:</span>
+                                                    <span className="text-gray-500">{t('finished')}:</span>
                                                     <span className="ml-2 font-medium">{formatDate(result.completed_at)}</span>
                                                 </div>
                                             )}
@@ -120,7 +128,7 @@ export function UserQuizResultsDialog({ user, open, onOpenChange }: UserQuizResu
                                                 <div>
                                                     <h4 className="font-medium text-sm text-gray-700 mb-3 flex items-center gap-2">
                                                         <TrendingUp className="h-4 w-4" />
-                                                        Top 3 Dons Espirituais
+                                                        {t('topGifts')}
                                                     </h4>
                                                     <div className="space-y-2">
                                                         {result.top_gifts.slice(0, 3).map((gift, giftIndex) => (
@@ -142,14 +150,14 @@ export function UserQuizResultsDialog({ user, open, onOpenChange }: UserQuizResu
                                                 <div className="pt-4 border-t">
                                                     <Button
                                                         onClick={() => {
-                                                            const url = `/pt/admin/quiz-report/${result.session_id}`
+                                                            const url = `/${locale}/admin/quiz-report/${result.session_id}`
                                                             window.open(url, '_blank')
                                                         }}
                                                         className="w-full"
                                                         variant="outline"
                                                     >
                                                         <FileText className="h-4 w-4 mr-2" />
-                                                        Ver Relatório Completo
+                                                        {t('viewReport')}
                                                     </Button>
                                                 </div>
                                             </>
@@ -161,15 +169,15 @@ export function UserQuizResultsDialog({ user, open, onOpenChange }: UserQuizResu
                     ) : (
                         <div className="text-center py-12">
                             <FileText className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                            <p className="text-gray-500">This user hasn&apos;t taken any quizzes yet</p>
+                            <p className="text-gray-500">{t('empty')}</p>
                         </div>
                     )}
                 </div>
 
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Close</AlertDialogCancel>
+                    <AlertDialogCancel>{t('close')}</AlertDialogCancel>
                 </AlertDialogFooter>
             </AlertDialogContent>
-        </AlertDialog>
+        </AlertDialog >
     )
 }

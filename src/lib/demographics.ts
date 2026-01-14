@@ -25,8 +25,12 @@ interface UserDemographics {
 // Get geolocation from IP using a free service
 export async function getGeolocationFromIP(ipAddress: string): Promise<GeolocationData | null> {
   try {
-    // Using ipapi.co (free tier: 1000 requests/day)
-    const response = await fetch(`https://ipapi.co/${ipAddress}/json/`, {
+    // Using ipapi.co (free tier: 1000 requests/day). If IP is unknown, let the service infer it.
+    const target = ipAddress && ipAddress !== 'unknown'
+      ? `https://ipapi.co/${ipAddress}/json/`
+      : 'https://ipapi.co/json/'
+
+    const response = await fetch(target, {
       headers: {
         'User-Agent': 'spiritual-gifts-app/1.0'
       }

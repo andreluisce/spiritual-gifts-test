@@ -44,11 +44,11 @@ export default function AdminTranslationsPage() {
     es: ''
   })
 
-  const { 
-    translations, 
-    loading: translationsLoading, 
-    updateTranslation, 
-    updating 
+  const {
+    translations,
+    loading: translationsLoading,
+    updateTranslation,
+    updating
   } = useTranslations()
 
   useEffect(() => {
@@ -133,14 +133,6 @@ export default function AdminTranslationsPage() {
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
       {/* Header */}
       <div className="mb-8">
-        <div className="flex items-center gap-4 mb-4">
-          <Link href="/admin">
-            <Button variant="outline" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Admin
-            </Button>
-          </Link>
-        </div>
 
         <div className="flex items-center justify-between">
           <div>
@@ -152,7 +144,7 @@ export default function AdminTranslationsPage() {
               Manage translations for all content across Portuguese, English, and Spanish
             </p>
           </div>
-          
+
           <div className="flex items-center gap-4">
             <div className="text-sm text-gray-500">
               {filteredTranslations.length} items
@@ -280,7 +272,7 @@ export default function AdminTranslationsPage() {
                               {status.completed}/{status.total} languages
                             </Badge>
                           </div>
-                          
+
                           <div className="space-y-1 text-sm">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                               <div>
@@ -334,7 +326,7 @@ export default function AdminTranslationsPage() {
                               {status.completed}/{status.total} languages
                             </Badge>
                           </div>
-                          
+
                           <div className="space-y-1 text-sm">
                             <div className="grid grid-cols-1 gap-2">
                               <div>
@@ -388,7 +380,7 @@ export default function AdminTranslationsPage() {
                               {status.completed}/{status.total} languages
                             </Badge>
                           </div>
-                          
+
                           <div className="space-y-1 text-sm">
                             <div className="grid grid-cols-1 gap-2">
                               <div>
@@ -442,7 +434,7 @@ export default function AdminTranslationsPage() {
                               {status.completed}/{status.total} languages
                             </Badge>
                           </div>
-                          
+
                           <div className="space-y-1 text-sm">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                               <div>
@@ -485,7 +477,7 @@ export default function AdminTranslationsPage() {
               Update the translations for this content item across all supported languages.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          
+
           <div className="space-y-4 py-4">
             {/* Portuguese */}
             <div className="space-y-2">
@@ -532,7 +524,7 @@ export default function AdminTranslationsPage() {
 
           <AlertDialogFooter>
             <AlertDialogCancel onClick={handleCancelEdit}>Cancel</AlertDialogCancel>
-            <Button 
+            <Button
               onClick={handleSaveTranslation}
               disabled={updating}
               className="bg-blue-600 hover:bg-blue-700"

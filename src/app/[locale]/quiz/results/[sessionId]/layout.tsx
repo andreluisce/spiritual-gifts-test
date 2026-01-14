@@ -195,25 +195,6 @@ export default function ResultsLayout({ children }: ResultsLayoutProps) {
                   <ArrowLeft className="h-4 w-4" />
                   <span className="hidden sm:inline">{t('backToDashboard')}</span>
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowEmailDialog(true)}
-                  className="flex items-center gap-2"
-                  disabled={sending}
-                >
-                  {sending ? (
-                    <>
-                      <Send className="h-4 w-4 animate-pulse" />
-                      <span className="hidden sm:inline">Enviando...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Mail className="h-4 w-4" />
-                      <span className="hidden sm:inline">Enviar por Email</span>
-                    </>
-                  )}
-                </Button>
               </div>
             </div>
 

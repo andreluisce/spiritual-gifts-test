@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { UserWithStats, useUpdateUser, useUserApproval } from '@/hooks/useAdminData'
+import { usePermissions } from '@/hooks/usePermissions'
 
 // Validation schema for user editing
 const userEditSchema = z.object({
@@ -39,6 +40,7 @@ interface UserEditDialogProps {
 export function UserEditDialog({ user, open, onOpenChange, onSuccess }: UserEditDialogProps) {
     const { updateUser, updating } = useUpdateUser()
     const { approveUser, rejectUser, updating: approvalUpdating } = useUserApproval()
+    const { isAdmin } = usePermissions()
 
     const {
         register,
@@ -77,13 +79,14 @@ export function UserEditDialog({ user, open, onOpenChange, onSuccess }: UserEdit
         try {
             const promises = []
 
-            // 1. Update standard fields
-            // Check if any standard fields changed to avoid unnecessary calls? Supabase update is cheap.
-            promises.push(updateUser(user.id, {
-                displayName: data.displayName,
-                role: data.role,
-                status: data.status
-            }))
+            // 1. Update standard fields (admins only)
+            if (isAdmin) {
+                promises.push(updateUser(user.id, {
+                    displayName: data.displayName,
+                    role: data.role,
+                    status: data.status
+                }))
+            }
 
             // 2. Handle Approval Logic
             if (data.approved !== user.approved) {
@@ -92,6 +95,11 @@ export function UserEditDialog({ user, open, onOpenChange, onSuccess }: UserEdit
                 } else {
                     promises.push(rejectUser(user.id, 'Revoked by administrator via User Management'))
                 }
+            }
+
+            if (promises.length === 0) {
+                onOpenChange(false)
+                return
             }
 
             const results = await Promise.all(promises)
@@ -133,10 +141,14 @@ export function UserEditDialog({ user, open, onOpenChange, onSuccess }: UserEdit
                             id="displayName"
                             {...register('displayName')}
                             placeholder="Enter display name"
-                            className={`w-full ${errors.displayName ? 'border-red-500' : ''}`}
+                            className={`w-full ${errors.displayName ? 'border-red-500' : ''} ${!isAdmin ? 'opacity-60 cursor-not-allowed' : ''}`}
+                            disabled={!isAdmin}
                         />
                         {errors.displayName && (
                             <p className="text-xs text-red-500">{errors.displayName.message}</p>
+                        )}
+                        {!isAdmin && (
+                            <p className="text-xs text-muted-foreground">Only administrators can edit this field</p>
                         )}
                     </div>
 
@@ -146,7 +158,8 @@ export function UserEditDialog({ user, open, onOpenChange, onSuccess }: UserEdit
                         <select
                             id="role"
                             {...register('role')}
-                            className={`w-full px-3 py-2 border rounded-md text-sm bg-background ${errors.role ? 'border-red-500' : ''}`}
+                            className={`w-full px-3 py-2 border rounded-md text-sm bg-background ${errors.role ? 'border-red-500' : ''} ${!isAdmin ? 'opacity-60 cursor-not-allowed' : ''}`}
+                            disabled={!isAdmin}
                         >
                             <option value="user">User</option>
                             <option value="manager">Manager</option>
@@ -154,6 +167,9 @@ export function UserEditDialog({ user, open, onOpenChange, onSuccess }: UserEdit
                         </select>
                         {errors.role && (
                             <p className="text-xs text-red-500">{errors.role.message}</p>
+                        )}
+                        {!isAdmin && (
+                            <p className="text-xs text-muted-foreground">Only administrators can edit this field</p>
                         )}
                     </div>
 
@@ -163,7 +179,8 @@ export function UserEditDialog({ user, open, onOpenChange, onSuccess }: UserEdit
                         <select
                             id="status"
                             {...register('status')}
-                            className={`w-full px-3 py-2 border rounded-md text-sm bg-background ${errors.status ? 'border-red-500' : ''}`}
+                            className={`w-full px-3 py-2 border rounded-md text-sm bg-background ${errors.status ? 'border-red-500' : ''} ${!isAdmin ? 'opacity-60 cursor-not-allowed' : ''}`}
+                            disabled={!isAdmin}
                         >
                             <option value="active">Active</option>
                             <option value="inactive">Inactive</option>
@@ -171,6 +188,9 @@ export function UserEditDialog({ user, open, onOpenChange, onSuccess }: UserEdit
                         </select>
                         {errors.status && (
                             <p className="text-xs text-red-500">{errors.status.message}</p>
+                        )}
+                        {!isAdmin && (
+                            <p className="text-xs text-muted-foreground">Only administrators can edit this field</p>
                         )}
                     </div>
 

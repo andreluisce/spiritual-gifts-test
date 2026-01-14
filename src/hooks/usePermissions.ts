@@ -46,12 +46,12 @@ export function usePermissions(): Permissions {
 
     return {
         // View permissions
-        canViewAnalytics: hasPermission('analytics'),
-        canViewUsers: hasPermission('users_read'),
-        canViewSettings: hasPermission('analytics') || hasPermission('system_admin'),
+        canViewAnalytics: hasPermission('analytics') || isManager,
+        canViewUsers: hasPermission('users_read') || isManager,
+        canViewSettings: hasPermission('analytics') || hasPermission('system_admin') || isManager,
 
         // Write permissions
-        canEditUsers: hasPermission('users_write'),
+        canEditUsers: hasPermission('users_write') || isManager,
         canDeleteUsers: hasPermission('users_write'),
 
         // Admin permissions

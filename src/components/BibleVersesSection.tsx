@@ -2,6 +2,7 @@
 
 import { BookOpen, ChevronDown, ChevronRight } from 'lucide-react'
 import { useGiftBibleVerses, type BibleVerse } from '@/hooks/useGiftBibleVerses'
+import { useTranslations } from 'next-intl'
 
 // Bible Verses Section Component
 export function BibleVersesSection({
@@ -15,6 +16,7 @@ export function BibleVersesSection({
     expandedVerses: Set<string>
     setExpandedVerses: (set: Set<string>) => void
 }) {
+    const t = useTranslations('bibleVerses')
     const { data: verses, isLoading } = useGiftBibleVerses(giftKey, locale, 20)
 
     if (isLoading) {
@@ -47,7 +49,7 @@ export function BibleVersesSection({
         <div>
             <h4 className="font-semibold text-sm text-gray-700 mb-2 flex items-center gap-1">
                 <BookOpen className="h-4 w-4" />
-                Referências Bíblicas ({verses.length})
+                {t('title', { count: verses.length })}
             </h4>
             <div className="space-y-2">
                 {displayedVerses.map((verse: BibleVerse) => (
@@ -65,12 +67,12 @@ export function BibleVersesSection({
                     {isExpanded ? (
                         <>
                             <ChevronDown className="h-3 w-3" />
-                            Mostrar menos
+                            {t('showLess')}
                         </>
                     ) : (
                         <>
                             <ChevronRight className="h-3 w-3" />
-                            E mais {verses.length - 3} versículos...
+                            {t('showMore', { count: verses.length - 3 })}
                         </>
                     )}
                 </button>

@@ -226,10 +226,12 @@ export function useQuizQuestions(locale: string = 'pt') {
           for (const giftKey of giftKeys) {
             const { data: giftQuestions, error: giftError } = await supabase
               .from('question_pool')
-              .select('*')
-              .eq('gift_key', giftKey)
-              .limit(questionsPerGift)
+              .select('id, text, gift, pclass, reverse_scored, default_weight')
+              .eq('gift', giftKey)
+              .eq('is_active', true)
+              .order('pclass', { ascending: true })
               .order('id')
+              .limit(questionsPerGift)
 
             if (giftError) {
               console.warn(`Error getting questions for ${giftKey}:`, giftError.message)
@@ -239,12 +241,18 @@ export function useQuizQuestions(locale: string = 'pt') {
             if (giftQuestions) {
               const mappedQuestions = giftQuestions.map((item: {
                 id: number;
-                question_text: string;
-                gift_key: Database['public']['Enums']['gift_key'];
+                text: string;
+                gift: Database['public']['Enums']['gift_key'];
+                reverse_scored: boolean;
+                default_weight: number;
+                pclass: string;
               }) => ({
                 id: item.id,
-                question: item.question_text || `Question ${item.id}`,
-                gift_key: item.gift_key as Database['public']['Enums']['gift_key'],
+                question: item.text || `Question ${item.id}`,
+                gift_key: item.gift as Database['public']['Enums']['gift_key'],
+                reverse_scored: item.reverse_scored,
+                default_weight: item.default_weight,
+                weight_class: item.pclass
               }))
 
               allQuestions.push(...mappedQuestions)
@@ -292,12 +300,35 @@ export function useCategories(locale: string = 'pt') {
 
         if (error) {
           console.warn('Categories RPC failed, using fallback:', error.message);
-          throw error;
+          // Return fallback instead of throwing
+          return [
+            {
+              key: 'motivational',
+              name: 'Motivações',
+              greek_term: 'Karismata',
+              description: 'Dons básicos motivacionais dados por Deus',
+              purpose: 'Impulsos básicos para servir'
+            },
+            {
+              key: 'ministries',
+              name: 'Ministérios',
+              greek_term: 'Diakoniai',
+              description: 'Formas de serviço cristão',
+              purpose: 'Canais de ministério'
+            },
+            {
+              key: 'manifestations',
+              name: 'Manifestações',
+              greek_term: 'Phanerosis',
+              description: 'Manifestações visíveis do Espírito',
+              purpose: 'Demonstrações do poder de Deus'
+            }
+          ] as Category[];
         }
 
         return data || [];
-      } catch {
-        console.warn('Categories function not available, using static fallback');
+      } catch (err) {
+        console.warn('Categories function not available, using static fallback:', err);
 
         // Fallback categories
         return [
@@ -326,6 +357,7 @@ export function useCategories(locale: string = 'pt') {
       }
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: false, // Don't retry on failure
   });
 }
 
@@ -341,16 +373,17 @@ export function useMinistries(locale: string = 'pt') {
 
         if (error) {
           console.warn('Ministries RPC failed, using fallback:', error.message);
-          throw error;
+          return [] as Ministry[];
         }
 
         return data || [];
-      } catch {
-        console.warn('Ministries function not available, using static fallback');
+      } catch (err) {
+        console.warn('Ministries function not available, using static fallback:', err);
         return [] as Ministry[];
       }
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: false, // Don't retry on failure
   });
 }
 
@@ -366,16 +399,17 @@ export function useManifestations(locale: string = 'pt') {
 
         if (error) {
           console.warn('Manifestations RPC failed, using fallback:', error.message);
-          throw error;
+          return [] as Manifestation[];
         }
 
         return data || [];
-      } catch {
-        console.warn('Manifestations function not available, using static fallback');
+      } catch (err) {
+        console.warn('Manifestations function not available, using static fallback:', err);
         return [] as Manifestation[];
       }
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: false, // Don't retry on failure
   });
 }
 

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, BookOpen, AlertCircle, Layers, Heart, Users, Crown, Lightbulb } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -16,9 +17,12 @@ import {
   useManifestations,
   useManifestationPrinciples
 } from '@/hooks/useEducationalContent'
+import { useQuizAccess } from '@/hooks/useQuizAccess'
 
 export default function LearnPage() {
   const [activeTab, setActiveTab] = useState('intro')
+  const { canTakeQuiz } = useQuizAccess()
+  const t = useTranslations('gifts.learn')
 
   const { data: importantIntro, isLoading: loadingIntro } = useImportantIntro()
   const { data: obstacles, isLoading: loadingObstacles } = useObstacles()
@@ -51,7 +55,7 @@ export default function LearnPage() {
           <Link href="/gifts">
             <Button variant="ghost" size="sm" className="mb-4 flex items-center gap-2">
               <ArrowLeft className="h-4 w-4" />
-              Voltar para Dons
+              {t('backToGifts')}
             </Button>
           </Link>
 
@@ -59,10 +63,10 @@ export default function LearnPage() {
             <BookOpen className="h-12 w-12 text-blue-600" />
             <div>
               <h1 className="text-4xl font-bold text-gray-800">
-                Aprenda sobre Dons Espirituais
+                {t('title')}
               </h1>
               <p className="text-xl text-gray-600 mt-2">
-                Fundamentos bíblicos e orientações práticas
+                {t('subtitle')}
               </p>
             </div>
           </div>
@@ -73,31 +77,31 @@ export default function LearnPage() {
           <TabsList className="grid w-full grid-cols-3 lg:grid-cols-7 mb-8">
             <TabsTrigger value="intro" className="flex items-center gap-2">
               <AlertCircle className="h-4 w-4" />
-              <span className="hidden sm:inline">Introdução</span>
+              <span className="hidden sm:inline">{t('tabs.intro')}</span>
             </TabsTrigger>
             <TabsTrigger value="obstacles" className="flex items-center gap-2">
               <AlertCircle className="h-4 w-4" />
-              <span className="hidden sm:inline">Obstáculos</span>
+              <span className="hidden sm:inline">{t('tabs.obstacles')}</span>
             </TabsTrigger>
             <TabsTrigger value="categories" className="flex items-center gap-2">
               <Layers className="h-4 w-4" />
-              <span className="hidden sm:inline">Categorias</span>
+              <span className="hidden sm:inline">{t('tabs.categories')}</span>
             </TabsTrigger>
             <TabsTrigger value="biblical" className="flex items-center gap-2">
               <BookOpen className="h-4 w-4" />
-              <span className="hidden sm:inline">Bíblico</span>
+              <span className="hidden sm:inline">{t('tabs.biblical')}</span>
             </TabsTrigger>
             <TabsTrigger value="ministries" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
-              <span className="hidden sm:inline">Ministérios</span>
+              <span className="hidden sm:inline">{t('tabs.ministries')}</span>
             </TabsTrigger>
             <TabsTrigger value="manifestations" className="flex items-center gap-2">
               <Crown className="h-4 w-4" />
-              <span className="hidden sm:inline">Manifestações</span>
+              <span className="hidden sm:inline">{t('tabs.manifestations')}</span>
             </TabsTrigger>
             <TabsTrigger value="principles" className="flex items-center gap-2">
               <Lightbulb className="h-4 w-4" />
-              <span className="hidden sm:inline">Princípios</span>
+              <span className="hidden sm:inline">{t('tabs.principles')}</span>
             </TabsTrigger>
           </TabsList>
 
@@ -135,7 +139,7 @@ export default function LearnPage() {
               <CardHeader>
                 <CardTitle className="text-2xl flex items-center gap-3">
                   <AlertCircle className="h-6 w-6 text-red-600" />
-                  O que impede de descobrir seu dom espiritual
+                  {t('obstacles.title')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -173,7 +177,7 @@ export default function LearnPage() {
               <CardHeader>
                 <CardTitle className="text-2xl flex items-center gap-3">
                   <Layers className="h-6 w-6 text-blue-600" />
-                  As Três Categorias de Dons
+                  {t('categories.title')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -213,7 +217,7 @@ export default function LearnPage() {
               <CardHeader>
                 <CardTitle className="text-2xl flex items-center gap-3">
                   <BookOpen className="h-6 w-6 text-blue-600" />
-                  Contexto Bíblico: O que todos devem fazer
+                  {t('biblical.title')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -246,10 +250,10 @@ export default function LearnPage() {
               <CardHeader>
                 <CardTitle className="text-2xl flex items-center gap-3">
                   <Users className="h-6 w-6 text-green-600" />
-                  Os 12 Ministérios
+                  {t('ministries.title')}
                 </CardTitle>
                 <p className="text-gray-600">
-                  Dons de serviço dados pelo Cristo ressurreto à Igreja
+                  {t('ministries.subtitle')}
                 </p>
               </CardHeader>
               <CardContent>
@@ -285,10 +289,10 @@ export default function LearnPage() {
               <CardHeader>
                 <CardTitle className="text-2xl flex items-center gap-3">
                   <Crown className="h-6 w-6 text-purple-600" />
-                  As 9 Manifestações do Espírito
+                  {t('manifestations.title')}
                 </CardTitle>
                 <p className="text-gray-600">
-                  Capacitações sobrenaturais do Espírito Santo
+                  {t('manifestations.subtitle')}
                 </p>
               </CardHeader>
               <CardContent>
@@ -324,7 +328,7 @@ export default function LearnPage() {
               <CardHeader>
                 <CardTitle className="text-2xl flex items-center gap-3">
                   <Lightbulb className="h-6 w-6 text-yellow-600" />
-                  Princípios das Manifestações
+                  {t('principles.title')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -363,20 +367,29 @@ export default function LearnPage() {
         <Card className="mt-12 bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-0">
           <CardContent className="text-center py-12">
             <h2 className="text-3xl font-bold mb-4">
-              Pronto para descobrir seus dons?
+              {t('cta.title')}
             </h2>
             <p className="text-blue-100 mb-6 text-lg max-w-2xl mx-auto">
-              Agora que você entende os fundamentos, faça o teste e descubra como Deus te capacitou para servir.
+              {t('cta.subtitle')}
             </p>
             <div className="flex gap-4 justify-center flex-wrap">
-              <Link href="/quiz">
-                <Button size="lg" variant="secondary" className="text-blue-700">
-                  Fazer o Teste
-                </Button>
-              </Link>
+              {canTakeQuiz && (
+                <Link href="/quiz">
+                  <Button
+                    size="lg"
+                    className="bg-white text-blue-700 hover:bg-blue-50"
+                  >
+                    Fazer o Teste
+                  </Button>
+                </Link>
+              )}
               <Link href="/gifts">
-                <Button size="lg" variant="outline" className="text-white border-white hover:bg-white/10">
-                  Ver Todos os Dons
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="text-white border-white bg-black/40 hover:bg-black/60 hover:text-white"
+                >
+                  {t('cta.viewAllGifts')}
                 </Button>
               </Link>
             </div>

@@ -23,19 +23,22 @@ import {
     Mail
 } from 'lucide-react'
 import { useUserActivities, useActivityStats } from '@/hooks/useUserActivity'
+import { usePermissions } from '@/hooks/usePermissions'
 
 export default function AdminUsersActivityPage() {
-    const { user, isAdmin, loading } = useAuth()
+    const { user, isAdmin, isManager, loading } = useAuth()
+    const { canViewUsers } = usePermissions()
     const router = useRouter()
 
     const { activities, loading: activitiesLoading } = useUserActivities(100)
     const { stats: activityStats, loading: activityStatsLoading } = useActivityStats()
 
     useEffect(() => {
-        if (!loading && (!user || !isAdmin)) {
+        const allowed = isAdmin || isManager || canViewUsers
+        if (!loading && (!user || !allowed)) {
             router.push('/dashboard')
         }
-    }, [user, isAdmin, loading, router])
+    }, [user, isAdmin, isManager, canViewUsers, loading, router])
 
     if (loading || activitiesLoading || activityStatsLoading) {
         return (
@@ -45,7 +48,7 @@ export default function AdminUsersActivityPage() {
         )
     }
 
-    if (!user || !isAdmin) return null
+    if (!user || !(isAdmin || isManager || canViewUsers)) return null
 
     const getActivityIcon = (type: string) => {
         switch (type) {

@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import { LanguageToggleCompact } from '@/components/LanguageToggle'
 import { useSystemSettings } from '@/hooks/useSystemSettings'
+import { useQuizAccess } from '@/hooks/useQuizAccess'
 import {
   Home,
   User,
@@ -18,11 +19,13 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 
 export function AppHeader() {
-  const { user, signOut, isAdmin, isApproved } = useAuth()
+  const { user, signOut, isAdmin, isApproved, isManager } = useAuth()
   const { settings, loading: settingsLoading } = useSystemSettings()
+  const { canTakeQuiz } = useQuizAccess()
   const t = useTranslations('dashboard')
   const tCommon = useTranslations('common')
   const pathname = usePathname()
+  const canAccessAdmin = isAdmin || isManager
 
   // Secure by default: If settings are loading or undefined, assume approval IS required.
   // This prevents unapproved users from seeing buttons briefly while settings load.
@@ -31,14 +34,21 @@ export function AppHeader() {
 
   // Admin is always allowed (handled by isApproved in context, but good to be explicit if needed)
   const isAccessAllowed = !requireApproval || isApproved
+  const showQuizCta = isAccessAllowed && canTakeQuiz
 
   // Don't render if no user, on homepage, or on login pages
   if (!user) {
     return null
   }
 
-  // Don't render on homepage (has its own header)
-  if (pathname === '/' || pathname.match(/^\/[a-z]{2}$/) || pathname.match(/^\/[a-z]{2}\/$/) || pathname.includes('/login')) {
+  // Don't render on homepage (has its own header), login pages, or admin pages (has its own layout)
+  if (
+    pathname === '/' ||
+    pathname.match(/^\/[a-z]{2}$/) ||
+    pathname.match(/^\/[a-z]{2}\/$/) ||
+    pathname.includes('/login') ||
+    pathname.includes('/admin')
+  ) {
     return null
   }
 
@@ -110,7 +120,7 @@ export function AppHeader() {
                     </Button>
                   </Link>
                 )}
-                {isAdmin && (
+                {canAccessAdmin && (
                   <Link href="/admin">
                     <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900 p-2">
                       <Settings className="h-4 w-4" />
@@ -118,7 +128,7 @@ export function AppHeader() {
                   </Link>
                 )}
               </nav>
-              {isAccessAllowed && (
+              {showQuizCta && (
                 <Link href="/quiz">
                   <Button variant="default" size="sm" className="bg-blue-600 hover:bg-blue-700 text-white px-4">
                     <Award className="h-4 w-4 mr-1" />
@@ -194,7 +204,7 @@ export function AppHeader() {
                     </Button>
                   </Link>
                 )}
-                {isAdmin && (
+                {canAccessAdmin && (
                   <Link href="/admin">
                     <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900">
                       <Settings className="h-4 w-4 mr-1.5" />
@@ -206,7 +216,7 @@ export function AppHeader() {
             </div>
 
             <div className="flex items-center gap-2">
-              {isAccessAllowed && (
+              {showQuizCta && (
                 <Link href="/quiz">
                   <Button variant="default" size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
                     <Award className="h-4 w-4 mr-2" />

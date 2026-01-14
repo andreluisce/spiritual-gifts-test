@@ -12,9 +12,11 @@ import {
   useGeographicDistribution 
 } from '@/hooks/useAdminData'
 import AnalyticsNavigation from '@/components/AnalyticsNavigation'
+import { usePermissions } from '@/hooks/usePermissions'
 
 export default function AnalyticsDemographicsPage() {
-  const { user, isAdmin, loading } = useAuth()
+  const { user, isAdmin, isManager, loading } = useAuth()
+  const { canViewAnalytics } = usePermissions()
   const router = useRouter()
   const t = useTranslations('admin.analytics')
   
@@ -23,10 +25,11 @@ export default function AnalyticsDemographicsPage() {
   const { distribution: geoDistribution, loading: geoLoading } = useGeographicDistribution()
 
   useEffect(() => {
-    if (!loading && (!user || !isAdmin)) {
+    const allowed = isAdmin || isManager || canViewAnalytics
+    if (!loading && (!user || !allowed)) {
       router.push('/dashboard')
     }
-  }, [user, isAdmin, loading, router])
+  }, [user, isAdmin, isManager, canViewAnalytics, loading, router])
 
   if (loading || ageLoading || geoLoading) {
     return (
@@ -36,7 +39,7 @@ export default function AnalyticsDemographicsPage() {
     )
   }
 
-  if (!user || !isAdmin) {
+  if (!user || !(isAdmin || isManager || canViewAnalytics)) {
     return null
   }
 

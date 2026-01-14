@@ -5,14 +5,14 @@ import { useRouter } from '@/i18n/navigation'
 import { useEffect } from 'react'
 
 export default function AdminResultsPage() {
-  const { user, isAdmin, loading } = useAuth()
+  const { user, isAdmin, isManager, loading } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
-    if (!loading && (!user || !isAdmin)) {
+    if (!loading && (!user || (!isAdmin && !isManager))) {
       router.push('/dashboard')
     }
-  }, [user, isAdmin, loading, router])
+  }, [user, isAdmin, isManager, loading, router])
 
   if (loading) {
     return (
@@ -22,7 +22,7 @@ export default function AdminResultsPage() {
     )
   }
 
-  if (!user || !isAdmin) {
+  if (!user || (!isAdmin && !isManager)) {
     return null
   }
 

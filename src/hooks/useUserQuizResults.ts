@@ -2,6 +2,8 @@
 
 import { useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase-client'
+import { useAuth } from '@/context/AuthContext'
+import { useLocale } from 'next-intl'
 
 export type QuizResult = {
   session_id: string
@@ -38,29 +40,37 @@ export function useUserQuizResults() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [supabase] = useState(() => createClient())
+  const { isAdmin, isManager } = useAuth()
+  const locale = useLocale()
 
   const fetchUserQuizResults = useCallback(async (userId: string) => {
+    if (!isAdmin && !isManager) {
+      setError('Not authorized')
+      return []
+    }
+
     try {
       setLoading(true)
       setError(null)
 
-      console.log('Fetching quiz results for user:', userId)
+      console.log('Fetching quiz results for userId:', userId, 'with locale:', locale)
+      console.log('Current Auth State:', { isAdmin, isManager })
 
       const { data, error: rpcError } = await supabase.rpc('get_user_quiz_results', {
-        p_user_id: userId
+        p_user_id: userId,
+        p_locale: locale
       })
 
-      console.log('RPC Response:', { data, error: rpcError })
-
       if (rpcError) {
-        console.error('RPC Error details:', {
-          message: rpcError.message,
-          details: rpcError.details,
-          hint: rpcError.hint,
-          code: rpcError.code
-        })
+        console.error('RPC Error details (FULL):', rpcError)
+        console.error('RPC Error message:', rpcError.message)
+        console.error('RPC Error code:', rpcError.code)
+        console.error('RPC Error details prop:', rpcError.details)
+        console.error('RPC Error hint:', rpcError.hint)
         throw rpcError
       }
+
+      console.log('RPC Success, data:', data)
 
       setResults(data || [])
       return data || []
@@ -71,7 +81,7 @@ export function useUserQuizResults() {
     } finally {
       setLoading(false)
     }
-  }, [supabase])
+  }, [supabase, isAdmin, isManager, locale])
 
   return { results, loading, error, fetchUserQuizResults }
 }

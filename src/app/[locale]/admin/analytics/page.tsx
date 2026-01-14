@@ -3,22 +3,25 @@
 import { useAuth } from '@/context/AuthContext'
 import { useRouter } from '@/i18n/navigation'
 import { useEffect } from 'react'
+import { usePermissions } from '@/hooks/usePermissions'
 
 export default function AdminAnalyticsPage() {
-  const { user, isAdmin, loading } = useAuth()
+  const { user, isAdmin, isManager, loading } = useAuth()
+  const { canViewAnalytics } = usePermissions()
   const router = useRouter()
 
   useEffect(() => {
-    if (!loading && (!user || !isAdmin)) {
+    const allowed = isAdmin || isManager || canViewAnalytics
+    if (!loading && (!user || !allowed)) {
       router.push('/dashboard')
       return
     }
     
-    if (!loading && user && isAdmin) {
+    if (!loading && user && allowed) {
       // Redirect to overview page as the default analytics view
       router.push('/admin/analytics/overview')
     }
-  }, [user, isAdmin, loading, router])
+  }, [user, isAdmin, isManager, canViewAnalytics, loading, router])
 
   if (loading) {
     return (
@@ -28,7 +31,7 @@ export default function AdminAnalyticsPage() {
     )
   }
 
-  if (!user || !isAdmin) {
+  if (!user || !(isAdmin || isManager || canViewAnalytics)) {
     return null
   }
 

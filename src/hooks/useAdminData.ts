@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase-client'
+import { useLocale } from 'next-intl'
+import { useAuth } from '@/context/AuthContext'
 
 // Types
 export type UserWithStats = {
@@ -173,8 +175,6 @@ export function useAdminStats() {
         const { data: statsData, error: statsError } = await supabase
           .rpc('get_admin_stats')
 
-        console.log('📊 Admin Stats Response:', { statsData, statsError })
-
         if (statsError) {
           console.error('❌ Admin Stats Error:', statsError)
           console.error('Error code:', statsError.code)
@@ -187,7 +187,6 @@ export function useAdminStats() {
         // RPC returns TABLE as array, get first row
         if (statsData && statsData.length > 0) {
           const row = statsData[0]
-          console.log('✅ Admin Stats Row:', row)
           setStats({
             totalUsers: row.totalusers || 0,
             activeUsers: row.activeusers || 0,
@@ -286,8 +285,16 @@ export function useRecentActivity(limit: number = 10) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [supabase] = useState(() => createClient())
+  const { isAdmin, isManager } = useAuth()
 
   useEffect(() => {
+    // Only admins can call this RPC; others get empty list to avoid 400.
+    if (!isAdmin) {
+      setLoading(false)
+      setActivities([])
+      return
+    }
+
     const fetchActivity = async () => {
       try {
         setLoading(true)
@@ -319,7 +326,7 @@ export function useRecentActivity(limit: number = 10) {
     }
 
     fetchActivity()
-  }, [supabase, limit])
+  }, [supabase, limit, isAdmin, isManager])
 
   return { activities, loading, error }
 }
@@ -330,6 +337,7 @@ export function useGiftDistribution() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [supabase] = useState(() => createClient())
+  const locale = useLocale()
 
   useEffect(() => {
     const fetchDistribution = async () => {
@@ -338,9 +346,7 @@ export function useGiftDistribution() {
 
         // Use RPC function to get gift distribution
         const { data: distributionData, error: distributionError } = await supabase
-          .rpc('get_gift_distribution')
-
-        console.log('📊 Gift Distribution Response:', { distributionData, distributionError })
+          .rpc('get_gift_distribution', { p_locale: locale })
 
         if (distributionError) {
           console.error('❌ Gift Distribution Error:', distributionError)
@@ -358,8 +364,6 @@ export function useGiftDistribution() {
             count: item.count,
             percentage: item.percentage
           }))
-
-          console.log('✅ Gift Distribution:', distribution)
           setDistribution(distribution)
         } else {
           console.warn('⚠️ No gift distribution data returned')
@@ -377,7 +381,7 @@ export function useGiftDistribution() {
     }
 
     fetchDistribution()
-  }, [supabase])
+  }, [supabase, locale])
 
   return { distribution, loading, error }
 }

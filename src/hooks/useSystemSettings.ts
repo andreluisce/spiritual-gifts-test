@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/context/AuthContext'
+import { usePermissions } from '@/hooks/usePermissions'
 
 export interface SystemSettings {
   quiz: {
-    debugMode: boolean
-    allowRetake: boolean
-    showProgress: boolean
-    questionsPerGift: number | {
+    debugMode?: boolean
+    allowRetake?: boolean
+    showProgress?: boolean
+    questionsPerGift?: number | {
       prophecy: number
       ministry: number
       teaching: number
@@ -58,6 +59,7 @@ export interface SystemSettings {
 
 export function useSystemSettings() {
   const { user } = useAuth()
+  const { isAdmin, isManager } = usePermissions()
   const [settings, setSettings] = useState<SystemSettings | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -86,6 +88,13 @@ export function useSystemSettings() {
   }
 
   const updateSettings = async (newSettings: SystemSettings) => {
+    if (!isAdmin && !isManager) {
+      const err = new Error('Not authorized')
+      console.error('❌ useSystemSettings: Error updating settings:', err)
+      setError('Not authorized')
+      throw err
+    }
+
     try {
       setError(null)
 
@@ -99,7 +108,15 @@ export function useSystemSettings() {
       })
 
       if (!response.ok) {
-        throw new Error(`Failed to update settings: ${response.status}`)
+        let details = ''
+        try {
+          const body = await response.json()
+          details = body?.details || body?.error || ''
+        } catch {
+          // ignore
+        }
+        const message = `Failed to update settings: ${response.status}${details ? ` - ${details}` : ''}`
+        throw new Error(message)
       }
 
       const data = await response.json()

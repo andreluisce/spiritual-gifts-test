@@ -86,7 +86,8 @@
       "users": "users",
       "tests": "tests completed",
       "questions": "balanced questions",
-      "accuracy": "analysis accuracy"
+      "accuracy": "analysis accuracy",
+      "minutes": "minutes long"
     },
     "testimonials": {
       "title": "What our users say",
@@ -258,6 +259,25 @@
       "settings": "Settings",
       "audit": "Audit"
     },
+    "shared": {
+      "importContent": "Import Content",
+      "import": "Import",
+      "addNewContent": "Add New Content",
+      "add": "Add",
+      "otherContent": "Other Content",
+      "active": "Active",
+      "inactive": "Inactive",
+      "suspended": "Suspended",
+      "pending": "Pending",
+      "approved": "Approved",
+      "cancel": "Cancel",
+      "deleting": "Deleting...",
+      "roles": {
+        "administrator": "Administrator",
+        "manager": "Manager",
+        "user": "User"
+      }
+    },
     "dashboard": {
       "title": "Admin Dashboard",
       "stats": {
@@ -268,7 +288,21 @@
         "newUsersThisMonth": "from last month",
         "completedToday": "completed today",
         "acrossAllAttempts": "Across all quiz attempts",
-        "activeThisWeek": "Users active this week"
+        "activeThisWeek": "Users active this week",
+        "recentLogin": "Recent Login",
+        "inactiveNoLogin": "Inactive (No Login)",
+        "thisMonth": "this month",
+        "statusActiveConfig": "Status: active (config)",
+        "last30Days": "Last 30 days",
+        "activeNoLogin30Days": "Active, but no login in 30+ days",
+        "mostCommonGift": "Most Common Gift",
+        "appearsInResults": "Appears in {percent}% of results",
+        "completionRate": "Completion Rate",
+        "completedVsStarted": "Quizzes completed vs started",
+        "averageTime": "Average Time",
+        "toCompleteQuiz": "To complete the quiz",
+        "disabled": "Disabled",
+        "statusInactiveSuspended": "Status: inactive/suspended"
       },
       "recentActivity": {
         "title": "Recent Activity",
@@ -279,7 +313,58 @@
         "users": "users",
         "ofTotal": "of total",
         "noData": "No data available"
+      },
+      "timeAgo": {
+        "seconds": "{count} seconds ago",
+        "minutes": "{count} min ago",
+        "hours": "{count} hours ago",
+        "days": "{count} days ago",
+        "secondsShort": "{count}s ago",
+        "minutesShort": "{count}m ago",
+        "hoursShort": "{count}h ago"
       }
+    },
+    "users": {
+      "title": "User Management",
+      "subtitle": "Manage system users, roles and permissions",
+      "export": "Export Users",
+      "add": "Add User",
+      "tabs": {
+        "overview": "Overview",
+        "allUsers": "All Users",
+        "admins": "Administrators",
+        "activity": "Activity"
+      },
+      "stats": {
+        "totalUsers": "Total Users",
+        "allRegistered": "All registered users",
+        "activeUsers": "Active Users",
+        "percentTotal": "{percent}% of total",
+        "administrators": "Administrators",
+        "adminPrivileges": "Admin privileges",
+        "newThisMonth": "New This Month",
+        "fromLastMonth": "{percent}% from last month",
+        "suspended": "Suspended",
+        "requireAttention": "Require attention"
+      },
+      "list": {
+        "searchPlaceholder": "Search users by name or email...",
+        "allRoles": "All Roles",
+        "allStatus": "All Status",
+        "allUsersCount": "All Users ({count})",
+        "unknown": "Unknown",
+        "never": "Never",
+        "joined": "Joined",
+        "lastLogin": "Last login",
+        "quizzes": "Quizzes",
+        "avgScore": "Avg Score",
+        "viewResults": "View Quiz Results",
+        "noUsersFound": "No users found matching your criteria",
+        "pending": "Pending",
+        "approved": "Approved"
+      },
+      "recentRegistrations": "Recent Registrations",
+      "unknown": "Unknown"
     },
     "settings": {
       "title": "System Settings",
@@ -289,7 +374,9 @@
       "unsavedChanges": "Unsaved Changes",
       "tabs": {
         "quiz": "Quiz Settings",
-        "general": "General"
+        "general": "General",
+        "ai": "AI",
+        "email": "E-mail"
       },
       "quiz": {
         "title": "Questions per Gift Type",
@@ -299,7 +386,12 @@
           "description": "Set the number of questions per spiritual gift. This will apply to all seven motivational gifts from Romans 12:6-8.",
           "label": "Questions per Gift",
           "helperText": "Each spiritual gift will have this many questions (Total: {total})",
-          "recommendation": "Recommended: 5 questions per gift (35 total questions)"
+          "recommendation": "Recommended: 5 questions per gift (35 total questions)",
+          "requireApproval": {
+            "title": "Want to restrict quiz access?",
+            "description": "You can require admin approval for users to take the test in",
+            "link": "General Settings"
+          }
         },
         "options": {
           "title": "Quiz Options",
@@ -314,7 +406,23 @@
           "allowRetake": {
             "label": "Allow Retake",
             "description": "Users can retake the quiz multiple times"
+          },
+          "debugMode": {
+            "description": "Show debug information during the quiz",
+            "label": "Debug Mode"
           }
+        },
+        "saving": "Saving changes...",
+        "summary": {
+          "allowed": "Allowed",
+          "no": "No",
+          "notAllowed": "Not Allowed",
+          "questionsPerGift": "Questions by Dom:",
+          "retakes": "Redo:",
+          "shuffle": "Shuffle:",
+          "title": "Current Configuration",
+          "totalQuestions": "Total Questions:",
+          "yes": "Yes"
         }
       },
       "general": {
@@ -328,6 +436,10 @@
           "allowGuestQuiz": {
             "label": "Allow Guest Quizzes",
             "description": "Users can take the quiz without creating an account"
+          },
+          "requireApproval": {
+            "label": "Require Admin Approval",
+            "description": "Only approved users can access the dashboard and take the test"
           }
         },
         "localization": {
@@ -341,6 +453,22 @@
               "en": "English",
               "es": "Español (Spanish)"
             }
+          }
+        },
+        "site": {
+          "title": "Site Information",
+          "description": "Basic information about your platform",
+          "siteName": {
+            "label": "Site Name",
+            "placeholder": "Enter site name"
+          },
+          "siteDescription": {
+            "label": "Site Description",
+            "placeholder": "Brief description of your site"
+          },
+          "contactEmail": {
+            "label": "Contact Email",
+            "placeholder": "admin@example.com"
           }
         }
       },
@@ -427,6 +555,29 @@
           "aiButtonStatus": "AI Button Status",
           "note": "Note: Detailed usage statistics will be available once the analytics system is implemented. Current settings are being saved automatically."
         }
+      },
+      "navigation": {
+        "categories": "Settings Categories",
+        "descriptions": {
+          "ai": "AI Analytics Setup",
+          "email": "Email service configuration using Resend",
+          "general": "General system settings",
+          "quiz": "Configure quiz parameters and questions"
+        }
+      },
+      "status": {
+        "aiAnalysis": "AI Analysis",
+        "configured": "Configured",
+        "disabled": "Disabled",
+        "emailService": "Email Service",
+        "enabled": "Enabled",
+        "hidden": "Hidden",
+        "notSet": "Not Configured",
+        "perGift": "by gift",
+        "quizQuestions": "Quiz Questions",
+        "registration": "Registration",
+        "title": "Current Status",
+        "visible": "Visible"
       }
     },
     "analytics": {
@@ -619,7 +770,10 @@
         "searchPlaceholder": "Search spiritual gifts...",
         "addNew": "Add New Gift",
         "count": "Spiritual Gifts ({count})",
-        "deleteConfirm": "Are you sure you want to delete the gift \"{name}\"? This will also delete all related questions and content. This action cannot be undone."
+        "deleteTitle": "Delete Gift",
+        "deleteConfirm": "Are you sure you want to delete the gift \"{name}\"? This will also delete all related questions and content. This action cannot be undone.",
+        "deleteAction": "Delete Gift",
+        "noResults": "No spiritual gifts found matching your criteria"
       },
       "questions": {
         "title": "Quiz Questions",
@@ -627,18 +781,119 @@
         "addNew": "Add Question",
         "count": "Quiz Questions ({count})",
         "allGifts": "All Gifts",
+        "deleteTitle": "Delete Question",
         "noResults": "No questions found matching your criteria",
-        "deleteConfirm": "Are you sure you want to delete this question? This action cannot be undone."
+        "deleteConfirm": "Are you sure you want to delete this question? This action cannot be undone.",
+        "deleteAction": "Delete Question"
       },
       "characteristics": {
         "title": "Gift Content",
         "searchPlaceholder": "Search characteristics, dangers, misunderstandings...",
         "addNew": "Add Content",
         "count": "Gift Content ({count})",
+        "deleteTitle": "Delete Content",
         "noResults": "No content found matching your criteria",
-        "deleteConfirm": "Are you sure you want to delete this {type}? This action cannot be undone."
+        "deleteConfirm": "Are you sure you want to delete this content? This action cannot be undone.",
+        "deleteAction": "Delete Content"
+      },
+      "modals": {
+        "editGift": "Edit Spiritual Gift",
+        "createGift": "Create New Gift",
+        "editQuestion": "Edit Question",
+        "createQuestion": "Create New Question",
+        "editCharacteristic": "Edit Content",
+        "createCharacteristic": "Create New Content",
+        "editTitle": "Edit {type}",
+        "createTitle": "Create New {type}",
+        "updateInfo": "Update the information for this content item.",
+        "createItem": "Create a new content item.",
+        "giftKey": "Gift Key",
+        "giftKeyPlaceholder": "e.g., PROPHECY, MINISTRY",
+        "giftKeyHelp": "Unique identifier for the gift (uppercase, no spaces)",
+        "category": "Category",
+        "namePt": "Name (Portuguese)",
+        "nameEn": "Name (English)",
+        "nameEs": "Name (Spanish)",
+        "namePtPlaceholder": "Portuguese name",
+        "nameEnPlaceholder": "English name",
+        "nameEsPlaceholder": "Spanish name",
+        "descriptionPt": "Description (Portuguese)",
+        "descriptionEn": "Description (English)",
+        "descriptionEs": "Description (Spanish)",
+        "descriptionPtPlaceholder": "Portuguese description",
+        "descriptionEnPlaceholder": "English description",
+        "descriptionEsPlaceholder": "Spanish description",
+        "questionPt": "Question (Portuguese)",
+        "questionEn": "Question (English)",
+        "questionEs": "Question (Spanish)",
+        "questionPtPlaceholder": "Portuguese question",
+        "questionEnPlaceholder": "English question",
+        "questionEsPlaceholder": "Spanish question",
+        "contentPt": "Content (Portuguese)",
+        "contentEn": "Content (English)",
+        "contentEs": "Content (Spanish)",
+        "contentPtPlaceholder": "Portuguese content",
+        "contentEnPlaceholder": "English content",
+        "contentEsPlaceholder": "Spanish content",
+        "gift": "Spiritual Gift",
+        "selectGift": "Select a spiritual gift...",
+        "contentType": "Content Type",
+        "status": "Status",
+        "active": "Active",
+        "inactive": "Inactive",
+        "cancel": "Cancel",
+        "save": "Save Changes",
+        "create": "Create",
+        "saving": "Saving...",
+        "creating": "Creating..."
       }
     }
+  },
+  "bibleVerses": {
+    "title": "Bible References ({count})",
+    "showLess": "Show less",
+    "showMore": "And {count} more verses..."
+  },
+  "aiInsights": {
+    "completeTest": "Complete the test to see personalized AI insights",
+    "title": "Personalized AI Insights",
+    "beta": "Beta",
+    "basedOnGifts": "Analysis based on your main gifts",
+    "confidence": "{value}% confidence",
+    "loading": "Generating personalized insights...",
+    "loadingSub": "Our AI is analyzing your spiritual gifts",
+    "error": "We couldn’t generate your personalized analysis right now. Please try again in a moment.",
+    "retry": "Try again",
+    "personalizedAnalysis": "Personalized Analysis",
+    "strengths": "Your Natural Strengths",
+    "developmentPlan": "Development Plan",
+    "practicalApplications": "Practical Applications:",
+    "ministryRecommendations": "Ministry Recommendations",
+    "challenges": "Points of Attention",
+    "regenerate": "Regenerate Analysis"
+  },
+  "languageStatus": {
+    "loading": "Loading settings...",
+    "current": "Current language",
+    "default": "Default"
+  },
+  "adminUserQuiz": {
+    "title": "Quiz Results - {user}",
+    "description": "All quiz attempts and results for this user",
+    "loading": "Loading quiz results...",
+    "totalAttempts": "Total Attempts",
+    "completed": "Completed",
+    "attempt": "Attempt #{num}",
+    "status": {
+      "completed": "Completed",
+      "inProgress": "In progress"
+    },
+    "started": "Started",
+    "finished": "Finished",
+    "topGifts": "Top 3 Spiritual Gifts",
+    "viewReport": "View Full Report",
+    "empty": "This user hasn’t taken any quizzes yet",
+    "close": "Close"
   },
   "gifts": {
     "title": "Spiritual Gifts",
@@ -648,12 +903,19 @@
     "searchPlaceholder": "Search gifts, ministries or manifestations",
     "names": {
       "A_PROPHECY": "Prophecy",
+      "A_PROPHECY_name": "Prophecy",
       "B_SERVICE": "Service",
+      "B_SERVICE_name": "Service",
       "C_TEACHING": "Teaching",
+      "C_TEACHING_name": "Teaching",
       "D_EXHORTATION": "Exhortation",
+      "D_EXHORTATION_name": "Exhortation",
       "E_GIVING": "Giving",
+      "E_GIVING_name": "Giving",
       "F_LEADERSHIP": "Leadership",
-      "G_MERCY": "Mercy"
+      "F_LEADERSHIP_name": "Leadership",
+      "G_MERCY": "Mercy",
+      "G_MERCY_name": "Mercy"
     },
     "categories": {
       "motivations": "Motivations",
@@ -685,6 +947,45 @@
       "title": "Ready to discover your gifts?",
       "description": "Our test was developed based on Scripture and the document \"Spiritual Gifts - The Three Categories\" to help you identify and understand the gifts God has given you.",
       "button": "Take the Test Now"
+    },
+    "learn": {
+      "backToGifts": "Back to Gifts",
+      "title": "Learn About Spiritual Gifts",
+      "subtitle": "Biblical foundations and practical guidance",
+      "tabs": {
+        "intro": "Introduction",
+        "obstacles": "Obstacles",
+        "categories": "Categories",
+        "biblical": "Biblical",
+        "ministries": "Ministries",
+        "manifestations": "Manifestations",
+        "principles": "Principles"
+      },
+      "obstacles": {
+        "title": "What hinders discovering your spiritual gift"
+      },
+      "categories": {
+        "title": "The Three Categories of Gifts"
+      },
+      "biblical": {
+        "title": "Biblical Context: What everyone should do"
+      },
+      "ministries": {
+        "title": "The 12 Ministries",
+        "subtitle": "Service gifts given by the risen Christ to the Church"
+      },
+      "manifestations": {
+        "title": "The 9 Manifestations of the Spirit",
+        "subtitle": "Supernatural enablements of the Holy Spirit"
+      },
+      "principles": {
+        "title": "Principles of Manifestations"
+      },
+      "cta": {
+        "title": "Ready to discover your gifts?",
+        "subtitle": "Now that you understand the foundations, take the test and see how God has equipped you to serve.",
+        "viewAllGifts": "View All Gifts"
+      }
     }
   },
   "results": {
@@ -735,9 +1036,13 @@
       "giftCompatibility": "Compatibility Between Your Gifts",
       "strengthAreas": "Strength Areas",
       "attentionPoints": "Attention Points",
+      "mitigationStrategies": "How to Mitigate Risks",
+      "practicalExamples": "Practical Examples",
       "recommendedMinistries": "Recommended Ministries",
       "mainResponsibilities": "Main Responsibilities",
       "growthAreas": "Growth Areas",
+      "successMetrics": "Success Metrics",
+      "spiritualPractices": "Spiritual Practices",
       "essentialGifts": "Essential Gifts",
       "highlyRecommended": "Highly Recommended",
       "recommended": "Recommended",
@@ -897,7 +1202,7 @@
       "fullName": "Full Name",
       "fullNamePlaceholder": "Your full name",
       "phone": "Phone",
-      "phonePlaceholder": "(11) 99999-9999",
+      "phonePlaceholder": "+1 202 555 0123",
       "location": "Location",
       "locationPlaceholder": "City, State",
       "birthDate": "Birth Date",
@@ -924,7 +1229,8 @@
       "nameRequired": "Name is required",
       "nameMaxLength": "Name must be less than 100 characters",
       "bioMaxLength": "Bio must be less than 500 characters",
-      "locationMaxLength": "Location must be less than 100 characters"
+      "locationMaxLength": "Location must be less than 100 characters",
+      "phoneInvalid": "Invalid phone number for the selected country"
     },
     "alerts": {
       "updateSuccess": "Profile updated successfully!",
@@ -947,5 +1253,53 @@
         "profile_update": "Profile updated"
       }
     }
+  },
+  "quizReport": {
+    "aiInsights": {
+      "biblicalFoundation": "Biblical Foundation:",
+      "customTitle": "Personalized Insights",
+      "description": "Description:",
+      "noBiblicalFoundation": "Biblical foundation not available",
+      "noDescription": "Description not available",
+      "noPracticalApplications": "Practical applications not available",
+      "practicalApplications": "Practical Applications:",
+      "title": "Insights and Guidance"
+    },
+    "back": "To go back",
+    "error": "Error loading report",
+    "footer": {
+      "copyright": "© {year} Spiritual Gifts Test. \nAll rights reserved.",
+      "generated": "Report generated on {date}",
+      "subtitle": "Spiritual Gifts Test - Discover Your Gift"
+    },
+    "loading": "Loading report...",
+    "print": "Print/Save PDF",
+    "questions": {
+      "answer": "Response:",
+      "noText": "Question text not available",
+      "title": "Questions and Answers ({count} questions)"
+    },
+    "reportSubtitle": "Profile and Purpose Analysis",
+    "reportTitle": "SPIRITUAL GIFTS REPORT",
+    "sessionInfo": {
+      "analysisDate": "Analysis Date",
+      "date": "Date:",
+      "duration": "Duration: {duration} minutes",
+      "participant": "Participant",
+      "topGift": "Main Gift",
+      "user": "User:"
+    },
+    "spiritualGifts": {
+      "breakdownTitle": "Detailing",
+      "completeAnalysis": "Analysis completed successfully",
+      "performanceTitle": "Performance of the Dons",
+      "strength": {
+        "present": "Gift",
+        "primary": "Primary",
+        "secondary": "Secondary"
+      },
+      "title": "Spiritual Gifts Discovered"
+    },
+    "title": "Full Report - Spiritual Gifts Test"
   }
 }

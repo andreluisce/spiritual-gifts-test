@@ -54,10 +54,7 @@ export default function PendingApprovalPage() {
                             Para garantir a segurança e integridade do teste de dons espirituais,
                             sua conta precisa ser aprovada por um administrador.
                         </p>
-                        <p className="text-sm bg-gray-100 p-3 rounded-md border border-gray-200">
-                            Você receberá o acesso assim que sua solicitação for processada.
-                            Isso geralmente leva menos de 24 horas.
-                        </p>
+
                     </div>
 
                     <div className="space-y-3">

@@ -12,19 +12,18 @@ interface SystemSettings {
   quiz?: {
     debugMode?: boolean
     showProgress?: boolean
+    allowRetake?: boolean
   }
 }
 
 // Hook público para acessar configurações do sistema (somente leitura)
 export function usePublicSettings() {
-  console.log('🔄 usePublicSettings MOUNT')
 
   const [settings, setSettings] = useState<SystemSettings | null>(null)
   const [loading, setLoading] = useState(true)
   const [supabase] = useState(() => createClient())
 
   useEffect(() => {
-    console.log('🔄 usePublicSettings useEffect running')
 
     const fetchSettings = async () => {
       try {
@@ -73,6 +72,7 @@ export function usePublicSettings() {
     canRegister: settings?.general?.enableRegistration ?? true,
     allowGuestQuiz: settings?.general?.enableGuestQuiz ?? false,
     defaultLanguage: settings?.general?.defaultLanguage ?? 'pt',
-    debugMode: settings?.quiz?.debugMode ?? false
+    debugMode: settings?.quiz?.debugMode ?? false,
+    allowRetake: settings?.quiz?.allowRetake ?? false
   }
 }

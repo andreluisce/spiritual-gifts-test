@@ -15,9 +15,11 @@ import {
 } from 'lucide-react'
 import { useUsersWithStats, useAdminStats } from '@/hooks/useAdminData'
 import { useTranslations } from 'next-intl'
+import { usePermissions } from '@/hooks/usePermissions'
 
 export default function AdminUsersOverviewPage() {
-  const { user, isAdmin, loading } = useAuth()
+  const { user, isAdmin, isManager, loading } = useAuth()
+  const { canViewUsers } = usePermissions()
   const router = useRouter()
   const t = useTranslations('admin')
 
@@ -26,10 +28,11 @@ export default function AdminUsersOverviewPage() {
   const { users, loading: usersLoading } = useUsersWithStats()
 
   useEffect(() => {
-    if (!loading && (!user || !isAdmin)) {
+    const allowed = isAdmin || isManager || canViewUsers
+    if (!loading && (!user || !allowed)) {
       router.push('/dashboard')
     }
-  }, [user, isAdmin, loading, router])
+  }, [user, isAdmin, isManager, canViewUsers, loading, router])
 
   if (loading || statsLoading || usersLoading) {
     return (
@@ -39,7 +42,7 @@ export default function AdminUsersOverviewPage() {
     )
   }
 
-  if (!user || !isAdmin) return null
+  if (!user || !(isAdmin || isManager || canViewUsers)) return null
 
   const statsData = stats || {
     totalUsers: 0,

@@ -14,8 +14,7 @@ import {
   HelpCircle,
   Save,
   ArrowLeft,
-  Sparkles,
-  Mail
+  Sparkles
 } from 'lucide-react'
 import { useSystemSettings } from '@/hooks/useSystemSettings'
 
@@ -83,12 +82,6 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
       label: t('tabs.ai'),
       icon: <Sparkles className="h-4 w-4" />,
       description: t('navigation.descriptions.ai')
-    },
-    {
-      href: '/admin/settings/email',
-      label: t('tabs.email'),
-      icon: <Mail className="h-4 w-4" />,
-      description: t('navigation.descriptions.email')
     }
   ]
 
@@ -99,17 +92,6 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
       <div className="p-2 sm:p-4 m-1 sm:m-4">
         {/* Mobile Header */}
         <div className="block lg:hidden mb-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => router.push('/admin')}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              {t('navigation.backToAdmin')}
-            </Button>
-          </div>
           <div className="mb-4">
             <h1 className="text-xl font-bold">{t('title')}</h1>
             <p className="text-sm text-gray-600">{t('subtitle')}</p>
@@ -127,15 +109,6 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
         {/* Desktop Header */}
         <div className="hidden lg:flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => router.push('/admin')}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              {t('navigation.backToAdmin')}
-            </Button>
             <div>
               <h1 className="text-2xl font-bold">{t('title')}</h1>
               <p className="text-sm text-gray-600">{t('subtitle')}</p>

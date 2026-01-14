@@ -9,7 +9,6 @@ import {
   Heart,
   Users,
   Crown,
-  ArrowRight,
   CheckCircle2,
   Star,
   Clock,
@@ -22,11 +21,13 @@ import { useAuth } from '@/context/AuthContext'
 import { usePublicSettings } from '@/hooks/usePublicSettings'
 import { LanguageToggle } from '@/components/LanguageToggle'
 import { useTranslations } from 'next-intl'
+import { useQuizAccess } from '@/hooks/useQuizAccess'
 
 export default function HomePage() {
   const [selectedFeature, setSelectedFeature] = useState(0)
   const { user } = useAuth()
   const { allowGuestQuiz } = usePublicSettings()
+  const { canTakeQuiz } = useQuizAccess()
   const t = useTranslations('home')
   const tCommon = useTranslations('common')
 
@@ -55,7 +56,7 @@ export default function HomePage() {
             <BookOpen className="h-6 w-6 text-slate-600" />
             <span className="font-semibold text-slate-800 hidden sm:inline">{t('title')} {t('titleHighlight')}</span>
           </div>
-          
+
           <div className="flex items-center gap-4">
             {user && (
               <Link href="/dashboard">
@@ -112,25 +113,20 @@ export default function HomePage() {
             transition={{ delay: 0.6, duration: 0.8 }}
             className="flex flex-col sm:flex-row gap-4 justify-center items-center"
           >
-            <Link href={user || allowGuestQuiz ? "/quiz" : "/login?from=home"}>
-              <Button size="lg" className="px-8 py-4 text-lg bg-slate-700 hover:bg-slate-800">
-                <Sparkles className="mr-2 h-5 w-5" />
-                {user ? t('cta.primary') : allowGuestQuiz ? t('cta.primary') : t('cta.secondary')}
-              </Button>
-            </Link>
+            {(!user || canTakeQuiz) && (
+              <Link href={user || allowGuestQuiz ? "/quiz" : "/login?from=home"}>
+                <Button size="lg" className="px-8 py-4 text-lg bg-slate-700 hover:bg-slate-800">
+                  <Sparkles className="mr-2 h-5 w-5" />
+                  {user ? t('cta.primary') : allowGuestQuiz ? t('cta.primary') : t('cta.secondary')}
+                </Button>
+              </Link>
+            )}
 
-            {user ? (
+            {user && (
               <Link href="/dashboard">
                 <Button variant="outline" size="lg" className="px-8 py-4 text-lg border-slate-300">
                   <Trophy className="mr-2 h-5 w-5" />
                   {tCommon('dashboard')}
-                </Button>
-              </Link>
-            ) : (
-              <Link href="/gifts">
-                <Button variant="outline" size="lg" className="px-8 py-4 text-lg border-slate-300">
-                  {t('features.title')}
-                  <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
             )}
@@ -144,7 +140,7 @@ export default function HomePage() {
           >
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4" />
-              <span>3-5 {t('stats.tests')}</span>
+              <span>3-5 {t('stats.minutes')}</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4" />
@@ -174,33 +170,33 @@ export default function HomePage() {
 
           <div className="grid md:grid-cols-3 gap-8">
             {categories.map((category: { name: string; greek: string; icon: React.ComponentType<{ className?: string }>; color: string; bgColor: string; borderColor: string; description: string }, index: number) => (
-              <Link href="/gifts" key={category.name}>
-                <motion.div
-                  initial={{ y: 50, opacity: 0 }}
-                  whileInView={{ y: 0, opacity: 1 }}
-                  transition={{ delay: index * 0.2, duration: 0.8 }}
-                  viewport={{ once: true }}
-                >
-                  <Card className={`h-full border-2 ${category.borderColor} ${category.bgColor} hover:shadow-lg transition-all duration-300`}>
-                    <CardHeader className="text-center">
-                      <div className="flex justify-center mb-4">
-                        <div className={`p-4 rounded-full ${category.bgColor}`}>
-                          <category.icon className={`h-8 w-8 ${category.color}`} />
-                        </div>
+              <motion.div
+                key={category.name}
+                initial={{ y: 50, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                transition={{ delay: index * 0.2, duration: 0.8 }}
+                viewport={{ once: true }}
+                className={!user ? 'cursor-default' : ''}
+              >
+                <Card className={`h-full border-2 ${category.borderColor} ${category.bgColor}`}>
+                  <CardHeader className="text-center">
+                    <div className="flex justify-center mb-4">
+                      <div className={`p-4 rounded-full ${category.bgColor}`}>
+                        <category.icon className={`h-8 w-8 ${category.color}`} />
                       </div>
-                      <CardTitle className="text-2xl text-slate-800">
-                        {category.name}
-                      </CardTitle>
-                      <Badge variant="outline" className="w-fit mx-auto text-slate-600">
-                        {category.greek}
-                      </Badge>
-                    </CardHeader>
-                    <CardContent className="text-center">
-                      <p className="text-slate-700">{category.description}</p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              </Link>
+                    </div>
+                    <CardTitle className="text-2xl text-slate-800">
+                      {category.name}
+                    </CardTitle>
+                    <Badge variant="outline" className="w-fit mx-auto text-slate-600">
+                      {category.greek}
+                    </Badge>
+                  </CardHeader>
+                  <CardContent className="text-center">
+                    <p className="text-slate-700">{category.description}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -223,29 +219,28 @@ export default function HomePage() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature: { icon: React.ComponentType<{ className?: string }>; title: string; description: string }, index: number) => (
-              <Link href={feature.title === 'Histórico Personalizado' ? '/dashboard' : '/gifts'} key={index}>
-                <motion.div
-                  initial={{ y: 50, opacity: 0 }}
-                  whileInView={{ y: 0, opacity: 1 }}
-                  transition={{ delay: index * 0.1, duration: 0.6 }}
-                  viewport={{ once: true }}
-                  onMouseEnter={() => setSelectedFeature(index)}
-                  className="cursor-pointer h-full"
-                >
-                  <Card className={`h-full transition-all duration-300 hover:shadow-lg ${selectedFeature === index ? 'ring-2 ring-slate-300 shadow-lg' : ''
-                    }`}>
-                    <CardHeader className="text-center">
-                      <div className="flex justify-center mb-4">
-                        <feature.icon className="h-12 w-12 text-slate-600" />
-                      </div>
-                      <CardTitle className="text-lg">{feature.title}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="text-center">
-                      <p className="text-slate-600 text-sm">{feature.description}</p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              </Link>
+              <motion.div
+                key={index}
+                initial={{ y: 50, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                transition={{ delay: index * 0.1, duration: 0.6 }}
+                viewport={{ once: true }}
+                onMouseEnter={() => setSelectedFeature(index)}
+                className={`${user ? 'cursor-pointer' : 'cursor-default'} h-full`}
+              >
+                <Card className={`h-full transition-all duration-300 ${selectedFeature === index ? 'ring-2 ring-slate-300 shadow-lg' : ''
+                  }`}>
+                  <CardHeader className="text-center">
+                    <div className="flex justify-center mb-4">
+                      <feature.icon className="h-12 w-12 text-slate-600" />
+                    </div>
+                    <CardTitle className="text-lg">{feature.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="text-center">
+                    <p className="text-slate-600 text-sm">{feature.description}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -266,19 +261,21 @@ export default function HomePage() {
             <p className="text-xl text-slate-300 mb-8 max-w-2xl mx-auto">
               {user
                 ? t('subtitle')
-                : allowGuestQuiz 
+                : allowGuestQuiz
                   ? t('subtitle')
                   : t('subtitle')
               }
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link href={user || allowGuestQuiz ? "/quiz" : "/login?from=home"}>
-                <Button size="lg" className="px-8 py-4 text-lg bg-white text-slate-800 hover:bg-slate-100">
-                  <Star className="mr-2 h-5 w-5" />
-                  {user ? t('cta.primary') : allowGuestQuiz ? t('cta.primary') : t('cta.secondary')}
-                </Button>
-              </Link>
+              {(!user || canTakeQuiz) && (
+                <Link href={user || allowGuestQuiz ? "/quiz" : "/login?from=home"}>
+                  <Button size="lg" className="px-8 py-4 text-lg bg-white text-slate-800 hover:bg-slate-100">
+                    <Star className="mr-2 h-5 w-5" />
+                    {user ? t('cta.primary') : allowGuestQuiz ? t('cta.primary') : t('cta.secondary')}
+                  </Button>
+                </Link>
+              )}
 
               {!user && allowGuestQuiz && (
                 <p className="text-slate-400 text-sm">

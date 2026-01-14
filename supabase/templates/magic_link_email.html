@@ -1,0 +1,112 @@
+-- =====================================================
+-- MAGIC LINK EMAIL TEMPLATE
+-- Template personalizado para autenticação via email
+-- =====================================================
+
+-- Este template será usado pelo Supabase para enviar Magic Links
+-- Configure no Supabase Dashboard → Authentication → Email Templates → Magic Link
+
+/*
+SUBJECT: Seu link de acesso - Descubra seu Dom
+
+BODY (HTML):
+*/
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seu Link de Acesso</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f9fafb;">
+    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td align="center" style="padding: 40px 0;">
+                <table role="presentation" style="width: 600px; max-width: 100%; background-color: #ffffff; border-radius: 16px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                    <!-- Header -->
+                    <tr>
+                        <td style="padding: 40px 40px 20px; text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px 16px 0 0;">
+                            <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">
+                                🎁 Descubra seu Dom
+                            </h1>
+                        </td>
+                    </tr>
+
+                    <!-- Content -->
+                    <tr>
+                        <td style="padding: 40px;">
+                            <h2 style="margin: 0 0 16px; color: #1f2937; font-size: 24px; font-weight: 600;">
+                                Seu link de acesso está pronto!
+                            </h2>
+
+                            <p style="margin: 0 0 24px; color: #6b7280; font-size: 16px; line-height: 1.6;">
+                                Olá! 👋
+                            </p>
+
+                            <p style="margin: 0 0 24px; color: #6b7280; font-size: 16px; line-height: 1.6;">
+                                Clique no botão abaixo para acessar sua conta e descobrir seus dons espirituais:
+                            </p>
+
+                            <!-- CTA Button -->
+                            <table role="presentation" style="margin: 32px 0;">
+                                <tr>
+                                    <td align="center">
+                                        <a href="{{ .ConfirmationURL }}"
+                                           style="display: inline-block; padding: 16px 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 6px rgba(102, 126, 234, 0.3);">
+                                            ✨ Acessar Minha Conta
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- Info Box -->
+                            <div style="margin: 32px 0; padding: 20px; background-color: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 8px;">
+                                <p style="margin: 0 0 12px; color: #1e40af; font-size: 14px; font-weight: 600;">
+                                    ℹ️ Informações importantes:
+                                </p>
+                                <ul style="margin: 0; padding-left: 20px; color: #1e3a8a; font-size: 14px; line-height: 1.6;">
+                                    <li>Este link é válido por 1 hora</li>
+                                    <li>Após clicar, você ficará conectado por 30 dias</li>
+                                    <li>Você pode usar este link apenas uma vez</li>
+                                </ul>
+                            </div>
+
+                            <!-- Alternative Link -->
+                            <p style="margin: 24px 0 0; color: #9ca3af; font-size: 14px; line-height: 1.6;">
+                                Se o botão não funcionar, copie e cole este link no seu navegador:
+                            </p>
+                            <p style="margin: 8px 0 0; padding: 12px; background-color: #f3f4f6; border-radius: 8px; word-break: break-all; font-size: 12px; color: #6b7280;">
+                                {{ .ConfirmationURL }}
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding: 32px 40px; background-color: #f9fafb; border-radius: 0 0 16px 16px; text-align: center;">
+                            <p style="margin: 0 0 8px; color: #6b7280; font-size: 14px;">
+                                Não solicitou este email?
+                            </p>
+                            <p style="margin: 0; color: #9ca3af; font-size: 12px;">
+                                Você pode ignorar esta mensagem com segurança.
+                            </p>
+
+                            <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #e5e7eb;">
+                                <p style="margin: 0; color: #9ca3af; font-size: 12px;">
+                                    © 2026 Descubra seu Dom. Todos os direitos reservados.
+                                </p>
+                                <p style="margin: 8px 0 0; color: #9ca3af; font-size: 12px;">
+                                    <a href="https://descubraseudom.online" style="color: #667eea; text-decoration: none;">
+                                        descubraseudom.online
+                                    </a>
+                                </p>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

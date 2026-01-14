@@ -9,6 +9,7 @@ import { useAuth } from '@/context/AuthContext'
 import { useSpiritualGifts } from '@/hooks/use-quiz-queries'
 import { useLocale, useTranslations } from 'next-intl'
 import type { Database } from '@/lib/database.types'
+import { createClient } from '@/lib/supabase-client'
 
 // Helper function to extract sessionId from URL
 function getSessionIdFromUrl(): string | undefined {
@@ -52,6 +53,7 @@ export function useCompatibilityAnalysis(
   const locale = useLocale()
   const t = useTranslations('results.compatibility')
   const { data: spiritualGiftsData } = useSpiritualGifts(locale)
+  const supabase = createClient()
 
   const [analysis, setAnalysis] = useState<CompatibilityAnalysisResult>({
     compatibilities: [],
@@ -87,6 +89,24 @@ export function useCompatibilityAnalysis(
 
       try {
         setAnalysis(prev => ({ ...prev, isLoading: true }))
+
+        const normalizeList = (value: unknown): string[] => {
+          if (!Array.isArray(value)) return []
+          return value
+            .map((item: unknown) => {
+              if (typeof item === 'string') return item
+              if (typeof item === 'object' && item !== null) {
+                const obj = item as Record<string, unknown>
+                return obj.text || obj.description || obj.value || obj.name || obj.item || obj.detail || obj.area || obj.responsibility
+              }
+              return null
+            })
+            .filter(Boolean) as string[]
+        }
+
+        const createPairKey = (a: string, b: string) => {
+          return a <= b ? `${a}_${b}` : `${b}_${a}`
+        }
 
         // Use dynamic compatibility analyzer with AI
         const topGifts = Object.entries(giftScores)
@@ -135,14 +155,92 @@ export function useCompatibilityAnalysis(
         }
 
         const compatibilities: DynamicGiftCompatibility[] = []
-        const ministryRecommendations = await dynamicCompatibilityAnalyzer.getMinistryRecommendations(
-          topGifts as Database['public']['Enums']['gift_key'][],
-          locale
-        )
+
+        // Prefer curated insights from the new tables; fallback to existing RPCs
+        const fetchPairInsight = async (a: string, b: string) => {
+          const { data } = await supabase
+            .from('gift_pair_insights')
+            .select('synergy_score, summary, strengths, risks, mitigations, examples')
+            .eq('pair_key', createPairKey(a, b))
+            .eq('language', locale)
+            .eq('status', 'active')
+            .order('version', { ascending: false })
+            .limit(1)
+            .maybeSingle()
+
+          return data
+        }
+
+        const fetchMinistryRecommendations = async (): Promise<DynamicMinistryRecommendation[]> => {
+          const { data } = await supabase
+            .from('ministry_recommendations')
+            .select('ministry_key, ministry_name, description, gifts_match, fit_score, why_fit, responsibilities, growth_areas, success_metrics, spiritual_practices')
+            .eq('language', locale)
+            .eq('status', 'active')
+            .order('version', { ascending: false })
+
+          if (!data || data.length === 0) return []
+
+          return data.map((row: {
+            ministry_key: string;
+            ministry_name: string;
+            description: string | null;
+            gifts_match: unknown;
+            fit_score: unknown;
+            why_fit: string | null;
+            responsibilities: unknown;
+            growth_areas: unknown;
+            success_metrics: unknown;
+            spiritual_practices: unknown;
+          }) => {
+            const giftsMatch = Array.isArray(row.gifts_match) ? row.gifts_match : []
+            const matched = giftsMatch.filter((g: unknown) => topGifts.includes(g as string)).length
+            const totalRequired = giftsMatch.length || topGifts.length || 1
+            const scoreFromRow = typeof row.fit_score === 'number' ? row.fit_score : Math.round((matched / totalRequired) * 100)
+
+            return {
+              ministryKey: row.ministry_key,
+              ministryName: row.ministry_name,
+              description: row.description || row.why_fit || '',
+              compatibilityScore: scoreFromRow,
+              matchedGifts: matched,
+              totalRequired,
+              responsibilities: normalizeList(row.responsibilities),
+              growthAreas: normalizeList(row.growth_areas),
+              successMetrics: normalizeList(row.success_metrics),
+              spiritualPractices: normalizeList(row.spiritual_practices)
+            }
+          })
+        }
+
+        const ministryRecommendations = await (async () => {
+          const fromDb = await fetchMinistryRecommendations()
+          if (fromDb.length > 0) return fromDb
+          return await dynamicCompatibilityAnalyzer.getMinistryRecommendations(
+            topGifts as Database['public']['Enums']['gift_key'][],
+            locale
+          )
+        })()
 
         // Get compatibility data for each pair of top gifts
         for (let i = 0; i < topGifts.length; i++) {
           for (let j = i + 1; j < topGifts.length; j++) {
+            const curated = await fetchPairInsight(topGifts[i], topGifts[j])
+
+            if (curated) {
+              compatibilities.push({
+                primaryGift: topGifts[i],
+                secondaryGifts: [topGifts[j]],
+                compatibilityScore: typeof curated.synergy_score === 'number' ? curated.synergy_score : 75,
+                strengthAreas: normalizeList(curated.strengths),
+                potentialChallenges: normalizeList(curated.risks),
+                mitigations: normalizeList(curated.mitigations),
+                examples: normalizeList(curated.examples),
+                synergyDescription: curated.summary || 'Análise de compatibilidade'
+              })
+              continue
+            }
+
             const compatibility = await dynamicCompatibilityAnalyzer.getGiftCompatibility(
               topGifts[i] as Database['public']['Enums']['gift_key'],
               topGifts[j] as Database['public']['Enums']['gift_key'],
@@ -419,6 +517,7 @@ export function useCompatibilityAnalysis(
     }
 
     analyzeCompatibility()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [giftScores, topGiftsCount, locale, spiritualGiftsData, user, t])
 
   return analysis

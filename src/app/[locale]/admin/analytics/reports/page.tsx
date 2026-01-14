@@ -17,11 +17,13 @@ import {
 } from 'lucide-react'
 import { useReports, useQuickReport } from '@/hooks/useReports'
 import AnalyticsNavigation from '@/components/AnalyticsNavigation'
+import { usePermissions } from '@/hooks/usePermissions'
 
 type DateRange = '7d' | '30d' | '90d' | '1y'
 
 export default function AnalyticsReportsPage() {
-  const { user, isAdmin, loading } = useAuth()
+  const { user, isAdmin, isManager, loading } = useAuth()
+  const { canViewAnalytics } = usePermissions()
   const router = useRouter()
   const t = useTranslations('admin.analytics')
   const [dateRange, setDateRange] = useState<DateRange>('30d')
@@ -31,10 +33,11 @@ export default function AnalyticsReportsPage() {
   const { generateQuickReport, generating } = useQuickReport()
 
   useEffect(() => {
-    if (!loading && (!user || !isAdmin)) {
+    const allowed = isAdmin || isManager || canViewAnalytics
+    if (!loading && (!user || !allowed)) {
       router.push('/dashboard')
     }
-  }, [user, isAdmin, loading, router])
+  }, [user, isAdmin, isManager, canViewAnalytics, loading, router])
 
   if (loading || reportsLoading) {
     return (
@@ -44,7 +47,7 @@ export default function AnalyticsReportsPage() {
     )
   }
 
-  if (!user || !isAdmin) {
+  if (!user || !(isAdmin || isManager || canViewAnalytics)) {
     return null
   }
 

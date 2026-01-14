@@ -16,6 +16,8 @@ export interface DynamicGiftCompatibility {
   strengthAreas: string[]
   potentialChallenges: string[]
   synergyDescription: string
+  mitigations?: string[]
+  examples?: string[]
   aiEnhancedAnalysis?: AICompatibilityAnalysis
 }
 
@@ -28,6 +30,8 @@ export interface DynamicMinistryRecommendation {
   totalRequired: number
   responsibilities: string[]
   growthAreas: string[]
+  successMetrics?: string[]
+  spiritualPractices?: string[]
   aiInsights?: string
 }
 
@@ -229,7 +233,10 @@ class DynamicCompatibilityAnalyzer {
     // Enhance with AI insights if requested
     if (includeAI && recommendations.length > 0) {
       try {
-        const aiAnalysis = await aiCompatibilityAnalyzer.analyzeCompatibility(userProfile)
+        const aiAnalysis = await aiCompatibilityAnalyzer.analyzeCompatibility(
+          userProfile,
+          userProfile.locale || 'pt'
+        )
         
         // Add AI insights to top recommendations
         return recommendations.map((rec, index) => ({

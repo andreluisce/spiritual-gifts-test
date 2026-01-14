@@ -30,17 +30,17 @@ export async function GET() {
 
     // Check authentication and admin role
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Check if user is admin using our database function
-    const { data: isAdminData, error: adminError } = await supabase
-      .rpc('is_user_admin_safe')
-    
-    if (adminError || !isAdminData) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
+    // Check if user is manager or admin
+    const { data: isAllowed, error: adminError } = await supabase
+      .rpc('is_user_manager')
+
+    if (adminError || !isAllowed) {
+      return NextResponse.json({ error: 'Manager access required' }, { status: 403 })
     }
 
     // Clean up expired reports first
@@ -95,27 +95,27 @@ export async function POST(request: NextRequest) {
 
     // Check authentication and admin role
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Check if user is admin using our database function
-    const { data: isAdminData, error: adminError } = await supabase
-      .rpc('is_user_admin_safe')
-    
-    if (adminError || !isAdminData) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
+    // Check if user is manager or admin
+    const { data: isAllowed, error: adminError } = await supabase
+      .rpc('is_user_manager')
+
+    if (adminError || !isAllowed) {
+      return NextResponse.json({ error: 'Manager access required' }, { status: 403 })
     }
 
     // Parse request body
     const body = await request.json()
-    const { 
-      title, 
-      description, 
-      reportType = 'comprehensive', 
-      format = 'json', 
-      dateRange = '30d' 
+    const {
+      title,
+      description,
+      reportType = 'comprehensive',
+      format = 'json',
+      dateRange = '30d'
     } = body
 
     if (!title) {
@@ -195,17 +195,17 @@ export async function DELETE(request: NextRequest) {
 
     // Check authentication and admin role
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Check if user is admin using our database function
-    const { data: isAdminData, error: adminError } = await supabase
-      .rpc('is_user_admin_safe')
-    
-    if (adminError || !isAdminData) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
+    // Check if user is manager or admin
+    const { data: isAllowed, error: adminError } = await supabase
+      .rpc('is_user_manager')
+
+    if (adminError || !isAllowed) {
+      return NextResponse.json({ error: 'Manager access required' }, { status: 403 })
     }
 
     const { searchParams } = new URL(request.url)

@@ -30,7 +30,7 @@
     "subtitle": "Uma jornada de autoconhecimento baseada nas Escrituras Sagradas para descobrir como Deus trabalha através de você de forma única.",
     "cta": {
       "title": "Pronto Para Descobrir Seus Dons?",
-      "primary": "Começar Teste Gratuito",
+      "primary": "Começar Teste",
       "secondary": "Entrar na Conta"
     },
     "features": {
@@ -80,7 +80,8 @@
       "users": "usuários",
       "tests": "testes realizados",
       "questions": "perguntas balanceadas",
-      "accuracy": "precisão na análise"
+      "accuracy": "precisão na análise",
+      "minutes": "minutos de duração"
     },
     "testimonials": {
       "title": "O que dizem nossos usuários",
@@ -195,6 +196,52 @@
     "orContinueWith": "Ou continue com",
     "agreement": "Ao entrar, você concorda em fazer a avaliação de dons espirituais e receber resultados personalizados baseados em suas respostas."
   },
+  "bibleVerses": {
+    "title": "Referências Bíblicas ({count})",
+    "showLess": "Mostrar menos",
+    "showMore": "E mais {count} versículos..."
+  },
+  "aiInsights": {
+    "completeTest": "Complete o teste para ver insights personalizados com IA",
+    "title": "Insights Personalizados com IA",
+    "beta": "Beta",
+    "basedOnGifts": "Análise baseada em seus dons principais",
+    "confidence": "{value}% confiança",
+    "loading": "Gerando insights personalizados...",
+    "loadingSub": "Nossa IA está analisando seus dons espirituais",
+    "error": "Não foi possível gerar a análise personalizada no momento. Tente novamente em alguns instantes.",
+    "retry": "Tentar novamente",
+    "personalizedAnalysis": "Análise Personalizada",
+    "strengths": "Suas Forças Naturais",
+    "developmentPlan": "Plano de Desenvolvimento",
+    "practicalApplications": "Aplicações Práticas:",
+    "ministryRecommendations": "Recomendações de Ministério",
+    "challenges": "Pontos de Atenção",
+    "regenerate": "Regenerar Análise"
+  },
+  "languageStatus": {
+    "loading": "Carregando configurações...",
+    "current": "Idioma atual",
+    "default": "Padrão"
+  },
+  "adminUserQuiz": {
+    "title": "Resultados do Quiz - {user}",
+    "description": "Todas as tentativas e resultados deste usuário",
+    "loading": "Carregando resultados do quiz...",
+    "totalAttempts": "Total de Tentativas",
+    "completed": "Completados",
+    "attempt": "Tentativa #{num}",
+    "status": {
+      "completed": "Completo",
+      "inProgress": "Em andamento"
+    },
+    "started": "Iniciado",
+    "finished": "Completado",
+    "topGifts": "Top 3 Dons Espirituais",
+    "viewReport": "Ver Relatório Completo",
+    "empty": "Este usuário ainda não realizou nenhum teste",
+    "close": "Fechar"
+  },
   "gifts": {
     "title": "Dons Espirituais",
     "subtitle": "As Três Categorias: Motivações, Ministérios e Manifestações",
@@ -203,12 +250,19 @@
     "searchPlaceholder": "Buscar dons, ministérios ou manifestações",
     "names": {
       "A_PROPHECY": "Profecia",
+      "A_PROPHECY_name": "Profecia",
       "B_SERVICE": "Serviço",
+      "B_SERVICE_name": "Serviço",
       "C_TEACHING": "Ensino",
+      "C_TEACHING_name": "Ensino",
       "D_EXHORTATION": "Exortação",
+      "D_EXHORTATION_name": "Exortação",
       "E_GIVING": "Contribuição",
+      "E_GIVING_name": "Contribuição",
       "F_LEADERSHIP": "Liderança",
-      "G_MERCY": "Misericórdia"
+      "F_LEADERSHIP_name": "Liderança",
+      "G_MERCY": "Misericórdia",
+      "G_MERCY_name": "Misericórdia"
     },
     "categories": {
       "motivations": "Motivações",
@@ -240,6 +294,45 @@
       "title": "Pronto para descobrir seus dons?",
       "description": "Nosso teste foi desenvolvido com base nas Escrituras e no documento \"Dons Espirituais - As Três Categorias\" para ajudar você a identificar e compreender os dons que Deus lhe concedeu.",
       "button": "Fazer o Teste Agora"
+    },
+    "learn": {
+      "backToGifts": "Voltar para Dons",
+      "title": "Aprenda sobre Dons Espirituais",
+      "subtitle": "Fundamentos bíblicos e orientações práticas",
+      "tabs": {
+        "intro": "Introdução",
+        "obstacles": "Obstáculos",
+        "categories": "Categorias",
+        "biblical": "Bíblico",
+        "ministries": "Ministérios",
+        "manifestations": "Manifestações",
+        "principles": "Princípios"
+      },
+      "obstacles": {
+        "title": "O que impede de descobrir seu dom espiritual"
+      },
+      "categories": {
+        "title": "As Três Categorias de Dons"
+      },
+      "biblical": {
+        "title": "Contexto Bíblico: O que todos devem fazer"
+      },
+      "ministries": {
+        "title": "Os 12 Ministérios",
+        "subtitle": "Dons de serviço dados pelo Cristo ressurreto à Igreja"
+      },
+      "manifestations": {
+        "title": "As 9 Manifestações do Espírito",
+        "subtitle": "Capacitações sobrenaturais do Espírito Santo"
+      },
+      "principles": {
+        "title": "Princípios das Manifestações"
+      },
+      "cta": {
+        "title": "Pronto para descobrir seus dons?",
+        "subtitle": "Agora que você entende os fundamentos, faça o teste e descubra como Deus te capacitou para servir.",
+        "viewAllGifts": "Ver Todos os Dons"
+      }
     }
   },
   "results": {
@@ -309,9 +402,13 @@
       "giftCompatibility": "Compatibilidade entre Seus Dons",
       "strengthAreas": "Áreas de Força",
       "attentionPoints": "Pontos de Atenção",
+      "mitigationStrategies": "Como Mitigar Riscos",
+      "practicalExamples": "Exemplos Práticos",
       "recommendedMinistries": "Ministérios Recomendados",
       "mainResponsibilities": "Principais Responsabilidades",
       "growthAreas": "Áreas de Crescimento",
+      "successMetrics": "Métricas de Sucesso",
+      "spiritualPractices": "Práticas Espirituais",
       "essentialGifts": "Dons Essenciais",
       "highlyRecommended": "Altamente Recomendado",
       "recommended": "Recomendado",
@@ -466,6 +563,25 @@
       "settings": "Configurações",
       "audit": "Auditoria"
     },
+    "shared": {
+      "importContent": "Importar Conteúdo",
+      "import": "Importar",
+      "addNewContent": "Adicionar Novo Conteúdo",
+      "add": "Adicionar",
+      "otherContent": "Outro Conteúdo",
+      "active": "Ativo",
+      "inactive": "Inativo",
+      "suspended": "Suspenso",
+      "pending": "Pendente",
+      "approved": "Aprovado",
+      "cancel": "Cancelar",
+      "deleting": "Excluindo...",
+      "roles": {
+        "administrator": "Administrador",
+        "manager": "Gerente",
+        "user": "Usuário"
+      }
+    },
     "dashboard": {
       "title": "Dashboard Admin",
       "stats": {
@@ -476,7 +592,21 @@
         "newUsersThisMonth": "do mês passado",
         "completedToday": "completados hoje",
         "acrossAllAttempts": "Em todas as tentativas de quiz",
-        "activeThisWeek": "Usuários ativos esta semana"
+        "activeThisWeek": "Usuários ativos esta semana",
+        "recentLogin": "Login Recente",
+        "inactiveNoLogin": "Inativos (Sem Login)",
+        "thisMonth": "este mês",
+        "statusActiveConfig": "Status: ativo (configuração)",
+        "last30Days": "Últimos 30 dias",
+        "activeNoLogin30Days": "Ativos, mas sem login há 30+ dias",
+        "mostCommonGift": "Dom Mais Comum",
+        "appearsInResults": "Aparece em {percent}% dos resultados",
+        "completionRate": "Taxa de Conclusão",
+        "completedVsStarted": "Quizzes completados vs iniciados",
+        "averageTime": "Tempo Médio",
+        "toCompleteQuiz": "Para completar o quiz",
+        "disabled": "Desativados",
+        "statusInactiveSuspended": "Status: inativo/suspenso"
       },
       "recentActivity": {
         "title": "Atividade Recente",
@@ -487,6 +617,15 @@
         "users": "usuários",
         "ofTotal": "do total",
         "noData": "Nenhum dado disponível"
+      },
+      "timeAgo": {
+        "seconds": "{count} segundos atrás",
+        "minutes": "{count} min atrás",
+        "hours": "{count} horas atrás",
+        "days": "{count} dias atrás",
+        "secondsShort": "{count}s atrás",
+        "minutesShort": "{count}m atrás",
+        "hoursShort": "{count}h atrás"
       }
     },
     "users": {
@@ -512,6 +651,22 @@
         "suspended": "Suspensos",
         "requireAttention": "Requer atenção"
       },
+      "list": {
+        "searchPlaceholder": "Pesquisar usuários por nome ou email...",
+        "allRoles": "Todos os Papéis",
+        "allStatus": "Todos os Status",
+        "allUsersCount": "Todos os Usuários ({count})",
+        "unknown": "Desconhecido",
+        "never": "Nunca",
+        "joined": "Adicionado",
+        "lastLogin": "Último login",
+        "quizzes": "Quizzes",
+        "avgScore": "Pontuação Média",
+        "viewResults": "Ver Resultados do Quiz",
+        "noUsersFound": "Nenhum usuário encontrado que corresponda aos seus critérios",
+        "pending": "Pendente",
+        "approved": "Aprovado"
+      },
       "recentRegistrations": "Registros Recentes",
       "unknown": "Desconhecido"
     },
@@ -528,7 +683,6 @@
         "email": "Email & Notificações"
       },
       "navigation": {
-        "backToAdmin": "Voltar ao Admin",
         "categories": "Categorias de Configurações",
         "descriptions": {
           "quiz": "Configure parâmetros e perguntas do quiz",
@@ -559,7 +713,12 @@
           "description": "Defina o número de perguntas por dom espiritual. Isso se aplicará a todos os sete dons motivacionais de Romanos 12:6-8.",
           "label": "Perguntas por Dom",
           "helperText": "Cada dom espiritual terá este número de perguntas (Total: {total})",
-          "recommendation": "Recomendado: 5 perguntas por dom (35 perguntas no total)"
+          "recommendation": "Recomendado: 5 perguntas por dom (35 perguntas no total)",
+          "requireApproval": {
+            "title": "Quer restringir o acesso ao teste?",
+            "description": "Você pode exigir aprovação de administrador para liberar o teste em",
+            "link": "Configurações Gerais"
+          }
         },
         "options": {
           "title": "Opções do Quiz",
@@ -604,6 +763,10 @@
           "allowGuestQuiz": {
             "label": "Permitir Quizzes de Visitantes",
             "description": "Usuários podem fazer o quiz sem criar uma conta"
+          },
+          "requireApproval": {
+            "label": "Exigir aprovação de admin",
+            "description": "Só usuários aprovados podem acessar o dashboard e fazer o teste"
           }
         },
         "localization": {
@@ -617,6 +780,22 @@
               "en": "Inglês (English)",
               "es": "Espanhol (Spanish)"
             }
+          }
+        },
+        "site": {
+          "title": "Informações do Site",
+          "description": "Informações básicas da plataforma",
+          "siteName": {
+            "label": "Nome do site",
+            "placeholder": "Digite o nome do site"
+          },
+          "siteDescription": {
+            "label": "Descrição do site",
+            "placeholder": "Breve descrição do site"
+          },
+          "contactEmail": {
+            "label": "Email de contato",
+            "placeholder": "admin@example.com"
           }
         }
       },
@@ -729,7 +908,10 @@
         "searchPlaceholder": "Pesquisar dons espirituais...",
         "addNew": "Adicionar Novo Dom",
         "count": "Dons Espirituais ({count})",
-        "deleteConfirm": "Tem certeza de que deseja excluir o dom \"{name}\"? Isso também excluirá todas as perguntas e conteúdo relacionados. Esta ação não pode ser desfeita."
+        "deleteTitle": "Excluir Dom",
+        "deleteConfirm": "Tem certeza de que deseja excluir o dom \"{name}\"? Isso também excluirá todas as perguntas e conteúdo relacionados. Esta ação não pode ser desfeita.",
+        "deleteAction": "Excluir Dom",
+        "noResults": "Nenhum dom espiritual encontrado que corresponda aos seus critérios"
       },
       "questions": {
         "title": "Perguntas do Quiz",
@@ -737,16 +919,71 @@
         "addNew": "Adicionar Pergunta",
         "count": "Perguntas do Quiz ({count})",
         "allGifts": "Todos os Dons",
+        "deleteTitle": "Excluir Pergunta",
         "noResults": "Nenhuma pergunta encontrada que corresponda aos seus critérios",
-        "deleteConfirm": "Tem certeza de que deseja excluir esta pergunta? Esta ação não pode ser desfeita."
+        "deleteConfirm": "Tem certeza de que deseja excluir esta pergunta? Esta ação não pode ser desfeita.",
+        "deleteAction": "Excluir Pergunta"
       },
       "characteristics": {
         "title": "Conteúdo dos Dons",
         "searchPlaceholder": "Pesquisar características, perigos, mal-entendidos...",
         "addNew": "Adicionar Conteúdo",
         "count": "Conteúdo dos Dons ({count})",
+        "deleteTitle": "Excluir Conteúdo",
         "noResults": "Nenhum conteúdo encontrado que corresponda aos seus critérios",
-        "deleteConfirm": "Tem certeza de que deseja excluir este {type}? Esta ação não pode ser desfeita."
+        "deleteConfirm": "Tem certeza de que deseja excluir este content? Esta ação não pode ser desfeita.",
+        "deleteAction": "Excluir Conteúdo"
+      },
+      "modals": {
+        "editGift": "Editar Dom Espiritual",
+        "createGift": "Criar Novo Dom",
+        "editQuestion": "Editar Pergunta",
+        "createQuestion": "Criar Nova Pergunta",
+        "editCharacteristic": "Editar Conteúdo",
+        "createCharacteristic": "Criar Novo Conteúdo",
+        "editTitle": "Editar {type}",
+        "createTitle": "Criar Novo {type}",
+        "updateInfo": "Atualize as informações deste item de conteúdo.",
+        "createItem": "Crie um novo item de conteúdo.",
+        "giftKey": "Chave do Dom",
+        "giftKeyPlaceholder": "ex: PROFECIA, MINISTERIO",
+        "giftKeyHelp": "Identificador único para o dom (maiúsculas, sem espaços)",
+        "category": "Categoria",
+        "namePt": "Nome (Português)",
+        "nameEn": "Nome (Inglês)",
+        "nameEs": "Nome (Espanhol)",
+        "namePtPlaceholder": "Nome em português",
+        "nameEnPlaceholder": "Nome em inglês",
+        "nameEsPlaceholder": "Nome em espanhol",
+        "descriptionPt": "Descrição (Português)",
+        "descriptionEn": "Descrição (Inglês)",
+        "descriptionEs": "Descrição (Espanhol)",
+        "descriptionPtPlaceholder": "Descrição em português",
+        "descriptionEnPlaceholder": "Descrição em inglês",
+        "descriptionEsPlaceholder": "Descrição em espanhol",
+        "questionPt": "Pergunta (Português)",
+        "questionEn": "Pergunta (Inglês)",
+        "questionEs": "Pergunta (Espanhol)",
+        "questionPtPlaceholder": "Pergunta em português",
+        "questionEnPlaceholder": "Pergunta em inglês",
+        "questionEsPlaceholder": "Pergunta em espanhol",
+        "contentPt": "Conteúdo (Português)",
+        "contentEn": "Conteúdo (Inglês)",
+        "contentEs": "Conteúdo (Espanhol)",
+        "contentPtPlaceholder": "Conteúdo em português",
+        "contentEnPlaceholder": "Conteúdo em inglês",
+        "contentEsPlaceholder": "Conteúdo em espanhol",
+        "gift": "Dom Espiritual",
+        "selectGift": "Selecione um dom espiritual...",
+        "contentType": "Tipo de Conteúdo",
+        "status": "Status",
+        "active": "Ativo",
+        "inactive": "Inativo",
+        "cancel": "Cancelar",
+        "save": "Salvar Alterações",
+        "create": "Criar",
+        "saving": "Salvando...",
+        "creating": "Criando..."
       }
     },
     "analytics": {
@@ -962,7 +1199,7 @@
       "fullName": "Nome Completo",
       "fullNamePlaceholder": "Seu nome completo",
       "phone": "Telefone",
-      "phonePlaceholder": "(11) 99999-9999",
+      "phonePlaceholder": "+1 202 555 0123",
       "location": "Localização",
       "locationPlaceholder": "Cidade, Estado",
       "birthDate": "Data de Nascimento",
@@ -989,7 +1226,8 @@
       "nameRequired": "Nome é obrigatório",
       "nameMaxLength": "Nome deve ter menos de 100 caracteres",
       "bioMaxLength": "Bio deve ter menos de 500 caracteres",
-      "locationMaxLength": "Localização deve ter menos de 100 caracteres"
+      "locationMaxLength": "Localização deve ter menos de 100 caracteres",
+      "phoneInvalid": "Telefone inválido para o país selecionado"
     },
     "alerts": {
       "updateSuccess": "Perfil atualizado com sucesso!",
@@ -1022,10 +1260,15 @@
     "back": "Voltar",
     "print": "Imprimir / Salvar PDF",
     "title": "Relatório Completo - Teste de Dons Espirituais",
+    "reportTitle": "RELATÓRIO DE DONS ESPIRITUAIS",
+    "reportSubtitle": "Análise de Perfil e Propósito",
     "sessionInfo": {
       "user": "Usuário:",
       "date": "Data:",
-      "duration": "Duração: {duration} minutos"
+      "duration": "Duração: {duration} minutos",
+      "participant": "Participante",
+      "topGift": "Dom Principal",
+      "analysisDate": "Data da Análise"
     },
     "spiritualGifts": {
       "title": "Dons Espirituais Descobertos",
@@ -1033,10 +1276,14 @@
         "primary": "Primário",
         "secondary": "Secundário",
         "present": "Presente"
-      }
+      },
+      "performanceTitle": "Performance dos Dons",
+      "breakdownTitle": "Detalhamento",
+      "completeAnalysis": "Análise completa com sucesso"
     },
     "aiInsights": {
       "title": "Insights e Orientações",
+      "customTitle": "Insights Personalizados",
       "description": "Descrição:",
       "biblicalFoundation": "Fundamento Bíblico:",
       "practicalApplications": "Aplicações Práticas:",
@@ -1051,7 +1298,8 @@
     },
     "footer": {
       "generated": "Relatório gerado em {date}",
-      "subtitle": "Teste de Dons Espirituais - Descubra Seu Dom"
+      "subtitle": "Teste de Dons Espirituais - Descubra Seu Dom",
+      "copyright": "© {year} Spiritual Gifts Test. Todos os direitos reservados."
     }
   }
 }

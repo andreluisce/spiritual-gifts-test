@@ -72,7 +72,17 @@ export function useAuditLogs(
         }
       } catch (err) {
         console.error('Error fetching audit logs:', err)
-        setError(err instanceof Error ? err.message : 'Failed to fetch audit logs')
+        console.dir(err)
+        let errorMessage = 'Failed to fetch audit logs'
+        if (typeof err === 'string') {
+          errorMessage = err
+        } else if (err instanceof Error) {
+          errorMessage = err.message
+        } else if (err && typeof err === 'object') {
+          const pgError = err as { message?: string; details?: string; hint?: string }
+          errorMessage = pgError.message || pgError.details || pgError.hint || JSON.stringify(err)
+        }
+        setError(errorMessage)
       } finally {
         setLoading(false)
       }
@@ -112,7 +122,14 @@ export function useAuditStats() {
         }
       } catch (err) {
         console.error('Error fetching audit stats:', err)
-        setError(err instanceof Error ? err.message : 'Failed to fetch audit stats')
+        let errorMessage = 'Failed to fetch audit stats'
+        if (typeof err === 'string') {
+          errorMessage = err
+        } else if (err && typeof err === 'object') {
+          const pgError = err as { message?: string; details?: string; hint?: string }
+          errorMessage = pgError.message || pgError.details || pgError.hint || JSON.stringify(err)
+        }
+        setError(errorMessage)
       } finally {
         setLoading(false)
       }

@@ -15,29 +15,32 @@ import {
   BarChart3
 } from 'lucide-react'
 import { formatScore, formatPercentage } from '@/data/quiz-data'
-import { 
-  useAnalyticsData, 
+import {
+  useAnalyticsData,
   useAdminStats
 } from '@/hooks/useAdminData'
 import AnalyticsNavigation from '@/components/AnalyticsNavigation'
+import { usePermissions } from '@/hooks/usePermissions'
 
 type DateRange = '7d' | '30d' | '90d' | '1y'
 
 export default function AnalyticsOverviewPage() {
-  const { user, isAdmin, loading } = useAuth()
+  const { user, isAdmin, isManager, loading } = useAuth()
+  const { canViewAnalytics } = usePermissions()
   const router = useRouter()
   const t = useTranslations('admin.analytics')
   const [dateRange, setDateRange] = useState<DateRange>('30d')
-  
+
   // Fetch real data
   const { analytics: realAnalytics, loading: analyticsLoading } = useAnalyticsData(dateRange)
   const { stats: realStats, loading: statsLoading } = useAdminStats()
 
   useEffect(() => {
-    if (!loading && (!user || !isAdmin)) {
+    const allowed = isAdmin || isManager || canViewAnalytics
+    if (!loading && (!user || !allowed)) {
       router.push('/dashboard')
     }
-  }, [user, isAdmin, loading, router])
+  }, [user, isAdmin, isManager, canViewAnalytics, loading, router])
 
   if (loading || analyticsLoading || statsLoading) {
     return (
@@ -47,7 +50,7 @@ export default function AnalyticsOverviewPage() {
     )
   }
 
-  if (!user || !isAdmin) {
+  if (!user || !(isAdmin || isManager || canViewAnalytics)) {
     return null
   }
 
@@ -114,13 +117,13 @@ export default function AnalyticsOverviewPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('overview.averageScore')}</CardTitle>
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">{t('overview.mostPopularGift')}</CardTitle>
+            <Brain className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatScore((realAnalytics?.overview as { avgScore?: number })?.avgScore || (realStats as { averageScore?: number })?.averageScore || 0, 1)}</div>
+            <div className="text-2xl font-bold">{realStats?.mostPopularGift || 'N/A'}</div>
             <p className="text-xs text-muted-foreground">
-              {t('overview.outOfPossible')}
+              {t('overview.topSpiritualGift')}
             </p>
           </CardContent>
         </Card>

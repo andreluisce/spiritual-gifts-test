@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useSystemSettings, type SystemSettings } from '@/hooks/useSystemSettings'
 import { useTranslations } from 'next-intl'
 import { Globe, UserPlus, Users, Mail, AlertTriangle, FileText } from 'lucide-react'
+import { DEFAULT_SETTINGS } from '@/lib/system-settings-defaults'
 
 // Debounce hook for performance optimization
 function useDebounce<T>(value: T, delay: number): T {
@@ -32,39 +33,61 @@ export default function GeneralSettingsPage() {
   const { settings, updateSettings } = useSystemSettings()
   const [localSettings, setLocalSettings] = useState<SystemSettings | null>(null)
   const [isSaving, setIsSaving] = useState(false)
+  const [baseline, setBaseline] = useState<SystemSettings | null>(null)
+
+  const mergeWithDefaults = useCallback((incoming: SystemSettings) => ({
+    ...DEFAULT_SETTINGS,
+    ...incoming,
+    general: {
+      ...DEFAULT_SETTINGS.general,
+      ...(incoming.general || {})
+    },
+    quiz: {
+      ...DEFAULT_SETTINGS.quiz,
+      ...(incoming.quiz || {})
+    },
+    ai: {
+      ...DEFAULT_SETTINGS.ai,
+      ...(incoming.ai || {})
+    }
+  }), [])
 
   // Sync local settings with fetched settings
   useEffect(() => {
     if (settings) {
-      setLocalSettings(settings)
+      const merged = mergeWithDefaults(settings)
+      setLocalSettings(merged)
+      setBaseline(merged)
     }
-  }, [settings])
+  }, [settings, mergeWithDefaults])
 
   // Debounce local settings changes
   const debouncedSettings = useDebounce(localSettings, 1500)
 
   // Update server when debounced settings change
   useEffect(() => {
-    if (!debouncedSettings || !settings) return
+    if (!debouncedSettings || !baseline) return
 
     // Only update if the settings actually changed (deep comparison)
-    // Simple JSON stringify comparison is enough for this structure
-    const hasChanged = JSON.stringify(debouncedSettings.general) !== JSON.stringify(settings.general)
+    const hasChanged = JSON.stringify(debouncedSettings) !== JSON.stringify(baseline)
 
     if (hasChanged) {
       setIsSaving(true)
       updateSettings(debouncedSettings)
-        .then(() => {
+        .then((saved) => {
+          const merged = mergeWithDefaults((saved as SystemSettings) || debouncedSettings)
+          setBaseline(merged)
+          setLocalSettings(merged)
           setIsSaving(false)
         })
         .catch((error) => {
           console.error('Failed to update settings:', error)
           setIsSaving(false)
           // Revert to previous settings on error
-          setLocalSettings(settings)
+          setLocalSettings(baseline)
         })
     }
-  }, [debouncedSettings, settings, updateSettings])
+  }, [debouncedSettings, baseline, updateSettings, mergeWithDefaults])
 
   const handleSettingChange = useCallback((key: string, value: string | boolean | number) => {
     if (!localSettings) return
@@ -134,10 +157,10 @@ export default function GeneralSettingsPage() {
               <Users className="h-4 w-4 text-gray-500" />
               <div className="space-y-0.5">
                 <Label htmlFor="require-approval" className="text-sm font-medium cursor-pointer">
-                  Require Admin Approval
+                  {t('userAccess.requireApproval.label')}
                 </Label>
                 <p className="text-xs text-gray-500">
-                  Only approved users can access the dashboard and take the test
+                  {t('userAccess.requireApproval.description')}
                 </p>
               </div>
             </div>
@@ -175,38 +198,38 @@ export default function GeneralSettingsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5 text-blue-600" />
-            Site Information
+            {t('site.title')}
           </CardTitle>
           <CardDescription>
-            Basic information about your spiritual gifts test platform
+            {t('site.description')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Site Name */}
           <div className="space-y-2">
-            <Label htmlFor="site-name">Site Name</Label>
+            <Label htmlFor="site-name">{t('site.siteName.label')}</Label>
             <Input
               id="site-name"
               value={localSettings.general.siteName || ''}
               onChange={(e) => handleSettingChange('siteName', e.target.value)}
-              placeholder="Enter site name"
+              placeholder={t('site.siteName.placeholder')}
             />
           </div>
 
           {/* Site Description */}
           <div className="space-y-2">
-            <Label htmlFor="site-description">Site Description</Label>
+            <Label htmlFor="site-description">{t('site.siteDescription.label')}</Label>
             <Input
               id="site-description"
               value={localSettings.general.siteDescription || ''}
               onChange={(e) => handleSettingChange('siteDescription', e.target.value)}
-              placeholder="Brief description of your site"
+              placeholder={t('site.siteDescription.placeholder')}
             />
           </div>
 
           {/* Contact Email */}
           <div className="space-y-2">
-            <Label htmlFor="contact-email">Contact Email</Label>
+            <Label htmlFor="contact-email">{t('site.contactEmail.label')}</Label>
             <div className="flex items-center gap-2">
               <Mail className="h-4 w-4 text-gray-500" />
               <Input
@@ -214,7 +237,7 @@ export default function GeneralSettingsPage() {
                 type="email"
                 value={localSettings.general.contactEmail || ''}
                 onChange={(e) => handleSettingChange('contactEmail', e.target.value)}
-                placeholder="admin@example.com"
+                placeholder={t('site.contactEmail.placeholder')}
                 className="flex-1"
               />
             </div>

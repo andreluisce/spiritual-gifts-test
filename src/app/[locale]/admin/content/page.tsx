@@ -44,8 +44,8 @@ import {
   Gift as GiftIcon
 } from 'lucide-react'
 import Link from 'next/link'
-import { 
-  useSpiritualGifts, useQuestions, useCharacteristics, 
+import {
+  useSpiritualGifts, useQuestions, useCharacteristics,
   useUpdateGift, useUpdateQuestion, useUpdateCharacteristic,
   useCreateGift, useCreateQuestion, useCreateCharacteristic,
   useDeleteGift, useDeleteQuestion, useDeleteCharacteristic,
@@ -58,7 +58,8 @@ export default function AdminContentPage() {
   const { user, isAdmin, loading } = useAuth()
   const router = useRouter()
   const t = useTranslations('admin.content')
-  const tCommon = useTranslations('admin.content.common')
+  const tContentCommon = useTranslations('admin.content.common')
+  const tShared = useTranslations('admin.shared')
   const [activeTab, setActiveTab] = useState('gifts')
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedGift, setSelectedGift] = useState('all')
@@ -68,13 +69,17 @@ export default function AdminContentPage() {
   const [editForm, setEditForm] = useState({
     name: '',
     nameEn: '',
+    nameEs: '',
     description: '',
     descriptionEn: '',
+    descriptionEs: '',
     isActive: true,
     questionPt: '',
     questionEn: '',
+    questionEs: '',
     contentPt: '',
     contentEn: '',
+    contentEs: '',
     selectedGift: '',
     giftKey: '',
     category: 'KARISMATA',
@@ -227,17 +232,21 @@ export default function AdminContentPage() {
     setEditForm({
       name: gift.name,
       nameEn: gift.nameEn || '',
+      nameEs: gift.nameEs || '',
       description: gift.description,
       descriptionEn: gift.descriptionEn || '',
+      descriptionEs: gift.descriptionEs || '',
       isActive: gift.isActive,
       questionPt: '',
       questionEn: '',
+      questionEs: '',
       contentPt: '',
       contentEn: '',
+      contentEs: '',
       selectedGift: '',
       giftKey: gift.giftKey || '',
       category: 'KARISMATA',
-      characteristicType: 'characteristic' as 'characteristic' | 'danger' | 'misunderstanding' as 'characteristic' | 'danger' | 'misunderstanding'
+      characteristicType: 'characteristic' as 'characteristic' | 'danger' | 'misunderstanding'
     })
   }
 
@@ -247,17 +256,21 @@ export default function AdminContentPage() {
     setEditForm({
       name: '',
       nameEn: '',
+      nameEs: '',
       description: '',
       descriptionEn: '',
+      descriptionEs: '',
       isActive: question.isActive,
       questionPt: question.questionPt,
       questionEn: question.questionEn,
+      questionEs: question.questionEs,
       contentPt: '',
       contentEn: '',
+      contentEs: '',
       selectedGift: question.giftName,
       giftKey: question.giftKey || '',
       category: 'KARISMATA',
-      characteristicType: 'characteristic' as 'characteristic' | 'danger' | 'misunderstanding' as 'characteristic' | 'danger' | 'misunderstanding'
+      characteristicType: 'characteristic' as 'characteristic' | 'danger' | 'misunderstanding'
     })
   }
 
@@ -267,13 +280,17 @@ export default function AdminContentPage() {
     setEditForm({
       name: '',
       nameEn: '',
+      nameEs: '',
       description: '',
       descriptionEn: '',
+      descriptionEs: '',
       isActive: characteristic.isActive,
       questionPt: '',
       questionEn: '',
+      questionEs: '',
       contentPt: characteristic.contentPt,
       contentEn: characteristic.contentEn,
+      contentEs: characteristic.contentEs,
       selectedGift: characteristic.giftName,
       giftKey: characteristic.giftKey || '',
       category: 'KARISMATA',
@@ -289,11 +306,13 @@ export default function AdminContentPage() {
 
       if (editingType === 'gift') {
         const giftItem = editingItem as Gift
-        result = await updateGift(giftItem.id, {
+        result = await updateGift(giftItem.id, editForm.giftKey, {
           name: editForm.name,
           nameEn: editForm.nameEn,
+          nameEs: editForm.nameEs,
           description: editForm.description,
           descriptionEn: editForm.descriptionEn,
+          descriptionEs: editForm.descriptionEs,
           isActive: editForm.isActive
         })
       } else if (editingType === 'question') {
@@ -303,6 +322,7 @@ export default function AdminContentPage() {
         result = await updateQuestion(questionItem.id, {
           questionPt: editForm.questionPt,
           questionEn: editForm.questionEn,
+          questionEs: editForm.questionEs,
           isActive: editForm.isActive,
           giftKey: selectedGiftData?.giftKey
         })
@@ -313,8 +333,10 @@ export default function AdminContentPage() {
         result = await updateCharacteristic(characteristicItem.id, characteristicItem.type, {
           contentPt: editForm.contentPt,
           contentEn: editForm.contentEn,
+          contentEs: editForm.contentEs,
           isActive: editForm.isActive,
-          giftKey: selectedGiftData?.giftKey
+          giftKey: selectedGiftData?.giftKey,
+          ids: characteristicItem.ids
         })
       }
 
@@ -324,17 +346,21 @@ export default function AdminContentPage() {
         setEditForm({
           name: '',
           nameEn: '',
+          nameEs: '',
           description: '',
           descriptionEn: '',
+          descriptionEs: '',
           isActive: true,
           questionPt: '',
           questionEn: '',
+          questionEs: '',
           contentPt: '',
           contentEn: '',
+          contentEs: '',
           selectedGift: '',
           giftKey: '',
           category: 'KARISMATA',
-          characteristicType: 'characteristic' as 'characteristic' | 'danger' | 'misunderstanding' as 'characteristic' | 'danger' | 'misunderstanding'
+          characteristicType: 'characteristic' as 'characteristic' | 'danger' | 'misunderstanding'
         })
         // Refresh the page to show updated data
         window.location.reload()
@@ -354,13 +380,17 @@ export default function AdminContentPage() {
     setEditForm({
       name: '',
       nameEn: '',
+      nameEs: '',
       description: '',
       descriptionEn: '',
+      descriptionEs: '',
       isActive: true,
       questionPt: '',
       questionEn: '',
+      questionEs: '',
       contentPt: '',
       contentEn: '',
+      contentEs: '',
       selectedGift: '',
       giftKey: '',
       category: 'KARISMATA',
@@ -374,13 +404,17 @@ export default function AdminContentPage() {
     setEditForm({
       name: '',
       nameEn: '',
+      nameEs: '',
       description: '',
       descriptionEn: '',
+      descriptionEs: '',
       isActive: true,
       questionPt: '',
       questionEn: '',
+      questionEs: '',
       contentPt: '',
       contentEn: '',
+      contentEs: '',
       selectedGift: '',
       giftKey: '',
       category: 'KARISMATA',
@@ -393,13 +427,15 @@ export default function AdminContentPage() {
 
     try {
       let result
-      
+
       if (editingType === 'gift') {
         result = await createGift({
           name: editForm.name,
           nameEn: editForm.nameEn,
+          nameEs: editForm.nameEs,
           description: editForm.description,
           descriptionEn: editForm.descriptionEn,
+          descriptionEs: editForm.descriptionEs,
           giftKey: editForm.giftKey,
           category: editForm.category
         })
@@ -408,6 +444,7 @@ export default function AdminContentPage() {
         result = await createQuestion({
           questionPt: editForm.questionPt,
           questionEn: editForm.questionEn,
+          questionEs: editForm.questionEs,
           giftKey: selectedGiftData?.giftKey || '',
           isActive: editForm.isActive
         })
@@ -417,6 +454,7 @@ export default function AdminContentPage() {
           type: editForm.characteristicType,
           contentPt: editForm.contentPt,
           contentEn: editForm.contentEn,
+          contentEs: editForm.contentEs,
           giftKey: selectedGiftData?.giftKey || ''
         })
       }
@@ -436,7 +474,7 @@ export default function AdminContentPage() {
   const handleDelete = async (item: Gift | Question | Characteristic, type: 'gift' | 'question' | 'characteristic') => {
     try {
       let result
-      
+
       if (type === 'gift') {
         const giftItem = item as Gift
         result = await deleteGift(giftItem.giftKey)
@@ -463,33 +501,12 @@ export default function AdminContentPage() {
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
       {/* Header */}
       <div className="mb-8">
-        <div className="flex items-center gap-4 mb-4">
-          <Link href="/admin">
-            <Button variant="outline" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Admin
-            </Button>
-          </Link>
-        </div>
-
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex-1">
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('title')}</h1>
             <p className="text-gray-600 mt-1">
               {t('subtitle')}
             </p>
-          </div>
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 w-full sm:w-auto">
-            <Button variant="outline" size="sm" className="whitespace-nowrap">
-              <Database className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">Import Content</span>
-              <span className="sm:hidden">Import</span>
-            </Button>
-            <Button size="sm" className="whitespace-nowrap">
-              <Plus className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">Add New Content</span>
-              <span className="sm:hidden">Add New</span>
-            </Button>
           </div>
         </div>
       </div>
@@ -499,7 +516,7 @@ export default function AdminContentPage() {
           <TabsTrigger value="gifts">{t('gifts.title')}</TabsTrigger>
           <TabsTrigger value="questions">{t('questions.title')}</TabsTrigger>
           <TabsTrigger value="characteristics">{t('characteristics.title')}</TabsTrigger>
-          <TabsTrigger value="content">Other Content</TabsTrigger>
+          <TabsTrigger value="content">{tShared('otherContent')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="gifts" className="space-y-6">
@@ -518,10 +535,6 @@ export default function AdminContentPage() {
                     />
                   </div>
                 </div>
-                <Button onClick={() => handleCreateNew('gift')} className="whitespace-nowrap">
-                  <Plus className="h-4 w-4 mr-2" />
-                  {t('gifts.addNew')}
-                </Button>
               </div>
             </CardContent>
           </Card>
@@ -551,14 +564,14 @@ export default function AdminContentPage() {
                         </div>
                         <p className="text-sm text-gray-500 line-clamp-2">{gift.description}</p>
                         <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs text-gray-400">
-                          <span className="whitespace-nowrap">{gift.questionsCount} {tCommon('questions')}</span>
-                          <span className="whitespace-nowrap">{tCommon('updated')}: {new Date(gift.lastUpdated).toLocaleDateString()}</span>
+                          <span className="whitespace-nowrap">{gift.questionsCount} {tContentCommon('questions')}</span>
+                          <span className="whitespace-nowrap">{tContentCommon('updated')}: {new Date(gift.lastUpdated).toLocaleDateString()}</span>
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2">
                         <Badge className={getStatusColor(gift.isActive)}>
-                          {gift.isActive ? tCommon('active') : tCommon('inactive')}
+                          {gift.isActive ? tContentCommon('active') : tContentCommon('inactive')}
                         </Badge>
                       </div>
 
@@ -575,20 +588,20 @@ export default function AdminContentPage() {
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Delete Spiritual Gift</AlertDialogTitle>
+                              <AlertDialogTitle>{t('gifts.deleteTitle')}</AlertDialogTitle>
                               <AlertDialogDescription>
-                                Are you sure you want to delete the gift &quot;{gift.name}&quot;? This will also delete all related questions and content. This action cannot be undone.
+                                {t('gifts.deleteConfirm', { name: gift.name })}
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction 
-                              className="bg-red-600 hover:bg-red-700"
-                              onClick={() => handleDelete(gift, 'gift')}
-                              disabled={deletingGift}
-                            >
-                              {deletingGift ? 'Deleting...' : 'Delete Gift'}
-                            </AlertDialogAction>
+                              <AlertDialogCancel>{tShared('cancel')}</AlertDialogCancel>
+                              <AlertDialogAction
+                                className="bg-red-600 hover:bg-red-700"
+                                onClick={() => handleDelete(gift, 'gift')}
+                                disabled={deletingGift}
+                              >
+                                {deletingGift ? tShared('deleting') : t('gifts.deleteAction')}
+                              </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>
                         </AlertDialog>
@@ -601,7 +614,7 @@ export default function AdminContentPage() {
               {filteredGifts.length === 0 && (
                 <div className="text-center py-8">
                   <Brain className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500">No spiritual gifts found matching your criteria</p>
+                  <p className="text-gray-500">{t('gifts.noResults')}</p>
                 </div>
               )}
             </CardContent>
@@ -636,11 +649,6 @@ export default function AdminContentPage() {
                       <option key={gift.id} value={gift.name}>{gift.name}</option>
                     ))}
                   </select>
-
-                  <Button onClick={() => handleCreateNew('question')} className="whitespace-nowrap">
-                    <Plus className="h-4 w-4 mr-2" />
-                    {t('questions.addNew')}
-                  </Button>
                 </div>
               </div>
             </CardContent>
@@ -661,64 +669,68 @@ export default function AdminContentPage() {
                         <span className={iconColor}>{icon}</span>
                       </div>
 
-                    <div className="flex-1 min-w-0 space-y-3">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <Badge variant="outline" className="text-xs whitespace-nowrap">
-                          {question.giftName}
-                        </Badge>
-                        <Badge className={`${getStatusColor(question.isActive)} whitespace-nowrap`}>
-                          {question.isActive ? tCommon('active') : tCommon('inactive')}
-                        </Badge>
+                      <div className="flex-1 min-w-0 space-y-3">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Badge variant="outline" className="text-xs whitespace-nowrap">
+                            {question.giftName}
+                          </Badge>
+                          <Badge className={`${getStatusColor(question.isActive)} whitespace-nowrap`}>
+                            {question.isActive ? tContentCommon('active') : tContentCommon('inactive')}
+                          </Badge>
+                        </div>
+
+                        <div className="space-y-3">
+                          <div>
+                            <span className="text-xs text-gray-500 font-medium block mb-1">PT:</span>
+                            <p className="text-sm text-gray-900 line-clamp-3">{question.questionPt}</p>
+                          </div>
+                          <div>
+                            <span className="text-xs text-gray-500 font-medium block mb-1">EN:</span>
+                            <p className="text-sm text-gray-600 line-clamp-3">{question.questionEn}</p>
+                          </div>
+                          <div>
+                            <span className="text-xs text-gray-500 font-medium block mb-1">ES:</span>
+                            <p className="text-sm text-gray-600 line-clamp-3">{question.questionEs || '-'}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-4 text-xs text-gray-400">
+                          <span className="whitespace-nowrap">{tContentCommon('updated')}: {new Date(question.lastUpdated).toLocaleDateString()}</span>
+                        </div>
                       </div>
 
-                      <div className="space-y-3">
-                        <div>
-                          <span className="text-xs text-gray-500 font-medium block mb-1">PT:</span>
-                          <p className="text-sm text-gray-900 line-clamp-3">{question.questionPt}</p>
-                        </div>
-                        <div>
-                          <span className="text-xs text-gray-500 font-medium block mb-1">EN:</span>
-                          <p className="text-sm text-gray-600 line-clamp-3">{question.questionEn}</p>
-                        </div>
-                      </div>
+                      <div className="flex items-center gap-1 mt-2 sm:mt-0 self-end sm:self-start">
+                        <Button variant="ghost" size="sm" onClick={() => handleEditQuestion(question)}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
 
-                      <div className="flex items-center gap-4 text-xs text-gray-400">
-                        <span className="whitespace-nowrap">{tCommon('updated')}: {new Date(question.lastUpdated).toLocaleDateString()}</span>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>{t('questions.deleteTitle')}</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                {t('questions.deleteConfirm')}
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>{tShared('cancel')}</AlertDialogCancel>
+                              <AlertDialogAction
+                                className="bg-red-600 hover:bg-red-700"
+                                onClick={() => handleDelete(question, 'question')}
+                                disabled={deletingQuestion}
+                              >
+                                {deletingQuestion ? tContentCommon('deleting') : t('questions.deleteAction')}
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                     </div>
-
-                    <div className="flex items-center gap-1 mt-2 sm:mt-0 self-end sm:self-start">
-                      <Button variant="ghost" size="sm" onClick={() => handleEditQuestion(question)}>
-                        <Edit className="h-4 w-4" />
-                      </Button>
-
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete Question</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to delete this question? This action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction 
-                              className="bg-red-600 hover:bg-red-700"
-                              onClick={() => handleDelete(question, 'question')}
-                              disabled={deletingQuestion}
-                            >
-                              {deletingQuestion ? 'Deleting...' : 'Delete Question'}
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  </div>
                   )
                 })}
               </div>
@@ -761,11 +773,6 @@ export default function AdminContentPage() {
                       <option key={gift.id} value={gift.name}>{gift.name}</option>
                     ))}
                   </select>
-
-                  <Button onClick={() => handleCreateNew('characteristic')} className="whitespace-nowrap">
-                    <Plus className="h-4 w-4 mr-2" />
-                    {t('characteristics.addNew')}
-                  </Button>
                 </div>
               </div>
             </CardContent>
@@ -786,64 +793,64 @@ export default function AdminContentPage() {
                         <span className={iconColor}>{icon}</span>
                       </div>
 
-                    <div className="flex-1 min-w-0 space-y-3">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <Badge variant="outline" className="text-xs whitespace-nowrap">
-                          {item.giftName}
-                        </Badge>
-                        <Badge className={`${getCharacteristicColor(item.type)} whitespace-nowrap`} variant="outline">
-                          {getCharacteristicIcon(item.type)}
-                          {item.type}
-                        </Badge>
-                        <Badge className={`${getStatusColor(item.isActive)} whitespace-nowrap`}>
-                          {item.isActive ? tCommon('active') : tCommon('inactive')}
-                        </Badge>
+                      <div className="flex-1 min-w-0 space-y-3">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Badge variant="outline" className="text-xs whitespace-nowrap">
+                            {item.giftName}
+                          </Badge>
+                          <Badge className={`${getCharacteristicColor(item.type)} whitespace-nowrap`} variant="outline">
+                            {getCharacteristicIcon(item.type)}
+                            {item.type}
+                          </Badge>
+                          <Badge className={`${getStatusColor(item.isActive)} whitespace-nowrap`}>
+                            {item.isActive ? tContentCommon('active') : tContentCommon('inactive')}
+                          </Badge>
+                        </div>
+
+                        <div className="space-y-3">
+                          <div>
+                            <span className="text-xs text-gray-500 font-medium block mb-1">PT:</span>
+                            <p className="text-sm text-gray-900 line-clamp-3">{item.contentPt}</p>
+                          </div>
+                          <div>
+                            <span className="text-xs text-gray-500 font-medium block mb-1">EN:</span>
+                            <p className="text-sm text-gray-600 line-clamp-3">{item.contentEn}</p>
+                          </div>
+                        </div>
                       </div>
 
-                      <div className="space-y-3">
-                        <div>
-                          <span className="text-xs text-gray-500 font-medium block mb-1">PT:</span>
-                          <p className="text-sm text-gray-900 line-clamp-3">{item.contentPt}</p>
-                        </div>
-                        <div>
-                          <span className="text-xs text-gray-500 font-medium block mb-1">EN:</span>
-                          <p className="text-sm text-gray-600 line-clamp-3">{item.contentEn}</p>
-                        </div>
+                      <div className="flex items-center gap-1 mt-2 sm:mt-0 self-end sm:self-start">
+                        <Button variant="ghost" size="sm" onClick={() => handleEditCharacteristic(item)}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
+
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete Content</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to delete this {item.type}? This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                className="bg-red-600 hover:bg-red-700"
+                                onClick={() => handleDelete(item, 'characteristic')}
+                                disabled={deletingCharacteristic}
+                              >
+                                {deletingCharacteristic ? 'Deleting...' : 'Delete Content'}
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                     </div>
-
-                    <div className="flex items-center gap-1 mt-2 sm:mt-0 self-end sm:self-start">
-                      <Button variant="ghost" size="sm" onClick={() => handleEditCharacteristic(item)}>
-                        <Edit className="h-4 w-4" />
-                      </Button>
-
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete Content</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to delete this {item.type}? This action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction 
-                              className="bg-red-600 hover:bg-red-700"
-                              onClick={() => handleDelete(item, 'characteristic')}
-                              disabled={deletingCharacteristic}
-                            >
-                              {deletingCharacteristic ? 'Deleting...' : 'Delete Content'}
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  </div>
                   )
                 })}
               </div>
@@ -880,28 +887,6 @@ export default function AdminContentPage() {
                     </Link>
                   </div>
                 </Card>
-
-                <Card className="p-6">
-                  <div className="text-center">
-                    <FileText className="h-12 w-12 text-green-500 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">Templates</h3>
-                    <p className="text-gray-600 mb-4">Email templates and notification content</p>
-                    <Button variant="outline" className="w-full">
-                      Edit Templates
-                    </Button>
-                  </div>
-                </Card>
-
-                <Card className="p-6">
-                  <div className="text-center">
-                    <MessageSquare className="h-12 w-12 text-purple-500 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">Help Content</h3>
-                    <p className="text-gray-600 mb-4">FAQ, help articles, and support content</p>
-                    <Button variant="outline" className="w-full">
-                      Manage Help
-                    </Button>
-                  </div>
-                </Card>
               </div>
             </CardContent>
           </Card>
@@ -913,15 +898,18 @@ export default function AdminContentPage() {
         <AlertDialogContent className="max-w-lg w-[95vw] max-h-[90vh] overflow-y-auto">
           <AlertDialogHeader>
             <AlertDialogTitle className="line-clamp-2">
-              {isCreating ? 'Create New' : 'Edit'} {editingType === 'gift' ? 'Spiritual Gift' : 
-                   editingType === 'question' ? 'Question' : 
-                   'Characteristic'}
+              {editingType === 'gift'
+                ? (isCreating ? t('modals.createGift') : t('modals.editGift'))
+                : editingType === 'question'
+                  ? (isCreating ? t('modals.createQuestion') : t('modals.editQuestion'))
+                  : (isCreating ? t('modals.createCharacteristic') : t('modals.editCharacteristic'))
+              }
             </AlertDialogTitle>
             <AlertDialogDescription>
-              {isCreating ? 'Create a new content item.' : 'Update the information for this content item.'}
+              {isCreating ? t('modals.createItem') : t('modals.updateInfo')}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          
+
           <div className="space-y-4 py-4">
             {/* Gift Edit Fields */}
             {editingType === 'gift' && (
@@ -929,22 +917,22 @@ export default function AdminContentPage() {
                 {/* Gift Key (for new gifts only) */}
                 {isCreating && (
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Gift Key*</label>
+                    <label className="text-sm font-medium">{t('modals.giftKey')}*</label>
                     <Input
                       value={editForm.giftKey}
                       onChange={(e) => setEditForm(prev => ({ ...prev, giftKey: e.target.value.toUpperCase() }))}
-                      placeholder="e.g., PROPHECY, MINISTRY"
+                      placeholder={t('modals.giftKeyPlaceholder')}
                       className="w-full"
                       required
                     />
-                    <p className="text-xs text-gray-500">Unique identifier for the gift (uppercase, no spaces)</p>
+                    <p className="text-xs text-gray-500">{t('modals.giftKeyHelp')}</p>
                   </div>
                 )}
 
                 {/* Category (for new gifts only) */}
                 {isCreating && (
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Category*</label>
+                    <label className="text-sm font-medium">{t('modals.category')}*</label>
                     <select
                       value={editForm.category}
                       onChange={(e) => setEditForm(prev => ({ ...prev, category: e.target.value }))}
@@ -960,11 +948,11 @@ export default function AdminContentPage() {
 
                 {/* Name (Portuguese) */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Name (Portuguese)*</label>
+                  <label className="text-sm font-medium">{t('modals.namePt')}*</label>
                   <Input
                     value={editForm.name}
                     onChange={(e) => setEditForm(prev => ({ ...prev, name: e.target.value }))}
-                    placeholder="Portuguese name"
+                    placeholder={t('modals.namePtPlaceholder')}
                     className="w-full"
                     required
                   />
@@ -972,22 +960,33 @@ export default function AdminContentPage() {
 
                 {/* Name (English) */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Name (English)</label>
+                  <label className="text-sm font-medium">{t('modals.nameEn')}</label>
                   <Input
                     value={editForm.nameEn}
                     onChange={(e) => setEditForm(prev => ({ ...prev, nameEn: e.target.value }))}
-                    placeholder="English name"
+                    placeholder={t('modals.nameEnPlaceholder')}
+                    className="w-full"
+                  />
+                </div>
+
+                {/* Name (Spanish) */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">{t('modals.nameEs') || 'Name (Spanish)'}</label>
+                  <Input
+                    value={editForm.nameEs}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, nameEs: e.target.value }))}
+                    placeholder={t('modals.nameEsPlaceholder') || 'Enter name in Spanish'}
                     className="w-full"
                   />
                 </div>
 
                 {/* Description (Portuguese) */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Description (Portuguese)*</label>
+                  <label className="text-sm font-medium">{t('modals.descriptionPt')}*</label>
                   <textarea
                     value={editForm.description}
                     onChange={(e) => setEditForm(prev => ({ ...prev, description: e.target.value }))}
-                    placeholder="Portuguese description"
+                    placeholder={t('modals.descriptionPtPlaceholder')}
                     className="w-full px-3 py-2 border rounded-md text-sm min-h-[80px]"
                     required
                   />
@@ -995,11 +994,22 @@ export default function AdminContentPage() {
 
                 {/* Description (English) */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Description (English)</label>
+                  <label className="text-sm font-medium">{t('modals.descriptionEn')}</label>
                   <textarea
                     value={editForm.descriptionEn}
                     onChange={(e) => setEditForm(prev => ({ ...prev, descriptionEn: e.target.value }))}
-                    placeholder="English description"
+                    placeholder={t('modals.descriptionEnPlaceholder')}
+                    className="w-full px-3 py-2 border rounded-md text-sm min-h-[80px]"
+                  />
+                </div>
+
+                {/* Description (Spanish) */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">{t('modals.descriptionEs') || 'Description (Spanish)'}</label>
+                  <textarea
+                    value={editForm.descriptionEs}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, descriptionEs: e.target.value }))}
+                    placeholder={t('modals.descriptionEsPlaceholder') || 'Enter description in Spanish'}
                     className="w-full px-3 py-2 border rounded-md text-sm min-h-[80px]"
                   />
                 </div>
@@ -1011,13 +1021,13 @@ export default function AdminContentPage() {
               <>
                 {/* Spiritual Gift Selection */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Spiritual Gift</label>
+                  <label className="text-sm font-medium">{t('modals.gift')}</label>
                   <select
                     value={editForm.selectedGift}
                     onChange={(e) => setEditForm(prev => ({ ...prev, selectedGift: e.target.value }))}
                     className="w-full px-3 py-2 border rounded-md text-sm"
                   >
-                    <option value="">Select a spiritual gift...</option>
+                    <option value="">{t('modals.selectGift')}</option>
                     {giftsData.map(gift => (
                       <option key={gift.id} value={gift.name}>{gift.name}</option>
                     ))}
@@ -1026,22 +1036,33 @@ export default function AdminContentPage() {
 
                 {/* Question (Portuguese) */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Question (Portuguese)</label>
+                  <label className="text-sm font-medium">{t('modals.questionPt')}</label>
                   <textarea
                     value={editForm.questionPt}
                     onChange={(e) => setEditForm(prev => ({ ...prev, questionPt: e.target.value }))}
-                    placeholder="Portuguese question"
+                    placeholder={t('modals.questionPtPlaceholder')}
                     className="w-full px-3 py-2 border rounded-md text-sm min-h-[80px]"
                   />
                 </div>
 
                 {/* Question (English) */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Question (English)</label>
+                  <label className="text-sm font-medium">{t('modals.questionEn')}</label>
                   <textarea
                     value={editForm.questionEn}
                     onChange={(e) => setEditForm(prev => ({ ...prev, questionEn: e.target.value }))}
-                    placeholder="English question"
+                    placeholder={t('modals.questionEnPlaceholder')}
+                    className="w-full px-3 py-2 border rounded-md text-sm min-h-[80px]"
+                  />
+                </div>
+
+                {/* Question (Spanish) */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">{t('modals.questionEs') || 'Question (Spanish)'}</label>
+                  <textarea
+                    value={editForm.questionEs}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, questionEs: e.target.value }))}
+                    placeholder={t('modals.questionEsPlaceholder') || 'Enter question in Spanish'}
                     className="w-full px-3 py-2 border rounded-md text-sm min-h-[80px]"
                   />
                 </div>
@@ -1054,7 +1075,7 @@ export default function AdminContentPage() {
                 {/* Type Selection (for new characteristics only) */}
                 {isCreating && (
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Content Type*</label>
+                    <label className="text-sm font-medium">{t('modals.contentType')}*</label>
                     <select
                       value={editForm.characteristicType}
                       onChange={(e) => setEditForm(prev => ({ ...prev, characteristicType: e.target.value as 'characteristic' | 'danger' | 'misunderstanding' }))}
@@ -1070,14 +1091,14 @@ export default function AdminContentPage() {
 
                 {/* Spiritual Gift Selection */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Spiritual Gift*</label>
+                  <label className="text-sm font-medium">{t('modals.gift')}*</label>
                   <select
                     value={editForm.selectedGift}
                     onChange={(e) => setEditForm(prev => ({ ...prev, selectedGift: e.target.value }))}
                     className="w-full px-3 py-2 border rounded-md text-sm"
                     required
                   >
-                    <option value="">Select a spiritual gift...</option>
+                    <option value="">{t('modals.selectGift')}</option>
                     {giftsData.map(gift => (
                       <option key={gift.id} value={gift.name}>{gift.name}</option>
                     ))}
@@ -1086,11 +1107,11 @@ export default function AdminContentPage() {
 
                 {/* Content (Portuguese) */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Content (Portuguese)*</label>
+                  <label className="text-sm font-medium">{t('modals.contentPt')}*</label>
                   <textarea
                     value={editForm.contentPt}
                     onChange={(e) => setEditForm(prev => ({ ...prev, contentPt: e.target.value }))}
-                    placeholder="Portuguese content"
+                    placeholder={t('modals.contentPtPlaceholder')}
                     className="w-full px-3 py-2 border rounded-md text-sm min-h-[80px]"
                     required
                   />
@@ -1098,11 +1119,22 @@ export default function AdminContentPage() {
 
                 {/* Content (English) */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Content (English)</label>
+                  <label className="text-sm font-medium">{t('modals.contentEn')}</label>
                   <textarea
                     value={editForm.contentEn}
                     onChange={(e) => setEditForm(prev => ({ ...prev, contentEn: e.target.value }))}
-                    placeholder="English content"
+                    placeholder={t('modals.contentEnPlaceholder')}
+                    className="w-full px-3 py-2 border rounded-md text-sm min-h-[80px]"
+                  />
+                </div>
+
+                {/* Content (Spanish) */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">{t('modals.contentEs') || 'Content (Spanish)'}</label>
+                  <textarea
+                    value={editForm.contentEs}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, contentEs: e.target.value }))}
+                    placeholder={t('modals.contentEsPlaceholder') || 'Enter content in Spanish'}
                     className="w-full px-3 py-2 border rounded-md text-sm min-h-[80px]"
                   />
                 </div>
@@ -1111,36 +1143,36 @@ export default function AdminContentPage() {
 
             {/* Status - Common for all types */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">Status</label>
+              <label className="text-sm font-medium">{t('modals.status')}</label>
               <select
                 value={editForm.isActive ? 'active' : 'inactive'}
                 onChange={(e) => setEditForm(prev => ({ ...prev, isActive: e.target.value === 'active' }))}
                 className="w-full px-3 py-2 border rounded-md text-sm"
               >
-                <option value="active">{tCommon('active')}</option>
-                <option value="inactive">{tCommon('inactive')}</option>
+                <option value="active">{t('modals.active')}</option>
+                <option value="inactive">{t('modals.inactive')}</option>
               </select>
             </div>
           </div>
 
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={handleCancelEdit}>{tCommon('cancel')}</AlertDialogCancel>
-            <Button 
+            <AlertDialogCancel onClick={handleCancelEdit}>{t('modals.cancel')}</AlertDialogCancel>
+            <Button
               onClick={isCreating ? handleCreate : handleSaveEdit}
               disabled={
-                isCreating 
+                isCreating
                   ? (creatingGift || creatingQuestion || creatingCharacteristic)
                   : (updating || updatingQuestion || updatingCharacteristic)
               }
               className="bg-blue-600 hover:bg-blue-700"
             >
-              {isCreating 
-                ? (creatingGift || creatingQuestion || creatingCharacteristic) 
-                  ? tCommon('creating') 
-                  : tCommon('create')
-                : (updating || updatingQuestion || updatingCharacteristic) 
-                  ? tCommon('saving') 
-                  : tCommon('save')
+              {isCreating
+                ? (creatingGift || creatingQuestion || creatingCharacteristic)
+                  ? t('modals.creating')
+                  : t('modals.create')
+                : (updating || updatingQuestion || updatingCharacteristic)
+                  ? t('modals.saving')
+                  : t('modals.save')
               }
             </Button>
           </AlertDialogFooter>

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { useRouter } from '@/i18n/navigation'
 import { usePermissions } from '@/hooks/usePermissions'
+import { useTranslations } from 'next-intl'
 import {
     Card,
     CardContent,
@@ -32,9 +33,11 @@ import { UserDeleteDialog } from '@/components/admin/users/UserDeleteDialog'
 import { UserQuizResultsDialog } from '@/components/admin/users/UserQuizResultsDialog'
 
 export default function AdminUsersListPage() {
-    const { user, isAdmin, loading } = useAuth()
+    const { user, isAdmin, isManager, loading } = useAuth()
     const router = useRouter()
-    const { canEditUsers, canDeleteUsers } = usePermissions()
+    const { canEditUsers, canDeleteUsers, canViewUsers } = usePermissions()
+    const tList = useTranslations('admin.users.list')
+    const tShared = useTranslations('admin.shared')
 
     const [searchTerm, setSearchTerm] = useState('')
     const [selectedRole, setSelectedRole] = useState('all')
@@ -51,10 +54,11 @@ export default function AdminUsersListPage() {
     const { adminUserIds } = useAdminUsers()
 
     useEffect(() => {
-        if (!loading && (!user || !isAdmin)) {
+        const allowed = isAdmin || isManager || canViewUsers || canEditUsers || canDeleteUsers
+        if (!loading && (!user || !allowed)) {
             router.push('/dashboard')
         }
-    }, [user, isAdmin, loading, router])
+    }, [user, isAdmin, isManager, canViewUsers, canEditUsers, canDeleteUsers, loading, router])
 
     if (loading || usersLoading) {
         return (
@@ -64,7 +68,7 @@ export default function AdminUsersListPage() {
         )
     }
 
-    if (!user || !isAdmin) return null
+    if (!user || !(isAdmin || isManager || canViewUsers || canEditUsers || canDeleteUsers)) return null
 
     const filteredUsers = (usersData || []).filter(u => {
         const userName = u.user_metadata?.name || (u.email ? u.email.split('@')[0] : '') || ''
@@ -109,7 +113,7 @@ export default function AdminUsersListPage() {
                             <div className="relative">
                                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                                 <Input
-                                    placeholder="Search users by name or email..."
+                                    placeholder={tList('searchPlaceholder')}
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                     className="pl-10"
@@ -123,10 +127,10 @@ export default function AdminUsersListPage() {
                                 onChange={(e) => setSelectedRole(e.target.value)}
                                 className="px-3 py-2 border rounded-md text-sm whitespace-nowrap"
                             >
-                                <option value="all">All Roles</option>
-                                <option value="admin">Admin</option>
-                                <option value="manager">Manager</option>
-                                <option value="user">User</option>
+                                <option value="all">{tList('allRoles')}</option>
+                                <option value="admin">{tShared('roles.administrator')}</option>
+                                <option value="manager">{tShared('roles.manager')}</option>
+                                <option value="user">{tShared('roles.user')}</option>
                             </select>
 
                             <select
@@ -134,10 +138,10 @@ export default function AdminUsersListPage() {
                                 onChange={(e) => setSelectedStatus(e.target.value)}
                                 className="px-3 py-2 border rounded-md text-sm whitespace-nowrap"
                             >
-                                <option value="all">All Status</option>
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                                <option value="suspended">Suspended</option>
+                                <option value="all">{tList('allStatus')}</option>
+                                <option value="active">{tShared('active')}</option>
+                                <option value="inactive">{tShared('inactive')}</option>
+                                <option value="suspended">{tShared('suspended')}</option>
                             </select>
                         </div>
                     </div>
@@ -147,7 +151,7 @@ export default function AdminUsersListPage() {
             {/* Users List */}
             <Card>
                 <CardHeader>
-                    <CardTitle>All Users ({filteredUsers.length})</CardTitle>
+                    <CardTitle>{tList('allUsersCount', { count: filteredUsers.length })}</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
@@ -162,7 +166,7 @@ export default function AdminUsersListPage() {
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2 mb-1">
                                         <h3 className="text-sm font-medium text-gray-900">
-                                            {u.user_metadata?.name || (u.email ? u.email.split('@')[0] : '') || 'Unknown'}
+                                            {u.user_metadata?.name || (u.email ? u.email.split('@')[0] : '') || tShared('unknown')}
                                         </h3>
                                         {adminUserIds.has(u.id) && (
                                             <Crown className="h-4 w-4 text-yellow-500" />
@@ -170,10 +174,10 @@ export default function AdminUsersListPage() {
                                     </div>
                                     <p className="text-sm text-gray-500">{u.email}</p>
                                     <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2 text-xs text-gray-400">
-                                        <span className="whitespace-nowrap">Joined: {new Date(u.created_at).toLocaleDateString('pt-BR')}</span>
-                                        <span className="whitespace-nowrap">Last login: {u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString('pt-BR') : 'Never'}</span>
-                                        <span className="whitespace-nowrap">Quizzes: {u.quiz_count}</span>
-                                        <span className="whitespace-nowrap">Avg Score: {formatScore(u.avg_score, 1)}</span>
+                                        <span className="whitespace-nowrap">{tList('joined')}: {new Date(u.created_at).toLocaleDateString()}</span>
+                                        <span className="whitespace-nowrap">{tList('lastLogin')}: {u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString() : tList('never')}</span>
+                                        <span className="whitespace-nowrap">{tList('quizzes')}: {u.quiz_count}</span>
+                                        <span className="whitespace-nowrap">{tList('avgScore')}: {formatScore(u.avg_score, 1)}</span>
                                     </div>
                                 </div>
 
@@ -181,10 +185,10 @@ export default function AdminUsersListPage() {
                                     {!u.approved ? (
                                         <Badge variant="outline" className="flex items-center gap-1 whitespace-nowrap border-orange-500 text-orange-700 bg-orange-50">
                                             <AlertCircle className="h-3 w-3" />
-                                            <span>Pending</span>
+                                            <span>{tList('pending')}</span>
                                         </Badge>
                                     ) : (
-                                        <div title="Approved">
+                                        <div title={tList('approved')}>
                                             <CheckCircle2 className="h-5 w-5 text-green-500" />
                                         </div>
                                     )}
@@ -198,14 +202,16 @@ export default function AdminUsersListPage() {
                                 </div>
 
                                 <div className="flex items-center gap-1 mt-2 sm:mt-0">
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => setViewingQuizResultsUser(u)}
-                                        title="View Quiz Results"
-                                    >
-                                        <FileText className="h-4 w-4" />
-                                    </Button>
+                                    {(isAdmin || isManager) && (
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => setViewingQuizResultsUser(u)}
+                                            title={tList('viewResults')}
+                                        >
+                                            <FileText className="h-4 w-4" />
+                                        </Button>
+                                    )}
                                     {canEditUsers && (
                                         <Button variant="ghost" size="sm" onClick={() => setEditingUser(u)}>
                                             <Edit className="h-4 w-4" />
@@ -230,7 +236,7 @@ export default function AdminUsersListPage() {
                     {filteredUsers.length === 0 && (
                         <div className="text-center py-8">
                             <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                            <p className="text-gray-500">No users found matching your criteria</p>
+                            <p className="text-gray-500">{tList('noUsersFound')}</p>
                         </div>
                     )}
                 </CardContent>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
@@ -18,42 +18,45 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { formatPercentage } from '@/data/quiz-data'
 
 export default function QuizPage() {
-  console.log('QuizPage render start')
 
   const [progressValue, setProgressValue] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [showContinuePrompt, setShowContinuePrompt] = useState(false)
+  const [showAllMissing, setShowAllMissing] = useState(false)
   const promptShownRef = useRef(false)
   const redirectedRef = useRef(false)
+  const lastNavRef = useRef<'none' | 'next' | 'prev' | 'auto'>('none')
 
   const router = useRouter()
   const t = useTranslations('quiz')
   const tCommon = useTranslations('common')
   const locale = useLocale()
-  const { user, loading: authLoading, isAdmin, isManager } = useAuth()
-  const { allowGuestQuiz, settings, loading: settingsLoading, debugMode } = usePublicSettings()
+  const { user, loading: authLoading, isAdmin, isManager, isApproved, approvedLoading } = useAuth()
+  const { allowGuestQuiz, settings, loading: settingsLoading, debugMode, allowRetake } = usePublicSettings()
   const { data: latestResult, isLoading: loadingLatestResult } = useLatestResult(user?.id || null)
-
-  console.log('QuizPage state', {
-    authLoading,
-    settingsLoading,
-    loadingLatestResult,
-    hasUser: !!user,
-    allowGuestQuiz,
-    latestResult: !!latestResult
-  })
 
   // Enforce auth for non-guest flow on client to avoid middleware redirect loops
   useEffect(() => {
-    console.log('Auth gate effect', { authLoading, settingsLoading, allowGuestQuiz, hasUser: !!user, redirected: redirectedRef.current })
     if (!authLoading && !settingsLoading && !allowGuestQuiz && !user && !redirectedRef.current) {
-      console.log('🔴 Redirecting to login')
       redirectedRef.current = true
       router.replace(`/${locale}/login?from=quiz`)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authLoading, settingsLoading, allowGuestQuiz, user, locale]) // router excluded to prevent loops
+
+  // SECURITY: Block unapproved users from accessing quiz
+  useEffect(() => {
+    // Only check approval for authenticated users (not guests)
+    if (!authLoading && !approvedLoading && user && !allowGuestQuiz) {
+      // Admins and Managers are always approved
+      if (!isAdmin && !isManager && !isApproved && !redirectedRef.current) {
+        redirectedRef.current = true
+        router.replace(`/${locale}/pending-approval`)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authLoading, approvedLoading, user, isAdmin, isManager, isApproved, allowGuestQuiz, locale])
 
   const {
     questions,
@@ -73,11 +76,16 @@ export default function QuizPage() {
   // Preview mode: only 3 questions for non-logged users
   const isPreviewMode = !user
   const maxQuestions = isPreviewMode ? 3 : (questions?.length || 0)
-  const availableQuestions = questions ? questions.slice(0, maxQuestions) : []
+  const availableQuestions = useMemo(() => questions ? questions.slice(0, maxQuestions) : [], [questions, maxQuestions])
 
   const currentQuestion = availableQuestions && availableQuestions.length > 0 ? availableQuestions[currentQuestionIndex] : null
   // Only count answers for questions that are currently available
   const answeredCount = availableQuestions ? availableQuestions.filter(q => currentAnswers[q.id] !== undefined).length : 0
+  const previousUnansweredQuestions = availableQuestions
+    ? availableQuestions.filter((q, index) => index < currentQuestionIndex && currentAnswers[q.id] === undefined)
+    : []
+  const visibleUnanswered = showAllMissing ? previousUnansweredQuestions : previousUnansweredQuestions.slice(0, 12)
+  const hasPreviousUnanswered = previousUnansweredQuestions.length > 0 && currentQuestionIndex > 0
   const currentPosition = currentQuestionIndex + 1
   const progress = availableQuestions && availableQuestions.length > 0 ? ((currentQuestionIndex + 1) / availableQuestions.length) * 100 : 0
   const isLastQuestion = availableQuestions ? currentQuestionIndex === availableQuestions.length - 1 : false
@@ -107,31 +115,13 @@ export default function QuizPage() {
   }, [hasPersistedState, currentAnswers])
 
   const isPrivileged = isAdmin || isManager
-  const shouldBlockRetake = !authLoading && !settingsLoading && user && !isPrivileged && !loadingLatestResult && latestResult
-
-  if (shouldBlockRetake) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-gray-100 px-4">
-        <div className="max-w-md bg-white rounded-xl shadow-lg p-8 text-center space-y-4">
-          <div className="w-14 h-14 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto">
-            <CheckCircle2 className="h-7 w-7" />
-          </div>
-          <h2 className="text-xl font-semibold text-gray-800">{t('alreadyCompleted.title')}</h2>
-          <p className="text-gray-600">{t('alreadyCompleted.description')}</p>
-          <Link href={`/quiz/results/${latestResult.sessionId}`}>
-            <Button className="w-full">
-              {t('alreadyCompleted.viewResult')}
-            </Button>
-          </Link>
-        </div>
-      </div>
-    )
-  }
+  const shouldBlockRetake = !authLoading && !settingsLoading && user && !isPrivileged && !allowRetake && !loadingLatestResult && latestResult
 
   const handleAnswer = (score: number) => {
     if (currentQuestion && !isTransitioning) {
       setSelectedAnswer(score)
       updateAnswer(currentQuestion.id, score)
+      lastNavRef.current = 'next'
 
       // Small delay then auto-advance
       setIsTransitioning(true)
@@ -145,6 +135,7 @@ export default function QuizPage() {
   }
 
   const goToNext = async () => {
+    lastNavRef.current = 'next'
     if (isLastQuestion) {
       if (isPreviewMode) {
         router.push(`/${locale}/login?from=quiz-preview`)
@@ -173,6 +164,7 @@ export default function QuizPage() {
 
   const goToPrevious = () => {
     if (currentQuestionIndex > 0 && !isTransitioning) {
+      lastNavRef.current = 'prev'
       setCurrentQuestionIndex(currentQuestionIndex - 1)
       setSelectedAnswer(null)
     }
@@ -208,6 +200,44 @@ export default function QuizPage() {
       setCurrentQuestionIndex(firstUnansweredIndex)
       setSelectedAnswer(null)
     }
+  }
+
+  // Skip answered questions automatically unless user clicked "Anterior"
+  useEffect(() => {
+    if (!availableQuestions || !currentQuestion) return
+    const answered = currentAnswers[currentQuestion.id] !== undefined
+    if (answered && lastNavRef.current !== 'prev') {
+      const nextUnansweredIndex = availableQuestions.findIndex((q, idx) =>
+        idx > currentQuestionIndex && currentAnswers[q.id] === undefined
+      )
+      if (nextUnansweredIndex !== -1) {
+        lastNavRef.current = 'auto'
+        setCurrentQuestionIndex(nextUnansweredIndex)
+        setSelectedAnswer(null)
+        return
+      }
+    }
+    lastNavRef.current = 'none'
+  }, [availableQuestions, currentAnswers, currentQuestion, currentQuestionIndex, setCurrentQuestionIndex])
+
+  // Show retake blocked message if user already completed and retakes are not allowed
+  if (shouldBlockRetake) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-gray-100 px-4">
+        <div className="max-w-md bg-white rounded-xl shadow-lg p-8 text-center space-y-4">
+          <div className="w-14 h-14 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto">
+            <CheckCircle2 className="h-7 w-7" />
+          </div>
+          <h2 className="text-xl font-semibold text-gray-800">{t('alreadyCompleted.title')}</h2>
+          <p className="text-gray-600">{t('alreadyCompleted.description')}</p>
+          <Link href={`/quiz/results/${latestResult.sessionId}`}>
+            <Button className="w-full">
+              {t('alreadyCompleted.viewResult')}
+            </Button>
+          </Link>
+        </div>
+      </div>
+    )
   }
 
   // Show guest quiz blocked message if not allowed
@@ -415,43 +445,72 @@ export default function QuizPage() {
 
 
             {/* Visual question navigator */}
-            {answeredCount < availableQuestions.length && (
+            {hasPreviousUnanswered && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-4 md:mt-6 bg-amber-50 border border-amber-200 rounded-lg p-4"
+                className="mt-4 md:mt-6 bg-white/80 border border-slate-200 rounded-xl p-4 shadow-sm"
               >
-                <div className="flex items-start gap-3">
-                  <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                  <div className="flex-1">
-                    <h3 className="text-sm font-semibold text-amber-900 mb-2">
-                      {t('unansweredQuestions', {
-                        default: 'Questões não respondidas',
-                        count: availableQuestions.length - answeredCount
-                      })}
-                    </h3>
-                    <p className="text-xs text-amber-700 mb-3">
-                      {t('clickToAnswer', { default: 'Clique em uma questão abaixo para respondê-la:' })}
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {availableQuestions.map((question, index) => {
-                        const isAnswered = currentAnswers[question.id] !== undefined
-                        if (isAnswered) return null
-
-                        return (
-                          <button
-                            key={question.id}
-                            onClick={() => {
-                              setCurrentQuestionIndex(index)
-                              setSelectedAnswer(null)
-                            }}
-                            className="px-3 py-1.5 bg-white border border-amber-300 rounded-md text-sm font-medium text-amber-900 hover:bg-amber-100 hover:border-amber-400 transition-colors"
-                          >
-                            Questão {index + 1}
-                          </button>
-                        )
-                      })}
+                <div className="flex flex-col gap-3">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      <div className="h-8 w-8 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center">
+                        <AlertCircle className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <p className="text-xs uppercase tracking-wide text-slate-500">
+                          {t('questionsOfTotal', { answered: answeredCount, total: availableQuestions.length })}
+                        </p>
+                        <p className="text-sm font-semibold text-slate-800">
+                          {t('unansweredQuestions', {
+                            default: 'Questões não respondidas',
+                            count: previousUnansweredQuestions.length
+                          })}
+                        </p>
+                      </div>
                     </div>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={goToFirstUnanswered}
+                        className="border-slate-300 text-slate-700"
+                      >
+                        {t('continuePrompt.continue')}
+                      </Button>
+                      {previousUnansweredQuestions.length > 12 && !showAllMissing && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setShowAllMissing(true)}
+                          className="text-slate-600 hover:text-slate-800"
+                        >
+                          {t('viewAllQuestions')}
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-slate-500">
+                    {t('clickToAnswer', { default: 'Escolha uma questão para responder agora:' })}
+                  </p>
+
+                  <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-7 gap-2">
+                    {visibleUnanswered.map((question) => {
+                      const questionIndex = availableQuestions.findIndex(q => q.id === question.id)
+                      return (
+                        <button
+                          key={question.id}
+                          onClick={() => {
+                            setCurrentQuestionIndex(questionIndex)
+                            setSelectedAnswer(null)
+                          }}
+                          className="px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm font-medium text-slate-800 hover:border-slate-400 hover:bg-slate-50 transition-colors"
+                        >
+                          {questionIndex + 1}
+                        </button>
+                      )
+                    })}
                   </div>
                 </div>
               </motion.div>

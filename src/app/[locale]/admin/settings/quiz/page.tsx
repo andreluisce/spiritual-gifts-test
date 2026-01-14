@@ -10,6 +10,7 @@ import { useSystemSettings, type SystemSettings } from '@/hooks/useSystemSetting
 import { useTranslations } from 'next-intl'
 import { HelpCircle, Settings2, Shuffle, Eye, RefreshCw } from 'lucide-react'
 import Link from 'next/link'
+import { DEFAULT_SETTINGS } from '@/lib/system-settings-defaults'
 
 // Debounce hook for performance optimization
 function useDebounce<T>(value: T, delay: number): T {
@@ -33,38 +34,62 @@ export default function QuizSettingsPage() {
   const { settings, updateSettings } = useSystemSettings()
   const [localSettings, setLocalSettings] = useState<SystemSettings | null>(null)
   const [isSaving, setIsSaving] = useState(false)
+  const [baseline, setBaseline] = useState<SystemSettings | null>(null)
+
+  const mergeWithDefaults = useCallback((incoming: SystemSettings) => {
+    return {
+      ...DEFAULT_SETTINGS,
+      ...incoming,
+      quiz: {
+        ...DEFAULT_SETTINGS.quiz,
+        ...(incoming.quiz || {})
+      },
+      general: {
+        ...DEFAULT_SETTINGS.general,
+        ...(incoming.general || {})
+      },
+      ai: {
+        ...DEFAULT_SETTINGS.ai,
+        ...(incoming.ai || {})
+      }
+    }
+  }, [])
 
   // Sync local settings with fetched settings
   useEffect(() => {
     if (settings) {
-      setLocalSettings(settings)
+      const merged = mergeWithDefaults(settings)
+      setLocalSettings(merged)
+      setBaseline(merged)
     }
-  }, [settings])
+  }, [settings, mergeWithDefaults])
 
   // Debounce local settings changes
   const debouncedSettings = useDebounce(localSettings, 1000)
 
   // Update server when debounced settings change
   useEffect(() => {
-    if (!debouncedSettings || !settings) return
+    if (!debouncedSettings || !baseline) return
 
-    // Only update if the settings actually changed (deep comparison)
-    const hasChanged = JSON.stringify(debouncedSettings) !== JSON.stringify(settings)
+    const hasChanged = JSON.stringify(debouncedSettings) !== JSON.stringify(baseline)
 
     if (hasChanged) {
       setIsSaving(true)
       updateSettings(debouncedSettings)
-        .then(() => {
+        .then((saved) => {
+          const merged = mergeWithDefaults((saved as SystemSettings) || debouncedSettings)
+          setBaseline(merged)
+          setLocalSettings(merged)
           setIsSaving(false)
         })
         .catch((error) => {
           console.error('Failed to update settings:', error)
           setIsSaving(false)
-          // Revert to previous settings on error
-          setLocalSettings(settings)
+          // Revert to previous baseline on error
+          setLocalSettings(baseline)
         })
     }
-  }, [debouncedSettings, settings, updateSettings])
+  }, [debouncedSettings, baseline, updateSettings, mergeWithDefaults])
 
   const handleSettingChange = useCallback((key: string, value: string | boolean | number) => {
     if (!localSettings) return
@@ -152,11 +177,11 @@ export default function QuizSettingsPage() {
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-sm text-yellow-800 flex items-start gap-2">
               <Settings2 className="h-4 w-4 mt-0.5 flex-shrink-0" />
               <div>
-                <strong>Want to restrict quiz access?</strong>
+                <strong>{t('questionsConfig.requireApproval.title')}</strong>
                 <p>
-                  You can require admin approval for users to take the test in{' '}
+                  {t('questionsConfig.requireApproval.description')}{' '}
                   <Link href="/admin/settings/general" className="underline hover:text-yellow-900">
-                    General Settings
+                    {t('questionsConfig.requireApproval.link')}
                   </Link>.
                 </p>
               </div>
@@ -208,7 +233,7 @@ export default function QuizSettingsPage() {
                 </div>
                 <Switch
                   id="shuffle-questions"
-                  checked={localSettings.quiz.shuffleQuestions || false}
+                  checked={localSettings.quiz?.shuffleQuestions || false}
                   onCheckedChange={(checked) => handleSettingChange('shuffleQuestions', checked)}
                 />
               </div>
@@ -228,7 +253,7 @@ export default function QuizSettingsPage() {
                 </div>
                 <Switch
                   id="show-progress"
-                  checked={localSettings.quiz.showProgress || false}
+                  checked={localSettings.quiz?.showProgress || false}
                   onCheckedChange={(checked) => handleSettingChange('showProgress', checked)}
                 />
               </div>
@@ -248,7 +273,7 @@ export default function QuizSettingsPage() {
                 </div>
                 <Switch
                   id="allow-retake"
-                  checked={localSettings.quiz.allowRetake || false}
+                  checked={localSettings.quiz?.allowRetake || false}
                   onCheckedChange={(checked) => handleSettingChange('allowRetake', checked)}
                 />
               </div>
@@ -268,7 +293,7 @@ export default function QuizSettingsPage() {
                 </div>
                 <Switch
                   id="debug-mode"
-                  checked={localSettings.quiz.debugMode || false}
+                  checked={localSettings.quiz?.debugMode || false}
                   onCheckedChange={(checked) => handleSettingChange('debugMode', checked)}
                 />
               </div>
@@ -286,10 +311,10 @@ export default function QuizSettingsPage() {
                 <span className="font-medium">{t('summary.questionsPerGift')}</span> {questionsPerGiftValue}
               </div>
               <div className="text-blue-700">
-                <span className="font-medium">{t('summary.shuffle')}</span> {localSettings.quiz.shuffleQuestions ? t('summary.yes') : t('summary.no')}
+                <span className="font-medium">{t('summary.shuffle')}</span> {localSettings.quiz?.shuffleQuestions ? t('summary.yes') : t('summary.no')}
               </div>
               <div className="text-blue-700">
-                <span className="font-medium">{t('summary.retakes')}</span> {localSettings.quiz.allowRetake ? t('summary.allowed') : t('summary.notAllowed')}
+                <span className="font-medium">{t('summary.retakes')}</span> {localSettings.quiz?.allowRetake ? t('summary.allowed') : t('summary.notAllowed')}
               </div>
             </div>
           </div>

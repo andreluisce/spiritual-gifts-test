@@ -35,13 +35,16 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Check if user is admin using our database function
-    const { data: isAdminData, error: adminError } = await supabase
-      .rpc('is_user_admin_safe')
+    // Check if user is admin/manager using our database function
+    const { data: isAdminData, error: adminError } = await supabase.rpc('is_user_admin_safe')
+    const { data: isManagerData, error: managerError } = await supabase.rpc('is_user_manager')
 
-    if (adminError || !isAdminData) {
+    if ((adminError && managerError) || (!isAdminData && !isManagerData)) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
     }
+
+    const isAdmin = !!isAdminData
+    const isManager = !!isManagerData
 
 
     // Get query parameters
@@ -52,77 +55,107 @@ export async function GET(request: NextRequest) {
 
     switch (type) {
       case 'overview':
-        const { data: overviewStats, error: overviewError } = await supabase
-          .rpc('get_ai_usage_stats')
+        try {
+          const { data: overviewStats, error: overviewError } = await supabase
+            .rpc('get_ai_usage_stats')
 
-        if (overviewError) {
+          if (overviewError) throw overviewError
+
+          data = {
+            overview: overviewStats?.[0] || {
+              total_analyses: 0,
+              cache_hits: 0,
+              api_calls: 0,
+              unique_users: 0,
+              analyses_today: 0,
+              analyses_this_week: 0,
+              analyses_this_month: 0,
+              avg_confidence_score: 0,
+              most_analyzed_gift: 'N/A',
+              cache_hit_rate: 0
+            }
+          }
+        } catch (overviewError) {
           console.error('❌ AI Analytics API: Error fetching overview stats:', overviewError)
-          return NextResponse.json({ error: 'Failed to fetch overview stats' }, { status: 500 })
-        }
-
-        data = {
-          overview: overviewStats?.[0] || {
-            total_analyses: 0,
-            cache_hits: 0,
-            api_calls: 0,
-            unique_users: 0,
-            analyses_today: 0,
-            analyses_this_week: 0,
-            analyses_this_month: 0,
-            avg_confidence_score: 0,
-            most_analyzed_gift: 'N/A',
-            cache_hit_rate: 0
+          if (isManager && !isAdmin) {
+            data = { overview: {} }
+          } else {
+            return NextResponse.json({ error: 'Failed to fetch overview stats' }, { status: 500 })
           }
         }
         break
 
       case 'timeline':
-        const { data: timelineData, error: timelineError } = await supabase
-          .rpc('get_ai_usage_timeline')
+        try {
+          const { data: timelineData, error: timelineError } = await supabase
+            .rpc('get_ai_usage_timeline')
 
-        if (timelineError) {
+          if (timelineError) throw timelineError
+
+          data = { timeline: timelineData || [] }
+        } catch (timelineError) {
           console.error('❌ AI Analytics API: Error fetching timeline:', timelineError)
-          return NextResponse.json({ error: 'Failed to fetch timeline data' }, { status: 500 })
+          if (isManager && !isAdmin) {
+            data = { timeline: [] }
+          } else {
+            return NextResponse.json({ error: 'Failed to fetch timeline data' }, { status: 500 })
+          }
         }
-
-        data = { timeline: timelineData || [] }
         break
 
       case 'by-gift':
-        const { data: giftData, error: giftError } = await supabase
-          .rpc('get_ai_analysis_by_gift')
+        try {
+          const { data: giftData, error: giftError } = await supabase
+            .rpc('get_ai_analysis_by_gift')
 
-        if (giftError) {
+          if (giftError) throw giftError
+
+          data = { byGift: giftData || [] }
+        } catch (giftError) {
           console.error('❌ AI Analytics API: Error fetching gift breakdown:', giftError)
-          return NextResponse.json({ error: 'Failed to fetch gift breakdown' }, { status: 500 })
+          if (isManager && !isAdmin) {
+            data = { byGift: [] }
+          } else {
+            return NextResponse.json({ error: 'Failed to fetch gift breakdown' }, { status: 500 })
+          }
         }
-
-        data = { byGift: giftData || [] }
         break
 
       case 'recent-activity':
         const limit = parseInt(searchParams.get('limit') || '10')
-        const { data: activityData, error: activityError } = await supabase
-          .rpc('get_recent_ai_activity', { limit_count: limit })
+        try {
+          const { data: activityData, error: activityError } = await supabase
+            .rpc('get_recent_ai_activity', { limit_count: limit })
 
-        if (activityError) {
+          if (activityError) throw activityError
+
+          data = { recentActivity: activityData || [] }
+        } catch (activityError) {
           console.error('❌ AI Analytics API: Error fetching recent activity:', activityError)
-          return NextResponse.json({ error: 'Failed to fetch recent activity' }, { status: 500 })
+          if (isManager && !isAdmin) {
+            data = { recentActivity: [] }
+          } else {
+            return NextResponse.json({ error: 'Failed to fetch recent activity' }, { status: 500 })
+          }
         }
-
-        data = { recentActivity: activityData || [] }
         break
 
       case 'system-status':
-        const { data: statusData, error: statusError } = await supabase
-          .rpc('get_ai_system_status')
+        try {
+          const { data: statusData, error: statusError } = await supabase
+            .rpc('get_ai_system_status')
 
-        if (statusError) {
+          if (statusError) throw statusError
+
+          data = { systemStatus: statusData?.[0] || {} }
+        } catch (statusError) {
           console.error('❌ AI Analytics API: Error fetching system status:', statusError)
-          return NextResponse.json({ error: 'Failed to fetch system status' }, { status: 500 })
+          if (isManager && !isAdmin) {
+            data = { systemStatus: {} }
+          } else {
+            return NextResponse.json({ error: 'Failed to fetch system status' }, { status: 500 })
+          }
         }
-
-        data = { systemStatus: statusData?.[0] || {} }
         break
 
       case 'all':
