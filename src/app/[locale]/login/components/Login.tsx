@@ -6,7 +6,7 @@ import { usePublicSettings } from "@/hooks/usePublicSettings"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { FcGoogle } from "react-icons/fc"
-import { Mail, ArrowRight, CheckCircle2 } from "lucide-react"
+import { Mail, CheckCircle2 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
@@ -149,7 +149,6 @@ export function LoginForm() {
                                         onClick={() => {
                                             setMagicLinkSent(false)
                                             setEmail('')
-                                            setShowEmailForm(false)
                                         }}
                                         className="mt-4 text-gray-600"
                                     >
@@ -188,83 +187,15 @@ export function LoginForm() {
                                         </div>
                                     ) : (
                                         <>
-                                            {/* Email Form */}
-                                            <AnimatePresence>
-                                                {showEmailForm && (
-                                                    <motion.form
-                                                        initial={{ opacity: 0, height: 0 }}
-                                                        animate={{ opacity: 1, height: 'auto' }}
-                                                        exit={{ opacity: 0, height: 0 }}
-                                                        onSubmit={handleMagicLinkLogin}
-                                                        className="space-y-3"
-                                                    >
-                                                        <div>
-                                                            <Input
-                                                                type="email"
-                                                                placeholder="seu@email.com"
-                                                                value={email}
-                                                                onChange={(e) => setEmail(e.target.value)}
-                                                                required
-                                                                className="h-12 rounded-xl"
-                                                                disabled={loading}
-                                                            />
-                                                        </div>
-                                                        <Button
-                                                            type="submit"
-                                                            className="w-full h-12 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium rounded-xl"
-                                                            disabled={loading || !email}
-                                                        >
-                                                            {loading ? (
-                                                                'Enviando...'
-                                                            ) : (
-                                                                <>
-                                                                    Enviar Link Mágico
-                                                                    <ArrowRight className="ml-2 h-4 w-4" />
-                                                                </>
-                                                            )}
-                                                        </Button>
-                                                    </motion.form>
-                                                )}
-                                            </AnimatePresence>
-
-                                            {/* Magic Link Button */}
-                                            {!showEmailForm && (
-                                                <motion.div
-                                                    initial={{ opacity: 0, y: 10 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    transition={{ delay: 0.3 }}
-                                                >
-                                                    <Button
-                                                        type="button"
-                                                        className="w-full h-12 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium rounded-xl flex items-center justify-center gap-3"
-                                                        onClick={() => setShowEmailForm(true)}
-                                                    >
-                                                        <Mail className="h-5 w-5" />
-                                                        Entrar com Email
-                                                    </Button>
-                                                </motion.div>
-                                            )}
-
-                                            {/* Divider */}
-                                            <div className="relative">
-                                                <div className="absolute inset-0 flex items-center">
-                                                    <div className="w-full border-t border-gray-200"></div>
-                                                </div>
-                                                <div className="relative flex justify-center text-xs">
-                                                    <span className="px-2 bg-white text-gray-500">ou</span>
-                                                </div>
-                                            </div>
-
-                                            {/* Google Button */}
+                                            {/* Google Button - Primary option */}
                                             <motion.div
                                                 initial={{ opacity: 0, y: 10 }}
                                                 animate={{ opacity: 1, y: 0 }}
-                                                transition={{ delay: 0.5 }}
+                                                transition={{ delay: 0.3 }}
                                             >
                                                 <Button
                                                     type="button"
-                                                    variant="outline"
-                                                    className="w-full h-12 bg-white hover:bg-gray-50 text-gray-700 font-medium border-gray-200 rounded-xl flex items-center justify-center gap-3"
+                                                    className="w-full h-12 bg-white hover:bg-gray-50 text-gray-700 font-medium border-2 border-gray-200 rounded-xl flex items-center justify-center gap-3 shadow-sm hover:shadow-md transition-all"
                                                     onClick={handleGoogleLogin}
                                                     disabled={loading || settingsLoading}
                                                 >
@@ -272,6 +203,77 @@ export function LoginForm() {
                                                     {loading ? t('signingIn') : t('continueWithGoogle')}
                                                 </Button>
                                             </motion.div>
+
+                                            {/* Email as secondary option - text link */}
+                                            <AnimatePresence>
+                                                {!showEmailForm ? (
+                                                    <motion.div
+                                                        initial={{ opacity: 0 }}
+                                                        animate={{ opacity: 1 }}
+                                                        exit={{ opacity: 0 }}
+                                                        transition={{ delay: 0.5 }}
+                                                        className="text-center"
+                                                    >
+                                                        <p className="text-sm text-gray-600">
+                                                            Não tem conta Google?{' '}
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => setShowEmailForm(true)}
+                                                                className="text-purple-600 hover:text-purple-700 font-medium hover:underline inline-flex items-center gap-1"
+                                                            >
+                                                                <Mail className="h-4 w-4" />
+                                                                Entrar com Email
+                                                            </button>
+                                                        </p>
+                                                    </motion.div>
+                                                ) : (
+                                                    <motion.form
+                                                        initial={{ opacity: 0, height: 0 }}
+                                                        animate={{ opacity: 1, height: 'auto' }}
+                                                        exit={{ opacity: 0, height: 0 }}
+                                                        transition={{ duration: 0.3 }}
+                                                        onSubmit={handleMagicLinkLogin}
+                                                        className="space-y-3"
+                                                    >
+                                                        <div>
+                                                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                                                                Email
+                                                            </label>
+                                                            <Input
+                                                                id="email"
+                                                                type="email"
+                                                                placeholder="seu@email.com"
+                                                                value={email}
+                                                                onChange={(e) => setEmail(e.target.value)}
+                                                                required
+                                                                className="h-11 rounded-xl"
+                                                                disabled={loading}
+                                                            />
+                                                        </div>
+                                                        <div className="flex gap-2">
+                                                            <Button
+                                                                type="button"
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                onClick={() => {
+                                                                    setShowEmailForm(false)
+                                                                    setEmail('')
+                                                                }}
+                                                                className="text-gray-600"
+                                                            >
+                                                                Cancelar
+                                                            </Button>
+                                                            <Button
+                                                                type="submit"
+                                                                className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium rounded-xl"
+                                                                disabled={loading || !email}
+                                                            >
+                                                                {loading ? 'Enviando...' : 'Enviar Link'}
+                                                            </Button>
+                                                        </div>
+                                                    </motion.form>
+                                                )}
+                                            </AnimatePresence>
                                         </>
                                     )}
 

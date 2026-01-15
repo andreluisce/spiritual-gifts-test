@@ -214,7 +214,7 @@ export default function GiftsPage() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredMinistries.map((ministry) => (
                 <Card
-                  key={ministry.gift_key}
+                  key={ministry.key}
                   className="hover:shadow-xl transition-all cursor-pointer group"
                 >
                   <CardHeader>
@@ -236,7 +236,7 @@ export default function GiftsPage() {
                       variant="ghost"
                       size="sm"
                       className="w-full group-hover:bg-green-50"
-                      onClick={() => router.push(`/${locale}/gifts/${ministry.gift_key.toLowerCase()}`)}
+                      onClick={() => router.push(`/${locale}/gifts/${ministry.key.toLowerCase()}`)}
                     >
                       Ver Detalhes
                       <ArrowRight className="h-4 w-4 ml-2" />
@@ -252,7 +252,7 @@ export default function GiftsPage() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredManifestations.map((manifestation) => (
                 <Card
-                  key={manifestation.gift_key}
+                  key={manifestation.key}
                   className="hover:shadow-xl transition-all cursor-pointer group"
                 >
                   <CardHeader>
@@ -274,7 +274,7 @@ export default function GiftsPage() {
                       variant="ghost"
                       size="sm"
                       className="w-full group-hover:bg-purple-50"
-                      onClick={() => router.push(`/${locale}/gifts/${manifestation.gift_key.toLowerCase()}`)}
+                      onClick={() => router.push(`/${locale}/gifts/${manifestation.key.toLowerCase()}`)}
                     >
                       Ver Detalhes
                       <ArrowRight className="h-4 w-4 ml-2" />

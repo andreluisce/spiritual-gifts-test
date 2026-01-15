@@ -279,8 +279,10 @@ export function useCharacteristics() {
 
         const allCharacteristics: Characteristic[] = []
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const processData = (data: any[], type: 'characteristic' | 'danger' | 'misunderstanding') => {
           // Group by Gift Key
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const byGift: Record<string, any[]> = {}
           data.forEach(item => {
             const key = item.gift_key
@@ -292,6 +294,7 @@ export function useCharacteristics() {
           Object.keys(byGift).forEach(key => {
             const items = byGift[key]
             // Split by locale and sort by order_sequence (fallback to ID for dangers/misunderstandings)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const sorter = (a: any, b: any) => (a.order_sequence || 0) - (b.order_sequence || 0) || (a.id - b.id)
             const pt = items.filter(i => i.locale === 'pt').sort(sorter)
             const en = items.filter(i => i.locale === 'en').sort(sorter)
@@ -663,6 +666,7 @@ export function useUpdateCharacteristic() {
       const updateRow = async (id: number | undefined, content: string | undefined) => {
         if (!id || content === undefined) return
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const updateData: any = { [fieldName]: content }
         if (updates.giftKey) updateData.gift_key = updates.giftKey
 
