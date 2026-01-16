@@ -86,7 +86,9 @@ export const trackAuth = (method: 'google' | 'magic_link', userId?: string) => {
     })
 
     if (userId) {
-        window.gtag('set', { user_id: userId })
+        window.gtag('config', GA_MEASUREMENT_ID!, {
+            user_id: userId
+        })
     }
 }
 
