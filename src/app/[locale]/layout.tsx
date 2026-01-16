@@ -5,6 +5,7 @@ import { QueryProvider } from '@/providers/QueryProvider';
 import { ToastProvider } from '@/components/ui/toast';
 import { AppHeader } from '@/components/AppHeader';
 import { LangSetter } from '@/components/LangSetter';
+import { AnalyticsProvider } from '@/components/AnalyticsProvider';
 import { routing } from '@/i18n/routing';
 import '../globals.css';
 
@@ -33,10 +34,12 @@ export default async function LocaleLayout({
       <AuthProvider>
         <QueryProvider>
           <ToastProvider>
-            <AppHeader />
-            <main className="min-h-screen">
-              {children}
-            </main>
+            <AnalyticsProvider>
+              <AppHeader />
+              <main className="min-h-screen">
+                {children}
+              </main>
+            </AnalyticsProvider>
           </ToastProvider>
         </QueryProvider>
       </AuthProvider>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 
 export const metadata: Metadata = {
   title: "Spiritual Gifts Test",
@@ -13,6 +14,7 @@ export default function RootLayout({
   return (
     <html suppressHydrationWarning>
       <body suppressHydrationWarning>
+        <GoogleAnalytics />
         {children}
       </body>
     </html>
